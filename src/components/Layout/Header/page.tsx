@@ -1,20 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Drawer from "@/components/Drawer/page";
 import Authentication from "@/components/Pages/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/components/store/slice/auth";
+import { getCommonCategoryAll } from "@/components/service/apiService/category";
+import { log } from "console";
+import { saveCategory } from "@/components/store/slice/category";
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [categoryId, setCategoryId] = useState(null);
   const user = useSelector((state: any) => state?.user);
-
-  console.log(user, "user===>");
-
   const dispatch = useDispatch();
-
   const handleSignup = () => {
     setIsLogin(false);
     setIsOpen(true);
@@ -27,6 +28,25 @@ const Header = () => {
   const logoutFun = async () => {
     dispatch(logout());
   };
+
+  const categoryAllList = async () => {
+    try {
+      const response = await getCommonCategoryAll();
+      if (response?.success) {
+        const findOneCategory = response?.data?.categories?.[0];
+        dispatch(saveCategory(findOneCategory));
+        setCategoryId(findOneCategory?.id);
+        setCategory(response?.data?.categories);
+      } else {
+        setCategory([]);
+      }
+    } catch (error: any) {
+      setCategory([]);
+    }
+  };
+  useEffect(() => {
+    categoryAllList();
+  }, []);
 
   return (
     <>
@@ -106,103 +126,41 @@ const Header = () => {
               )}
             </div>
 
-            {/* Hamburger Icon */}
             <Drawer buttonLabel="☰" className="cursor-pointer" />
           </div>
-
-          {/* Navigation Links */}
           <nav className="border-b pb-2 border-gray-700 w-full hidden lg:block">
-            <ul className="flex flex-wrap justify-evenly w-full px-4 py-2 text-[16px]">
-              <li>
-                <a
-                  href="#"
-                  className="text-purple-400 font-semibold flex items-center"
-                >
-                  <span>
-                    <Image
-                      src="/img/icon/trend.png"
-                      width={14}
-                      height={14}
-                      alt="trending"
-                      className="mr-1"
-                    />
-                  </span>
-                  Trending
-                </a>
-              </li>
-              <li>
-                <Link
-                  href="/blockdetail"
-                  className="text-[#8D9CB1] hover:text-purple-400"
-                >
-                  New
-                </Link>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Politics
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Sports
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Culture
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  World
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Economy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Companies
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Financials
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Tech & Science
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Health
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Crypto
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Trump
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  More
-                </a>
-              </li>
+            <ul className="flex flex-wrap justify-start gap-6 w-full px-4 py-2 text-[16px]">
+              {category?.map((row: any, index) => (
+                <li>
+                  <div
+                    onClick={() => {
+                      dispatch(saveCategory(row));
+                      setCategoryId(row?.id);
+                    }}
+                    className={` ${
+                      row?.id == categoryId
+                        ? "text-purple-400"
+                        : "text-[#8D9CB1] hover:text-purple-400 cursor-pointer"
+                    } font-semibold flex items-center`}
+                  >
+                    {index == 0 && (
+                      <span>
+                        <Image
+                          src="/img/icon/trend.png"
+                          width={14}
+                          height={14}
+                          alt="trending"
+                          className="mr-1"
+                        />
+                      </span>
+                    )}
+                    {row?.name}
+                  </div>
+                </li>
+              ))}
             </ul>
           </nav>
-
-          {/* Sub Navigation */}
-          <nav className="w-full hidden lg:block">
+          {/* <nav className="w-full hidden lg:block">
             <ul className="flex flex-wrap justify-evenly w-full px-4 py-2 text-sm">
               <li>
                 <a
@@ -276,7 +234,7 @@ const Header = () => {
                 </a>
               </li>
             </ul>
-          </nav>
+          </nav> */}
         </div>
       </header>
       <Authentication

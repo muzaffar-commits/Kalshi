@@ -5,4 +5,7 @@ export const API_URLs = {
   login: "/login",
   googleLogin: "/google-login",
   verifyEmail: "/verify-email",
+  commonCategoryAll: "/common/get-list-category",
+  commonQuestionFindById: "/common/questions-list",
+  questionDetails: "/common/question",
 };

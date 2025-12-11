@@ -4,9 +4,11 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authSlice from "./slice/auth";
+import categorySlice from "./slice/category";
 
 const rootReducer = combineReducers({
   user: authSlice,
+  category: categorySlice,
 });
 
 const persistConfig = {

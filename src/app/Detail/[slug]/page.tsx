@@ -1,7 +1,36 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Authentication from "@/components/Pages/auth";
+import ApexCharts from "apexcharts";
+import { questionDetails } from "@/components/service/apiService/category";
+import { useParams } from "next/navigation";
+import ChartRealtime from "./realTimeChart";
 const Detail = () => {
+  const [data, setData] = useState([]);
+  const { slug } = useParams();
+
+  console.log(slug, "params");
+
+  const questionDetailsList = async () => {
+    try {
+      const response: any = await questionDetails(slug);
+
+      console.log(response, "response");
+
+      if (response?.success) {
+        setData(response?.data?.questions || []);
+      } else {
+        setData([]);
+      }
+    } catch (error: any) {
+      setData([]);
+    }
+  };
+
+  useEffect(() => {
+    questionDetailsList();
+  }, [slug]);
+
   return (
     <>
       <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-40">
@@ -56,7 +85,10 @@ const Detail = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
               <div className="bg-gray-800 rounded-lg h-64 mb-6 flex items-center justify-center">
-                <span className="text-gray-500">[Chart Placeholder]</span>
+                <span className="text-gray-500">
+                  {/* [Chart Placeholder] ;;;;;; */}
+                  <ChartRealtime />
+                </span>
               </div>
               <div className="md:flex items-center justify-between text-center px-2 md:px-0 py-3 md:py-0 border rounded-lg border-[#334661] md:border-0 bg-[#162033] lg:bg-transparent">
                 <div className="flex items-center justify-start mb-3 lg:mb-0">
