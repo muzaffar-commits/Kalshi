@@ -1,35 +1,41 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
-import ApexCharts from "apexcharts";
-import { questionDetails } from "@/components/service/apiService/category";
+// import { questionDetails } from "@/components/service/apiService/category";
 import { useParams } from "next/navigation";
 import ChartRealtime from "./realTimeChart";
-const Detail = () => {
-  const [data, setData] = useState([]);
+
+// export async function generateStaticParams() {
+//   return [{ slug: "btc" }, { slug: "eth" }, { slug: "bnb" }];
+// }
+
+const Page = () => {
+  // const [data, setData] = useState([]);
   const { slug } = useParams();
 
   console.log(slug, "params");
 
-  const questionDetailsList = async () => {
-    try {
-      const response: any = await questionDetails(slug);
+  // const questionDetailsList = async () => {
+  //   try {
+  //     const response: any = await questionDetails(slug);
 
-      console.log(response, "response");
+  //     console.log(response, "response");
 
-      if (response?.success) {
-        setData(response?.data?.questions || []);
-      } else {
-        setData([]);
-      }
-    } catch (error: any) {
-      setData([]);
-    }
-  };
+  //     if (response?.success) {
+  //       setData(response?.data?.questions || []);
+  //     } else {
+  //       setData([]);
+  //     }
+  //   } catch (error: any) {
+  //     console.log(error,"error");
 
-  useEffect(() => {
-    questionDetailsList();
-  }, [slug]);
+  //     setData([]);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   questionDetailsList();
+  // }, [slug]);
 
   return (
     <>
@@ -237,4 +243,4 @@ const Detail = () => {
   );
 };
 
-export default Detail;
+export default Page;

@@ -28,8 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        style={{ background: "#0f172a" }}
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`
+    !bg-gradient-to-b !from-white !to-[#F8FBFF]
+    ${geistSans.variable} 
+    ${geistMono.variable} 
+    antialiased
+  `}
       >
         <ReduxProvider>
           <Header />

@@ -2,12 +2,11 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import { useState } from "react";
-import ModalWithTabs from "@/components/Modal/BuySell/page";
 import Link from "next/link";
 import Authentication from "@/components/Pages/auth";
 import { commonQuestionFindById } from "@/components/service/apiService/category";
-import { log } from "console";
 import { useSelector } from "react-redux";
+import ModalWithTabs from "@/components/Modal/BuySell/page";
 
 const Blocks = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +25,8 @@ const Blocks = () => {
         setQuestionData([]);
       }
     } catch (error: any) {
+      console.log(error, "error");
+
       setQuestionData([]);
     }
   };
@@ -40,7 +41,7 @@ const Blocks = () => {
           {questionData?.map((row: any, index) => (
             <div
               key={index}
-              className="bg-[#162033] relative min-h-52 rounded-xl p-4 shadow-md border border-[#334661] hover:border-[#232f4c]"
+              className="border border-gray-200 relative min-h-48 rounded-xl p-4 hover:shadow-md transition"
             >
               <div className="flex items-center mb-3">
                 <Image
@@ -50,26 +51,33 @@ const Blocks = () => {
                   alt="trending"
                   className="mr-2 rounded"
                 />
-                <h2 className="font-semibold text-sm text-white">
-                  <Link href={`./Detail/${row?.id}`}>
-                    {row?.question || "--"}
+                <h2 className="font-semibold text-sm text-gray-800">
+                  <Link href={`/detail/${row?.id}`}>
+                    <span
+                      className="block line-clamp-2"
+                      title={row?.question || "--"}
+                    >
+                      {row?.question || "--"}
+                    </span>
                   </Link>
                 </h2>
               </div>
 
-              <div className="space-y-2 text-xs">
+              <div className="text-xs mt-4 mb-5 h-24 overflow-y-auto space-y-2">
                 {row?.options?.map((item: any, idx: any) => (
                   <div
                     key={idx}
-                    className="flex justify-between items-center text-white"
+                    className="flex gap-2 justify-between items-center text-gray-700"
                   >
-                    <span>{item?.name || "--"}</span>
+                    <span className="block max-w-full truncate">
+                      {item?.name || "--"}
+                    </span>
                     <div className="flex items-center gap-1.5">
-                      <span>{item?.price * 100}%</span>
-                      <button className="py-1 px-2 bg-green-600/40 text-green-500 cursor-pointer hover:scale-105 shadow rounded-xs text-[10px]">
+                      <span>{(item?.price * 100).toFixed(1)}%</span>
+                      <button className="py-1 px-2 bg-[#0099FF]/40 text-white font-semibold rounded-xs text-[10px]">
                         Buy
                       </button>
-                      <button className="py-1 px-2 bg-red-600/30 text-red-600 shadow cursor-pointer hover:scale-105  rounded-xs text-[10px]">
+                      <button className="py-1 px-2 bg-cyan-600/30 text-[#0099ff] font-semibold rounded-xs text-[10px]">
                         Sell
                       </button>
                     </div>
@@ -77,7 +85,7 @@ const Blocks = () => {
                 ))}
               </div>
 
-              <div className="flex absolute bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
+              <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
                 <span>${row?.stats?.totalVolume || 0}k</span>
                 <span>
                   <a href="#" onClick={() => setIsOpen(true)}>
@@ -100,8 +108,8 @@ const Blocks = () => {
               </div>
             </div>
           ))}
-          {/* block2 start */}
-          <div className="bg-[#162033] min-h-52 relative rounded-xl p-4 shadow-md border border-[#334661] hover:border-[#232f4c]">
+
+          {/* <div className="bg-[#162033] min-h-52 relative rounded-xl p-4 shadow-md border border-[#334661] hover:border-[#232f4c]">
             <div className="flex items-center mb-3">
               <Image
                 src="/img/blockimg2.jpg"
@@ -128,7 +136,7 @@ const Blocks = () => {
                 <h5 className="text-gray-400 mt-2 text-sm text-center">
                   $100 → <span className="text-green-600">$1,563</span>
                 </h5>
-                {/* Modal */}
+
                 <ModalWithTabs
                   isOpen={isModalOpen}
                   onClose={() => setIsModalOpen(false)}
@@ -168,7 +176,7 @@ const Blocks = () => {
                 </a>
               </span>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <Authentication
