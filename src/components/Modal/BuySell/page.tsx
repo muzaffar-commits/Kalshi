@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Dropdown from "@/components/popupDropdown/page";
 import ExpirationDropdown from "@/components/BlockDropdown/page";
+import Blockimg1 from '../../../../public/img/blockimg1.jpg';
 
 interface ModalProps {
   isOpen: boolean;
@@ -15,7 +16,8 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/75 bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center 
+      backdrop-blur-sm z-50 transition-all duration-300">
       <div className="bg-[#ffffff] p-6 lg:p-10 rounded-xl shadow-lg w-[100%] max-w-[320px] lg:max-w-[430px] relative">
         {/* Close Button */}
         <button
@@ -27,7 +29,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
 
               <div className="flex justify-between mb-2">
                   <Image
-                      src="/img/blockimg1.jpg"
+                      src={Blockimg1}
                       alt="NYC Flag"
                       width={60}
                       height={60}
@@ -35,7 +37,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
                   />
                   <h6 className="text-sm">Will the Fed do a rate cut of more than 25bps this year?</h6>
               </div>
-        <h2 className="text-blue-800 ml-18 mb-3 font-semibold">Buy Yes</h2>
+        <h2 className="text-[#0099FF] ml-18 mb-3 font-semibold">Buy Yes</h2>
 
         {/* Tabs */}
         <div className="border-b border-[#cccccc] mb-4 relative">
@@ -45,7 +47,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
             onClick={() => setActiveTab("true")}
             className={`py-2 mr-6 text-center font-medium ${
               activeTab === "true"
-                ? "border-b-2 border-blue-600 text-blue-600"
+                ? "border-b-2 border-[#0099FF] text-[#0099FF]"
                 : "text-gray-600 hover:text-gray-900 cursor-pointer"
             }`}
           >
@@ -55,7 +57,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
             onClick={() => setActiveTab("false")}
             className={`py-2 text-center font-medium ${
               activeTab === "false"
-                ? "border-b-2 border-blue-600 text-blue-600"
+                ? "border-b-2 border-[#0099FF] text-[#0099FF]"
                 : "text-gray-600 hover:text-gray-900 cursor-pointer"
             }`}
           >
@@ -70,7 +72,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
                           <div className="flex justify-between space-x-2">
                           <div className="flex-1">
   <button
-    className="flex items-center justify-center gap-2 bg-green-600/30 hover:bg-green-700/90 text-green-400 py-2 rounded-md text-md transition-colors w-full duration-150 active:bg-green-700 focus:bg-green-800 cursor-pointer"
+    className="flex items-center justify-center gap-2 bg-[#0099FF]/40 hover:bg-[#0099FF] text-white py-2 rounded-md text-md transition-colors w-full duration-150 active:bg-[#0099FF] focus:bg-[#0099FF] cursor-pointer"
   >
     <span>Yes 6</span>
     <svg
@@ -93,7 +95,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
 
                               <div className="flex-1">
   <button
-    className="flex items-center justify-center gap-2 bg-red-600/30 w-full hover:bg-red-700/70 text-red-600 py-2 rounded-md text-md focus:bg-red-800 cursor-pointer focus:text-red-500"
+    className="flex items-center justify-center gap-2 bg-[#0099FF]/30 hover:bg-[#0099FF]/70 text-[#0099FF] py-2 rounded-md text-md transition-colors w-full duration-150 active:bg-[#0099FF]/70 hover:text-white active:text-white focus:text-white focus:bg-[#0099FF]/70 cursor-pointer"
   >
     <span>No 95</span>
     <svg
@@ -120,7 +122,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
                               <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
                                   <span className="text-start">
                                       <span className="block text-sm text-gray-400">Contacts</span>
-                                      <span className="block text-sm text-green-700">Earn 4% Interest</span>
+                                      <span className="block text-sm text-[#0099FF]">Earn 4% Interest</span>
                                   </span>
                                   <span className="text-end text-2xl text-gray-600 text-bold">0</span>
                               </label>
@@ -160,12 +162,12 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
     {/* Right Side Checkbox */}
     <input
       type="checkbox"
-      className="w-5 h-5 text-blue-600 border-gray-300 rounded "
+      className="w-5 h-5 text-blue-600 border-gray-300 rounded"
     />
   </label>
 </div>
 <div className="mt-3">
-    <button className="py-3 px-4 text-lg text-white font-bold bg-emerald-500 rounded-xl w-full max-w-full">Sign Up To Trade</button>
+    <button className="py-3 px-4 text-lg text-white font-bold bg-[#0099FF]/60 hover:bg-[#0099FF] transition rounded-xl w-full max-w-full">Sign Up To Trade</button>
 </div>
           </div>
           )}
@@ -175,7 +177,7 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
                               <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
                                   <span className="text-start">
                                       <span className="block text-sm text-gray-400">Contacts</span>
-                                      <span className="block text-sm text-green-700">Earn 4% Interest</span>
+                                      <span className="block text-sm text-[#0099FF]">Earn 4% Interest</span>
                                   </span>
                                   <span className="text-end text-2xl text-gray-600 text-bold">0</span>
                               </label>
@@ -213,12 +215,12 @@ export default function ModalWithTabs({ isOpen, onClose }: ModalProps) {
     {/* Right Side Checkbox */}
     <input
       type="checkbox"
-      className="w-5 h-5 text-blue-600 border-gray-300 rounded "
+      className="w-5 h-5 text-[#0099FF] border-gray-300 rounded "
     />
   </label>
 </div>
-                          <div className="mt-3">
-    <button className="py-3 px-4 text-lg text-white font-bold bg-emerald-500 rounded-xl w-full max-w-full">Sign Up To Trade</button>
+    <div className="mt-3">
+    <button className="py-3 px-4 text-lg text-white font-bold bg-[#0099FF]/60 hover:bg-[#0099FF] transition rounded-xl w-full max-w-full">Sign Up To Trade</button>
 </div>
 
             </div>
