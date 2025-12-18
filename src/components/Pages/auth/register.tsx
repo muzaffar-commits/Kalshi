@@ -58,7 +58,7 @@ export default function Register({
       if (isLogin) {
         try {
           const response = await loginAPI(reqBody);
-          console.log(response, "response");
+          console.log(response, "response========");
 
           if (response?.success) {
             dispatch(

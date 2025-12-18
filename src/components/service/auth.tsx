@@ -23,6 +23,8 @@ export const googleLoginAPI = async (reqBody: any) => {
     const response = await apiInstance.post(API_URLs.googleLogin, reqBody);
     return response?.data;
   } catch (error: any) {
+    console.log(error, "error=======");
+
     return error?.response?.data;
   }
 };

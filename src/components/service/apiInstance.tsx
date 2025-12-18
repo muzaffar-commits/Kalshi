@@ -6,7 +6,7 @@ const developmentBaseURL = "http://192.168.29.218:3000/api";
 
 const apiInstance = axios.create({
   baseURL: developmentBaseURL,
-  timeout: 10000,
+  // timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },

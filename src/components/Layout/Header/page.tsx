@@ -9,11 +9,14 @@ import { logout } from "@/components/store/slice/auth";
 import { getCommonCategoryAll } from "@/components/service/apiService/category";
 import { saveCategory } from "@/components/store/slice/category";
 import Trend from "../../../../public/img/icon/trend.png";
+import ThemeToggle from "@/components/ThemeToggle";
+import { useParams } from "next/navigation";
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [category, setCategory] = useState([]);
   const [categoryId, setCategoryId] = useState(null);
+  const location = useParams();
   const user = useSelector((state: any) => state?.user);
   const dispatch = useDispatch();
   const handleSignup = () => {
@@ -50,11 +53,9 @@ const Header = () => {
 
   return (
     <>
-      <header className="w-full bg-[#fff] fixed top-0 z-30">
-        {/* Wrapper limited to 1440px */}
+      <header className="w-full dark:bg-black bg-[#fff] fixed top-0 z-30">
         <div className="max-w-[1268px] mx-auto px-4">
           <div className="flex items-center justify-between py-3 relative">
-            {/* Logo */}
             <Link href="/">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-[#0099FF] rounded-full flex items-center justify-center">
@@ -66,10 +67,8 @@ const Header = () => {
                 </h1>
               </div>
             </Link>
-
             <div className="absolute top-full left-0 w-full lg:ml-20 lg:px-4 md:static md:w-[800px] md:max-w-lg md:mx-3 mx-auto">
               <div className="relative">
-                {/* Search Icon */}
                 <span className="absolute inset-y-0 right-3 flex items-center pl-3 text-gray-400">
                   <svg
                     className="w-5 h-5"
@@ -122,117 +121,44 @@ const Header = () => {
                   </button>
                 </>
               )}
+              <ThemeToggle />
             </div>
 
             <Drawer buttonLabel="☰" className="cursor-pointer" />
           </div>
           <nav className="border-b pb-2 border-gray-300 w-full hidden lg:block">
-            <ul className="flex  justify-around w-full px-4 py-2 text-[15px]">
-              {category?.map((row: any, index) => (
-                <li>
-                  <div
-                    onClick={() => {
-                      dispatch(saveCategory(row));
-                      setCategoryId(row?.id);
-                    }}
-                    className={` ${
-                      row?.id == categoryId
-                        ? "text-black"
-                        : "text-[#0099FF] hover:text-black cursor-pointer"
-                    } font-semibold flex items-center`}
-                  >
-                    {index == 0 && (
-                      <span>
-                        <Image
-                          src={Trend}
-                          width={14}
-                          height={14}
-                          alt="trending"
-                          className="mr-1"
-                        />
-                      </span>
-                    )}
-                    {row?.name}
-                  </div>
-                </li>
-              ))}
+            <ul className="flex  justify-start gap-10 w-full px-4 py-2 text-[15px]">
+              {!location?.slug &&
+                category?.map((row: any, index) => (
+                  <li>
+                    <div
+                      onClick={() => {
+                        dispatch(saveCategory(row));
+                        setCategoryId(row?.id);
+                      }}
+                      className={` ${
+                        row?.id == categoryId
+                          ? "text-black"
+                          : "text-[#0099FF] hover:text-black cursor-pointer"
+                      } font-semibold flex items-center`}
+                    >
+                      {index == 0 && (
+                        <span>
+                          <Image
+                            src={Trend}
+                            width={14}
+                            height={14}
+                            alt="trending"
+                            className="mr-1"
+                          />
+                        </span>
+                      )}
+                      {row?.name}
+                    </div>
+                  </li>
+                ))}
             </ul>
           </nav>
-          {/* <nav className="w-full hidden lg:block">
-            <ul className="flex flex-wrap justify-evenly w-full px-4 py-2 text-sm">
-              <li>
-                <a
-                  href="#"
-                  className="text-white font-semibold flex items-center px-4 py-1 rounded-xl
-             bg-gradient-to-r from-purple-500 to-pink-500
-             hover:bg-gradient-to-l hover:from-pink-500 hover:to-purple-500
-             transition-all duration-300"
-                >
-                  All
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Breaking News
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Trump-Putin
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Trump-Khamenei
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Trump Presidency
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Israel
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Ukraine
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  IPOs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  Tariffs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  ED Sheeran
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  NYC Mayor
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  CEO Politics
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#8D9CB1] hover:text-purple-400">
-                  GPT-5
-                </a>
-              </li>
-            </ul>
-          </nav> */}
         </div>
       </header>
       <Authentication
