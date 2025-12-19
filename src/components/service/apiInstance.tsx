@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-const developmentBaseURL = "http://192.168.29.218:3000/api";
+export const developmentBaseURL = "http://192.168.29.218:3000/api";
 
 const apiInstance = axios.create({
   baseURL: developmentBaseURL,

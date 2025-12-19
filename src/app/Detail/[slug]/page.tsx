@@ -4,6 +4,9 @@ import Image from "next/image";
 import { questionDetails } from "@/components/service/apiService/category";
 import { useParams } from "next/navigation";
 import ChartRealtime from "./realTimeChart";
+import socket from "@/components/socket";
+import axios from "axios";
+import BuySell from "@/components/Modal/BuySell/page";
 
 // export async function generateStaticParams() {
 //   return [{ slug: "btc" }, { slug: "eth" }, { slug: "bnb" }];
@@ -12,6 +15,9 @@ import ChartRealtime from "./realTimeChart";
 const Page = () => {
   const [data, setData] = useState<any>({});
   const { slug } = useParams();
+  const [isOpenBuySell, setIsOpenBuySell] = useState(false);
+  const [buyType, setBuyType] = useState<any>(null);
+  const [options, setOptions] = useState<any>({});
 
   console.log(slug, "params");
 
@@ -37,8 +43,49 @@ const Page = () => {
     questionDetailsList();
   }, [slug]);
 
+  const questionId = 36;
+
+  console.log(socket.connected, "socket.connected");
+
+  useEffect(() => {
+    // connect socket
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+
+      // subscribe AFTER connect
+      socket.emit("subscribe:market", questionId);
+      console.log("Subscribed to market:", questionId);
+    });
+
+    // example listener
+    socket.on("market:update", (data) => {
+      console.log("Market update:", data);
+    });
+
+    return () => {
+      // unsubscribe when leaving page
+      socket.emit("unsubscribe:market", questionId);
+
+      socket.off("market:update");
+      socket.off("connect");
+
+      // optional: disconnect if page-based usage
+      socket.disconnect();
+    };
+  }, [questionId]);
   console.log(data, "========");
 
+  const handleBuyNow = (row: any, type: string) => {
+    setOptions(row);
+    console.log(type, "type===");
+
+    setBuyType(type);
+    setIsOpenBuySell(true);
+  };
   return (
     <>
       <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-28">
@@ -121,10 +168,16 @@ const Page = () => {
                     <div className="pr-3">
                       {(item?.price * 100).toFixed(1)}%
                     </div>
-                    <button className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded">
+                    <button
+                      onClick={() => handleBuyNow(item, "sell")}
+                      className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded"
+                    >
                       Sell
                     </button>
-                    <button className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded">
+                    <button
+                      onClick={() => handleBuyNow(item, "buy")}
+                      className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded"
+                    >
                       Buy
                     </button>
                   </div>
@@ -251,6 +304,15 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+      <BuySell
+        rowDetails={data}
+        isOpen={isOpenBuySell}
+        onClose={() => setIsOpenBuySell(false)}
+        orderType={buyType}
+        handleChangeOrderType={setBuyType}
+        option={options}
+      />
     </>
   );
 };

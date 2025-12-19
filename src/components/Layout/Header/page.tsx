@@ -11,6 +11,7 @@ import { saveCategory } from "@/components/store/slice/category";
 import Trend from "../../../../public/img/icon/trend.png";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useParams } from "next/navigation";
+import CustomMenu from "@/components/common/CustomMenu";
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -98,12 +99,15 @@ const Header = () => {
             {/* Buttons */}
             <div className="flex items-center space-x-2 ml-auto">
               {user?.isAuth ? (
-                <button
-                  onClick={logoutFun}
-                  className="px-4 py-1 border border-[#0099FF] text-[#0099FF] rounded-md hover:bg-[#0099FF] font-bold hover:text-white"
-                >
-                  Logout
-                </button>
+                <>
+                  {/* <button
+                    onClick={logoutFun}
+                    className="px-4 py-1 border border-[#0099FF] text-[#0099FF] rounded-md hover:bg-[#0099FF] font-bold hover:text-white"
+                  >
+                    Logout
+                  </button> */}
+                  <CustomMenu />
+                </>
               ) : (
                 <>
                   <button
@@ -130,7 +134,7 @@ const Header = () => {
             <ul className="flex  justify-start gap-10 w-full px-4 py-2 text-[15px]">
               {!location?.slug &&
                 category?.map((row: any, index) => (
-                  <li>
+                  <li key={index}>
                     <div
                       onClick={() => {
                         dispatch(saveCategory(row));

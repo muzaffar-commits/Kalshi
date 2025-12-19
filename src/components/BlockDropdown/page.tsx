@@ -11,7 +11,8 @@ export default function ExpirationDropdown() {
       {/* Trigger Block */}
       <div
         className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer"
-        onClick={() => setOpen(!open)} >
+        onClick={() => setOpen(!open)}
+      >
         {/* Left Label */}
         <span className="text-sm text-gray-400">Expiration</span>
 
@@ -51,7 +52,7 @@ export default function ExpirationDropdown() {
                 setOpen(false);
               }}
             >
-            {option}
+              {option}
             </button>
           ))}
         </div>

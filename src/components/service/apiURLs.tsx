@@ -8,4 +8,5 @@ export const API_URLs = {
   commonCategoryAll: "/common/get-list-category",
   commonQuestionFindById: "/common/questions-list",
   questionDetails: "/common/question",
+  userBalance: "/user/balance",
 };

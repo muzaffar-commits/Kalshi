@@ -38,6 +38,7 @@ export default function Authentication({
       console.log(response, "response");
 
       if (response?.success) {
+        localStorage.setItem("token", response?.data?.token);
         dispatch(
           login({ user: response?.data?.user, token: response?.data?.token })
         );
