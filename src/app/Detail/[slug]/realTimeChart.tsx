@@ -6,52 +6,16 @@ import { ApexOptions } from "apexcharts";
 
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-// Helper to generate demo data (same as your example)
-const generateDayWiseTimeSeries = (
-  start: number,
-  count: number,
-  range: { min: number; max: number }
-) => {
-  let i = 0;
-  const series = [];
-  while (i < count) {
-    const x = start + i * 86400000; // 1 day
-    const y =
-      Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
-
-    series.push({ x, y });
-    i++;
-  }
-  return series;
-};
-
-const StackedAreaChart = () => {
-  const series = [
-    {
-      name: "South",
-      data: generateDayWiseTimeSeries(
-        new Date("11 Feb 2017 GMT").getTime(),
-        20,
-        { min: 10, max: 60 }
-      ),
-    },
-    {
-      name: "North",
-      data: generateDayWiseTimeSeries(
-        new Date("11 Feb 2017 GMT").getTime(),
-        20,
-        { min: 10, max: 20 }
-      ),
-    },
-    // {
-    //   name: "Central",
-    //   data: generateDayWiseTimeSeries(
-    //     new Date("11 Feb 2017 GMT").getTime(),
-    //     20,
-    //     { min: 10, max: 15 }
-    //   ),
-    // },
-  ];
+const StackedAreaChart = ({ data }: { data: any }) => {
+  const series =
+    data?.length > 0 &&
+    data?.map((item: any) => ({
+      name: item.optionName,
+      data: item.data.map((d: any) => ({
+        x: d.timestamp,
+        y: d.price?.toFixed(2),
+      })),
+    }));
 
   const options: ApexOptions = {
     chart: {

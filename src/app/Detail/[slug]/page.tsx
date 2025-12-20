@@ -7,6 +7,8 @@ import ChartRealtime from "./realTimeChart";
 import socket from "@/components/socket";
 import axios from "axios";
 import BuySell from "@/components/Modal/BuySell/page";
+import { getGraphData } from "@/components/service/apiService/buySell";
+import { useSelector } from "react-redux";
 
 // export async function generateStaticParams() {
 //   return [{ slug: "btc" }, { slug: "eth" }, { slug: "bnb" }];
@@ -14,16 +16,18 @@ import BuySell from "@/components/Modal/BuySell/page";
 
 const Page = () => {
   const [data, setData] = useState<any>({});
+  const [graphData, setGraphData] = useState<any>({});
   const { slug } = useParams();
   const [isOpenBuySell, setIsOpenBuySell] = useState(false);
   const [buyType, setBuyType] = useState<any>(null);
   const [options, setOptions] = useState<any>({});
+  const userDetails = useSelector((state: any) => state?.user);
 
-  console.log(slug, "params");
+  console.log(graphData, "graphData====");
 
   const questionDetailsList = async () => {
     try {
-      const response: any = await questionDetails(slug);
+      const response: any = await questionDetails(slug, userDetails?.user?.id);
 
       console.log(response, "response");
 
@@ -38,9 +42,28 @@ const Page = () => {
       setData({});
     }
   };
+  const getGraphDetails = async () => {
+    try {
+      const response: any = await getGraphData(slug);
 
+      console.log(response, "setGraphData");
+
+      if (response?.success) {
+        setGraphData(response?.data || {});
+      } else {
+        setGraphData({});
+      }
+    } catch (error: any) {
+      console.log(error, "error");
+
+      setGraphData({});
+    }
+  };
+
+  // getGraphData
   useEffect(() => {
     questionDetailsList();
+    getGraphDetails();
   }, [slug]);
 
   const questionId = 36;
@@ -77,7 +100,7 @@ const Page = () => {
       socket.disconnect();
     };
   }, [questionId]);
-  console.log(data, "========");
+  console.log(graphData, "graphData========");
 
   const handleBuyNow = (row: any, type: string) => {
     setOptions(row);
@@ -135,10 +158,12 @@ const Page = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
-              {data?.graphData?.length > 0 ? (
-                <div className="bg-gray-800 rounded-lg h-64 mb-6 flex items-center justify-center">
+              {graphData?.series?.length > 0 ? (
+                <div className=" h-64 mb-6 flex items-center justify-center">
                   <span className="text-gray-500">
-                    <ChartRealtime />
+                    <ChartRealtime
+                      data={graphData?.series?.length > 0 && graphData?.series}
+                    />
                   </span>
                 </div>
               ) : (
@@ -147,42 +172,43 @@ const Page = () => {
                 </div>
               )}
 
-              {data?.options?.map((item: any, index: any) => (
-                <div
-                  key={index}
-                  className="md:flex items-center justify-between text-center px-2 md:px-0 py-3 md:py-0 border !text-[#162033] rounded-lg border-[#334661] md:border-0 bg-[#162033] lg:bg-transparent"
-                >
-                  <div className="flex items-center justify-start mb-3 lg:mb-0">
-                    <Image
-                      src="https://cdn.pixabay.com/photo/2016/11/01/18/45/silhouette-1789199_1280.png"
-                      alt="Andrew Cuomo"
-                      width={40}
-                      height={40}
-                      className="w-12 h-12 bg-cover  rounded-lg bg-white border border-gray-400"
-                    />
-                    <div className=" text-md lg:text-lg font-bold ml-3 text-left">
-                      {item?.name || "--"}
+              {data?.options &&
+                data?.options?.map((item: any, index: any) => (
+                  <div
+                    key={index}
+                    className="md:flex items-center justify-between text-center px-2 md:px-0 py-3 md:py-0 border !text-[#162033] rounded-lg border-[#334661] md:border-0 bg-[#162033] lg:bg-transparent"
+                  >
+                    <div className="flex items-center justify-start mb-3 lg:mb-0">
+                      <Image
+                        src="https://cdn.pixabay.com/photo/2016/11/01/18/45/silhouette-1789199_1280.png"
+                        alt="Andrew Cuomo"
+                        width={40}
+                        height={40}
+                        className="w-12 h-12 bg-cover  rounded-lg bg-white border border-gray-400"
+                      />
+                      <div className=" text-md lg:text-lg font-bold ml-3 text-left">
+                        {item?.name || "--"}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 items-center justify-between">
+                      <div className="pr-3">
+                        {(item?.price * 100).toFixed(1)}%
+                      </div>
+                      <button
+                        onClick={() => handleBuyNow(item, "sell")}
+                        className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded"
+                      >
+                        Sell
+                      </button>
+                      <button
+                        onClick={() => handleBuyNow(item, "buy")}
+                        className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded"
+                      >
+                        Buy
+                      </button>
                     </div>
                   </div>
-                  <div className="flex space-x-2 items-center justify-between">
-                    <div className="pr-3">
-                      {(item?.price * 100).toFixed(1)}%
-                    </div>
-                    <button
-                      onClick={() => handleBuyNow(item, "sell")}
-                      className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded"
-                    >
-                      Sell
-                    </button>
-                    <button
-                      onClick={() => handleBuyNow(item, "buy")}
-                      className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded"
-                    >
-                      Buy
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
 
               {/* <div className="md:flex items-center justify-between text-center px-2 md:px-0 py-3 md:py-0 border rounded-lg border-[#334661] md:border-0 bg-[#162033] lg:bg-transparent">
                 <div className="flex items-center justify-start mb-3 lg:mb-0">
@@ -312,6 +338,8 @@ const Page = () => {
         orderType={buyType}
         handleChangeOrderType={setBuyType}
         option={options}
+        fetchDetail={questionDetailsList}
+        userId={userDetails?.user?.id}
       />
     </>
   );

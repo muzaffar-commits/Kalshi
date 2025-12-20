@@ -9,4 +9,8 @@ export const API_URLs = {
   commonQuestionFindById: "/common/questions-list",
   questionDetails: "/common/question",
   userBalance: "/user/balance",
+  ordersQuoteDetails: "/orders/quote-buy",
+  quoteByBudget: "/orders/quote-by-budget",
+  submitOrder: "/orders/submit-order",
+  graphData: "/common/markets",
 };

@@ -21,9 +21,11 @@ export const commonQuestionFindById = async (id: any) => {
   }
 };
 
-export const questionDetails = async (id: any) => {
+export const questionDetails = async (id: any, userId: any) => {
   try {
-    const response = await apiInstance.get(`${API_URLs.questionDetails}/${id}`);
+    const response = await apiInstance.get(
+      `${API_URLs.questionDetails}/${id}${userId && `?userId=${userId}`}`
+    );
     return response?.data;
   } catch (error: any) {
     return error?.response?.data;

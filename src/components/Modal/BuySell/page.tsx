@@ -1,17 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import Modal from "@mui/material/Modal";
+import Backdrop from "@mui/material/Backdrop";
+import Fade from "@mui/material/Fade";
+import Box from "@mui/material/Box";
+
 import Dropdown from "@/components/popupDropdown/page";
 import ExpirationDropdown from "@/components/BlockDropdown/page";
 import Blockimg1 from "../../../../public/img/blockimg1.jpg";
-
+import {
+  getOrdersQuoteDetails,
+  getQuoteByBudget,
+  submitOrder,
+} from "@/components/service/apiService/buySell";
+import { TfiExchangeVertical } from "react-icons/tfi";
+import toast from "react-hot-toast";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   rowDetails: any;
   orderType: string;
   option: any;
-  handleChangeOrderType: any;
+  fetchDetail: any;
+  userId: any;
+  handleChangeOrderType: (type: "buy" | "sell") => void;
 }
 
 export default function BuySell({
@@ -20,263 +33,318 @@ export default function BuySell({
   rowDetails,
   orderType,
   option,
+  fetchDetail,
   handleChangeOrderType,
+  userId,
 }: ModalProps) {
-  const [activeTab, setActiveTab] = useState<boolean>(
-    orderType == "buy" ? true : false
+  const [share, setShare] = useState<number | "">("");
+  const [amount, setAmount] = useState<number | "">("");
+  const [types, setTypes] = useState<any | "">("market");
+
+  const [activeField, setActiveField] = useState<"shares" | "amount" | null>(
+    null
   );
+  const [shareDetailAmount, setShareDetailAmount] = useState<any>({});
+  const [debouncedValue, setDebouncedValue] = useState(0);
 
-  if (!isOpen) return null;
+  console.log(types, "types");
 
-  console.log(orderType, "orderType");
+  useEffect(() => {
+    if (activeField == "shares") {
+      setAmount("");
+    }
+    if (activeField == "amount") {
+      setShare("");
+    }
+  }, [activeField]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (activeField === "shares" && share !== "") {
+        setDebouncedValue(Number(share));
+      }
+      if (activeField === "amount" && amount !== "") {
+        setDebouncedValue(Number(amount));
+      }
+    }, 300);
 
+    return () => clearTimeout(t);
+  }, [share, amount, activeField]);
+
+  console.log(activeField, "activeField ");
+
+  const orderDetailsGet = async () => {
+    if (activeField == "shares") {
+      try {
+        const response = await getOrdersQuoteDetails(
+          rowDetails.question.id,
+          option.index,
+          debouncedValue
+        );
+        console.log(response, "API CALL");
+        if (response?.success) {
+          setAmount(response?.data?.fee?.toFixed(2) || "");
+          setShareDetailAmount(response?.data || {});
+        } else {
+          setAmount("");
+          setShareDetailAmount({});
+        }
+      } catch (error) {
+        setAmount("");
+        setShareDetailAmount({});
+      }
+    }
+    if (activeField == "amount") {
+      try {
+        const response: any = await getQuoteByBudget(
+          rowDetails.question.id,
+          option.index,
+          debouncedValue
+        );
+        console.log(response, "API CALL");
+        if (response?.success) {
+          setShare(response?.data?.fee?.toFixed(2) || "");
+          setShareDetailAmount(response?.data || {});
+        } else {
+          setShare("");
+          setShareDetailAmount({});
+        }
+      } catch (error) {
+        setShare("");
+        setShareDetailAmount({});
+      }
+    }
+  };
+
+  console.log(shareDetailAmount, "shareDetailAmount");
+
+  useEffect(() => {
+    if (!isOpen || !rowDetails?.question?.id) return;
+    if (orderType === "buy") {
+      orderDetailsGet();
+    }
+  }, [debouncedValue, isOpen, rowDetails?.question?.id, option?.index]);
+
+  const handleClose = () => {
+    setAmount("");
+    setShare("");
+    onClose();
+  };
+
+  const handleSubmit = async () => {
+    const reqBody = {
+      questionId: rowDetails.question.id,
+      outcomeIndex: option.index,
+      side: orderType,
+      type: types,
+      shares: shareDetailAmount?.shares || "",
+      // "maxCost" : "9.1",
+      timeInForce: "IOC",
+    };
+    try {
+      const response = await submitOrder(reqBody);
+      if (response?.success) {
+        toast.success(response.message);
+        fetchDetail();
+        handleClose();
+      } else {
+      }
+    } catch (error: any) {
+      toast.error("internal server error");
+    }
+  };
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center 
-      backdrop-blur-sm z-50 transition-all duration-300"
+    <Modal
+      open={isOpen}
+      // onClose={onClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 300,
+        sx: {
+          backdropFilter: "blur(10px)", // blur strength
+          backgroundColor: "rgba(255, 255, 255, 0.7)", // ✅ white 80%
+        },
+      }}
     >
-      <div className="bg-[#ffffff] p-6 lg:p-10 rounded-xl shadow-lg w-[100%] max-w-[320px] lg:max-w-[430px] relative">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 cursor-pointer right-3 text-gray-900 hover:text-gray-500"
+      <Fade in={isOpen}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+          className="bg-white p-6 lg:p-10 rounded-xl shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
         >
-          ✕
-        </button>
+          {/* Close */}
+          <button
+            onClick={handleClose}
+            className="absolute top-3 right-3 text-gray-900 hover:text-gray-500"
+          >
+            ✕
+          </button>
 
-        <div className="flex justify-between mb-2">
-          <Image
-            src={Blockimg1}
-            alt="NYC Flag"
-            width={60}
-            height={60}
-            className="mr-4 rounded-lg max-h-[45px]"
-          />
-          <h6 className="text-sm text-black">
-            {rowDetails?.question?.question || "--"}
-          </h6>
-        </div>
-        <div className="flex flex-row items-center mb-3 gap-5">
-          <h2 className="text-[#0099FF] ml-18  font-semibold">
-            {orderType == "buy" ? "Buy" : "Sell"} Yes
-          </h2>
-          <span>- span</span>
-        </div>
-
-        {/* Tabs */}
-        <div className="border-b border-[#cccccc] mb-4 relative">
-          <div className="absolute right-0 top-0">
-            <Dropdown onSelect={(v) => console.log("selected:", v)} />
+          {/* Header */}
+          <div className="flex flex-row gap-2 justify-between mb-0">
+            <Image
+              src={Blockimg1}
+              alt="Block"
+              width={60}
+              height={60}
+              className="rounded-lg max-h-[45px]"
+            />
+            <h6 className="text-sm text-black">
+              {rowDetails?.question?.question || "--"}
+            </h6>
           </div>
-          <button
-            onClick={() => handleChangeOrderType("buy")}
-            className={`py-2 mr-6 text-center font-medium ${
-              orderType == "buy"
-                ? "border-b-2 border-[#0099FF] text-[#0099FF]"
-                : "text-gray-600 hover:text-gray-900 cursor-pointer"
-            }`}
-          >
-            Buy
-          </button>
-          <button
-            onClick={() => handleChangeOrderType("sell")}
-            className={`py-2 text-center font-medium ${
-              orderType == "sell"
-                ? "border-b-2 border-[#0099FF] text-[#0099FF]"
-                : "text-gray-600 hover:text-gray-900 cursor-pointer"
-            }`}
-          >
-            Sell
-          </button>
-        </div>
 
-        {/* Tab Content */}
-        <div>
-          {orderType == "buy" && (
-            <div className="text-center text-gray-800">
-              <div className="flex justify-between space-x-2">
-                <div className="flex-1">
-                  <button className="flex items-center justify-center gap-2 bg-[#0099FF]/40 hover:bg-[#0099FF] text-white py-2 rounded-md text-md transition-colors w-full duration-150 active:bg-[#0099FF] focus:bg-[#0099FF] cursor-pointer">
-                    <span>Yes 6</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M16.007 7.54a5.965 5.965 0 0 0 -4.008 -1.54a6 6 0 0 0 -5.992 6c0 3.314 2.682 6 5.992 6a5.965 5.965 0 0 0 4 -1.536" />
-                      <path d="M12 20v-2" />
-                      <path d="M12 6v-2" />
-                    </svg>
-                  </button>
-                </div>
+          <div className="flex items-center ml-14 mb-3  gap-3">
+            <h2 className="text-[#0099FF] font-semibold">
+              {orderType === "buy" ? "Buy" : "Sell"} Now
+            </h2>
+            <span className="text-gray-500">- {option?.name || "--"}</span>
+          </div>
 
-                <div className="flex-1">
-                  <button className="flex items-center justify-center gap-2 bg-[#0099FF]/30 hover:bg-[#0099FF]/70 text-[#0099FF] py-2 rounded-md text-md transition-colors w-full duration-150 active:bg-[#0099FF]/70 hover:text-white active:text-white focus:text-white focus:bg-[#0099FF]/70 cursor-pointer">
-                    <span>No 95</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M16.007 7.54a5.965 5.965 0 0 0 -4.008 -1.54a6 6 0 0 0 -5.992 6c0 3.314 2.682 6 5.992 6a5.965 5.965 0 0 0 4 -1.536" />
-                      <path d="M12 20v-2" />
-                      <path d="M12 6v-2" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+          {/* Tabs */}
+          <div className="border-b border-gray-300 mb-4 relative">
+            <div className="absolute right-0 top-0">
+              <Dropdown onSelect={(v) => setTypes(v)} />
+            </div>
 
-              <div className="mt-3">
-                <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
-                  <span className="text-start">
-                    <span className="block text-sm text-gray-400">
-                      Contacts
-                    </span>
+            <button
+              onClick={() => handleChangeOrderType("buy")}
+              className={`py-2 mr-6 font-medium ${
+                orderType === "buy"
+                  ? "border-b-2 border-[#0099FF] text-[#0099FF]"
+                  : "text-gray-600"
+              }`}
+            >
+              Buy
+            </button>
+
+            <button
+              onClick={() => handleChangeOrderType("sell")}
+              className={`py-2 font-medium ${
+                orderType === "sell"
+                  ? "border-b-2 border-[#0099FF] text-[#0099FF]"
+                  : "text-gray-600"
+              }`}
+            >
+              Sell
+            </button>
+          </div>
+
+          {/* BUY */}
+          {orderType === "buy" && (
+            <>
+              <div className="flex flex-col gap-3">
+                <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
+                  <span>
+                    <span className="block text-sm text-gray-400">Shares</span>
                     <span className="block text-sm text-[#0099FF]">
-                      Earn 4% Interest
-                    </span>
-                  </span>
-                  <span className="text-end text-2xl text-gray-600 text-bold">
-                    0
-                  </span>
-                </label>
-              </div>
-
-              <div className="mt-3">
-                <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
-                  <span className="text-start">
-                    <span className="block text-sm text-gray-400">
-                      Limit price
-                    </span>
-                  </span>
-                  <span className="text-end text-md text-gray-950 font-semibold flex items-center">
-                    96{" "}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      display="inline-block"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#000000"
-                      stroke-width="4"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M16.007 7.54a5.965 5.965 0 0 0 -4.008 -1.54a6 6 0 0 0 -5.992 6c0 3.314 2.682 6 5.992 6a5.965 5.965 0 0 0 4 -1.536" />
-                      <path d="M12 20v-2" />
-                      <path d="M12 6v-2" />
-                    </svg>
-                  </span>
-                </label>
-              </div>
-              <ExpirationDropdown />
-              <div className="mt-3">
-                <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer">
-                  {/* Left Side Label */}
-                  <span className="text-start">
-                    <span className="block text-xs text-gray-400">
-                      Place as resting order only
+                      No Interest
                     </span>
                   </span>
 
-                  {/* Right Side Checkbox */}
                   <input
-                    type="checkbox"
-                    className="w-5 h-5 text-blue-600 border-gray-300 rounded"
+                    type="number"
+                    placeholder="0"
+                    value={share}
+                    onFocus={() => setActiveField("shares")}
+                    onChange={(e) =>
+                      setShare(
+                        e.target.value === "" ? 0 : Number(e.target.value)
+                      )
+                    }
+                    onWheel={(e) => e.currentTarget.blur()}
+                    className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
+                  />
+                </label>
+
+                <div className="flex items-center justify-center text-gray-400">
+                  <TfiExchangeVertical size={25} />
+                </div>
+                <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
+                  <span>
+                    <span className="block text-sm text-gray-400">Amount</span>
+                    <span className="block text-sm text-[#0099FF]">
+                      No Interest
+                    </span>
+                  </span>
+
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={amount}
+                    onFocus={() => setActiveField("amount")}
+                    onChange={(e) =>
+                      setAmount(
+                        e.target.value === "" ? "" : Number(e.target.value)
+                      )
+                    }
+                    onWheel={(e) => e.currentTarget.blur()}
+                    className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
                   />
                 </label>
               </div>
-              <div className="mt-3">
-                <button className="py-3 px-4 text-lg text-white font-bold bg-[#0099FF]/60 hover:bg-[#0099FF] transition rounded-xl w-full max-w-full">
-                  Sign Up To Trade
-                </button>
-              </div>
-            </div>
-          )}
-          {orderType == "sell" && (
-            <div className="text-center text-gray-800">
-              <div className="mt-3">
-                <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
-                  <span className="text-start">
-                    <span className="block text-sm text-gray-400">
-                      Contacts
-                    </span>
-                    <span className="block text-sm text-[#0099FF]">
-                      Earn 4% Interest
-                    </span>
-                  </span>
-                  <span className="text-end text-2xl text-gray-600 text-bold">
-                    0
-                  </span>
-                </label>
-              </div>
-              <div className="mt-3">
-                <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
-                  <span className="text-start">
-                    <span className="block text-sm text-gray-400">
-                      Limit price
-                    </span>
-                  </span>
-                  <span className="text-end text-md text-gray-950 font-semibold flex items-center">
-                    96{" "}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      display="inline-block"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#000000"
-                      stroke-width="4"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M16.007 7.54a5.965 5.965 0 0 0 -4.008 -1.54a6 6 0 0 0 -5.992 6c0 3.314 2.682 6 5.992 6a5.965 5.965 0 0 0 4 -1.536" />
-                      <path d="M12 20v-2" />
-                      <path d="M12 6v-2" />
-                    </svg>
-                  </span>
-                </label>
-              </div>
-              <ExpirationDropdown />
-              <div className="mt-3">
-                <label className="w-full max-w-full p-3 border border-gray-200 rounded-md flex justify-between items-center cursor-pointer">
-                  {/* Left Side Label */}
-                  <span className="text-start">
-                    <span className="block text-xs text-gray-400">
-                      Place as resting order only
-                    </span>
-                  </span>
 
-                  {/* Right Side Checkbox */}
-                  <input
-                    type="checkbox"
-                    className="w-5 h-5 text-[#0099FF] border-gray-300 rounded "
-                  />
-                </label>
+              <div className="flex flex-row mt-2">
+                {" "}
+                <div className="bg-[#0099FF] font-semibold text-white px-2 py-1 rounded">
+                  {" "}
+                  LOC{" "}
+                </div>{" "}
               </div>
-              <div className="mt-3">
-                <button className="py-3 px-4 text-lg text-white font-bold bg-[#0099FF]/60 hover:bg-[#0099FF] transition rounded-xl w-full max-w-full">
-                  Sign Up To Trade
-                </button>
+
+              <div className="flex text-black py-3 text-sm flex-col gap-2">
+                <div className="text-[#0099FF] font-semibold text-lg">
+                  Share Details :
+                </div>
+                <div className="flex flex-row justify-between">
+                  <span className="text-gray-400 font-medium">
+                    Available Balance
+                  </span>
+                  <span className="text-gray-600 text-sm font-medium">
+                    ₹ 1000
+                  </span>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <span className="text-gray-400 font-medium">Fee</span>
+                  <span>
+                    ₹ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <span className="text-gray-400 font-medium">Net Cost</span>
+                  <span>
+                    ₹ {Number(shareDetailAmount?.netCost || 0).toFixed(2)}
+                  </span>
+                </div>
               </div>
-            </div>
+
+              <button
+                onClick={handleSubmit}
+                className="mt-4 py-3 text-lg text-white font-bold bg-[#0099FF] hover:bg-[#0099FF]/90 rounded-xl w-full"
+              >
+                Buy <span className="text-gray-200">₹</span>{" "}
+                <span className="text-gray-200">
+                  {Number(shareDetailAmount?.grossCost || 0).toFixed(2)}
+                </span>
+              </button>
+            </>
           )}
-        </div>
-      </div>
-    </div>
+
+          {/* SELL */}
+          {orderType === "sell" && (
+            <>
+              <ExpirationDropdown />
+              <button className="mt-4 py-3 text-lg text-white font-bold bg-[#0099FF]/60 hover:bg-[#0099FF] rounded-xl w-full">
+                Sign Up To Trade
+              </button>
+            </>
+          )}
+        </Box>
+      </Fade>
+    </Modal>
   );
 }

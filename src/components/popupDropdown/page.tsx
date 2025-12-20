@@ -7,9 +7,9 @@ interface Props {
   onSelect?: (value: string) => void;
 }
 
-export default function Dropdown({ label = "Limit", onSelect }: Props) {
+export default function Dropdown({ label = "Market", onSelect }: Props) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(label); // 👈 keep track of selected value
+  const [selected, setSelected] = useState(label);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,16 +60,10 @@ export default function Dropdown({ label = "Limit", onSelect }: Props) {
       {open && (
         <div className="absolute right-0 mt-2 w-36 rounded-lg bg-white shadow-xl shadow-black/50 z-20">
           <div role="menu" className="flex flex-col py-2">
-            <MenuItem
-              label="Market"
-              onClick={() => choose("dollars", "market")}
-            >
+            <MenuItem label="Market" onClick={() => choose("market", "market")}>
               <FaBolt className="mt-1 text-yellow-400 " />
             </MenuItem>
-            <MenuItem
-              label="Limit"
-              onClick={() => choose("contracts", "limit")}
-            >
+            <MenuItem label="Limit" onClick={() => choose("limit", "limit")}>
               <FaBullseye className="mt-1 text-blue-500" />
             </MenuItem>
             {/* <MenuItem
