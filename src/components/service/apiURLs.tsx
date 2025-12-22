@@ -13,4 +13,5 @@ export const API_URLs = {
   quoteByBudget: "/orders/quote-by-budget",
   submitOrder: "/orders/submit-order",
   graphData: "/common/markets",
+  commonQuoteSell: "/orders/quote-sell",
 };

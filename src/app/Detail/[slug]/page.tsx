@@ -5,16 +5,12 @@ import { questionDetails } from "@/components/service/apiService/category";
 import { useParams } from "next/navigation";
 import ChartRealtime from "./realTimeChart";
 import socket from "@/components/socket";
-import axios from "axios";
 import BuySell from "@/components/Modal/BuySell/page";
 import { getGraphData } from "@/components/service/apiService/buySell";
 import { useSelector } from "react-redux";
 
-// export async function generateStaticParams() {
-//   return [{ slug: "btc" }, { slug: "eth" }, { slug: "bnb" }];
-// }
-
 const Page = () => {
+  const [orderFlow, setOrderFlow] = useState<any>({});
   const [data, setData] = useState<any>({});
   const [graphData, setGraphData] = useState<any>({});
   const { slug } = useParams();
@@ -22,23 +18,21 @@ const Page = () => {
   const [buyType, setBuyType] = useState<any>(null);
   const [options, setOptions] = useState<any>({});
   const userDetails = useSelector((state: any) => state?.user);
-
-  console.log(graphData, "graphData====");
+  const useToken = localStorage.getItem("token");
 
   const questionDetailsList = async () => {
     try {
       const response: any = await questionDetails(slug, userDetails?.user?.id);
 
-      console.log(response, "response");
-
       if (response?.success) {
+        setOrderFlow(response?.data?.orderFlow || {});
         setData(response?.data || {});
       } else {
+        setOrderFlow({});
         setData({});
       }
     } catch (error: any) {
-      console.log(error, "error");
-
+      setOrderFlow({});
       setData({});
     }
   };
@@ -46,16 +40,12 @@ const Page = () => {
     try {
       const response: any = await getGraphData(slug);
 
-      console.log(response, "setGraphData");
-
       if (response?.success) {
         setGraphData(response?.data || {});
       } else {
         setGraphData({});
       }
     } catch (error: any) {
-      console.log(error, "error");
-
       setGraphData({});
     }
   };
@@ -66,49 +56,144 @@ const Page = () => {
     getGraphDetails();
   }, [slug]);
 
-  const questionId = 36;
-
-  console.log(socket.connected, "socket.connected");
+  const questionId = slug;
 
   useEffect(() => {
-    // connect socket
+    console.log(socket.connected, "socket.connected)");
+
     if (!socket.connected) {
       socket.connect();
     }
 
+    // Connection success
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-
-      // subscribe AFTER connect
+      console.log("✅ Socket connected! ID:", socket.id);
+      // Subscribe to the market room
       socket.emit("subscribe:market", questionId);
+      socket.emit("subscribe:user", questionId);
       console.log("Subscribed to market:", questionId);
     });
 
-    // example listener
-    socket.on("market:update", (data) => {
-      console.log("Market update:", data);
+    // Catch ALL incoming events from server (super important!)
+    socket.onAny((eventName, ...args) => {
+      console.log("🔥 SERVER SENT EVENT:", eventName);
+      console.log("Data:", JSON.stringify(args, null, 2));
     });
 
+    // Listen to events that backend is actually emitting
+    socket.on("market:prices", (payload) => {
+      console.log("📈 Market prices received:", payload);
+      // Yahan tum state update kar sakte ho, e.g. setMarketData(payload)
+    });
+
+    socket.on("trade", (payload) => {
+      console.log("🛒 Trade update received:", payload);
+
+      // Handle both string and object payloads safely
+      let parsed: any;
+      try {
+        parsed = JSON.stringify(data);
+      } catch (e) {
+        console.error("Failed to parse trade payload:", e, payload);
+        return; // Don't update state on invalid payload
+      }
+
+      console.log(parsed?.questionId, parsed.prices, "parsed.prices====");
+      console.log(
+        typeof parsed?.questionId,
+        typeof parsed.prices,
+        "parsed.prices====>>>>>>>>"
+      );
+
+      console.log(
+        !parsed?.questionId,
+        !Array.isArray(parsed.prices),
+        !Array.isArray(parsed.q),
+        "parsed"
+      );
+      if (
+        !parsed?.questionId ||
+        !Array.isArray(parsed.prices) ||
+        !Array.isArray(parsed.q)
+      ) {
+        console.warn("Invalid trade payload structure:", parsed);
+        return;
+      }
+
+      console.log(parsed, "parsed");
+
+      setData((prev: any) => {
+        // If no previous data yet, skip or initialize (depending on your app logic)
+        if (!prev || !prev.options || !Array.isArray(prev.options)) {
+          console.warn("No previous market data available yet");
+          return prev; // or return initial state if you have one
+        }
+
+        // Create a new options array with updated values
+        const updatedOptions = prev.options.map((option: any, index: any) => {
+          const newPrice = parsed.prices?.[index];
+          const newQty = parsed.q?.[index];
+
+          // Only update if we have valid numbers
+          const updatedPrice =
+            typeof newPrice === "number" && !isNaN(newPrice)
+              ? newPrice
+              : option.price;
+
+          const updatedQty =
+            typeof newQty === "number" && !isNaN(newQty)
+              ? newQty
+              : option.quantity;
+
+          return {
+            ...option,
+            price: updatedPrice,
+            winningProbability: updatedPrice, // usually same as price in prediction markets
+            quantity: updatedQty,
+          };
+        });
+
+        // Return new state object to trigger re-render
+        return {
+          ...prev,
+          options: updatedOptions,
+          // Optional: update timestamp or other fields
+          lastUpdated: new Date().toISOString(),
+        };
+      });
+    });
+
+    // If you also need user-specific order updates
+    socket.on("order:update", (payload) => {
+      console.log("Order update received:-----------", payload);
+    });
+
+    // Error handling
+    socket.on("connect_error", (err) => {
+      console.error("Socket connection error:", err.message);
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason);
+    });
     return () => {
-      // unsubscribe when leaving page
-      socket.emit("unsubscribe:market", questionId);
-
-      socket.off("market:update");
+      console.log("Unsubscribing from market:", questionId);
+      // socket.emit("unsubscribe:market", questionId);
       socket.off("connect");
-
-      // optional: disconnect if page-based usage
-      socket.disconnect();
+      socket.off("market:prices");
+      socket.off("trade");
+      socket.off("order:update");
+      socket.offAny();
     };
-  }, [questionId]);
-  console.log(graphData, "graphData========");
+  }, [slug]);
 
   const handleBuyNow = (row: any, type: string) => {
     setOptions(row);
-    console.log(type, "type===");
-
     setBuyType(type);
     setIsOpenBuySell(true);
   };
+
+  console.log(data, "data");
   return (
     <>
       <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-28">
@@ -130,7 +215,7 @@ const Page = () => {
               </p>
               <div className="lg:flex space-x-4 mt-1 text-sm">
                 {data?.options?.map((item: any, index: any) => (
-                  <div className=" text-wrap items-center">
+                  <div key={index} className=" text-wrap items-center">
                     <span
                       className={`rounded-full ${
                         index === 0
@@ -156,7 +241,7 @@ const Page = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
               {graphData?.series?.length > 0 ? (
                 <div className=" h-64 mb-6 flex items-center justify-center">
@@ -172,160 +257,141 @@ const Page = () => {
                 </div>
               )}
 
-              {data?.options &&
-                data?.options?.map((item: any, index: any) => (
-                  <div
-                    key={index}
-                    className="md:flex items-center justify-between text-center px-2 md:px-0 py-3 md:py-0 border !text-[#162033] rounded-lg border-[#334661] md:border-0 bg-[#162033] lg:bg-transparent"
-                  >
-                    <div className="flex items-center justify-start mb-3 lg:mb-0">
-                      <Image
-                        src="https://cdn.pixabay.com/photo/2016/11/01/18/45/silhouette-1789199_1280.png"
-                        alt="Andrew Cuomo"
-                        width={40}
-                        height={40}
-                        className="w-12 h-12 bg-cover  rounded-lg bg-white border border-gray-400"
-                      />
-                      <div className=" text-md lg:text-lg font-bold ml-3 text-left">
-                        {item?.name || "--"}
-                      </div>
-                    </div>
-                    <div className="flex space-x-2 items-center justify-between">
-                      <div className="pr-3">
-                        {(item?.price * 100).toFixed(1)}%
-                      </div>
-                      <button
-                        onClick={() => handleBuyNow(item, "sell")}
-                        className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded"
-                      >
-                        Sell
-                      </button>
-                      <button
-                        onClick={() => handleBuyNow(item, "buy")}
-                        className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded"
-                      >
-                        Buy
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              {data?.options?.length > 0 && (
+                <div className="md:flex   items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold !text-[#080b11]  md:border-0  lg:bg-transparent">
+                  <div className="w-40"></div>
+                  {useToken && (
+                    <>
+                      <div className="!w-16">Invested</div>
+                      <div className="!w-10 ">PnL</div>
+                      <div className="!w-24">Buy Shares</div>{" "}
+                    </>
+                  )}
+                  <div className="!w-40"></div>
+                </div>
+              )}
+              <div className="flex flex-col  overflow-hidden  gap-1">
+                {data?.options &&
+                  data?.options?.map((item: any, index: any) => {
+                    const pnl = Number(item?.userPosition?.pnl || 0);
 
-              {/* <div className="md:flex items-center justify-between text-center px-2 md:px-0 py-3 md:py-0 border rounded-lg border-[#334661] md:border-0 bg-[#162033] lg:bg-transparent">
-                <div className="flex items-center justify-start mb-3 lg:mb-0">
-                  <Image
-                    src="/img/zohran.png"
-                    alt="Zohran Mamdani"
-                    width={40}
-                    height={40}
-                    className="w-12 h-12  rounded-lg bg-white border border-gray-400"
-                  />
-                  <div className="text-white text-md lg:text-lg font-bold ml-3 text-left">
-                    Zohran Mamdani
-                  </div>
-                </div>
-                <div className="flex space-x-2 justify-between">
-                  <button className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded">
-                    Sell 23¢
-                  </button>
-                  <button className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded">
-                    Buy 77¢
-                  </button>
-                </div>
+                    return (
+                      <div
+                        key={index}
+                        className="md:flex items-center lg:bg-transparent justify-between text-center  md:px-0  md:py-1 border !text-[#162033] rounded-lg border-[#334661] md:border-0  "
+                      >
+                        <div className="flex !w-40  items-center  justify-start mb-3 lg:mb-0">
+                          {item?.name || "--"}
+                        </div>
+                        {useToken && (
+                          <>
+                            <div className="pr-1  !w-16">
+                              {item?.userPosition?.invested > 0
+                                ? `${Number(
+                                    item?.userPosition?.invested || 0
+                                  ).toFixed(1)}`
+                                : "--"}
+                            </div>
+                            <div
+                              className={`pr-1 !w-10 font-semibold ${
+                                pnl < 0 ? "text-red-500" : "text-green-500"
+                              }`}
+                            >
+                              {pnl != 0 ? `  ₹${pnl.toFixed(1)}` : "--"}
+                            </div>
+                            <div className="pr-1 !w-24 font-medium ">
+                              {item?.userPosition?.shares > 0
+                                ? `${Number(
+                                    item?.userPosition?.shares || 0
+                                  ).toFixed(2)}`
+                                : "--"}
+                            </div>
+                          </>
+                        )}
+                        <div className="flex space-x-1 items-center justify-between">
+                          <div className="pr-1">
+                            {Number(item?.price * 100).toFixed(1)}%
+                          </div>
+                          <button
+                            onClick={() => handleBuyNow(item, "sell")}
+                            className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded"
+                          >
+                            Sell
+                          </button>
+                          <button
+                            onClick={() => handleBuyNow(item, "buy")}
+                            className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded"
+                          >
+                            Buy
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
-
-              <div className="md:flex items-center justify-between text-center px-2 md:px-0 py-3 md:py-0 border rounded-lg border-[#334661] md:border-0 bg-[#162033] lg:bg-transparent">
-                <div className="flex items-center justify-start mb-3 lg:mb-0">
-                  <Image
-                    src="/img/zohran.png"
-                    alt="Andrew Cuomo"
-                    width={40}
-                    height={40}
-                    className="w-12 h-12  rounded-lg bg-white border border-gray-400"
-                  />
-                  <div className="text-white text-md lg:text-lg font-bold ml-3 text-left">
-                    Zohran Mamdani
-                  </div>
-                </div>
-                <div className="flex space-x-2 justify-between">
-                  <button className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded cursor-pointer">
-                    Sell 23¢
-                  </button>
-                  <button className="bg-green-600/40 text-green-500 lg:w-auto w-50 font-semibold px-3 py-1 rounded cursor-pointer">
-                    Buy 77¢
-                  </button>
-                </div>
-              </div> */}
             </div>
 
-            <div className="md:col-span-1 border border-[#334661] rounded-lg p-3 lg-p-6">
-              <h2 className="text-xl font-bold mb-4 text-white">
-                New York City Election
-              </h2>
-              <div className="space-y-3 mb-4">
-                <button className="w-full bg-red-700 py-2 px-3 text-left rounded text-white font-semibold">
-                  Zohran Mamdani
-                </button>
-                <button className="w-full bg-blue-600 py-2 px-3 text-left rounded text-white font-semibold">
-                  Andrew Cuomo
-                </button>
-                <button className="w-full bg-green-600 py-2 px-3 text-left rounded text-white font-semibold">
-                  Eric Adams
-                </button>
-                <button className="w-full bg-purple-600 py-2 px-3 text-left rounded text-white font-semibold">
-                  Rahul
-                </button>
+            <div className="md:col-span-1  border border-[#334661] rounded-lg p-3 lg-p-6">
+              <div className="flex justify-between pr-14 items-center ">
+                <span className="text-lg font-semibold text-gray-900">
+                  Shares
+                </span>
+                <span className="text-sm text-gray-500 ">Price</span>
               </div>
 
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between items-center">
-                  <label className="block mb-1 text-[#717E91] font-semibold">
-                    Limit Price
-                  </label>
-                  <input
-                    type="number"
-                    defaultValue={0}
-                    className="w-1/2 py-1 rounded border border-[#717E91] text-[#717E91] hover:border-[#406db1] focus:border-[#406db1] focus:outline-none pl-3"
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <label className="block mb-1 text-[#717E91] font-semibold">
-                    Limit Price
-                  </label>
-                  <span className="w-1/2">
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        className="w-1/2 py-1 rounded border border-[#717E91] text-[#717E91] hover:border-[#406db1] focus:border-[#406db1] pl-1 text-sm"
+              <div className="mb-2">
+                <span className="text-base p-0 font-bold text-green-600 mb-3 tracking-wide">
+                  Buy Orders
+                </span>
+                <div className="max-h-[160px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
+                  {orderFlow?.buys?.length > 0 ? (
+                    orderFlow.buys.map((item: any, index: number) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center py-1 px-4  hover:bg-gray-100 transition-colors "
                       >
-                        Min-10
-                      </button>
-                      <button
-                        type="button"
-                        className="w-1/2 py-1 rounded border border-[#717E91] text-[#717E91] hover:border-[#406db1] focus:border-[#406db1] pl-1 text-sm"
-                      >
-                        Max-10
-                      </button>
+                        <span className="text-gray-800 font-medium">
+                          {Number(item?.shares)?.toFixed(2) || "0.00"}
+                        </span>
+                        <span className="text-green-600 font-semibold">
+                          ₹{Number(item?.saleAtPrice)?.toFixed(2) || "0.00"}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6 text-gray-400 text-sm ">
+                      No buy orders yet
                     </div>
-                  </span>
-                </div>
-
-                <div>
-                  <p className="text-white flex justify-between font-bold text-xl">
-                    <span>Total:</span> <span>$0.00</span>
-                  </p>
+                  )}
                 </div>
               </div>
 
-              <button className="w-full bg-purple-700 py-3 rounded font-bold text-white text-lg">
-                TRADE
-              </button>
-              <p className="text-xs text-gray-400 mt-2 text-center">
-                By trading, you agree to the{" "}
-                <a href="#" className="underline">
-                  Terms of Use
-                </a>
-                .
-              </p>
+              <div>
+                <span className="text-base font-bold text-red-600 mb-0 tracking-wide">
+                  Sell Orders
+                </span>
+                <div className="max-h-[160px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
+                  {orderFlow?.sells?.length > 0 ? (
+                    orderFlow.sells.map((item: any, index: number) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center py-1 px-4  hover:bg-gray-100 transition-colors "
+                      >
+                        <span className="text-gray-800 font-medium">
+                          {Number(item?.shares)?.toFixed(2) || "0.00"}
+                        </span>
+                        <span className="text-red-600 font-semibold">
+                          ₹{Number(item?.saleAtPrice)?.toFixed(2) || "0.00"}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6 text-gray-400 text-sm ">
+                      No sell orders yet
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

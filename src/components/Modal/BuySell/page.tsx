@@ -10,6 +10,7 @@ import Dropdown from "@/components/popupDropdown/page";
 import ExpirationDropdown from "@/components/BlockDropdown/page";
 import Blockimg1 from "../../../../public/img/blockimg1.jpg";
 import {
+  getCommonQuoteSell,
   getOrdersQuoteDetails,
   getQuoteByBudget,
   submitOrder,
@@ -47,7 +48,7 @@ export default function BuySell({
   const [shareDetailAmount, setShareDetailAmount] = useState<any>({});
   const [debouncedValue, setDebouncedValue] = useState(0);
 
-  console.log(types, "types");
+  // console.log(types, "types");
 
   useEffect(() => {
     if (activeField == "shares") {
@@ -70,7 +71,7 @@ export default function BuySell({
     return () => clearTimeout(t);
   }, [share, amount, activeField]);
 
-  console.log(activeField, "activeField ");
+  // console.log(activeField, "activeField ");
 
   const orderDetailsGet = async () => {
     if (activeField == "shares") {
@@ -80,7 +81,6 @@ export default function BuySell({
           option.index,
           debouncedValue
         );
-        console.log(response, "API CALL");
         if (response?.success) {
           setAmount(response?.data?.fee?.toFixed(2) || "");
           setShareDetailAmount(response?.data || {});
@@ -100,7 +100,6 @@ export default function BuySell({
           option.index,
           debouncedValue
         );
-        console.log(response, "API CALL");
         if (response?.success) {
           setShare(response?.data?.fee?.toFixed(2) || "");
           setShareDetailAmount(response?.data || {});
@@ -113,16 +112,37 @@ export default function BuySell({
         setShareDetailAmount({});
       }
     }
-  };
 
-  console.log(shareDetailAmount, "shareDetailAmount");
+    if (orderType == "sell") {
+      try {
+        const response = await getCommonQuoteSell(
+          rowDetails.question.id,
+          option.index,
+          debouncedValue
+        );
+        // console.log(response, "getCommonQuoteSell");
+        if (response?.success) {
+          setAmount(response?.data?.fee?.toFixed(2) || "");
+          setShareDetailAmount(response?.data || {});
+        } else {
+          setAmount("");
+          setShareDetailAmount({});
+        }
+      } catch (error) {
+        setAmount("");
+        setShareDetailAmount({});
+      }
+    }
+  };
+  //
+  // console.log(shareDetailAmount, "shareDetailAmount");
 
   useEffect(() => {
-    if (!isOpen || !rowDetails?.question?.id) return;
-    if (orderType === "buy") {
+    if (!rowDetails?.question?.id) return;
+    if (orderType) {
       orderDetailsGet();
     }
-  }, [debouncedValue, isOpen, rowDetails?.question?.id, option?.index]);
+  }, [debouncedValue, rowDetails?.question?.id, option?.index]);
 
   const handleClose = () => {
     setAmount("");
@@ -144,7 +164,7 @@ export default function BuySell({
       const response = await submitOrder(reqBody);
       if (response?.success) {
         toast.success(response.message);
-        fetchDetail();
+        // fetchDetail();
         handleClose();
       } else {
       }
@@ -208,141 +228,220 @@ export default function BuySell({
           {/* Tabs */}
           <div className="border-b border-gray-300 mb-4 relative">
             <div className="absolute right-0 top-0">
-              <Dropdown onSelect={(v) => setTypes(v)} />
+              <Dropdown
+                onSelect={(v) => {
+                  setTypes(v);
+                }}
+              />
             </div>
 
             <button
-              onClick={() => handleChangeOrderType("buy")}
+              onClick={() => {
+                handleChangeOrderType("buy");
+                setShareDetailAmount({});
+                setDebouncedValue(0);
+                setAmount("");
+                setShare("");
+              }}
               className={`py-2 mr-6 font-medium ${
                 orderType === "buy"
                   ? "border-b-2 border-[#0099FF] text-[#0099FF]"
-                  : "text-gray-600"
+                  : "text-gray-600 cursor-pointer"
               }`}
             >
               Buy
             </button>
 
             <button
-              onClick={() => handleChangeOrderType("sell")}
+              onClick={() => {
+                handleChangeOrderType("sell");
+
+                setShareDetailAmount({});
+                setDebouncedValue(0);
+                setAmount("");
+                setShare("");
+              }}
               className={`py-2 font-medium ${
                 orderType === "sell"
                   ? "border-b-2 border-[#0099FF] text-[#0099FF]"
-                  : "text-gray-600"
+                  : "text-gray-600 cursor-pointer"
               }`}
             >
               Sell
             </button>
           </div>
 
-          {/* BUY */}
-          {orderType === "buy" && (
-            <>
-              <div className="flex flex-col gap-3">
-                <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
-                  <span>
-                    <span className="block text-sm text-gray-400">Shares</span>
-                    <span className="block text-sm text-[#0099FF]">
-                      No Interest
+          <>
+            <div className="flex flex-col gap-3">
+              {orderType === "buy" ? (
+                <>
+                  <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
+                    <span>
+                      <span className="block text-sm text-gray-400">
+                        Shares
+                      </span>
+                      <span className="block text-sm text-[#0099FF]">
+                        No Interest
+                      </span>
                     </span>
-                  </span>
 
-                  <input
-                    type="number"
-                    placeholder="0"
-                    value={share}
-                    onFocus={() => setActiveField("shares")}
-                    onChange={(e) =>
-                      setShare(
-                        e.target.value === "" ? 0 : Number(e.target.value)
-                      )
-                    }
-                    onWheel={(e) => e.currentTarget.blur()}
-                    className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
-                  />
-                </label>
-
-                <div className="flex items-center justify-center text-gray-400">
-                  <TfiExchangeVertical size={25} />
-                </div>
-                <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
-                  <span>
-                    <span className="block text-sm text-gray-400">Amount</span>
-                    <span className="block text-sm text-[#0099FF]">
-                      No Interest
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={share}
+                      onFocus={() => setActiveField("shares")}
+                      onChange={(e) =>
+                        setShare(
+                          e.target.value === "" ? 0 : Number(e.target.value)
+                        )
+                      }
+                      onWheel={(e) => e.currentTarget.blur()}
+                      className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
+                    />
+                  </label>
+                  <div className="flex items-center justify-center text-gray-400">
+                    <TfiExchangeVertical size={25} />
+                  </div>
+                  <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
+                    <span>
+                      <span className="block text-sm text-gray-400">
+                        Amount
+                      </span>
+                      <span className="block text-sm text-[#0099FF]">
+                        No Interest
+                      </span>
                     </span>
-                  </span>
 
-                  <input
-                    type="number"
-                    placeholder="0"
-                    value={amount}
-                    onFocus={() => setActiveField("amount")}
-                    onChange={(e) =>
-                      setAmount(
-                        e.target.value === "" ? "" : Number(e.target.value)
-                      )
-                    }
-                    onWheel={(e) => e.currentTarget.blur()}
-                    className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
-                  />
-                </label>
-              </div>
-
-              <div className="flex flex-row mt-2">
-                {" "}
-                <div className="bg-[#0099FF] font-semibold text-white px-2 py-1 rounded">
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={amount}
+                      onFocus={() => setActiveField("amount")}
+                      onChange={(e) =>
+                        setAmount(
+                          e.target.value === "" ? "" : Number(e.target.value)
+                        )
+                      }
+                      onWheel={(e) => e.currentTarget.blur()}
+                      className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
+                    />
+                  </label>
+                </>
+              ) : (
+                <>
                   {" "}
-                  LOC{" "}
-                </div>{" "}
+                  <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
+                    <span>
+                      <span className="block text-sm text-gray-400">
+                        Shares
+                      </span>
+                      <span className="block text-sm text-[#0099FF]">
+                        No Interest
+                      </span>
+                    </span>
+
+                    <input
+                      type="number"
+                      placeholder="0"
+                      min={0}
+                      max={option?.userPosition?.shares ?? 0}
+                      value={share}
+                      onFocus={() => setActiveField("shares")}
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        const maxShares = option?.userPosition?.shares ?? 0;
+
+                        if (value <= maxShares) {
+                          setShare(value);
+                        }
+                      }}
+                      onWheel={(e) => e.currentTarget.blur()}
+                      className="border-none outline-none text-gray-800 text-3xl text-right w-56 bg-transparent"
+                    />
+                  </label>
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-row mt-2">
+              {" "}
+              <div className="bg-[#0099FF] font-semibold text-white px-2 py-1 rounded">
+                {" "}
+                LOC{" "}
+              </div>{" "}
+            </div>
+
+            <div className="flex text-black py-3 text-sm flex-col gap-2">
+              <div className="text-[#0099FF] font-semibold text-lg">
+                Share Details :
               </div>
+              {orderType === "buy" ? (
+                <>
+                  <div className="flex flex-row justify-between">
+                    <span className="text-gray-400 font-medium">
+                      Available Balance
+                    </span>
+                    <span className="text-gray-600 text-sm font-medium">
+                      ₹ 1000
+                    </span>
+                  </div>
+                  <div className="flex flex-row justify-between">
+                    <span className="text-gray-400 font-medium">Fee</span>
+                    <span>
+                      ₹ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex flex-row justify-between">
+                    <span className="text-gray-400 font-medium">Net Cost</span>
+                    <span>
+                      ₹ {Number(shareDetailAmount?.netCost || 0).toFixed(2)}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2  bg-white py-2 ">
+                    {/* Total Buy Share */}
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500 font-medium">
+                        Total Buy Share
+                      </span>
+                      <span className="text-gray-800 font-semibold">
+                        {(option?.userPosition?.shares || 0).toFixed(2)}
+                      </span>
+                    </div>
 
-              <div className="flex text-black py-3 text-sm flex-col gap-2">
-                <div className="text-[#0099FF] font-semibold text-lg">
-                  Share Details :
-                </div>
-                <div className="flex flex-row justify-between">
-                  <span className="text-gray-400 font-medium">
-                    Available Balance
-                  </span>
-                  <span className="text-gray-600 text-sm font-medium">
-                    ₹ 1000
-                  </span>
-                </div>
-                <div className="flex flex-row justify-between">
-                  <span className="text-gray-400 font-medium">Fee</span>
-                  <span>
-                    ₹ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex flex-row justify-between">
-                  <span className="text-gray-400 font-medium">Net Cost</span>
-                  <span>
-                    ₹ {Number(shareDetailAmount?.netCost || 0).toFixed(2)}
-                  </span>
-                </div>
-              </div>
+                    <div className="flex flex-row justify-between">
+                      <span className="text-gray-400 font-medium">Fee</span>
+                      <span>
+                        ₹ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex flex-row justify-between">
+                      <span className="text-gray-400 font-medium">Receive</span>
+                      <span>
+                        ₹{" "}
+                        {Number(shareDetailAmount?.netProceeds || 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
-              <button
-                onClick={handleSubmit}
-                className="mt-4 py-3 text-lg text-white font-bold bg-[#0099FF] hover:bg-[#0099FF]/90 rounded-xl w-full"
-              >
-                Buy <span className="text-gray-200">₹</span>{" "}
-                <span className="text-gray-200">
-                  {Number(shareDetailAmount?.grossCost || 0).toFixed(2)}
-                </span>
-              </button>
-            </>
-          )}
-
-          {/* SELL */}
-          {orderType === "sell" && (
-            <>
-              <ExpirationDropdown />
-              <button className="mt-4 py-3 text-lg text-white font-bold bg-[#0099FF]/60 hover:bg-[#0099FF] rounded-xl w-full">
-                Sign Up To Trade
-              </button>
-            </>
-          )}
+            <button
+              onClick={handleSubmit}
+              className="mt-4 py-3 text-lg text-white font-bold bg-[#0099FF] hover:bg-[#0099FF]/90 rounded-xl w-full"
+            >
+              <span className="capitalize">{orderType || "--"}</span>{" "}
+              <span className="text-gray-200">₹</span>{" "}
+              <span className="text-gray-200">
+                {orderType == "buy"
+                  ? Number(shareDetailAmount?.grossCost || 0).toFixed(2)
+                  : Number(shareDetailAmount?.grossProceeds || 0).toFixed(2)}
+              </span>
+            </button>
+          </>
         </Box>
       </Fade>
     </Modal>

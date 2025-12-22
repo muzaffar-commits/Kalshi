@@ -53,3 +53,17 @@ export const getGraphData = async (questionId: any, interval = "") => {
     return error?.response?.data;
   }
 };
+export const getCommonQuoteSell = async (
+  questionId: any,
+  outcomeIndex: any,
+  amount: any
+) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.commonQuoteSell}/?questionId=${questionId}&outcomeIndex=${outcomeIndex}&shares=${amount}`
+    );
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
