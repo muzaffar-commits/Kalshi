@@ -5,9 +5,7 @@ import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
 import Box from "@mui/material/Box";
-
 import Dropdown from "@/components/popupDropdown/page";
-import ExpirationDropdown from "@/components/BlockDropdown/page";
 import Blockimg1 from "../../../../public/img/blockimg1.jpg";
 import {
   getCommonQuoteSell,
@@ -24,7 +22,6 @@ interface ModalProps {
   orderType: string;
   option: any;
   fetchDetail: any;
-  userId: any;
   handleChangeOrderType: (type: "buy" | "sell") => void;
 }
 
@@ -36,11 +33,12 @@ export default function BuySell({
   option,
   fetchDetail,
   handleChangeOrderType,
-  userId,
 }: ModalProps) {
   const [share, setShare] = useState<number | "">("");
   const [amount, setAmount] = useState<number | "">("");
   const [types, setTypes] = useState<any | "">("market");
+  const balance = localStorage.getItem("balance");
+  const token = localStorage.getItem("token");
 
   const [activeField, setActiveField] = useState<"shares" | "amount" | null>(
     null
@@ -48,7 +46,8 @@ export default function BuySell({
   const [shareDetailAmount, setShareDetailAmount] = useState<any>({});
   const [debouncedValue, setDebouncedValue] = useState(0);
 
-  // console.log(types, "types");
+  const checkMarketISOpen = rowDetails?.question?.status === "OPEN";
+  console.log(checkMarketISOpen, "checkMarketISOpen");
 
   useEffect(() => {
     if (activeField == "shares") {
@@ -70,9 +69,6 @@ export default function BuySell({
 
     return () => clearTimeout(t);
   }, [share, amount, activeField]);
-
-  // console.log(activeField, "activeField ");
-
   const orderDetailsGet = async () => {
     if (activeField == "shares") {
       try {
@@ -134,8 +130,6 @@ export default function BuySell({
       }
     }
   };
-  //
-  // console.log(shareDetailAmount, "shareDetailAmount");
 
   useEffect(() => {
     if (!rowDetails?.question?.id) return;
@@ -164,7 +158,7 @@ export default function BuySell({
       const response = await submitOrder(reqBody);
       if (response?.success) {
         toast.success(response.message);
-        // fetchDetail();
+        fetchDetail();
         handleClose();
       } else {
       }
@@ -172,6 +166,9 @@ export default function BuySell({
       toast.error("internal server error");
     }
   };
+
+  console.log(debouncedValue, "debouncedValue======");
+
   return (
     <Modal
       open={isOpen}
@@ -181,8 +178,8 @@ export default function BuySell({
       BackdropProps={{
         timeout: 300,
         sx: {
-          backdropFilter: "blur(10px)", // blur strength
-          backgroundColor: "rgba(255, 255, 255, 0.7)", // ✅ white 80%
+          backdropFilter: "blur(10px)",
+          backgroundColor: "rgba(255, 255, 255, 0.7)",
         },
       }}
     >
@@ -194,7 +191,7 @@ export default function BuySell({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className="bg-white p-6 lg:p-10 rounded-xl shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
+          className="bg-white p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
         >
           {/* Close */}
           <button
@@ -204,6 +201,13 @@ export default function BuySell({
             ✕
           </button>
 
+          <div
+            className={`absolute ${
+              checkMarketISOpen ? "bg-green-500" : "bg-red-500"
+            }  text-white text-center w-28 top-4 -left-7   -rotate-45 `}
+          >
+            {checkMarketISOpen ? "Open" : "Not Open"}
+          </div>
           {/* Header */}
           <div className="flex flex-row gap-2 justify-between mb-0">
             <Image
@@ -377,14 +381,16 @@ export default function BuySell({
               </div>
               {orderType === "buy" ? (
                 <>
-                  <div className="flex flex-row justify-between">
-                    <span className="text-gray-400 font-medium">
-                      Available Balance
-                    </span>
-                    <span className="text-gray-600 text-sm font-medium">
-                      ₹ 1000
-                    </span>
-                  </div>
+                  {token && (
+                    <div className="flex flex-row justify-between">
+                      <span className="text-gray-400 font-medium">
+                        Available Balance
+                      </span>
+                      <span className="text-gray-600 text-sm font-medium">
+                        ₹ {Number(balance || 0).toFixed(2) || 0}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex flex-row justify-between">
                     <span className="text-gray-400 font-medium">Fee</span>
                     <span>
@@ -430,8 +436,13 @@ export default function BuySell({
             </div>
 
             <button
+              disabled={debouncedValue == 0 || !checkMarketISOpen}
               onClick={handleSubmit}
-              className="mt-4 py-3 text-lg text-white font-bold bg-[#0099FF] hover:bg-[#0099FF]/90 rounded-xl w-full"
+              className={`mt-4 py-3 text-lg text-white font-bold ${
+                debouncedValue == 0 || !checkMarketISOpen
+                  ? "bg-[#62bdfa]"
+                  : "bg-[#0099FF] hover:bg-[#0099FF]/90"
+              }  rounded-xl w-full`}
             >
               <span className="capitalize">{orderType || "--"}</span>{" "}
               <span className="text-gray-200">₹</span>{" "}

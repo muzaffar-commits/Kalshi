@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { questionDetails } from "@/components/service/apiService/category";
 import { useParams } from "next/navigation";
@@ -9,8 +9,22 @@ import BuySell from "@/components/Modal/BuySell/page";
 import { getGraphData } from "@/components/service/apiService/buySell";
 import { useSelector } from "react-redux";
 
+interface MarketUpdate {
+  questionId: number | string;
+  prices: number[];
+  q: number[];
+  ts: number;
+}
+
 const Page = () => {
-  const [orderFlow, setOrderFlow] = useState<any>({});
+  const [orderFlow, setOrderFlow] = useState<{
+    buys: any[];
+    sells: any[];
+  }>({
+    buys: [],
+    sells: [],
+  });
+
   const [data, setData] = useState<any>({});
   const [graphData, setGraphData] = useState<any>({});
   const { slug } = useParams();
@@ -25,14 +39,17 @@ const Page = () => {
       const response: any = await questionDetails(slug, userDetails?.user?.id);
 
       if (response?.success) {
-        setOrderFlow(response?.data?.orderFlow || {});
+        setOrderFlow({
+          buys: response?.data?.orderFlow?.buys || [],
+          sells: response?.data?.orderFlow?.sells || [],
+        });
         setData(response?.data || {});
       } else {
-        setOrderFlow({});
+        setOrderFlow({ buys: [], sells: [] });
         setData({});
       }
     } catch (error: any) {
-      setOrderFlow({});
+      setOrderFlow({ buys: [], sells: [] });
       setData({});
     }
   };
@@ -56,116 +73,159 @@ const Page = () => {
     getGraphDetails();
   }, [slug]);
 
+  const processedOrderIdsRef = useRef<Set<number>>(new Set());
+  const OrderHistoryIdsRef = useRef<Set<number>>(new Set());
   const questionId = slug;
 
+  console.log(socket.connected, "socket.connected=====");
   useEffect(() => {
-    console.log(socket.connected, "socket.connected)");
-
     if (!socket.connected) {
       socket.connect();
     }
 
-    // Connection success
     socket.on("connect", () => {
       console.log("✅ Socket connected! ID:", socket.id);
-      // Subscribe to the market room
       socket.emit("subscribe:market", questionId);
-      socket.emit("subscribe:user", questionId);
-      console.log("Subscribed to market:", questionId);
-    });
-
-    // Catch ALL incoming events from server (super important!)
-    socket.onAny((eventName, ...args) => {
-      console.log("🔥 SERVER SENT EVENT:", eventName);
-      console.log("Data:", JSON.stringify(args, null, 2));
-    });
-
-    // Listen to events that backend is actually emitting
-    socket.on("market:prices", (payload) => {
-      console.log("📈 Market prices received:", payload);
-      // Yahan tum state update kar sakte ho, e.g. setMarketData(payload)
-    });
-
-    socket.on("trade", (payload) => {
-      console.log("🛒 Trade update received:", payload);
-
-      // Handle both string and object payloads safely
-      let parsed: any;
-      try {
-        parsed = JSON.stringify(data);
-      } catch (e) {
-        console.error("Failed to parse trade payload:", e, payload);
-        return; // Don't update state on invalid payload
+      if (userDetails?.user?.id) {
+        socket.emit("subscribe:user", userDetails?.user?.id);
       }
+    });
 
-      console.log(parsed?.questionId, parsed.prices, "parsed.prices====");
-      console.log(
-        typeof parsed?.questionId,
-        typeof parsed.prices,
-        "parsed.prices====>>>>>>>>"
-      );
-
-      console.log(
-        !parsed?.questionId,
-        !Array.isArray(parsed.prices),
-        !Array.isArray(parsed.q),
-        "parsed"
-      );
-      if (
-        !parsed?.questionId ||
-        !Array.isArray(parsed.prices) ||
-        !Array.isArray(parsed.q)
-      ) {
-        console.warn("Invalid trade payload structure:", parsed);
+    socket.onAny((_, ...args) => {});
+    socket.on("market:prices", (payload: any) => {
+      console.log("Market prices received:", payload);
+      if (!payload?.questionId || !Array.isArray(payload.prices)) {
         return;
       }
 
-      console.log(parsed, "parsed");
-
       setData((prev: any) => {
-        // If no previous data yet, skip or initialize (depending on your app logic)
-        if (!prev || !prev.options || !Array.isArray(prev.options)) {
-          console.warn("No previous market data available yet");
-          return prev; // or return initial state if you have one
+        if (!prev?.options || !Array.isArray(prev.options)) {
+          return prev;
         }
+        const updatedOptions = prev.options.map(
+          (option: any, index: number) => {
+            const newPrice = payload.prices[index];
+            return {
+              ...option,
+              price:
+                typeof newPrice === "number" && !isNaN(newPrice)
+                  ? newPrice
+                  : option.price,
+              winningProbability:
+                typeof newPrice === "number" && !isNaN(newPrice)
+                  ? newPrice
+                  : option.winningProbability,
+            };
+          }
+        );
 
-        // Create a new options array with updated values
-        const updatedOptions = prev.options.map((option: any, index: any) => {
-          const newPrice = parsed.prices?.[index];
-          const newQty = parsed.q?.[index];
-
-          // Only update if we have valid numbers
-          const updatedPrice =
-            typeof newPrice === "number" && !isNaN(newPrice)
-              ? newPrice
-              : option.price;
-
-          const updatedQty =
-            typeof newQty === "number" && !isNaN(newQty)
-              ? newQty
-              : option.quantity;
-
-          return {
-            ...option,
-            price: updatedPrice,
-            winningProbability: updatedPrice, // usually same as price in prediction markets
-            quantity: updatedQty,
-          };
-        });
-
-        // Return new state object to trigger re-render
         return {
           ...prev,
           options: updatedOptions,
-          // Optional: update timestamp or other fields
-          lastUpdated: new Date().toISOString(),
+          lastPriceUpdatedAt: new Date(payload.ts || Date.now()).toISOString(),
         };
       });
     });
 
-    // If you also need user-specific order updates
-    socket.on("order:update", (payload) => {
-      console.log("Order update received:-----------", payload);
+    socket.on("trade", (payload: any) => {
+      const tradeRow = {
+        id: payload.orderId,
+        optionId: payload.optionId,
+        shares: payload.filledShares.toFixed(16),
+        saleAtPrice: (payload.cash / payload.filledShares).toFixed(16),
+        createdAt: new Date(payload.ts).toISOString(),
+      };
+      if (OrderHistoryIdsRef.current.has(payload.orderId)) {
+        return;
+      }
+      OrderHistoryIdsRef.current.add(payload.orderId);
+      setOrderFlow((prev) => {
+        if (!prev) return prev;
+
+        if (payload.side === "BUY") {
+          return {
+            buys: [tradeRow, ...(prev.buys || [])],
+            sells: prev.sells || [],
+          };
+        }
+
+        if (payload.side === "SELL") {
+          return {
+            buys: prev.buys || [],
+            sells: [tradeRow, ...(prev.sells || [])],
+          };
+        }
+
+        return prev;
+      });
+    });
+
+    socket.on("order:update", (payload: any) => {
+      if (
+        !payload?.questionId ||
+        !payload?.optionId ||
+        typeof payload?.orderId !== "number" ||
+        typeof payload?.filled !== "number"
+      ) {
+        return;
+      }
+      if (processedOrderIdsRef.current.has(payload.orderId)) {
+        return;
+      }
+      processedOrderIdsRef.current.add(payload.orderId);
+      setData((prev: any) => {
+        if (!prev?.options || !Array.isArray(prev.options)) {
+          return prev;
+        }
+        const updatedOptions = prev.options.map(
+          (option: any, index: number) => {
+            const newPrice = payload.prices?.[index];
+            if (option.id === payload.optionId) {
+              const prevShares = option.userPosition?.shares || 0;
+
+              return {
+                ...option,
+                price:
+                  typeof newPrice === "number" && !isNaN(newPrice)
+                    ? newPrice
+                    : option.price,
+
+                winningProbability:
+                  typeof newPrice === "number" && !isNaN(newPrice)
+                    ? newPrice
+                    : option.winningProbability,
+
+                userPosition: {
+                  ...option.userPosition,
+                  shares:
+                    payload.orderType == "BUY"
+                      ? prevShares + payload.filled
+                      : prevShares - payload.filled,
+                },
+              };
+            }
+
+            // OTHER OPTIONS → ONLY PRICE
+            return {
+              ...option,
+              price:
+                typeof newPrice === "number" && !isNaN(newPrice)
+                  ? newPrice
+                  : option.price,
+              winningProbability:
+                typeof newPrice === "number" && !isNaN(newPrice)
+                  ? newPrice
+                  : option.winningProbability,
+            };
+          }
+        );
+
+        return {
+          ...prev,
+          options: updatedOptions,
+          lastOrderUpdatedAt: new Date().toISOString(),
+        };
+      });
     });
 
     // Error handling
@@ -177,12 +237,12 @@ const Page = () => {
       console.log("Socket disconnected:", reason);
     });
     return () => {
-      console.log("Unsubscribing from market:", questionId);
+      console.log("subscribing from market:", questionId);
       // socket.emit("unsubscribe:market", questionId);
-      socket.off("connect");
-      socket.off("market:prices");
-      socket.off("trade");
-      socket.off("order:update");
+      // socket.off("connect");
+      // socket.off("market:prices");
+      // socket.off("trade");
+      // socket.off("order:update");
       socket.offAny();
     };
   }, [slug]);
@@ -193,7 +253,7 @@ const Page = () => {
     setIsOpenBuySell(true);
   };
 
-  console.log(data, "data");
+  console.log(orderFlow, "orderFlow");
   return (
     <>
       <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-28">
@@ -211,7 +271,8 @@ const Page = () => {
                 {data?.question?.question}
               </h1>
               <p className="text-sm text-[#7F90A7]">
-                ${data?.market?.totalMarketVolume || 0} Vol.
+                ₹ {Number(data?.market?.totalMarketVolume || 0).toFixed(2) || 0}{" "}
+                Vol.
               </p>
               <div className="lg:flex space-x-4 mt-1 text-sm">
                 {data?.options?.map((item: any, index: any) => (
@@ -259,18 +320,18 @@ const Page = () => {
 
               {data?.options?.length > 0 && (
                 <div className="md:flex   items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold !text-[#080b11]  md:border-0  lg:bg-transparent">
-                  <div className="w-40"></div>
+                  <div className="w-64 "></div>
                   {useToken && (
                     <>
-                      <div className="!w-16">Invested</div>
-                      <div className="!w-10 ">PnL</div>
+                      <div className="!w-20 ">Invested</div>
+                      <div className="!w-16 ">PnL</div>
                       <div className="!w-24">Buy Shares</div>{" "}
                     </>
                   )}
                   <div className="!w-40"></div>
                 </div>
               )}
-              <div className="flex flex-col  overflow-hidden  gap-1">
+              <div className="flex flex-col  overflow-hidden  gap-0">
                 {data?.options &&
                   data?.options?.map((item: any, index: any) => {
                     const pnl = Number(item?.userPosition?.pnl || 0);
@@ -280,12 +341,16 @@ const Page = () => {
                         key={index}
                         className="md:flex items-center lg:bg-transparent justify-between text-center  md:px-0  md:py-1 border !text-[#162033] rounded-lg border-[#334661] md:border-0  "
                       >
-                        <div className="flex !w-40  items-center  justify-start mb-3 lg:mb-0">
+                        <div
+                          className={`flex ${
+                            useToken ? "w-64" : "w-full"
+                          }  text-start    mb-3 lg:mb-0`}
+                        >
                           {item?.name || "--"}
                         </div>
                         {useToken && (
                           <>
-                            <div className="pr-1  !w-16">
+                            <div className="pr-1  !w-20">
                               {item?.userPosition?.invested > 0
                                 ? `${Number(
                                     item?.userPosition?.invested || 0
@@ -293,7 +358,7 @@ const Page = () => {
                                 : "--"}
                             </div>
                             <div
-                              className={`pr-1 !w-10 font-semibold ${
+                              className={`pr-1 !w-16 font-semibold ${
                                 pnl < 0 ? "text-red-500" : "text-green-500"
                               }`}
                             >
@@ -405,7 +470,6 @@ const Page = () => {
         handleChangeOrderType={setBuyType}
         option={options}
         fetchDetail={questionDetailsList}
-        userId={userDetails?.user?.id}
       />
     </>
   );

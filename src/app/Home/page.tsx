@@ -95,7 +95,9 @@ const Blocks = () => {
                   </div>
 
                   <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
-                    <span>${row?.stats?.totalVolume || 0}k</span>
+                    <span>
+                      ₹ {Number(row?.stats?.totalVolume || 0)?.toFixed(2) || 0}
+                    </span>
                     <span>
                       <a href="#" onClick={() => setIsOpen(true)}>
                         <svg
@@ -124,10 +126,10 @@ const Blocks = () => {
         isOpen={isOpen}
         handleClose={() => setIsOpen(false)}
       />
-      <ModalWithTabs
+      {/* <ModalWithTabs
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-      />
+      /> */}
     </>
   );
 };

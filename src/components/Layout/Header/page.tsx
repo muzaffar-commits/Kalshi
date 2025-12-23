@@ -12,6 +12,7 @@ import Trend from "../../../../public/img/icon/trend.png";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useParams } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
+import { userBalance } from "@/components/service/apiService/user";
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -52,6 +53,24 @@ const Header = () => {
     categoryAllList();
   }, []);
 
+  const token = localStorage.getItem("token");
+  const getUserBalance = async () => {
+    try {
+      const response = await userBalance();
+      if (response?.success) {
+        localStorage.setItem("balance", response?.data?.balance);
+      } else {
+        localStorage.removeItem("balance");
+      }
+    } catch (error: any) {
+      localStorage.removeItem("balance");
+    }
+  };
+  useEffect(() => {
+    if (token) {
+      getUserBalance();
+    }
+  }, [token]);
   return (
     <>
       <header className="w-full dark:bg-black bg-[#fff] fixed top-0 z-30">

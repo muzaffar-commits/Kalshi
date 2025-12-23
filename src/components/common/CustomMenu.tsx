@@ -26,18 +26,17 @@ export default function CustomMenu() {
 
   const changePassword = () => {
     handleClose();
-    // navigate("/change-password");
   };
 
   const userProfile = () => {
     handleClose();
-    // navigate("/user-profile");
   };
 
   const handleLogout = () => {
     handleClose();
     localStorage.clear();
     dispatch(logout());
+    window.location.href = "/";
   };
 
   return (

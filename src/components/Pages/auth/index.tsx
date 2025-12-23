@@ -43,6 +43,7 @@ export default function Authentication({
           login({ user: response?.data?.user, token: response?.data?.token })
         );
         toast.success(response?.message);
+        window.location.reload();
         handleClose();
       } else {
         toast.error(response?.message || "Something went wrong?");

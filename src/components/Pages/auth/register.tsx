@@ -61,6 +61,7 @@ export default function Register({
           console.log(response, "response========");
 
           if (response?.success) {
+            localStorage.setItem("token", response?.data?.token);
             dispatch(
               login({
                 user: response?.data?.user,
@@ -69,6 +70,7 @@ export default function Register({
             );
             toast.success(response?.message);
             action.resetForm();
+            window.location.reload();
             handleClose();
           } else {
             toast.error(response?.message);
