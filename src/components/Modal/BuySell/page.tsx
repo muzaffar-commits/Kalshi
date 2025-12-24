@@ -158,7 +158,7 @@ export default function BuySell({
       const response = await submitOrder(reqBody);
       if (response?.success) {
         toast.success(response.message);
-        fetchDetail();
+        // fetchDetail();
         handleClose();
       } else {
       }

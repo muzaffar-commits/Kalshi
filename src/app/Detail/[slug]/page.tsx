@@ -93,7 +93,7 @@ const Page = () => {
 
     socket.onAny((_, ...args) => {});
     socket.on("market:prices", (payload: any) => {
-      console.log("Market prices received:", payload);
+      console.log("MarketPrices received:", payload);
       if (!payload?.questionId || !Array.isArray(payload.prices)) {
         return;
       }
@@ -128,6 +128,8 @@ const Page = () => {
     });
 
     socket.on("trade", (payload: any) => {
+      console.log("Trade market", payload);
+
       const tradeRow = {
         id: payload.orderId,
         optionId: payload.optionId,
@@ -161,6 +163,8 @@ const Page = () => {
     });
 
     socket.on("order:update", (payload: any) => {
+      console.log(payload, "orderMarket======>123");
+
       if (
         !payload?.questionId ||
         !payload?.optionId ||
@@ -198,7 +202,7 @@ const Page = () => {
                 userPosition: {
                   ...option.userPosition,
                   shares:
-                    payload.orderType == "BUY"
+                    payload.side == "BUY"
                       ? prevShares + payload.filled
                       : prevShares - payload.filled,
                 },
