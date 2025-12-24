@@ -21,7 +21,7 @@ interface ModalProps {
   rowDetails: any;
   orderType: string;
   option: any;
-  fetchDetail: any;
+  // fetchDetail: any;
   handleChangeOrderType: (type: "buy" | "sell") => void;
 }
 
@@ -31,7 +31,7 @@ export default function BuySell({
   rowDetails,
   orderType,
   option,
-  fetchDetail,
+  // fetchDetail,
   handleChangeOrderType,
 }: ModalProps) {
   const [share, setShare] = useState<number | "">("");
@@ -45,6 +45,7 @@ export default function BuySell({
   );
   const [shareDetailAmount, setShareDetailAmount] = useState<any>({});
   const [debouncedValue, setDebouncedValue] = useState(0);
+  console.log(rowDetails, "rowDetails");
 
   const checkMarketISOpen = rowDetails?.question?.status === "OPEN";
   console.log(checkMarketISOpen, "checkMarketISOpen");
@@ -196,17 +197,17 @@ export default function BuySell({
           {/* Close */}
           <button
             onClick={handleClose}
-            className="absolute top-3 right-3 text-gray-900 hover:text-gray-500"
+            className="absolute top-3 right-3 cursor-pointer text-gray-900 hover:text-gray-500"
           >
             ✕
           </button>
 
           <div
-            className={`absolute ${
+            className={`absolute text-[10px] ${
               checkMarketISOpen ? "bg-green-500" : "bg-red-500"
             }  text-white text-center w-28 top-4 -left-7   -rotate-45 `}
           >
-            {checkMarketISOpen ? "Open" : "Not Open"}
+            {checkMarketISOpen ? "Live" : "Coming Soon"}
           </div>
           {/* Header */}
           <div className="flex flex-row gap-2 justify-between mb-0">
@@ -218,14 +219,14 @@ export default function BuySell({
               className="rounded-lg max-h-[45px]"
             />
             <h6 className="text-sm text-black">
-              {rowDetails?.question?.question || "--"}
+              {rowDetails?.question?.question || rowDetails?.question || "--"}
             </h6>
           </div>
 
-          <div className="flex items-center ml-14 mb-3  gap-3">
-            <h2 className="text-[#0099FF] font-semibold">
+          <div className="flex  text-wrap ml-14 mb-3 text-sm   gap-3">
+            <span className="text-[#0099FF] text-nowrap font-semibold">
               {orderType === "buy" ? "Buy" : "Sell"} Now
-            </h2>
+            </span>
             <span className="text-gray-500">- {option?.name || "--"}</span>
           </div>
 
