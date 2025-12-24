@@ -8,24 +8,411 @@ import socket from "@/components/socket";
 import BuySell from "@/components/Modal/BuySell/page";
 import { getGraphData } from "@/components/service/apiService/buySell";
 import { useSelector } from "react-redux";
+import GlobalLoader from "@/components/common/Loader";
 
-interface MarketUpdate {
-  questionId: number | string;
-  prices: number[];
-  q: number[];
-  ts: number;
-}
+const sellsssss = [
+  {
+    id: 112,
+    userId: 2,
+    optionId: 44,
+    shares: "101.0000000000000000",
+    saleAtPrice: "0.4045244275828439",
+    createdAt: "2025-12-24T07:17:18.000Z",
+  },
+  {
+    id: 111,
+    userId: 2,
+    optionId: 44,
+    shares: "100.0000000000000000",
+    saleAtPrice: "0.4289417255833655",
+    createdAt: "2025-12-24T07:17:01.000Z",
+  },
+  {
+    id: 108,
+    userId: 3,
+    optionId: 45,
+    shares: "100.0000000000000000",
+    saleAtPrice: "0.5715480061495828",
+    createdAt: "2025-12-24T06:07:52.000Z",
+  },
+  {
+    id: 106,
+    userId: 3,
+    optionId: 45,
+    shares: "4.0000000000000000",
+    saleAtPrice: "0.5597701613783670",
+    createdAt: "2025-12-23T13:21:09.000Z",
+  },
+  {
+    id: 105,
+    userId: 3,
+    optionId: 44,
+    shares: "30.0000000000000000",
+    saleAtPrice: "0.4434368697492649",
+    createdAt: "2025-12-23T13:20:34.000Z",
+  },
+  {
+    id: 104,
+    userId: 3,
+    optionId: 45,
+    shares: "2.0000000000000000",
+    saleAtPrice: "0.5531062841248513",
+    createdAt: "2025-12-23T13:18:53.000Z",
+  },
+  {
+    id: 103,
+    userId: 3,
+    optionId: 45,
+    shares: "5.0000000000000000",
+    saleAtPrice: "0.5539712280892672",
+    createdAt: "2025-12-23T13:16:31.000Z",
+  },
+  {
+    id: 100,
+    userId: 2,
+    optionId: 44,
+    shares: "20.0000000000000000",
+    saleAtPrice: "0.4473885568653714",
+    createdAt: "2025-12-23T13:15:05.000Z",
+  },
+  {
+    id: 95,
+    userId: 3,
+    optionId: 44,
+    shares: "2.0000000000000000",
+    saleAtPrice: "0.4414623271884466",
+    createdAt: "2025-12-23T11:28:35.000Z",
+  },
+  {
+    id: 94,
+    userId: 3,
+    optionId: 44,
+    shares: "11.0000000000000000",
+    saleAtPrice: "0.4430657951641230",
+    createdAt: "2025-12-23T11:24:09.000Z",
+  },
+];
 
+const bysssss = [
+  {
+    id: 110,
+    userId: 2,
+    optionId: 44,
+    shares: "12.0000000000000000",
+    saleAtPrice: "0.4397372011673231",
+    createdAt: "2025-12-24T06:35:27.000Z",
+  },
+  {
+    id: 109,
+    userId: 3,
+    optionId: 45,
+    shares: "10.0000000000000000",
+    saleAtPrice: "0.5605092062872472",
+    createdAt: "2025-12-24T06:31:30.000Z",
+  },
+  {
+    id: 107,
+    userId: 3,
+    optionId: 45,
+    shares: "100.0000000000000000",
+    saleAtPrice: "0.5715480061495828",
+    createdAt: "2025-12-23T13:22:09.000Z",
+  },
+  {
+    id: 102,
+    userId: 3,
+    optionId: 45,
+    shares: "10.0000000000000000",
+    saleAtPrice: "0.5533533451887933",
+    createdAt: "2025-12-23T13:16:17.000Z",
+  },
+  {
+    id: 101,
+    userId: 2,
+    optionId: 44,
+    shares: "12.0000000000000000",
+    saleAtPrice: "0.4463995636748829",
+    createdAt: "2025-12-23T13:15:25.000Z",
+  },
+  {
+    id: 99,
+    userId: 2,
+    optionId: 44,
+    shares: "12.0000000000000000",
+    saleAtPrice: "0.4483774113123218",
+    createdAt: "2025-12-23T13:14:12.000Z",
+  },
+  {
+    id: 98,
+    userId: 2,
+    optionId: 44,
+    shares: "12.0000000000000000",
+    saleAtPrice: "0.4454112718413701",
+    createdAt: "2025-12-23T13:11:47.000Z",
+  },
+  {
+    id: 97,
+    userId: 2,
+    optionId: 44,
+    shares: "12.0000000000000000",
+    saleAtPrice: "0.4424490157835900",
+    createdAt: "2025-12-23T13:11:46.000Z",
+  },
+  {
+    id: 96,
+    userId: 3,
+    optionId: 45,
+    shares: "1.0000000000000000",
+    saleAtPrice: "0.5589075038803912",
+    createdAt: "2025-12-23T11:30:29.000Z",
+  },
+  {
+    id: 91,
+    userId: 3,
+    optionId: 44,
+    shares: "5.0000000000000000",
+    saleAtPrice: "0.4482536204063308",
+    createdAt: "2025-12-23T11:06:43.000Z",
+  },
+];
+
+const datassssss = {
+  question: {
+    id: 14,
+    question: "Will global social commerce sales exceed $2 trillion in 2026?",
+    description: null,
+    status: "OPEN",
+    questionType: "MULTIPLE_CHOICE",
+    liquidity: "1000.00000000",
+    endDate: "1970-01-21T08:52:05.000Z",
+    createdAt: "2025-12-17T11:20:40.000Z",
+  },
+  options: [
+    {
+      id: 44,
+      name: "Yes",
+      index: 0,
+      price: 0.3924013449403528,
+      winningProbability: 0.3924013449403528,
+      quantity: "363.4925596024841000",
+      trading: {
+        buyVolume: 1401.492559602484,
+        sellVolume: 1038,
+        totalVolume: 2439.492559602484,
+      },
+      userPosition: {
+        shares: 273.4925596024841,
+        invested: 440.00000775230524,
+        currentValue: 107.31884821919436,
+        pnl: -332.6811595331109,
+      },
+    },
+    {
+      id: 45,
+      name: "No",
+      index: 1,
+      price: 0.6075986550596472,
+      winningProbability: 0.6075986550596472,
+      quantity: "800.7219616342336000",
+      trading: {
+        buyVolume: 1403.7219616342336,
+        sellVolume: 603,
+        totalVolume: 2006.7219616342336,
+      },
+      userPosition: {
+        shares: 790.7219616342336,
+        invested: 781.1576217589878,
+        currentValue: 480.44160041508627,
+        pnl: -300.71602134390156,
+      },
+    },
+  ],
+  market: {
+    totalMarketVolume: 4446.214521236718,
+  },
+  user: {
+    invested: 1221.1576295112932,
+    currentValue: 587.7604486342807,
+    pnl: -633.3971808770125,
+    earningPercent: -51.86858482229667,
+  },
+  orderFlow: {
+    buys: [
+      {
+        id: 110,
+        userId: 2,
+        optionId: 44,
+        shares: "12.0000000000000000",
+        saleAtPrice: "0.4397372011673231",
+        createdAt: "2025-12-24T06:35:27.000Z",
+      },
+      {
+        id: 109,
+        userId: 3,
+        optionId: 45,
+        shares: "10.0000000000000000",
+        saleAtPrice: "0.5605092062872472",
+        createdAt: "2025-12-24T06:31:30.000Z",
+      },
+      {
+        id: 107,
+        userId: 3,
+        optionId: 45,
+        shares: "100.0000000000000000",
+        saleAtPrice: "0.5715480061495828",
+        createdAt: "2025-12-23T13:22:09.000Z",
+      },
+      {
+        id: 102,
+        userId: 3,
+        optionId: 45,
+        shares: "10.0000000000000000",
+        saleAtPrice: "0.5533533451887933",
+        createdAt: "2025-12-23T13:16:17.000Z",
+      },
+      {
+        id: 101,
+        userId: 2,
+        optionId: 44,
+        shares: "12.0000000000000000",
+        saleAtPrice: "0.4463995636748829",
+        createdAt: "2025-12-23T13:15:25.000Z",
+      },
+      {
+        id: 99,
+        userId: 2,
+        optionId: 44,
+        shares: "12.0000000000000000",
+        saleAtPrice: "0.4483774113123218",
+        createdAt: "2025-12-23T13:14:12.000Z",
+      },
+      {
+        id: 98,
+        userId: 2,
+        optionId: 44,
+        shares: "12.0000000000000000",
+        saleAtPrice: "0.4454112718413701",
+        createdAt: "2025-12-23T13:11:47.000Z",
+      },
+      {
+        id: 97,
+        userId: 2,
+        optionId: 44,
+        shares: "12.0000000000000000",
+        saleAtPrice: "0.4424490157835900",
+        createdAt: "2025-12-23T13:11:46.000Z",
+      },
+      {
+        id: 96,
+        userId: 3,
+        optionId: 45,
+        shares: "1.0000000000000000",
+        saleAtPrice: "0.5589075038803912",
+        createdAt: "2025-12-23T11:30:29.000Z",
+      },
+      {
+        id: 91,
+        userId: 3,
+        optionId: 44,
+        shares: "5.0000000000000000",
+        saleAtPrice: "0.4482536204063308",
+        createdAt: "2025-12-23T11:06:43.000Z",
+      },
+    ],
+    sells: [
+      {
+        id: 112,
+        userId: 2,
+        optionId: 44,
+        shares: "101.0000000000000000",
+        saleAtPrice: "0.4045244275828439",
+        createdAt: "2025-12-24T07:17:18.000Z",
+      },
+      {
+        id: 111,
+        userId: 2,
+        optionId: 44,
+        shares: "100.0000000000000000",
+        saleAtPrice: "0.4289417255833655",
+        createdAt: "2025-12-24T07:17:01.000Z",
+      },
+      {
+        id: 108,
+        userId: 3,
+        optionId: 45,
+        shares: "100.0000000000000000",
+        saleAtPrice: "0.5715480061495828",
+        createdAt: "2025-12-24T06:07:52.000Z",
+      },
+      {
+        id: 106,
+        userId: 3,
+        optionId: 45,
+        shares: "4.0000000000000000",
+        saleAtPrice: "0.5597701613783670",
+        createdAt: "2025-12-23T13:21:09.000Z",
+      },
+      {
+        id: 105,
+        userId: 3,
+        optionId: 44,
+        shares: "30.0000000000000000",
+        saleAtPrice: "0.4434368697492649",
+        createdAt: "2025-12-23T13:20:34.000Z",
+      },
+      {
+        id: 104,
+        userId: 3,
+        optionId: 45,
+        shares: "2.0000000000000000",
+        saleAtPrice: "0.5531062841248513",
+        createdAt: "2025-12-23T13:18:53.000Z",
+      },
+      {
+        id: 103,
+        userId: 3,
+        optionId: 45,
+        shares: "5.0000000000000000",
+        saleAtPrice: "0.5539712280892672",
+        createdAt: "2025-12-23T13:16:31.000Z",
+      },
+      {
+        id: 100,
+        userId: 2,
+        optionId: 44,
+        shares: "20.0000000000000000",
+        saleAtPrice: "0.4473885568653714",
+        createdAt: "2025-12-23T13:15:05.000Z",
+      },
+      {
+        id: 95,
+        userId: 3,
+        optionId: 44,
+        shares: "2.0000000000000000",
+        saleAtPrice: "0.4414623271884466",
+        createdAt: "2025-12-23T11:28:35.000Z",
+      },
+      {
+        id: 94,
+        userId: 3,
+        optionId: 44,
+        shares: "11.0000000000000000",
+        saleAtPrice: "0.4430657951641230",
+        createdAt: "2025-12-23T11:24:09.000Z",
+      },
+    ],
+  },
+};
 const Page = () => {
   const [orderFlow, setOrderFlow] = useState<{
     buys: any[];
     sells: any[];
   }>({
-    buys: [],
-    sells: [],
+    buys: bysssss || [],
+    sells: sellsssss || [],
   });
-
-  const [data, setData] = useState<any>({});
+  const [isLoader, setIsLoader] = useState<any>(false);
+  const [data, setData] = useState<any>(datassssss || {});
   const [graphData, setGraphData] = useState<any>({});
   const { slug } = useParams();
   const [isOpenBuySell, setIsOpenBuySell] = useState(false);
@@ -34,23 +421,32 @@ const Page = () => {
   const userDetails = useSelector((state: any) => state?.user);
   const useToken = localStorage.getItem("token");
 
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
   const questionDetailsList = async () => {
+    setIsLoader(true);
     try {
-      const response: any = await questionDetails(slug, userDetails?.user?.id);
+      const [response] = await Promise.all([
+        questionDetails(slug, userDetails?.user?.id),
+        delay(2000), // ⏱️ minimum loader time
+      ]);
 
       if (response?.success) {
-        setOrderFlow({
-          buys: response?.data?.orderFlow?.buys || [],
-          sells: response?.data?.orderFlow?.sells || [],
-        });
-        setData(response?.data || {});
+        // setOrderFlow({
+        //   buys: response?.data?.orderFlow?.buys || [],
+        //   sells: response?.data?.orderFlow?.sells || [],
+        // });
+        // setData(response?.data || {});
       } else {
-        setOrderFlow({ buys: [], sells: [] });
-        setData({});
+        // setOrderFlow({ buys: [], sells: [] });
+        // setData({});
       }
     } catch (error: any) {
-      setOrderFlow({ buys: [], sells: [] });
-      setData({});
+      // setOrderFlow({ buys: [], sells: [] });
+      // setData({});
+    } finally {
+      setIsLoader(false);
     }
   };
   const getGraphDetails = async () => {
@@ -260,6 +656,7 @@ const Page = () => {
   console.log(orderFlow, "orderFlow");
   return (
     <>
+      {isLoader && <GlobalLoader />}
       <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-28">
         <div className="container mx-auto p-3 lg:p-6">
           <div className="md:flex lg:items-center mb-6">
@@ -307,9 +704,9 @@ const Page = () => {
           </div>
 
           <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-6">
+            <div className="md:col-span-2   space-y-6">
               {graphData?.series?.length > 0 ? (
-                <div className=" h-64 mb-6 flex items-center justify-center">
+                <div className=" h-64 mb-6  flex ">
                   <span className="text-gray-500">
                     <ChartRealtime
                       data={graphData?.series?.length > 0 && graphData?.series}
@@ -383,13 +780,13 @@ const Page = () => {
                           </div>
                           <button
                             onClick={() => handleBuyNow(item, "sell")}
-                            className="bg-red-700/40 text-red-600 w-50 lg:w-auto px-3 font-bold py-1 rounded"
+                            className="bg-red-700/40 text-red-600 w-50 cursor-pointer lg:w-auto px-3 font-bold py-1 rounded"
                           >
                             Sell
                           </button>
                           <button
                             onClick={() => handleBuyNow(item, "buy")}
-                            className="bg-green-600/40 text-green-500 w-50 lg:w-auto font-semibold px-3 py-1 rounded"
+                            className="bg-green-600/40 text-green-500 cursor-pointer w-50 lg:w-auto font-semibold px-3 py-1 rounded"
                           >
                             Buy
                           </button>
@@ -473,7 +870,7 @@ const Page = () => {
         orderType={buyType}
         handleChangeOrderType={setBuyType}
         option={options}
-        fetchDetail={questionDetailsList}
+        // fetchDetail={questionDetailsList}
       />
     </>
   );

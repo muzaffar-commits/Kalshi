@@ -13,10 +13,87 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useParams } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
+
+const datass = [
+  {
+    id: 1,
+    userId: 1,
+    name: "All",
+    description:
+      "there are all kind of things that we can now to trade futures outcomes.",
+    slug: "all",
+    imageUrl:
+      "https://localhost:3000/uploads/images/9e3f213f-06db-49ad-b4a3-9087032faaa7.png",
+    isActive: true,
+    createdAt: "2025-12-03T11:03:12.000Z",
+    updatedAt: "2025-12-03T11:03:12.000Z",
+  },
+  {
+    id: 2,
+    userId: 1,
+    name: "New",
+    description: "New test",
+    slug: "new",
+    imageUrl:
+      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
+    isActive: true,
+    createdAt: "2025-12-05T06:12:18.000Z",
+    updatedAt: "2025-12-05T06:12:18.000Z",
+  },
+  {
+    id: 3,
+    userId: 1,
+    name: "Trending",
+    description: "Trending test",
+    slug: "trending",
+    imageUrl:
+      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
+    isActive: true,
+    createdAt: "2025-12-05T06:12:40.000Z",
+    updatedAt: "2025-12-05T06:12:40.000Z",
+  },
+  {
+    id: 4,
+    userId: 1,
+    name: "Game",
+    description: "Game test",
+    slug: "game",
+    imageUrl:
+      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
+    isActive: true,
+    createdAt: "2025-12-17T07:28:39.000Z",
+    updatedAt: "2025-12-17T07:28:39.000Z",
+  },
+  {
+    id: 5,
+    userId: 1,
+    name: "Politics",
+    description: "Politics test",
+    slug: "politics",
+    imageUrl:
+      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
+    isActive: true,
+    createdAt: "2025-12-17T07:29:09.000Z",
+    updatedAt: "2025-12-17T07:29:09.000Z",
+  },
+  {
+    id: 6,
+    userId: 1,
+    name: "Social",
+    description: "Social test",
+    slug: "social",
+    imageUrl:
+      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
+    isActive: true,
+    createdAt: "2025-12-17T07:29:24.000Z",
+    updatedAt: "2025-12-17T07:29:24.000Z",
+  },
+];
+
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState(datass);
   const [categoryId, setCategoryId] = useState(null);
   const location = useParams();
   const user = useSelector((state: any) => state?.user);
@@ -28,10 +105,6 @@ const Header = () => {
   const handleLogin = () => {
     setIsLogin(true);
     setIsOpen(true);
-  };
-
-  const logoutFun = async () => {
-    dispatch(logout());
   };
 
   const categoryAllList = async () => {
