@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Layout/Header/page";
 import Footer from "@/components/Layout/Footer/page";
-
+import ReduxProvider from "@/components/store/providers";
+import { ThemeProvider } from "next-themes";
+import { Toaster } from "react-hot-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,17 +28,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-     <body
-  className={`
-    bg-gradient-to-b from-white to-[#F8FBFF]
-    ${geistSans.variable} 
-    ${geistMono.variable} 
-    antialiased
-  `}
->
-         <Header/>
-         {children}
-         <Footer/>
+      <body
+        className={`
+          bg-gradient-to-b
+          from-white to-[#F8FBFF]
+          text-black dark:text-white
+          ${geistSans.variable}
+          ${geistMono.variable}
+          antialiased
+          min-h-screen
+        `}
+      >
+        <ReduxProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            // disableTransitionOnChange
+          >
+            <Toaster />
+
+            <Header />
+            {children}
+            <Footer />
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

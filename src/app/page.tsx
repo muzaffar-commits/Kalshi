@@ -1,10 +1,12 @@
-import React from 'react'
-import Blocks from './Home/page'
+import React from "react";
+import Blocks from "./Home/page";
+import { Toaster } from "react-hot-toast";
 const Home = () => {
   return (
-    <>
-    <Blocks/>
-    </>
-  )
-}
-export default Home
+    <div className="!bg-white">
+      <Toaster />
+      <Blocks />
+    </div>
+  );
+};
+export default Home;

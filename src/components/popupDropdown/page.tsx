@@ -1,17 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { FaBolt, FaBullseye } from "react-icons/fa";
 
 interface Props {
   label?: string;
   onSelect?: (value: string) => void;
 }
 
-export default function Dropdown({ label = "Limit", onSelect }: Props) {
+export default function Dropdown({ label = "Market", onSelect }: Props) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(label); // 👈 keep track of selected value
+  const [selected, setSelected] = useState(label);
   const ref = useRef<HTMLDivElement>(null);
 
-  // close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -30,52 +30,48 @@ export default function Dropdown({ label = "Limit", onSelect }: Props) {
 
   return (
     <div ref={ref} className="relative inline-block">
-      {/* Button */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        aria-haspopup="true"
-        aria-expanded={open}
-        className="flex items-center gap-2 text-sm bg-white px-3 py-2 hover:bg-gray-50"
-      >
-        {selected} {/* 👈 show selected value */}
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          className="stroke-gray-700"
+      <div className="flex flex-row gap-1 items-center">
+        <span className="text-black text-sm">Order Type :</span>
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-haspopup="true"
+          aria-expanded={open}
+          className="flex items-center capitalize justify-between gap-2 text-gray-600 w-24 text-sm bg-gray-100 px-3 py-2 hover:bg-gray-50"
         >
-          <path
-            d="M6 9l6 6 6-6"
-            fill="none"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
+          {selected}
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            className="stroke-gray-700"
+          >
+            <path
+              d="M6 9l6 6 6-6"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
 
       {/* Menu */}
       {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-lg bg-white shadow-xl shadow-black/50 z-20">
+        <div className="absolute right-0 mt-2 w-36 rounded-lg bg-white shadow-xl shadow-black/50 z-20">
           <div role="menu" className="flex flex-col py-2">
-            <MenuItem
-              label="Buy in dollars"
-              onClick={() => choose("dollars", "Buy in dollars")}
-            >
-              <DollarIcon />
+            <MenuItem label="Market" onClick={() => choose("market", "market")}>
+              <FaBolt className="mt-1 text-yellow-400 " />
             </MenuItem>
-            <MenuItem
-              label="Buy in contracts"
-              onClick={() => choose("contracts", "Buy in contracts")}
-            >
-              <HashIcon />
+            <MenuItem label="Limit" onClick={() => choose("limit", "limit")}>
+              <FaBullseye className="mt-1 text-blue-500" />
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               label="Limit order"
               onClick={() => choose("limit", "Limit order")}
             >
               <LimitIcon />
-            </MenuItem>
+            </MenuItem> */}
           </div>
         </div>
       )}
