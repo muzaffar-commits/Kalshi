@@ -9,6 +9,7 @@ import BuySell from "@/components/Modal/BuySell/page";
 import { getGraphData } from "@/components/service/apiService/buySell";
 import { useSelector } from "react-redux";
 import GlobalLoader from "@/components/common/Loader";
+import { ClassNames } from "@emotion/react";
 
 const sellsssss = [
   {
@@ -656,8 +657,9 @@ const Page = () => {
   console.log(orderFlow, "orderFlow");
   return (
     <>
-      {isLoader && <GlobalLoader />}
-      <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-28">
+      {false && <GlobalLoader />}
+      <div className="dark:bg-[#0f172a]">
+      <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-28 ">
         <div className="container mx-auto p-3 lg:p-6">
           <div className="md:flex lg:items-center mb-6">
             <Image
@@ -668,10 +670,10 @@ const Page = () => {
               className="mr-4 rounded-lg"
             />
             <div>
-              <h1 className="text-xl lg:text-2xl font-bold text-black">
+              <h1 className="text-xl lg:text-2xl font-bold text-black dark:text-white">
                 {data?.question?.question}
               </h1>
-              <p className="text-sm text-[#7F90A7]">
+              <p className="text-sm text-[#7F90A7] dark:text-gray-300">
                 ₹ {Number(data?.market?.totalMarketVolume || 0).toFixed(2) || 0}{" "}
                 Vol.
               </p>
@@ -694,7 +696,7 @@ const Page = () => {
                       } inline-block mr-2`}
                       style={{ width: "10px", height: "10px" }}
                     ></span>
-                    <span className="text-[#7F90A7] font-semibold">
+                    <span className="text-[#7F90A7] font-semibold dark:text-gray-300">
                       {item?.name || "--"}, {(item?.price * 100).toFixed(1)}%
                     </span>
                   </div>
@@ -704,10 +706,10 @@ const Page = () => {
           </div>
 
           <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2   space-y-6">
-              {graphData?.series?.length > 0 ? (
-                <div className=" h-64 mb-6  flex ">
-                  <span className="text-gray-500">
+            <div className="md:col-span-2 space-y-6">
+              {graphData?.series?.length> 0 ? (
+                <div className=" h-64 mb-6 flex">
+                  <span className="text-gray-500 ">
                     <ChartRealtime
                       data={graphData?.series?.length > 0 && graphData?.series}
                     />
@@ -720,12 +722,12 @@ const Page = () => {
               )}
 
               {data?.options?.length > 0 && (
-                <div className="md:flex   items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold !text-[#080b11]  md:border-0  lg:bg-transparent">
-                  <div className="w-64 "></div>
+                <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold !text-[#080b11] md:border-0 lg:bg-transparent">
+                  <div className="w-64"></div>
                   {useToken && (
                     <>
-                      <div className="!w-20 ">Invested</div>
-                      <div className="!w-16 ">PnL</div>
+                      <div className="!w-20">Invested</div>
+                      <div className="!w-16">PnL</div>
                       <div className="!w-24">Buy Shares</div>{" "}
                     </>
                   )}
@@ -740,18 +742,17 @@ const Page = () => {
                     return (
                       <div
                         key={index}
-                        className="md:flex items-center lg:bg-transparent justify-between text-center  md:px-0  md:py-1 border !text-[#162033] rounded-lg border-[#334661] md:border-0  "
-                      >
+                        className="md:flex items-center lg:bg-transparent justify-between text-center  md:px-0 md:py-1 border text-[#162033] dark:text-gray-100 rounded-lg border-[#334661] md:border-0 mb-2">
                         <div
                           className={`flex ${
                             useToken ? "w-64" : "w-full"
-                          }  text-start    mb-3 lg:mb-0`}
+                          }  text-start mb-3 lg:mb-0`}
                         >
                           {item?.name || "--"}
                         </div>
                         {useToken && (
                           <>
-                            <div className="pr-1  !w-20">
+                            <div className="pr-1 !w-20">
                               {item?.userPosition?.invested > 0
                                 ? `${Number(
                                     item?.userPosition?.invested || 0
@@ -780,13 +781,12 @@ const Page = () => {
                           </div>
                           <button
                             onClick={() => handleBuyNow(item, "sell")}
-                            className="bg-red-700/40 text-red-600 w-50 cursor-pointer lg:w-auto px-3 font-bold py-1 rounded"
-                          >
+                            className="bg-[#0099FF]/40 text-blue-500 w-50 cursor-pointer lg:w-auto px-3 font-bold py-1 rounded">
                             Sell
                           </button>
                           <button
                             onClick={() => handleBuyNow(item, "buy")}
-                            className="bg-green-600/40 text-green-500 cursor-pointer w-50 lg:w-auto font-semibold px-3 py-1 rounded"
+                            className="bg-cyan-600/30 text-[#0099ff] cursor-pointer w-50 lg:w-auto font-semibold px-3 py-1 rounded"
                           >
                             Buy
                           </button>
@@ -797,16 +797,16 @@ const Page = () => {
               </div>
             </div>
 
-            <div className="md:col-span-1  border border-[#334661] rounded-lg p-3 lg-p-6">
+            <div className="md:col-span-1 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg-p-6">
               <div className="flex justify-between pr-14 items-center ">
-                <span className="text-lg font-semibold text-gray-900">
+                <span className="text-lg font-semibold text-gray-900 dark:text-gray-200">
                   Shares
                 </span>
-                <span className="text-sm text-gray-500 ">Price</span>
+                <span className="text-sm text-gray-500 dark:text-gray-200">Price</span>
               </div>
 
               <div className="mb-2">
-                <span className="text-base p-0 font-bold text-green-600 mb-3 tracking-wide">
+                <span className="text-base p-0 font-bold text-green-600 bg-green-600/15 px-2 block mb-3 tracking-wide">
                   Buy Orders
                 </span>
                 <div className="max-h-[160px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
@@ -814,9 +814,9 @@ const Page = () => {
                     orderFlow.buys.map((item: any, index: number) => (
                       <div
                         key={index}
-                        className="flex justify-between items-center py-1 px-4  hover:bg-gray-100 transition-colors "
+                        className="flex justify-between items-center py-1 px-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-800 transition-colors border-b border-b-white dark:border-b-gray-600"
                       >
-                        <span className="text-gray-800 font-medium">
+                        <span className="text-gray-500 font-medium dark:text-gray-100">
                           {Number(item?.shares)?.toFixed(2) || "0.00"}
                         </span>
                         <span className="text-green-600 font-semibold">
@@ -832,8 +832,8 @@ const Page = () => {
                 </div>
               </div>
 
-              <div>
-                <span className="text-base font-bold text-red-600 mb-0 tracking-wide">
+              <div className="">
+                <span className="text-base font-bold text-red-600 tracking-wide bg-red-600/15 block px-2 mb-3">
                   Sell Orders
                 </span>
                 <div className="max-h-[160px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
@@ -841,9 +841,9 @@ const Page = () => {
                     orderFlow.sells.map((item: any, index: number) => (
                       <div
                         key={index}
-                        className="flex justify-between items-center py-1 px-4  hover:bg-gray-100 transition-colors "
+                        className="flex justify-between items-center py-1 px-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-800 transition-colors border-b border-b-white dark:border-b-gray-600"
                       >
-                        <span className="text-gray-800 font-medium">
+                        <span className="text-gray-500 font-medium dark:text-gray-200">
                           {Number(item?.shares)?.toFixed(2) || "0.00"}
                         </span>
                         <span className="text-red-600 font-semibold">
@@ -862,7 +862,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-
+</div>
       <BuySell
         rowDetails={data}
         isOpen={isOpenBuySell}

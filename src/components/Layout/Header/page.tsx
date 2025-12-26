@@ -146,7 +146,7 @@ const Header = () => {
   }, [token]);
   return (
     <>
-      <header className="w-full dark:bg-black bg-[#fff] fixed top-0 z-30">
+      <header className="w-full dark:bg-[#0f172a] bg-[#fff] fixed top-0 z-30">
         <div className="max-w-[1268px] mx-auto px-4">
           <div className="flex items-center justify-between py-3 relative">
             <Link href="/">
@@ -181,10 +181,9 @@ const Header = () => {
                 <input
                   type="text"
                   placeholder="Search demo market"
-                  className="w-full pl-4 pr-4 py-2 rounded-md bg-[#eff3f9] 
-                  text-gray-200 placeholder-gray-400 
-                  focus:outline-none focus:ring-1 focus:ring-gray-200"
-                />
+                  className="w-full pl-4 pr-4 py-2 rounded-md dark:bg-[#1e293b] bg-[#eff3f9] 
+                 dark:text-gray-900 text-gray-200 placeholder-gray-400 
+                  focus:outline-none focus:ring-1 focus:ring-gray-200" />
               </div>
             </div>
 
@@ -210,9 +209,7 @@ const Header = () => {
                   </button>
                   <button
                     onClick={handleSignup}
-                    className="px-4 py-1 rounded-md text-white font-bold 
-             bg-[#0099FF]"
-                  >
+                    className="px-4 py-1 rounded-md text-white font-bold bg-[#0099FF]">
                     Sign Up
                   </button>
                 </>
@@ -220,11 +217,19 @@ const Header = () => {
               <ThemeToggle />
             </div>
 
-            <Drawer buttonLabel="☰" className="cursor-pointer" />
+            {/* <Drawer buttonLabel="☰" 
+  className="cursor-pointer dark:bg-black dark:text-white bg-[#fff] text-black" 
+/> */}
+<Drawer
+  buttonLabel={
+    <span className="text-black dark:text-white text-xl">☰</span>
+  }
+  className="cursor-pointer "
+/>
           </div>
-          <nav className="border-b pb-2 border-gray-300 w-full hidden lg:block">
-            <ul className="flex  justify-start gap-10 w-full px-4 py-2 text-[15px]">
-              {!location?.slug &&
+          <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
+            <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
+              {true &&
                 category?.map((row: any, index) => (
                   <li key={index}>
                     <div
@@ -235,7 +240,7 @@ const Header = () => {
                       className={` ${
                         row?.id == categoryId
                           ? "text-black"
-                          : "text-[#0099FF] hover:text-black cursor-pointer"
+                          : "dark:text-gray-300 text-[#5e5e5f] hover:text-gray-400  cursor-pointer"
                       } font-semibold flex items-center`}
                     >
                       {index == 0 && (

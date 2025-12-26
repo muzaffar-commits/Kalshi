@@ -750,7 +750,7 @@ const Blocks = () => {
     (state: any) => state?.category?.category
   );
   const questionAllList = async () => {
-    setLoader(true);
+    // setLoader(true);
     try {
       const response = await commonQuestionFindById(categoryDetails?.id || 1);
 
@@ -790,7 +790,7 @@ const Blocks = () => {
             : questionData?.map((row: any, index) => (
                 <div
                   key={index}
-                  className="border  border-gray-200  relative min-h-48 rounded-xl p-4 hover:shadow-md transition"
+                  className="border border-gray-200 dark:border-gray-700 dark:bg-[#162033]  relative min-h-48 rounded-xl p-4 hover:shadow-md transition"
                 >
                   <div className="flex items-center mb-3">
                     <Image
@@ -800,7 +800,7 @@ const Blocks = () => {
                       alt="trending"
                       className="mr-2 rounded"
                     />
-                    <h2 className="font-semibold text-sm dark:text-yellow-300 text-gray-800">
+                    <h2 className="font-semibold text-sm dark:text-white text-gray-800">
                       <Link href={`/detail/${row?.id}`}>
                         <div className="block">
                           <div
@@ -818,7 +818,7 @@ const Blocks = () => {
                     {row?.options?.map((item: any, idx: any) => (
                       <div
                         key={idx}
-                        className="flex gap-2 justify-between items-center text-gray-700"
+                        className="flex gap-2 justify-between items-center dark:text-white text-gray-700"
                       >
                         <span className="block max-w-full truncate">
                           {item?.name || "--"}

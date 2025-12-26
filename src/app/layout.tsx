@@ -27,17 +27,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-white dark:bg-[#0f172a]">
       <body
         className={`
           bg-gradient-to-b
           from-white to-[#F8FBFF]
-          text-black dark:text-white
+          text-black dark:text-white 
           ${geistSans.variable}
           ${geistMono.variable}
           antialiased
-          min-h-screen
-        `}
+          min-h-screen `}
       >
         <ReduxProvider>
           <ThemeProvider
