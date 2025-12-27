@@ -15,6 +15,7 @@ import {
 } from "@/components/service/apiService/buySell";
 import { TfiExchangeVertical } from "react-icons/tfi";
 import toast from "react-hot-toast";
+import { useTheme } from "next-themes";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -39,7 +40,7 @@ export default function BuySell({
   const [types, setTypes] = useState<any | "">("market");
   const balance = localStorage.getItem("balance");
   const token = localStorage.getItem("token");
-
+  const { theme } = useTheme();
   const [activeField, setActiveField] = useState<"shares" | "amount" | null>(
     null
   );
@@ -180,7 +181,10 @@ export default function BuySell({
         timeout: 300,
         sx: {
           backdropFilter: "blur(10px)",
-          backgroundColor: "rgba(255, 255, 255, 0.7)",
+          backgroundColor:
+            theme == "dark"
+              ? "rgba(15, 23, 42, 0.7)"
+              : "rgba(255, 255, 255, 0.7)",
         },
       }}
     >
@@ -192,12 +196,12 @@ export default function BuySell({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className="bg-white p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
+          className="bg-white dark:bg-[#0f172a] p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
         >
           {/* Close */}
           <button
             onClick={handleClose}
-            className="absolute top-3 right-3 cursor-pointer text-gray-900 hover:text-gray-500"
+            className="absolute top-3 right-3 cursor-pointer text-gray-900 dark:text-gray-200 hover:text-gray-500"
           >
             ✕
           </button>
@@ -218,7 +222,7 @@ export default function BuySell({
               height={60}
               className="rounded-lg max-h-[45px]"
             />
-            <h6 className="text-sm text-black">
+            <h6 className="text-sm text-black dark:text-white">
               {rowDetails?.question?.question || rowDetails?.question || "--"}
             </h6>
           </div>
@@ -227,7 +231,9 @@ export default function BuySell({
             <span className="text-[#0099FF] text-nowrap font-semibold">
               {orderType === "buy" ? "Buy" : "Sell"} Now
             </span>
-            <span className="text-gray-500">- {option?.name || "--"}</span>
+            <span className="text-gray-500 dark:text-gray-400">
+              - {option?.name || "--"}
+            </span>
           </div>
 
           {/* Tabs */}
@@ -251,7 +257,7 @@ export default function BuySell({
               className={`py-2 mr-6 font-medium ${
                 orderType === "buy"
                   ? "border-b-2 border-[#0099FF] text-[#0099FF]"
-                  : "text-gray-600 cursor-pointer"
+                  : "text-gray-600 dark:text-gray-300 cursor-pointer"
               }`}
             >
               Buy
@@ -269,7 +275,7 @@ export default function BuySell({
               className={`py-2 font-medium ${
                 orderType === "sell"
                   ? "border-b-2 border-[#0099FF] text-[#0099FF]"
-                  : "text-gray-600 cursor-pointer"
+                  : "text-gray-600 dark:text-gray-300 cursor-pointer"
               }`}
             >
               Sell
@@ -301,7 +307,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
+                      className="border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-32 bg-transparent"
                     />
                   </label>
                   <div className="flex items-center justify-center text-gray-400">
@@ -328,7 +334,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none text-gray-800 text-3xl text-right w-32 bg-transparent"
+                      className="border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-32 bg-transparent"
                     />
                   </label>
                 </>
@@ -361,7 +367,7 @@ export default function BuySell({
                         }
                       }}
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none text-gray-800 text-3xl text-right w-56 bg-transparent"
+                      className="border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
                     />
                   </label>
                 </>
@@ -372,7 +378,7 @@ export default function BuySell({
               {" "}
               <div className="bg-[#0099FF] font-semibold text-white px-2 py-1 rounded">
                 {" "}
-                LOC{" "}
+                IOC{" "}
               </div>{" "}
             </div>
 
@@ -387,46 +393,46 @@ export default function BuySell({
                       <span className="text-gray-400 font-medium">
                         Available Balance
                       </span>
-                      <span className="text-gray-600 text-sm font-medium">
+                      <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
                         ₹ {Number(balance || 0).toFixed(2) || 0}
                       </span>
                     </div>
                   )}
                   <div className="flex flex-row justify-between">
                     <span className="text-gray-400 font-medium">Fee</span>
-                    <span>
+                    <span className="dark:text-gray-300">
                       ₹ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex flex-row justify-between">
                     <span className="text-gray-400 font-medium">Net Cost</span>
-                    <span>
+                    <span className="dark:text-gray-300">
                       ₹ {Number(shareDetailAmount?.netCost || 0).toFixed(2)}
                     </span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="space-y-2  bg-white py-2 ">
+                  <div className="space-y-2   py-2 ">
                     {/* Total Buy Share */}
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500 font-medium">
+                      <span className="text-gray-400 font-medium">
                         Total Buy Share
                       </span>
-                      <span className="text-gray-800 font-semibold">
+                      <span className="text-gray-800 dark:text-gray-300 font-semibold">
                         {(option?.userPosition?.shares || 0).toFixed(2)}
                       </span>
                     </div>
 
                     <div className="flex flex-row justify-between">
                       <span className="text-gray-400 font-medium">Fee</span>
-                      <span>
+                      <span className="dark:text-gray-300">
                         ₹ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex flex-row justify-between">
                       <span className="text-gray-400 font-medium">Receive</span>
-                      <span>
+                      <span className="dark:text-gray-300">
                         ₹{" "}
                         {Number(shareDetailAmount?.netProceeds || 0).toFixed(2)}
                       </span>

@@ -5,7 +5,6 @@ import Link from "next/link";
 import Drawer from "@/components/Drawer/page";
 import Authentication from "@/components/Pages/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/components/store/slice/auth";
 import { getCommonCategoryAll } from "@/components/service/apiService/category";
 import { saveCategory } from "@/components/store/slice/category";
 import Trend from "../../../../public/img/icon/trend.png";
@@ -14,86 +13,10 @@ import { useParams } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
 
-const datass = [
-  {
-    id: 1,
-    userId: 1,
-    name: "All",
-    description:
-      "there are all kind of things that we can now to trade futures outcomes.",
-    slug: "all",
-    imageUrl:
-      "https://localhost:3000/uploads/images/9e3f213f-06db-49ad-b4a3-9087032faaa7.png",
-    isActive: true,
-    createdAt: "2025-12-03T11:03:12.000Z",
-    updatedAt: "2025-12-03T11:03:12.000Z",
-  },
-  {
-    id: 2,
-    userId: 1,
-    name: "New",
-    description: "New test",
-    slug: "new",
-    imageUrl:
-      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
-    isActive: true,
-    createdAt: "2025-12-05T06:12:18.000Z",
-    updatedAt: "2025-12-05T06:12:18.000Z",
-  },
-  {
-    id: 3,
-    userId: 1,
-    name: "Trending",
-    description: "Trending test",
-    slug: "trending",
-    imageUrl:
-      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
-    isActive: true,
-    createdAt: "2025-12-05T06:12:40.000Z",
-    updatedAt: "2025-12-05T06:12:40.000Z",
-  },
-  {
-    id: 4,
-    userId: 1,
-    name: "Game",
-    description: "Game test",
-    slug: "game",
-    imageUrl:
-      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
-    isActive: true,
-    createdAt: "2025-12-17T07:28:39.000Z",
-    updatedAt: "2025-12-17T07:28:39.000Z",
-  },
-  {
-    id: 5,
-    userId: 1,
-    name: "Politics",
-    description: "Politics test",
-    slug: "politics",
-    imageUrl:
-      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
-    isActive: true,
-    createdAt: "2025-12-17T07:29:09.000Z",
-    updatedAt: "2025-12-17T07:29:09.000Z",
-  },
-  {
-    id: 6,
-    userId: 1,
-    name: "Social",
-    description: "Social test",
-    slug: "social",
-    imageUrl:
-      "https://www.shareindia.com/wp-content/uploads/2023/12/What-is-Forex-Trading.webp",
-    isActive: true,
-    createdAt: "2025-12-17T07:29:24.000Z",
-    updatedAt: "2025-12-17T07:29:24.000Z",
-  },
-];
-
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [category, setCategory] = useState(datass);
+  const [category, setCategory] = useState([]);
   const [categoryId, setCategoryId] = useState(null);
   const location = useParams();
   const user = useSelector((state: any) => state?.user);
@@ -183,22 +106,15 @@ const Header = () => {
                   placeholder="Search demo market"
                   className="w-full pl-4 pr-4 py-2 rounded-md dark:bg-[#1e293b] bg-[#eff3f9] 
                  dark:text-gray-900 text-gray-200 placeholder-gray-400 
-                  focus:outline-none focus:ring-1 focus:ring-gray-200" />
+                  focus:outline-none focus:ring-1 focus:ring-gray-200"
+                />
               </div>
             </div>
 
             {/* Buttons */}
             <div className="flex items-center space-x-2 ml-auto">
               {user?.isAuth ? (
-                <>
-                  {/* <button
-                    onClick={logoutFun}
-                    className="px-4 py-1 border border-[#0099FF] text-[#0099FF] rounded-md hover:bg-[#0099FF] font-bold hover:text-white"
-                  >
-                    Logout
-                  </button> */}
-                  <CustomMenu />
-                </>
+                <CustomMenu />
               ) : (
                 <>
                   <button
@@ -209,7 +125,8 @@ const Header = () => {
                   </button>
                   <button
                     onClick={handleSignup}
-                    className="px-4 py-1 rounded-md text-white font-bold bg-[#0099FF]">
+                    className="px-4 py-1 rounded-md text-white font-bold bg-[#0099FF]"
+                  >
                     Sign Up
                   </button>
                 </>
@@ -217,19 +134,16 @@ const Header = () => {
               <ThemeToggle />
             </div>
 
-            {/* <Drawer buttonLabel="☰" 
-  className="cursor-pointer dark:bg-black dark:text-white bg-[#fff] text-black" 
-/> */}
-<Drawer
-  buttonLabel={
-    <span className="text-black dark:text-white text-xl">☰</span>
-  }
-  className="cursor-pointer "
-/>
+            <Drawer
+              buttonLabel={
+                <span className="text-black dark:text-white text-xl">☰</span>
+              }
+              className="cursor-pointer "
+            />
           </div>
           <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
             <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
-              {true &&
+              {!location?.slug &&
                 category?.map((row: any, index) => (
                   <li key={index}>
                     <div
@@ -239,7 +153,7 @@ const Header = () => {
                       }}
                       className={` ${
                         row?.id == categoryId
-                          ? "text-black"
+                          ? "text-black dark:text-blue-500"
                           : "dark:text-gray-300 text-[#5e5e5f] hover:text-gray-400  cursor-pointer"
                       } font-semibold flex items-center`}
                     >

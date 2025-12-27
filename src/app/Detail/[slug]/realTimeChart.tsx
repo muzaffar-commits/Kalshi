@@ -4,11 +4,13 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { prepareSeries } from "@/utils/Content"; // Your prepareSeries function
+import { useTheme } from "next-themes";
 
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const StackedAreaChart = ({ data }: { data: any }) => {
   const series = prepareSeries(data);
+  const { theme } = useTheme();
 
   const options: ApexOptions = {
     chart: {
@@ -50,7 +52,7 @@ const StackedAreaChart = ({ data }: { data: any }) => {
       offsetY: -10,
       offsetX: 0,
       labels: {
-        colors: "#000",
+        colors: theme === "dark" ? "#fff" : "#000",
       },
     },
 
@@ -115,7 +117,7 @@ const StackedAreaChart = ({ data }: { data: any }) => {
       <ApexChart
         type="area"
         height={230}
-        width={750}
+        width={800}
         series={series}
         options={options}
       />

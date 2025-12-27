@@ -13,15 +13,15 @@ const LoadingCard = () => {
       </div>
 
       {/* Options List */}
-      <div className="text-xs mt-4 mb-5 h-24 space-y-3">
-        {[1, 2].map((_, idx) => (
+      <div className="text-xs mt-4 mb-5 h-24 space-y-1">
+        {[1, 2, 3, 4].map((_, idx) => (
           <div key={idx} className="flex gap-2 justify-between items-center">
             <div className="flex-1 h-4 bg-gray-200 rounded" />
 
             <div className="flex items-center gap-1.5">
               <div className="h-4 w-12 bg-gray-200 rounded" />
-              <div className="py-1 px-2 w-12 h-7 bg-gray-300 rounded-xs" />
-              <div className="py-1 px-2 w-12 h-7 bg-gray-300 rounded-xs" />
+              <div className="py-1 px-2 w-12 h-5 bg-gray-300 rounded-xs" />
+              <div className="py-1 px-2 w-12 h-5 bg-gray-300 rounded-xs" />
             </div>
           </div>
         ))}
@@ -31,7 +31,7 @@ const LoadingCard = () => {
       <div className="flex absolute bottom-3 w-[88%] justify-between items-center text-xs">
         <div className="h-4 w-16 bg-gray-200 rounded" />
 
-        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+        {/* <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -46,7 +46,7 @@ const LoadingCard = () => {
               d="M12 4v16m8-8H4"
             />
           </svg>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -67,3 +67,14 @@ export const getCommonQuoteSell = async (
     return error?.response?.data;
   }
 };
+
+export const getLeaderBoardMarket = async (questionId: any) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.leaderBoardMarketList}/${questionId}/?sort=profit`
+    );
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};

@@ -14,4 +14,5 @@ export const API_URLs = {
   submitOrder: "/orders/submit-order",
   graphData: "/common/markets",
   commonQuoteSell: "/orders/quote-sell",
+  leaderBoardMarketList: "/user/leaderboard/market",
 };

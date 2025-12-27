@@ -18,7 +18,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggleTheme}
       aria-label="Toggle dark mode"
-      className="relative w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 
+      className="relative w-12 h-12 cursor-pointer rounded-full bg-gray-100 dark:bg-gray-800 
                  flex items-center justify-center
                  transition-colors duration-300 overflow-hidden"
     >

@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 const Home = () => {
   return (
     <div className="bg-white dark:bg-[#0f172a]">
-      <Toaster />
+      {/* <Toaster /> */}
       <Blocks />
     </div>
   );

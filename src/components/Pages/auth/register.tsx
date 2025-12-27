@@ -174,10 +174,9 @@ export default function Register({
             </div>
           )}
 
-          {/* Submit */}
           <button
             type="submit"
-            className="w-full py-3 flex items-center justify-center  rounded-xl  text-lg  font-semibold  text-white hover:cursor-pointer shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 transition-all duration-300
+            className="w-full py-3 flex items-center justify-center  rounded-xl  text-lg  font-semibold  text-white hover:cursor-pointer shadow-lg bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 transition-all duration-300
   "
           >
             {isLoader ? (
