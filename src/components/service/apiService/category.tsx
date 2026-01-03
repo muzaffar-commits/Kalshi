@@ -10,10 +10,12 @@ export const getCommonCategoryAll = async () => {
   }
 };
 
-export const commonQuestionFindById = async (id: any) => {
+export const commonQuestionFindById = async (id: any, userId: any) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.commonQuestionFindById}/${id}`
+      `${API_URLs.commonQuestionFindById}/${id}${
+        userId ? `?userId=${userId}` : ""
+      }`
     );
     return response?.data;
   } catch (error: any) {

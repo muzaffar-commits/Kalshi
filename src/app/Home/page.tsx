@@ -18,15 +18,19 @@ const Blocks = () => {
   const [buyType, setBuyType] = useState<any>(null);
   const [options, setOptions] = useState<any>({});
   const [rowDetails, setRowDetails] = useState<any>({});
+  const [optionIndex, setOptionIndex] = useState<any>(null);
   const getToken = localStorage.getItem("token");
   const categoryDetails = useSelector(
     (state: any) => state?.category?.category
   );
+  const userDetails = useSelector((state: any) => state?.user);
+  console.log(userDetails, "userDetails");
+
   const questionAllList = async () => {
     setLoader(true);
     try {
       const [response]: any = await Promise.all([
-        commonQuestionFindById(categoryDetails?.id || 1),
+        commonQuestionFindById(categoryDetails?.id || 1, userDetails?.user?.id),
         delay(1000),
       ]);
       if (response?.success) {
@@ -44,11 +48,12 @@ const Blocks = () => {
     questionAllList();
   }, [categoryDetails?.id]);
 
-  const handleBuyNow = (row: any, item: any, type: string) => {
+  const handleBuyNow = (row: any, item: any, type: string, idx: number) => {
     if (!getToken) {
       setIsOpen(true);
       return;
     }
+    setOptionIndex(idx);
     setRowDetails(row);
     setOptions(item);
     setBuyType(type);
@@ -99,13 +104,13 @@ const Blocks = () => {
                         <div className="flex items-center gap-1.5">
                           <span>{(item?.price * 100).toFixed(1)}%</span>
                           <button
-                            onClick={() => handleBuyNow(row, item, "sell")}
+                            onClick={() => handleBuyNow(row, item, "sell", idx)}
                             className="py-1 px-2 bg-[#0099FF]/40 text-white font-semibold rounded-xs text-[10px]"
                           >
                             Sell
                           </button>
                           <button
-                            onClick={() => handleBuyNow(row, item, "buy")}
+                            onClick={() => handleBuyNow(row, item, "buy", idx)}
                             className="py-1 px-2 bg-cyan-600/30 text-[#0099ff] font-semibold rounded-xs text-[10px]"
                           >
                             Buy
@@ -117,7 +122,7 @@ const Blocks = () => {
 
                   <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
                     <span>
-                      ₹ {Number(row?.stats?.totalVolume || 0)?.toFixed(2) || 0}
+                      $ {Number(row?.stats?.totalVolume || 0)?.toFixed(2) || 0}
                     </span>
                     <span></span>
                   </div>
@@ -134,10 +139,14 @@ const Blocks = () => {
       <BuySell
         rowDetails={rowDetails}
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setOptionIndex(null);
+          setIsModalOpen(false);
+        }}
         orderType={buyType}
         handleChangeOrderType={setBuyType}
         option={options}
+        optionIndex={optionIndex}
       />
     </>
   );

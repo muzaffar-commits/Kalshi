@@ -37,6 +37,7 @@ const Page = () => {
   const processedOrderIdsRef = useRef<Set<number>>(new Set());
   const OrderHistoryIdsRef = useRef<Set<number>>(new Set());
   const [isOpen, setIsOpen] = useState(false);
+  const [optionIndex, setOptionIndex] = useState<any>(null);
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -262,11 +263,12 @@ const Page = () => {
   }, [slug]);
 
   const getToken = localStorage.getItem("token");
-  const handleBuyNow = (row: any, type: string) => {
+  const handleBuyNow = (row: any, type: string, idx: number) => {
     if (!getToken) {
       setIsOpen(true);
       return;
     }
+    setOptionIndex(idx);
     setOptions(row);
     setBuyType(type);
     setIsOpenBuySell(true);
@@ -381,7 +383,7 @@ const Page = () => {
                     {data?.question?.question}
                   </h1>
                   <p className="text-sm text-[#7F90A7] dark:text-gray-300">
-                    ₹{" "}
+                    ${" "}
                     {Number(data?.market?.totalMarketVolume || 0).toFixed(2) ||
                       0}{" "}
                     Vol.
@@ -487,7 +489,7 @@ const Page = () => {
                                   pnl < 0 ? "text-red-400" : "text-emerald-400"
                                 }`}
                               >
-                                {pnl !== 0 ? `₹${pnl.toFixed(1)}` : "--"}
+                                {pnl !== 0 ? `$${pnl.toFixed(1)}` : "--"}
                               </div>
 
                               <div className="w-24 text-sm text-slate-300 text-center">
@@ -505,7 +507,7 @@ const Page = () => {
                             </div>
 
                             <button
-                              onClick={() => handleBuyNow(item, "sell")}
+                              onClick={() => handleBuyNow(item, "sell", index)}
                               className="px-4 py-1.5 rounded-md text-xs font-semibold
               bg-red-500/20 text-red-400 border border-red-500/30
               hover:bg-red-500/30 transition"
@@ -514,7 +516,7 @@ const Page = () => {
                             </button>
 
                             <button
-                              onClick={() => handleBuyNow(item, "buy")}
+                              onClick={() => handleBuyNow(item, "buy", index)}
                               className="px-4 py-1.5 rounded-md text-xs font-semibold
               bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
               hover:bg-emerald-500/30 transition"
@@ -558,7 +560,7 @@ const Page = () => {
                               <span className="z-10">
                                 {Number(item?.shares)?.toFixed(2) || "0.00"}
                               </span>
-                              <span className="z-10">₹{price.toFixed(2)}</span>
+                              <span className="z-10">${price.toFixed(2)}</span>
                             </div>
                           );
                         })
@@ -570,7 +572,7 @@ const Page = () => {
                     </div>
 
                     <div className="text-center dark:text-white text-black font-bold py-2 text-base border-y dark:border-[#1c1f26] border-[#d6d6d6]">
-                      ₹{" "}
+                      ${" "}
                       {Number(data?.market?.totalMarketVolume || 0).toFixed(
                         2
                       ) || 0}{" "}
@@ -593,7 +595,7 @@ const Page = () => {
                               <span className="z-10">
                                 {Number(item?.shares)?.toFixed(2) || "0.00"}
                               </span>
-                              <span className="z-10">₹ {price.toFixed(2)}</span>
+                              <span className="z-10">$ {price.toFixed(2)}</span>
                             </div>
                           );
                         })
@@ -623,6 +625,7 @@ const Page = () => {
         orderType={buyType}
         handleChangeOrderType={setBuyType}
         option={options}
+        optionIndex={optionIndex}
       />
     </>
   );
