@@ -806,7 +806,7 @@ const Page = () => {
               </div>
 
               <div className="mb-2">
-                <span className="text-base p-0 font-bold text-green-600 bg-green-600/15 px-2 block mb-3 tracking-wide">
+                <span className="text-base p-0 font-bold text-green-600 mb-3 tracking-wide">
                   Buy Orders
                 </span>
                 <div className="max-h-[160px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
@@ -858,6 +858,62 @@ const Page = () => {
                   )}
                 </div>
               </div>
+
+              <div className="dark:bg-[#151922] bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden border dark:border-[#1c1f26] border-[#d6d6d6]">
+    
+
+    <div className="divide-y dark:divide-[#1c1f26] divide-[#d6d6d6]">
+  
+      <div className="relative flex justify-between px-2 py-1 text-sm text-red-400 font-medium">
+        <div className="absolute right-0 top-0 h-full bg-red-500 opacity-10 z-0" style={{ width: '80%' }}></div>
+        <span className="z-10">29484.1</span>
+        <span className="z-10">2.44224615</span>
+      </div>
+
+      <div className="relative flex justify-between px-2 py-1 text-sm text-red-400 font-medium">
+        <div className="absolute right-0 top-0 h-full bg-red-500 opacity-10 z-0" style={{ width: '10%' }}></div>
+        <span className="z-10">29483.1</span>
+        <span className="z-10">0.02900000</span>
+      </div>
+
+      <div className="relative flex justify-between px-2 py-1 text-sm text-red-400 font-medium">
+        <div className="absolute right-0 top-0 h-full bg-red-500 opacity-10 z-0" style={{ width: '30%' }}></div>
+        <span className="z-10">29482.2</span>
+        <span className="z-10">2.59239545</span>
+      </div>
+
+    
+    </div>
+
+ 
+    <div className="text-center dark:text-white text-black font-bold py-2 text-base border-y dark:border-[#1c1f26] border-[#d6d6d6]">
+      29481.3 USD <span className="text-green-500 text-xs align-top">▲</span>
+    </div>
+
+   
+    <div className="divide-y dark:divide-[#2e3139] divide-[#d6d6d6]">
+      <div className="relative flex justify-between px-2 py-1 text-sm text-green-400 font-medium">
+        <div className="absolute left-0 top-0 h-full bg-green-500 opacity-10 z-0" style={{ width: '30%' }}></div>
+        <span className="z-10">29481.2</span>
+        <span className="z-10">0.34533991</span>
+      </div>
+
+      <div className="relative flex justify-between px-2 py-1 text-sm text-green-400 font-medium">
+        <div className="absolute left-0 top-0 h-full bg-green-500 opacity-10 z-0" style={{ width: '10%' }}></div>
+        <span className="z-10">29481.0</span>
+        <span className="z-10">0.06784030</span>
+      </div>
+
+      <div className="relative flex justify-between px-2 py-1 text-sm text-green-400 font-medium">
+        <div className="absolute left-0 top-0 h-full bg-green-500 opacity-10 z-0" style={{ width: '70%' }}></div>
+        <span className="z-10">29475.0</span>
+        <span className="z-10">2.79452092</span>
+      </div>
+
+     
+    </div>
+
+  </div>
             </div>
           </div>
         </div>

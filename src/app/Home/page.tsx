@@ -784,15 +784,17 @@ const Blocks = () => {
   return (
     <>
       <div className="max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-40">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0 relative overflow-visible">
           {loader
             ? [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
             : questionData?.map((row: any, index) => (
-                <div
-                  key={index}
-                  className="border border-gray-200 dark:border-gray-700 dark:bg-[#162033]  relative min-h-48 rounded-xl p-4 hover:shadow-md transition"
-                >
-                  <div className="flex items-center mb-3">
+<div
+  key={index}
+  className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#162033] 
+    relative min-h-48 rounded-xl p-4 
+    transition-transform duration-300 ease-in-out 
+    transform hover:scale-110 hover:shadow-md hover:z-50">
+                 <div className="flex items-center mb-3">
                     <Image
                       src="/img/blockimg1.jpg"
                       width={40}
@@ -814,7 +816,7 @@ const Blocks = () => {
                     </h2>
                   </div>
 
-                  <div className="text-xs mt-4 mb-5 h-24 overflow-y-auto space-y-2">
+                  <div className="text-xs mt-4 mb-5 h-24 overflow-y-auto space-y-2 custom-scroll">
                     {row?.options?.map((item: any, idx: any) => (
                       <div
                         key={idx}
