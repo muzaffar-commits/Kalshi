@@ -12,8 +12,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { usePathname, useSearchParams } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
-import { FaArrowTrendUp  } from "react-icons/fa6";
-import { FaSearch  } from "react-icons/fa";
+import { FaArrowTrendUp } from "react-icons/fa6";
+import { FaSearch } from "react-icons/fa";
 
 interface CategoryState {
   category?: {
@@ -119,31 +119,31 @@ const Header = () => {
     <>
       <header className="w-full dark:bg-[#0f172a] bg-[#fff] fixed top-0 z-30">
         <div className="max-w-[1268px] mx-auto px-4">
-          <div className="flex items-center justify-between py-3 relative">
+          <div className="flex items-center justify-between py-3 border-b dark:border-gray-800 border-gray-300  relative">
             <Link href="/">
               <div className="flex items-center space-x-2">
                 <div className="hidden md:block text-xl font-bold">
                   <div className="hidden md:block text-xl font-bold">
-  {/* Light mode logo */}
-  <Image
-    src="/img/opinionLogo-dark.png"
-    alt="Opinion logo"
-    width={80}
-    height={80}
-    className="h-auto block dark:hidden"
-    priority
-  />
+                    {/* Light mode logo */}
+                    <Image
+                      src="/img/opinionLogo-dark.png"
+                      alt="Opinion logo"
+                      width={80}
+                      height={80}
+                      className="h-auto block dark:hidden"
+                      priority
+                    />
 
-  {/* Dark mode logo */}
-  <Image
-    src="/img/opinionLogo-light.png"
-    alt="Opinion logo"
-    width={80}
-    height={80}
-    className="h-auto hidden dark:block"
-    priority
-  />
-</div>
+                    {/* Dark mode logo */}
+                    <Image
+                      src="/img/opinionLogo-light.png"
+                      alt="Opinion logo"
+                      width={80}
+                      height={80}
+                      className="h-auto hidden dark:block"
+                      priority
+                    />
+                  </div>
                   <span className="text-white"></span>
                 </div>
               </div>
@@ -151,7 +151,7 @@ const Header = () => {
             <div className="absolute top-full left-0 w-full lg:ml-20 lg:px-4 md:static md:w-[800px] md:max-w-lg md:mx-3 mx-auto">
               <div className="relative">
                 <span className="absolute inset-y-0 right-3 flex items-center pl-3 text-gray-400">
-                  <FaSearch className="dark:text-[#c7ac77]/60"/>
+                  <FaSearch className="dark:text-[#c7ac77]/60" />
                   {/* <svg
                     className="w-5 h-5"
                     fill="none"
@@ -201,7 +201,9 @@ const Header = () => {
             </div>
             <Drawer
               buttonLabel={
-                <span className="text-black dark:text-[#c7ac77] text-xl">☰</span>
+                <span className="text-black dark:text-[#c7ac77] text-xl">
+                  ☰
+                </span>
               }
               className="cursor-pointer"
             />
@@ -224,7 +226,7 @@ const Header = () => {
                     >
                       {index == 0 && (
                         <span>
-                          <FaArrowTrendUp className="mr-1"/>
+                          <FaArrowTrendUp className="mr-1" />
                           {/* <Image
                             src={Trend}
                             width={14}

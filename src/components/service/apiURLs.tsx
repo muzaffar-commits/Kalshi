@@ -19,4 +19,10 @@ export const API_URLs = {
   cancelOrders: "/orders",
   userDetails: "/user",
   userPositions: "/user/positions",
+  // user post feedback/delete/get
+  getFeed: "/user/feed",
+  userPost: "/user/post",
+  imageUpload: "/upload/images",
 };
+
+// images
