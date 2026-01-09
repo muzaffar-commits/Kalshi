@@ -93,7 +93,7 @@ const Home = () => {
                   className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#162033] 
                   relative min-h-48 rounded-xl p-4 
                   transition-transform duration-300 ease-in-out 
-                  transform hover:scale-105 hover:shadow-md hover:z-50"
+                  transform hover:scale-105 hover:shadow-md "
                 >
                   <div className="flex items-center mb-3">
                     <Image
@@ -130,13 +130,13 @@ const Home = () => {
                           <span>{(item?.price * 100).toFixed(1)}%</span>
                           <button
                             onClick={() => handleBuyNow(row, item, "sell", idx)}
-                            className="py-1 px-2 bg-[#0099FF]/40 cursor-pointer text-white font-semibold rounded-xs text-[10px]"
+                            className="py-1 px-2 bg-[#c7ac77]/80 cursor-pointer text-white font-semibold rounded-xs text-[10px]"
                           >
                             Sell
                           </button>
                           <button
                             onClick={() => handleBuyNow(row, item, "buy", idx)}
-                            className="py-1 px-2 bg-cyan-600/30 cursor-pointer text-[#0099ff] font-semibold rounded-xs text-[10px]"
+                            className="py-1 px-2 border border-[#c7ac77]/80 cursor-pointer text-[#c7ac77] font-semibold rounded-xs text-[10px]"
                           >
                             Buy
                           </button>

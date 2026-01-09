@@ -40,16 +40,28 @@ export default function Drawer({ buttonLabel, className }: RightDrawerProps) {
         }`}
       >
         {/* Drawer Header */}
-        <div className="flex justify-between items-center p-4 border-b">
+        <div className="flex justify-between items-center p-4 border-b dark:border-gray-600 border-gray-300">
           <div className=" flex items-center gap-2">
-            <Image
-              src="/img/opinionLogo.jpg"
-              alt="Opinion logo"
-              width={40}
-              height={40}
-              className="h-auto rounded-full"
-            />
-            <span className="font-serif text-xl text-gray-400">
+             {/* Light mode logo */}
+              <Image
+                src="/img/opinionLogo-dark.png"
+                alt="Opinion logo"
+                width={40}
+                height={40}
+                className="h-auto block dark:hidden"
+                priority
+              />
+            
+              {/* Dark mode logo */}
+              <Image
+                src="/img/opinionLogo-light.png"
+                alt="Opinion logo"
+                width={40}
+                height={40}
+                className="h-auto hidden dark:block"
+                priority
+              />
+            <span className="font-serif text-xl dark:text-gray-300 text-gray-600">
               Opinion Kings
             </span>
           </div>
@@ -66,10 +78,18 @@ export default function Drawer({ buttonLabel, className }: RightDrawerProps) {
         <div className="space-y-2.5 mt-5">
           {/* Privacy Policy */}
           <Link
+            href="/ideas"
+            onClick={closeDrawer}
+            className="block px-4 rounded-lg text-base font-medium text-gray-600 dark:text-gray-400 
+                            dark:hover:bg-gray-800 hover:text-[#c6a872] transition"
+          >
+            Ideas
+          </Link>
+          <Link
             href="/privacyPolicy"
             onClick={closeDrawer}
-            className="block px-4 rounded-lg text-base font-medium text-gray-800 dark:text-gray-200 
-                           hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#0099ff] transition"
+            className="block px-4 rounded-lg text-base font-medium text-gray-600 dark:text-gray-400 
+                            dark:hover:bg-gray-800 hover:text-[#c6a872] transition"
           >
             Privacy Policy
           </Link>
@@ -78,8 +98,8 @@ export default function Drawer({ buttonLabel, className }: RightDrawerProps) {
           <Link
             href="/termsAndConditions"
             onClick={closeDrawer}
-            className="block px-4  rounded-lg text-base font-medium text-gray-800 dark:text-gray-200 
-                           hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#0099ff] transition"
+            className="block px-4 rounded-lg text-base font-medium text-gray-600 dark:text-gray-400 
+                            dark:hover:bg-gray-800 hover:text-[#c6a872] transition"
           >
             Terms & Conditions
           </Link>

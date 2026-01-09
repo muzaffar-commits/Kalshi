@@ -18,7 +18,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggleTheme}
       aria-label="Toggle dark mode"
-      className="relative w-12 h-12 cursor-pointer rounded-full bg-gray-100 dark:bg-gray-800 
+      className="relative w-8 h-8 cursor-pointer rounded-full bg-gray-100 dark:bg-gray-800 
                  flex items-center justify-center
                  transition-colors duration-300 overflow-hidden"
     >
@@ -34,7 +34,7 @@ export default function ThemeToggle() {
         `}
       >
         <svg
-          className="w-6 h-6 text-yellow-500"
+          className="w-5 h-5 text-yellow-500"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -58,7 +58,7 @@ export default function ThemeToggle() {
         `}
       >
         <svg
-          className="w-6 h-6 text-yellow-300"
+          className="w-5 h-5 text-[#c3a66e]"
           fill="currentColor"
           viewBox="0 0 20 20"
         >

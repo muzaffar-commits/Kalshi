@@ -12,6 +12,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useSearchParams } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
+import { FaArrowTrendUp  } from "react-icons/fa6";
+import { FaSearch  } from "react-icons/fa";
 
 interface CategoryState {
   category?: {
@@ -122,14 +124,26 @@ const Header = () => {
               <div className="flex items-center space-x-2">
                 <div className="hidden md:block text-xl font-bold">
                   <div className="hidden md:block text-xl font-bold">
-                    <Image
-                      src="/img/opinionLogo.jpg"
-                      alt="Opinion logo"
-                      width={80}
-                      height={80}
-                      className="h-auto"
-                    />
-                  </div>
+  {/* Light mode logo */}
+  <Image
+    src="/img/opinionLogo-dark.png"
+    alt="Opinion logo"
+    width={80}
+    height={80}
+    className="h-auto block dark:hidden"
+    priority
+  />
+
+  {/* Dark mode logo */}
+  <Image
+    src="/img/opinionLogo-light.png"
+    alt="Opinion logo"
+    width={80}
+    height={80}
+    className="h-auto hidden dark:block"
+    priority
+  />
+</div>
                   <span className="text-white"></span>
                 </div>
               </div>
@@ -137,7 +151,8 @@ const Header = () => {
             <div className="absolute top-full left-0 w-full lg:ml-20 lg:px-4 md:static md:w-[800px] md:max-w-lg md:mx-3 mx-auto">
               <div className="relative">
                 <span className="absolute inset-y-0 right-3 flex items-center pl-3 text-gray-400">
-                  <svg
+                  <FaSearch className="dark:text-[#c7ac77]/60"/>
+                  {/* <svg
                     className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
@@ -149,7 +164,7 @@ const Header = () => {
                       strokeLinejoin="round"
                       d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
                     />
-                  </svg>
+                  </svg> */}
                 </span>
                 {/* Input Box */}
                 <input
@@ -170,13 +185,13 @@ const Header = () => {
                 <>
                   <button
                     onClick={handleLogin}
-                    className="px-4 py-1 border border-[#0099FF] text-[#0099FF] rounded-md hover:bg-[#0099FF] font-bold hover:text-white"
+                    className="px-4 py-1 border border-[#c7ac77] text-[#c7ac77] rounded-md hover:bg-[#c7ac77] font-bold hover:text-white"
                   >
                     Log In
                   </button>
                   <button
                     onClick={handleSignup}
-                    className="px-4 py-1 rounded-md text-white font-bold bg-[#0099FF]"
+                    className="px-4 py-1 rounded-md text-white font-bold bg-[#c7ac77] hover:bg-gray-500"
                   >
                     Sign Up
                   </button>
@@ -184,12 +199,11 @@ const Header = () => {
               )}
               <ThemeToggle />
             </div>
-
             <Drawer
               buttonLabel={
-                <span className="text-black dark:text-white text-xl">☰</span>
+                <span className="text-black dark:text-[#c7ac77] text-xl">☰</span>
               }
-              className="cursor-pointer "
+              className="cursor-pointer"
             />
           </div>
           <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
@@ -204,19 +218,20 @@ const Header = () => {
                       }}
                       className={` ${
                         row?.id == categoryId
-                          ? "text-black dark:text-blue-500"
-                          : "dark:text-gray-300 text-[#5e5e5f] hover:text-gray-400  cursor-pointer"
+                          ? "text-black dark:text-[#c7ac77]"
+                          : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
                       } font-semibold flex items-center`}
                     >
                       {index == 0 && (
                         <span>
-                          <Image
+                          <FaArrowTrendUp className="mr-1"/>
+                          {/* <Image
                             src={Trend}
                             width={14}
                             height={14}
                             alt="trending"
                             className="mr-1"
-                          />
+                          /> */}
                         </span>
                       )}
                       {row?.name}
