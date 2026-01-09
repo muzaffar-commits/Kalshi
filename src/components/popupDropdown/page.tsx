@@ -73,7 +73,6 @@ export default function Dropdown({ label = "Market", onSelect }: Props) {
   );
 }
 
-// ---------- MenuItem ----------
 function MenuItem({
   label,
   onClick,

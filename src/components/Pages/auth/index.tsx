@@ -31,8 +31,10 @@ export default function Authentication({
   const loginWithGoogle = async (token: string) => {
     try {
       const reqBody = {
-        idToken: token,
+        idToken:
+          "eyJhbGciOiJSUzI1NiIsImtpZCI6IjRiYTZlZmVmNWUxNzIxNDk5NzFhMmQzYWJiNWYzMzJlMGY3ODcxNjUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4MzU5ODgwMzU5MzAtZWszYjI5N2owbzM0MDk4M2w1c2NiaWdtM21jbWg5b2YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI4MzU5ODgwMzU5MzAtZWszYjI5N2owbzM0MDk4M2w1c2NiaWdtM21jbWg5b2YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTQyNDM4Nzk0NDg1NzA5NjYzMzkiLCJlbWFpbCI6InZhYmhpNzAyOUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmJmIjoxNzY3OTUzMTU3LCJuYW1lIjoiQWJoaSBWYXJtYSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLcUFqTXR5S29SSEhQTTFFU1VWdGIwWXdvNmphbEdCNWlxYS0yeno2RUhuaVpvWGc9czk2LWMiLCJnaXZlbl9uYW1lIjoiQWJoaSIsImZhbWlseV9uYW1lIjoiVmFybWEiLCJpYXQiOjE3Njc5NTM0NTcsImV4cCI6MTc2Nzk1NzA1NywianRpIjoiY2MyYmMzYWMxN2I3MGY3NzQ3Y2VjYTVhZDQzMzk0ZWJlOGM2YWE4ZCJ9.TeBt3fJzjcVX2YVB7n79z-OkPga5f5jlbi6rNf0IezR37Ufqc86yTXVZ65h2tbguhn8cjL99_3AAKVuUu8wAIje5tk21v34rgXH9ZbwtrL59-XxsRQx_xLA5ljpLWy8lx_xEaAhP-S46m3QpcmI6DjmPNF_aIIYaI2VJ1r3O7FKIKfS-arYY8ElxCyHcVvPuGGONOXMaD2BjU7o-qtalMxRyyOvYl3puLMH-6aij2I3PL_WCa3OoQZak5mG_qvs8e4PN1qi0nGOTDLTys4eiFVXjNSJMUReJH6OF1fPfLnRKaYCgp3hUbidnrjL8xsTEOzQaZispqfc4suNoPpbRAg",
       };
+      // eyJhbGciOiJSUzI1NiIsImtpZCI6IjRiYTZlZmVmNWUxNzIxNDk5NzFhMmQzYWJiNWYzMzJlMGY3ODcxNjUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4MzU5ODgwMzU5MzAtZWszYjI5N2owbzM0MDk4M2w1c2NiaWdtM21jbWg5b2YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI4MzU5ODgwMzU5MzAtZWszYjI5N2owbzM0MDk4M2w1c2NiaWdtM21jbWg5b2YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTQyNDM4Nzk0NDg1NzA5NjYzMzkiLCJlbWFpbCI6InZhYmhpNzAyOUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmJmIjoxNzY3OTUzMTU3LCJuYW1lIjoiQWJoaSBWYXJtYSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLcUFqTXR5S29SSEhQTTFFU1VWdGIwWXdvNmphbEdCNWlxYS0yeno2RUhuaVpvWGc9czk2LWMiLCJnaXZlbl9uYW1lIjoiQWJoaSIsImZhbWlseV9uYW1lIjoiVmFybWEiLCJpYXQiOjE3Njc5NTM0NTcsImV4cCI6MTc2Nzk1NzA1NywianRpIjoiY2MyYmMzYWMxN2I3MGY3NzQ3Y2VjYTVhZDQzMzk0ZWJlOGM2YWE4ZCJ9.TeBt3fJzjcVX2YVB7n79z-OkPga5f5jlbi6rNf0IezR37Ufqc86yTXVZ65h2tbguhn8cjL99_3AAKVuUu8wAIje5tk21v34rgXH9ZbwtrL59-XxsRQx_xLA5ljpLWy8lx_xEaAhP-S46m3QpcmI6DjmPNF_aIIYaI2VJ1r3O7FKIKfS-arYY8ElxCyHcVvPuGGONOXMaD2BjU7o-qtalMxRyyOvYl3puLMH-6aij2I3PL_WCa3OoQZak5mG_qvs8e4PN1qi0nGOTDLTys4eiFVXjNSJMUReJH6OF1fPfLnRKaYCgp3hUbidnrjL8xsTEOzQaZispqfc4suNoPpbRAg
       const response = await googleLoginAPI(reqBody);
       console.log(response, "response");
 
@@ -42,7 +44,7 @@ export default function Authentication({
           login({ user: response?.data?.user, token: response?.data?.token })
         );
         toast.success(response?.message);
-        window.location.reload();
+        // window.location.reload();
         handleClose();
       } else {
         toast.error(response?.message || "Something went wrong?");
@@ -60,38 +62,10 @@ export default function Authentication({
   return (
     <>
       <ModalSignup isOpen={isOpen} onClose={handleClose}>
-        <h2 className="text-xl text-black font-bold mb-4">
+        <h2 className="text-xl  text-black dark:text-white font-bold mb-4">
           {isLogin ? " Login your account" : " Create your account"}
         </h2>
-        {/* <div
-          onClick={loginWithGoogle}
-          className="bg-black hover:bg-black/85 w-full p-3 text-center text-white rounded-lg mb-3 cursor-pointer"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 533.5 544.3"
-            className="w-5 h-5 inline-block mr-4"
-            aria-hidden="true"
-          >
-            <path
-              fill="#4285F4"
-              d="M533.5 278.4c0-18.6-1.6-36.5-4.7-53.8H272v101.9h146.9c-6.4 34.9-25.6 64.4-54.8 84.2v69.9h88.5c51.8-47.7 80.9-118 80.9-202.2z"
-            />
-            <path
-              fill="#34A853"
-              d="M272 544.3c73.7 0 135.6-24.4 180.8-66.4l-88.5-69.9c-24.6 16.5-56 26.3-92.3 26.3-70.9 0-131-47.9-152.4-112.3H27.3v70.6C72.1 487.9 165.3 544.3 272 544.3z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M119.6 323.9c-5.6-16.5-8.8-34.1-8.8-52s3.2-35.5 8.8-52V149.3H27.3C10 189.1 0 232 0 271.9s10 82.8 27.3 122.6l92.3-70.6z"
-            />
-            <path
-              fill="#EA4335"
-              d="M272 107.7c39.9 0 75.7 13.7 103.9 40.7l78-78C404.5 25.2 347 0 272 0 165.3 0 72.1 56.4 27.3 149.3l92.3 70.6C141 155.6 201.1 107.7 272 107.7z"
-            />
-          </svg>
-          Continue with Google
-        </div> */}
+
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
           <div className="w-full flex justify-center mt-10">
             <div className="w-full max-w-md">
@@ -119,7 +93,7 @@ export default function Authentication({
           </div>
         </GoogleOAuthProvider>
 
-        <div className="bg-black hover:bg-black/85 w-full p-3 text-center text-white rounded-lg mt-3 mb-3 cursor-pointer">
+        <div className="bg-black dark:bg-gray-50 dark:text-black hover:text-gray-800 hover:dark:bg-white hover:bg-black/85 w-full p-3 text-center text-white rounded-lg mt-3 mb-3 cursor-pointer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -135,7 +109,7 @@ export default function Authentication({
         </div>
         <div
           onClick={handleRegister}
-          className="border border-gray-600/15 hover:bg-gray-200 w-full p-3 text-center text-gray-800 rounded-lg mb-3 cursor-pointer"
+          className="border border-gray-600/15 hover:bg-gray-200 hover:dark:bg-transparent w-full p-3 text-center text-gray-800 dark:text-gray-200 dark:border-gray-300 rounded-lg mb-3 cursor-pointer"
         >
           <span className="w-5 h-5 fill-current mr-4 inline-block">@</span>
           Continue with Email

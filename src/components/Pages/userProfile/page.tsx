@@ -231,7 +231,11 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <UpdateProfile isOpen={open} handleClose={handleClose} />
+        <UpdateProfile
+          isOpen={open}
+          handleClose={handleClose}
+          userDetails={userData}
+        />
       </div>
     </>
   );

@@ -128,15 +128,15 @@ export default function Register({
     <ModalSignup isOpen={isOpen} onClose={handleClose}>
       <div className=" flex flex-col pb-5 gap-6">
         {/* Icon */}
-        <div className="mx-auto bg-white shadow-md rounded-2xl p-3 w-14 h-14 flex items-center justify-center">
-          <FiLogOut className="text-black" size={28} />
+        <div className="mx-auto bg-white dark:bg-black/50  shadow-md rounded-2xl p-3 w-14 h-14 flex items-center justify-center">
+          <FiLogOut className="text-black dark:text-white" size={28} />
         </div>
 
         <div className="flex flex-col gap-4">
-          <h1 className="text-center text-2xl  font-semibold text-gray-900">
+          <h1 className="text-center text-2xl  font-semibold text-gray-900 dark:text-white">
             Sign {isLogin ? "in" : "up"} with email or Phone
           </h1>
-          <p className="text-center mx-auto  text-gray-500 w-2/3 text-sm -mt-3">
+          <p className="text-center mx-auto  text-gray-500 dark:text-gray-300 w-2/3 text-sm -mt-3">
             Make a new doc to bring your words, data, and teams together.
           </p>
         </div>
@@ -150,7 +150,7 @@ export default function Register({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.userName ? formik.errors.userName : ""}
-              startIcon={<MdEmail className="text-gray-400" size={22} />}
+              startIcon={<MdEmail className="text-gray-400 " size={22} />}
             />
           </div>
           <div>
@@ -167,13 +167,13 @@ export default function Register({
                 show ? (
                   <FaRegEye
                     size={22}
-                    className="text-gray-600 cursor-pointer"
+                    className="text-gray-600 dark:text-gray-400 cursor-pointer"
                     onClick={() => setShow(false)}
                   />
                 ) : (
                   <FaRegEyeSlash
                     size={22}
-                    className="text-gray-600 cursor-pointer"
+                    className="text-gray-600 dark:text-gray-400 cursor-pointer"
                     onClick={() => setShow(true)}
                   />
                 )
@@ -198,7 +198,6 @@ export default function Register({
             ) : (
               `Sign${isLogin ? "In" : "Up"}`
             )}{" "}
-            kkk
           </button>
         </form>
       </div>

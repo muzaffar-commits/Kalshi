@@ -9,7 +9,7 @@ import { getCommonCategoryAll } from "@/components/service/apiService/category";
 import { saveCategory } from "@/components/store/slice/category";
 import Trend from "../../../../public/img/icon/trend.png";
 import ThemeToggle from "@/components/ThemeToggle";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
 
@@ -54,10 +54,10 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [category, setCategory] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState<number | null>(null);
-
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  console.log(id, "id");
+  console.log(pathname, "pathname");
 
   const user = useSelector((state: RootState) => state?.user);
   const dispatch = useDispatch();
@@ -192,10 +192,10 @@ const Header = () => {
               className="cursor-pointer "
             />
           </div>
-          <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
-            <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
-              {!id &&
-                category?.map((row: Category, index: number) => (
+          {pathname === "/" && (
+            <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
+              <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
+                {category?.map((row: Category, index: number) => (
                   <li key={index}>
                     <div
                       onClick={() => {
@@ -223,8 +223,9 @@ const Header = () => {
                     </div>
                   </li>
                 ))}
-            </ul>
-          </nav>
+              </ul>
+            </nav>
+          )}
         </div>
       </header>
       <Authentication

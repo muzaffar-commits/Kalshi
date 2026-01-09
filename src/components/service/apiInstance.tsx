@@ -3,11 +3,11 @@
 import axios from "axios";
 
 // export const developmentBaseURL = "http://192.168.1.55:3000/api";
-// export const developmentBaseURL = "http://192.168.29.218:3000/api";
-export const productionBaseURL = "https://api.opinionkings.com/api";
+export const developmentBaseURL = "http://192.168.29.218:3000/api";
+// export const productionBaseURL = "https://api.opinionkings.com/api";
 
 const apiInstance = axios.create({
-  baseURL: productionBaseURL,
+  baseURL: developmentBaseURL,
   // timeout: 10000,
   headers: {
     "Content-Type": "application/json",
