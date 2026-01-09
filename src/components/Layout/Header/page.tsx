@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Drawer from "@/components/Drawer/page";
@@ -9,17 +9,57 @@ import { getCommonCategoryAll } from "@/components/service/apiService/category";
 import { saveCategory } from "@/components/store/slice/category";
 import Trend from "../../../../public/img/icon/trend.png";
 import ThemeToggle from "@/components/ThemeToggle";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
+
+interface CategoryState {
+  category?: {
+    id?: number;
+  };
+}
+
+interface UserState {
+  id?: number;
+  isAuth: boolean;
+}
+
+interface RootState {
+  category?: CategoryState;
+  user?: UserState;
+}
+
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface CategoryApiResponse {
+  success: boolean;
+  data?: {
+    categories?: Category[];
+  };
+}
+
+interface UserBalanceResponse {
+  success: boolean;
+
+  data?: {
+    balance: string | number;
+  };
+}
 
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [category, setCategory] = useState([]);
-  const [categoryId, setCategoryId] = useState(null);
-  const location = useParams();
-  const user = useSelector((state: any) => state?.user);
+  const [category, setCategory] = useState<Category[]>([]);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
+
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  console.log(id, "id");
+
+  const user = useSelector((state: RootState) => state?.user);
   const dispatch = useDispatch();
   const handleSignup = () => {
     setIsLogin(false);
@@ -30,35 +70,40 @@ const Header = () => {
     setIsOpen(true);
   };
 
-  const categoryAllList = async () => {
+  const categoryAllList = useCallback(async () => {
     try {
-      const response = await getCommonCategoryAll();
-      if (response?.success) {
-        const findOneCategory = response?.data?.categories?.[0];
-        dispatch(saveCategory(findOneCategory));
-        setCategoryId(findOneCategory?.id);
-        setCategory(response?.data?.categories);
+      const response: CategoryApiResponse = await getCommonCategoryAll();
+
+      if (response.success && response.data?.categories?.length) {
+        const firstCategory = response.data.categories[0];
+
+        dispatch(saveCategory(firstCategory));
+        setCategoryId(firstCategory.id);
+        setCategory(response.data.categories);
       } else {
         setCategory([]);
       }
-    } catch (error: any) {
+    } catch {
       setCategory([]);
     }
-  };
+  }, [dispatch]);
+
   useEffect(() => {
     categoryAllList();
-  }, []);
+  }, [categoryAllList]);
 
-  const token = localStorage.getItem("token");
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const getUserBalance = async () => {
     try {
-      const response = await userBalance();
-      if (response?.success) {
-        localStorage.setItem("balance", response?.data?.balance);
+      const response: UserBalanceResponse = await userBalance();
+
+      if (response.success && response.data?.balance !== undefined) {
+        localStorage.setItem("balance", String(response.data.balance));
       } else {
         localStorage.removeItem("balance");
       }
-    } catch (error: any) {
+    } catch {
       localStorage.removeItem("balance");
     }
   };
@@ -67,6 +112,7 @@ const Header = () => {
       getUserBalance();
     }
   }, [token]);
+
   return (
     <>
       <header className="w-full dark:bg-[#0f172a] bg-[#fff] fixed top-0 z-30">
@@ -74,13 +120,18 @@ const Header = () => {
           <div className="flex items-center justify-between py-3 relative">
             <Link href="/">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-[#0099FF] rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">X</span>
-                </div>
-                <h1 className="hidden md:block text-xl font-bold">
-                  <span className="text-[#0099FF] ">DEMO MARKET</span>{" "}
+                <div className="hidden md:block text-xl font-bold">
+                  <div className="hidden md:block text-xl font-bold">
+                    <Image
+                      src="/img/opinionLogo.jpg"
+                      alt="Opinion logo"
+                      width={80}
+                      height={80}
+                      className="h-auto"
+                    />
+                  </div>
                   <span className="text-white"></span>
-                </h1>
+                </div>
               </div>
             </Link>
             <div className="absolute top-full left-0 w-full lg:ml-20 lg:px-4 md:static md:w-[800px] md:max-w-lg md:mx-3 mx-auto">
@@ -103,7 +154,7 @@ const Header = () => {
                 {/* Input Box */}
                 <input
                   type="text"
-                  placeholder="Search demo market"
+                  placeholder="Search opinion kings"
                   className="w-full pl-4 pr-4 py-2 rounded-md dark:bg-[#1e293b] bg-[#eff3f9] 
                  dark:text-gray-900 text-gray-200 placeholder-gray-400 
                   focus:outline-none focus:ring-1 focus:ring-gray-200"
@@ -143,8 +194,8 @@ const Header = () => {
           </div>
           <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
             <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
-              {!location?.slug &&
-                category?.map((row: any, index) => (
+              {!id &&
+                category?.map((row: Category, index: number) => (
                   <li key={index}>
                     <div
                       onClick={() => {

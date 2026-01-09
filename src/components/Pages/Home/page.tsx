@@ -1,54 +1,71 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import Image from "next/image";
 import { useState } from "react";
-import Link from "next/link";
 import Authentication from "@/components/Pages/auth";
-import { commonQuestionFindById } from "@/components/service/apiService/category";
 import { useSelector } from "react-redux";
 import LoadingCard from "@/components/common/LoadingCard";
 import BuySell from "@/components/Modal/BuySell/page";
+import { commonQuestionFindById } from "@/components/service/apiService/category";
+import { useRouter } from "next/navigation";
+import {
+  OptionItem,
+  QuestionItem,
+  QuestionItemSecond,
+  RootState,
+} from "@/utils/typesInterface";
+import { delay } from "@/utils/Content";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const Blocks = () => {
+const Home = () => {
   const [loader, setLoader] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [questionData, setQuestionData] = useState([]);
-  const [buyType, setBuyType] = useState<any>(null);
-  const [options, setOptions] = useState<any>({});
-  const [rowDetails, setRowDetails] = useState<any>({});
-  const [optionIndex, setOptionIndex] = useState<any>(null);
+  const [questionData, setQuestionData] = useState<QuestionItem[]>([]);
+  const [buyType, setBuyType] = useState<string | null>(null);
+  const [options, setOptions] = useState<OptionItem | null>(null);
+  const [rowDetails, setRowDetails] = useState<QuestionItemSecond | null>(null);
+  const [optionIndex, setOptionIndex] = useState<number | null>(null);
   const getToken = localStorage.getItem("token");
+  const router = useRouter();
   const categoryDetails = useSelector(
-    (state: any) => state?.category?.category
+    (state: RootState) => state?.category?.category
   );
-  const userDetails = useSelector((state: any) => state?.user);
-  console.log(userDetails, "userDetails");
+  const userDetails = useSelector((state: RootState) => state?.user);
+  localStorage.setItem("isCategory", "1");
 
-  const questionAllList = async () => {
+  const questionAllList = useCallback(async () => {
     setLoader(true);
     try {
-      const [response]: any = await Promise.all([
-        commonQuestionFindById(categoryDetails?.id || 1, userDetails?.user?.id),
+      const [response] = await Promise.all([
+        commonQuestionFindById(
+          categoryDetails?.id || 1,
+          userDetails?.user?.id as string
+        ),
         delay(1000),
       ]);
+
       if (response?.success) {
-        setQuestionData(response?.data?.questions || []);
+        setQuestionData(response.data.questions ?? []);
       } else {
         setQuestionData([]);
       }
-    } catch (error: any) {
+    } catch {
       setQuestionData([]);
     } finally {
       setLoader(false);
     }
-  };
+  }, [categoryDetails?.id, userDetails?.user?.id]);
+
   useEffect(() => {
     questionAllList();
-  }, [categoryDetails?.id]);
+  }, [questionAllList]);
 
-  const handleBuyNow = (row: any, item: any, type: string, idx: number) => {
+  const handleBuyNow = (
+    row: QuestionItemSecond,
+    item: OptionItem,
+    type: string,
+    idx: number
+  ) => {
     if (!getToken) {
       setIsOpen(true);
       return;
@@ -59,16 +76,24 @@ const Blocks = () => {
     setBuyType(type);
     setIsModalOpen(true);
   };
+
+  const goToDetails = (userId: string) => {
+    router.push(`/detail?id=${userId}`);
+  };
+
   return (
     <>
-      <div className="max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-40">
+      <div className="max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0">
           {loader
             ? [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
-            : questionData?.map((row: any, index) => (
+            : questionData?.map((row: QuestionItem, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 dark:border-gray-700 dark:bg-[#162033]  relative min-h-48 rounded-xl p-4 hover:shadow-md transition"
+                  className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#162033] 
+                  relative min-h-48 rounded-xl p-4 
+                  transition-transform duration-300 ease-in-out 
+                  transform hover:scale-105 hover:shadow-md hover:z-50"
                 >
                   <div className="flex items-center mb-3">
                     <Image
@@ -78,8 +103,8 @@ const Blocks = () => {
                       alt="trending"
                       className="mr-2 rounded"
                     />
-                    <h2 className="font-semibold text-sm dark:text-white text-gray-800">
-                      <Link href={`/detail/${row?.id}`}>
+                    <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-gray-800">
+                      <div onClick={() => goToDetails(row.id)}>
                         <div className="block">
                           <div
                             className="line-clamp-2"
@@ -88,12 +113,12 @@ const Blocks = () => {
                             {row?.question || "--"}
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     </h2>
                   </div>
 
                   <div className="text-xs mt-4 mb-5 h-24 hideScrollbar overflow-y-auto space-y-2">
-                    {row?.options?.map((item: any, idx: any) => (
+                    {row?.options?.map((item: OptionItem, idx: number) => (
                       <div
                         key={idx}
                         className="flex gap-2 justify-between items-center dark:text-white text-gray-700"
@@ -105,13 +130,13 @@ const Blocks = () => {
                           <span>{(item?.price * 100).toFixed(1)}%</span>
                           <button
                             onClick={() => handleBuyNow(row, item, "sell", idx)}
-                            className="py-1 px-2 bg-[#0099FF]/40 text-white font-semibold rounded-xs text-[10px]"
+                            className="py-1 px-2 bg-[#0099FF]/40 cursor-pointer text-white font-semibold rounded-xs text-[10px]"
                           >
                             Sell
                           </button>
                           <button
                             onClick={() => handleBuyNow(row, item, "buy", idx)}
-                            className="py-1 px-2 bg-cyan-600/30 text-[#0099ff] font-semibold rounded-xs text-[10px]"
+                            className="py-1 px-2 bg-cyan-600/30 cursor-pointer text-[#0099ff] font-semibold rounded-xs text-[10px]"
                           >
                             Buy
                           </button>
@@ -137,18 +162,19 @@ const Blocks = () => {
       />
 
       <BuySell
-        rowDetails={rowDetails}
+        rowDetailss={rowDetails as null}
         isOpen={isModalOpen}
         onClose={() => {
           setOptionIndex(null);
           setIsModalOpen(false);
         }}
-        orderType={buyType}
+        orderType={buyType as string}
         handleChangeOrderType={setBuyType}
         option={options}
-        optionIndex={optionIndex}
+        optionIndex={optionIndex as number}
+        fetchOrders={() => null}
       />
     </>
   );
 };
-export default Blocks;
+export default Home;

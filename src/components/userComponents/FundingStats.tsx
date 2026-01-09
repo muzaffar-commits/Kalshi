@@ -1,4 +1,7 @@
-export default function FundingStats({ balance }: { balance: any }) {
+interface balanceText {
+  balance: string;
+}
+export default function FundingStats({ balance }: { balance: balanceText }) {
   return (
     <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
       <StatCard title="Status" value="Funding Round" />

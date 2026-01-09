@@ -15,4 +15,8 @@ export const API_URLs = {
   graphData: "/common/markets",
   commonQuoteSell: "/orders/quote-sell",
   leaderBoardMarketList: "/user/leaderboard/market",
+  getOrders: "/orders",
+  cancelOrders: "/orders",
+  userDetails: "/user",
+  userPositions: "/user/positions",
 };

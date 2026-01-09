@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { GOOGLE_CLIENT_ID } from "@/components/content";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login } from "@/components/store/slice/auth";
 
 export default function Authentication({
@@ -19,9 +19,8 @@ export default function Authentication({
   handleClose: () => void;
 }) {
   const [registerOpen, setRegisterOpen] = useState(false);
-  const user = useSelector((state: any) => state);
+
   const dispatch = useDispatch();
-  console.log(user, "rpx==================");
   const handleRegister = () => {
     handleClose();
     setRegisterOpen(true);
@@ -29,7 +28,7 @@ export default function Authentication({
   const handleRegisterClose = () => {
     setRegisterOpen(false);
   };
-  const loginWithGoogle = async (token: any) => {
+  const loginWithGoogle = async (token: string) => {
     try {
       const reqBody = {
         idToken: token,
@@ -48,8 +47,14 @@ export default function Authentication({
       } else {
         toast.error(response?.message || "Something went wrong?");
       }
-    } catch (error: any) {
-      toast.error(error?.message || "Internal server error!");
+    } catch (error: unknown) {
+      console.log(error, "Error");
+
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
   return (
@@ -92,7 +97,7 @@ export default function Authentication({
             <div className="w-full max-w-md">
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
-                  const token: any = credentialResponse.credential;
+                  const token: string = credentialResponse.credential || "";
                   const userInfo = jwtDecode(token);
                   console.log("User Info:", userInfo);
                   await loginWithGoogle(token);

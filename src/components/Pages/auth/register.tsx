@@ -18,7 +18,11 @@ const RegisterSchema = Yup.object().shape({
     .min(4, "Must be at least 4 characters"),
   password: Yup.string()
     .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(6, "Password must be at least 8 characters")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/,
+      "Password must contain uppercase, lowercase, number & special character"
+    ),
 });
 
 function isValidEmail(email: string) {
@@ -75,25 +79,35 @@ export default function Register({
           } else {
             toast.error(response?.message);
           }
-        } catch (error: any) {
-          console.log(error, "error");
-
-          toast.error(error?.message || "Something went wrong!");
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            toast.error(error.message);
+          } else {
+            toast.error("Something went wrong");
+          }
         } finally {
           setIsLoader(false);
         }
       } else {
         try {
           const response = await registerAPI(reqBody);
+          console.log(response, "response");
+
           if (response?.success) {
             toast.success(response?.message);
             action.resetForm();
             handleClose();
           } else {
-            toast.error(response?.message);
+            toast.error(response?.errors?.[0]?.message || response?.message);
           }
-        } catch (error: any) {
-          toast.error(error?.message || "Something went wrong!");
+        } catch (error: unknown) {
+          console.log(error, "error===");
+
+          if (error instanceof Error) {
+            toast.error(error.message);
+          } else {
+            toast.error("Something went wrong");
+          }
         } finally {
           setIsLoader(false);
         }
@@ -183,7 +197,8 @@ export default function Register({
               <CircularProgress size={28} color="white" />
             ) : (
               `Sign${isLogin ? "In" : "Up"}`
-            )}
+            )}{" "}
+            kkk
           </button>
         </form>
       </div>

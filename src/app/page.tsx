@@ -1,12 +1,10 @@
+import Home from "@/components/Pages/Home/page";
 import React from "react";
-import Blocks from "./Home/page";
-import { Toaster } from "react-hot-toast";
-const Home = () => {
+const page = () => {
   return (
     <div className="bg-white dark:bg-[#0f172a]">
-      {/* <Toaster /> */}
-      <Blocks />
+      <Home />
     </div>
   );
 };
-export default Home;
+export default page;

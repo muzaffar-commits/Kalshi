@@ -3,15 +3,19 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
-import { prepareSeries } from "@/utils/Content"; // Your prepareSeries function
 import { useTheme } from "next-themes";
+import { prepareSeries } from "@/utils/Content";
+import { RawSeries } from "@/utils/typesInterface";
 
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const StackedAreaChart = ({ data }: { data: any }) => {
-  const series = prepareSeries(data);
-  const { theme } = useTheme();
+interface StackedAreaChartProps {
+  data?: RawSeries[];
+}
 
+const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
+  const { theme } = useTheme();
+  const series = prepareSeries(data);
   const options: ApexOptions = {
     chart: {
       type: "area",
@@ -79,7 +83,7 @@ const StackedAreaChart = ({ data }: { data: any }) => {
 
     yaxis: {
       min: 0,
-      max: 1.5, // Adjust based on your data (Yes + No should sum ≈ 1)
+      max: 1.5,
       labels: {
         style: {
           colors: "#6b7280",
@@ -87,7 +91,7 @@ const StackedAreaChart = ({ data }: { data: any }) => {
         formatter: (val: number) => val.toFixed(2),
       },
       title: {
-        text: undefined, // Remove y-axis title if any
+        text: undefined,
       },
     },
 
@@ -113,7 +117,7 @@ const StackedAreaChart = ({ data }: { data: any }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full -mx-4 sm:mx-0">
       <ApexChart
         type="area"
         height={230}

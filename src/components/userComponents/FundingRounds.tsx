@@ -1,5 +1,9 @@
 "use client";
-export default function FundingRounds({ balance }: { balance: any }) {
+
+interface balanceText {
+  balance: string;
+}
+export default function FundingRounds({ balance }: { balance: balanceText }) {
   console.log(balance, "balance");
 
   return (

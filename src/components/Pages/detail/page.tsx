@@ -1,98 +1,200 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { questionDetails } from "@/components/service/apiService/category";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import ChartRealtime from "./realTimeChart";
 import socket from "@/components/socket";
 import BuySell from "@/components/Modal/BuySell/page";
 import {
+  cancelOrder,
   getGraphData,
   getLeaderBoardMarket,
+  getOrdersList,
 } from "@/components/service/apiService/buySell";
 import { useSelector } from "react-redux";
-import GlobalLoader from "@/components/common/Loader";
 import MarketSkeleton from "@/components/common/CartDetailLoader";
 import Authentication from "@/components/Pages/auth";
 import MarketLeaderboard from "./MarketLeaderboard";
+import OrderList from "./OrderList";
+import ConfirmationModal from "@/components/Modal/ConfirmationModal/page";
+import toast from "react-hot-toast";
+import { GraphData } from "@/utils/typesInterface";
+import { delay } from "@/utils/Content";
 
-const Page = () => {
-  const [orderFlow, setOrderFlow] = useState<{
-    buys: any[];
-    sells: any[];
-  }>({
+type OrderSide = "BUY" | "SELL";
+
+interface OrderFlowItem {
+  id: number;
+  optionId: number;
+  shares: string;
+  saleAtPrice: string;
+  createdAt: string;
+}
+type SellOrder = {
+  saleAtPrice?: number | string;
+};
+interface OrderFlow {
+  buys: OrderFlowItem[];
+  sells: OrderFlowItem[];
+}
+
+interface UserPosition {
+  shares: number;
+  invested: number;
+  pnl: number;
+}
+interface OrderItem {
+  id: number;
+  optionId: number;
+  shares: number;
+  price: number;
+  side: OrderSide;
+  status: string;
+  createdAt: string;
+}
+
+interface OptionItem {
+  id: number;
+  name: string;
+  price: number;
+  winningProbability: number;
+  userPosition?: UserPosition;
+}
+
+interface MarketData {
+  question?: {
+    question: string;
+  };
+  market?: {
+    totalMarketVolume: number;
+  };
+  options?: OptionItem[];
+  lastOrderUpdatedAt: string;
+}
+
+interface SocketPricePayload {
+  questionId: string;
+  prices: number[];
+  ts?: number;
+}
+
+interface SocketTradePayload {
+  orderId: number;
+  optionId: number;
+  filledShares: number;
+  cash: number;
+  side: OrderSide;
+  ts: number;
+}
+
+interface SocketOrderUpdatePayload {
+  questionId: string;
+  optionId: number;
+  orderId: number;
+  filled: number;
+  side: OrderSide;
+  prices: number[];
+}
+
+interface RootState {
+  user?: {
+    user?: { id?: number };
+  };
+}
+
+interface OptionItem {
+  id: number;
+  name: string;
+  price: number;
+  winningProbability: number;
+  userPosition?: UserPosition;
+}
+export interface LeaderboardItem {
+  userId: number;
+  username: string;
+  profit: number;
+  invested: number;
+  pnl: number;
+  rank: number;
+  roi: number;
+}
+
+const Details = () => {
+  const [orderFlow, setOrderFlow] = useState<OrderFlow>({
     buys: [],
     sells: [],
   });
-  const [isLoader, setIsLoader] = useState<any>(false);
-  const [data, setData] = useState<any>({});
-  const [leaderBoard, setLeaderBoard] = useState<any>([]);
-  const [graphData, setGraphData] = useState<any>({});
-  const { slug } = useParams();
+  const [isLoader, setIsLoader] = useState(false);
+  const [data, setData] = useState<MarketData | null>(null);
+  const [leaderBoard, setLeaderBoard] = useState<LeaderboardItem[]>([]);
+  const [graphData, setGraphData] = useState<GraphData>({
+    series: [],
+  });
+  // const { slug }: { slug: string } = useParams();
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("id");
   const [isOpenBuySell, setIsOpenBuySell] = useState(false);
-  const [buyType, setBuyType] = useState<any>(null);
-  const [options, setOptions] = useState<any>({});
-  const userDetails = useSelector((state: any) => state?.user);
+  const [buyType, setBuyType] = useState<OrderSide | unknown>();
+  const [options, setOptions] = useState<OptionItem | null>(null);
+  const userDetails = useSelector((state: RootState) => state?.user);
   const useToken = localStorage.getItem("token");
   const processedOrderIdsRef = useRef<Set<number>>(new Set());
   const OrderHistoryIdsRef = useRef<Set<number>>(new Set());
   const [isOpen, setIsOpen] = useState(false);
-  const [optionIndex, setOptionIndex] = useState<any>(null);
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  const [optionIndex, setOptionIndex] = useState<number | null>(null);
+  const [orderData, setOrderData] = useState<OrderItem[]>([]);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [deleteResponse, setDeleteResponse] = useState(false);
 
-  const questionDetailsList = async () => {
+  const questionDetailsList = useCallback(async () => {
     setIsLoader(true);
     try {
+      // const [response] = await Promise.all([
+      //   questionDetails(slug as string, userDetails?.user?.id as number),
+      // ]);
       const [response] = await Promise.all([
-        questionDetails(slug, userDetails?.user?.id),
+        questionDetails(slug as string, userDetails?.user?.id as number),
         delay(2000),
       ]);
-
       if (response?.success) {
         setOrderFlow({
-          buys: response?.data?.orderFlow?.buys || [],
-          sells: response?.data?.orderFlow?.sells || [],
+          buys: response.data.orderFlow?.buys ?? [],
+          sells: response.data.orderFlow?.sells ?? [],
         });
-        setData(response?.data || {});
+        setData(response.data);
       } else {
         setOrderFlow({ buys: [], sells: [] });
-        setData({});
+        setData(null);
       }
-    } catch (error: any) {
-      setOrderFlow({ buys: [], sells: [] });
-      setData({});
     } finally {
       setIsLoader(false);
     }
-  };
-  const getGraphDetails = async () => {
-    try {
-      const response: any = await getGraphData(slug);
+  }, [slug, userDetails?.user?.id]);
 
-      if (response?.success) {
-        setGraphData(response?.data || {});
-      } else {
-        setGraphData({});
-      }
-    } catch (error: any) {
-      setGraphData({});
+  const getGraphDetails = useCallback(async () => {
+    const response = await getGraphData(slug);
+    if (response?.success) {
+      setGraphData(response.data);
+    } else {
+      setGraphData({ series: [] });
     }
-  };
+  }, [slug]);
 
   // getGraphData
   useEffect(() => {
     questionDetailsList();
     getGraphDetails();
-  }, [slug]);
+  }, [questionDetailsList, getGraphDetails, slug]);
 
   const questionId = slug;
 
-  console.log(socket.connected, "socket.connected=====");
   useEffect(() => {
     if (!socket.connected) {
       socket.connect();
     }
+    console.log(socket.connected, "socket.connected");
 
     socket.on("connect", () => {
       console.log("✅ Socket connected! ID:", socket.id);
@@ -102,19 +204,19 @@ const Page = () => {
       }
     });
 
-    socket.onAny((_, ...args) => {});
-    socket.on("market:prices", (payload: any) => {
+    // socket.onAny((, ...args) => {});
+    socket.on("market:prices", (payload: SocketPricePayload) => {
       console.log("MarketPrices received:", payload);
       if (!payload?.questionId || !Array.isArray(payload.prices)) {
         return;
       }
 
-      setData((prev: any) => {
+      setData((prev): MarketData | null => {
         if (!prev?.options || !Array.isArray(prev.options)) {
           return prev;
         }
         const updatedOptions = prev.options.map(
-          (option: any, index: number) => {
+          (option: OptionItem, index: number) => {
             const newPrice = payload.prices[index];
             return {
               ...option,
@@ -133,15 +235,18 @@ const Page = () => {
         return {
           ...prev,
           options: updatedOptions,
-          lastPriceUpdatedAt: new Date(payload.ts || Date.now()).toISOString(),
+          lastOrderUpdatedAt: new Date(payload.ts || Date.now()).toISOString(),
         };
       });
     });
 
-    socket.on("trade", (payload: any) => {
-      console.log("Trade market", payload);
+    socket.on("trade", (payload: SocketTradePayload) => {
+      if (OrderHistoryIdsRef.current.has(payload.orderId)) {
+        return;
+      }
+      OrderHistoryIdsRef.current.add(payload.orderId);
 
-      const tradeRow = {
+      const tradeRow: OrderFlowItem = {
         id: payload.orderId,
         optionId: payload.optionId,
         shares: payload.filledShares.toFixed(16),
@@ -152,7 +257,7 @@ const Page = () => {
         return;
       }
       OrderHistoryIdsRef.current.add(payload.orderId);
-      setOrderFlow((prev) => {
+      setOrderFlow((prev: OrderFlow) => {
         if (!prev) return prev;
 
         if (payload.side === "BUY") {
@@ -173,9 +278,7 @@ const Page = () => {
       });
     });
 
-    socket.on("order:update", (payload: any) => {
-      console.log(payload, "orderMarket======>123");
-
+    socket.on("order:update", (payload: SocketOrderUpdatePayload) => {
       if (
         !payload?.questionId ||
         !payload?.optionId ||
@@ -188,47 +291,53 @@ const Page = () => {
         return;
       }
       processedOrderIdsRef.current.add(payload.orderId);
-      setData((prev: any) => {
-        if (!prev?.options || !Array.isArray(prev.options)) {
+      setData((prev): MarketData | null => {
+        if (!prev || !Array.isArray(prev.options)) {
           return prev;
         }
-        const updatedOptions = prev.options.map(
-          (option: any, index: number) => {
+
+        const updatedOptions: OptionItem[] = prev.options.map(
+          (option: OptionItem, index: number) => {
             const newPrice = payload.prices?.[index];
+
             if (option.id === payload.optionId) {
-              const prevShares = option.userPosition?.shares || 0;
+              const prevPosition = option.userPosition ?? {
+                shares: 0,
+                invested: 0,
+                pnl: 0,
+              };
+
+              const updatedShares =
+                payload.side === "BUY"
+                  ? prevPosition.shares + payload.filled
+                  : prevPosition.shares - payload.filled;
 
               return {
                 ...option,
                 price:
-                  typeof newPrice === "number" && !isNaN(newPrice)
+                  typeof newPrice === "number" && !Number.isNaN(newPrice)
                     ? newPrice
                     : option.price,
-
                 winningProbability:
-                  typeof newPrice === "number" && !isNaN(newPrice)
+                  typeof newPrice === "number" && !Number.isNaN(newPrice)
                     ? newPrice
                     : option.winningProbability,
-
                 userPosition: {
-                  ...option.userPosition,
-                  shares:
-                    payload.side == "BUY"
-                      ? prevShares + payload.filled
-                      : prevShares - payload.filled,
+                  shares: updatedShares,
+                  invested: prevPosition.invested,
+                  pnl: prevPosition.pnl,
                 },
               };
             }
 
-            // OTHER OPTIONS → ONLY PRICE
             return {
               ...option,
               price:
-                typeof newPrice === "number" && !isNaN(newPrice)
+                typeof newPrice === "number" && !Number.isNaN(newPrice)
                   ? newPrice
                   : option.price,
               winningProbability:
-                typeof newPrice === "number" && !isNaN(newPrice)
+                typeof newPrice === "number" && !Number.isNaN(newPrice)
                   ? newPrice
                   : option.winningProbability,
             };
@@ -243,7 +352,6 @@ const Page = () => {
       });
     });
 
-    // Error handling
     socket.on("connect_error", (err) => {
       console.error("Socket connection error:", err.message);
     });
@@ -260,10 +368,12 @@ const Page = () => {
       // socket.off("order:update");
       socket.offAny();
     };
-  }, [slug]);
+  }, [questionId, userDetails?.user?.id]);
 
-  const getToken = localStorage.getItem("token");
-  const handleBuyNow = (row: any, type: string, idx: number) => {
+  const getToken =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  const handleBuyNow = (row: OptionItem, type: string, idx: number) => {
     if (!getToken) {
       setIsOpen(true);
       return;
@@ -274,27 +384,49 @@ const Page = () => {
     setIsOpenBuySell(true);
   };
 
-  // getLeaderBoardMarket
+  console.log(typeof slug, "slug");
 
-  const getLeaderBoardMarketList = async () => {
+  const getLeaderBoardMarketList = useCallback(async () => {
     try {
-      const response: any = await getLeaderBoardMarket(slug);
+      const response = await getLeaderBoardMarket(slug);
+
       if (response?.success) {
-        setLeaderBoard(response?.data?.leaderboard || []);
+        setLeaderBoard(response.data.leaderboard as LeaderboardItem[]);
       } else {
         setLeaderBoard([]);
       }
-    } catch (error: any) {
+    } catch (error) {
+      console.error(error);
       setLeaderBoard([]);
     }
-  };
+  }, [slug]);
 
   useEffect(() => {
     getLeaderBoardMarketList();
-  }, []);
+  }, [getLeaderBoardMarketList]);
 
+  const ordersList = useCallback(async () => {
+    try {
+      const response = await getOrdersList(2, slug);
+
+      if (response?.success) {
+        setOrderData(response.data?.orders ?? []);
+      } else {
+        setOrderData([]);
+      }
+    } catch (error) {
+      console.error(error);
+      setOrderData([]);
+    }
+  }, [slug]);
+
+  useEffect(() => {
+    ordersList();
+  }, [ordersList]);
+
+  //
   const sellPrices =
-    orderFlow?.sells?.map((i: any) => Number(i?.saleAtPrice) || 0) || [];
+    orderFlow?.sells?.map((i: SellOrder) => Number(i?.saleAtPrice) || 0) || [];
 
   const minSellPrice = Math.min(...sellPrices);
   const maxSellPrice = Math.max(...sellPrices);
@@ -315,7 +447,7 @@ const Page = () => {
   };
 
   const buyPrices =
-    orderFlow?.buys?.map((i: any) => Number(i?.saleAtPrice) || 0) || [];
+    orderFlow?.buys?.map((i: SellOrder) => Number(i?.saleAtPrice) || 0) || [];
 
   const minBuyPrice = Math.min(...buyPrices);
   const maxBuyPrice = Math.max(...buyPrices);
@@ -336,7 +468,7 @@ const Page = () => {
   };
 
   const prices = Array.isArray(data?.options)
-    ? data.options.map((o: any) => Number(o?.price ?? 0))
+    ? data.options.map((o: OptionItem) => Number(o?.price ?? 0))
     : [];
 
   const minPrice = prices.length ? Math.min(...prices) : 0;
@@ -362,13 +494,48 @@ const Page = () => {
     return "bg-slate-700/10";
   };
 
+  const handleDelete = (row: number) => {
+    setSelected(row);
+    setDeleteOpen(true);
+  };
+  const closeDeleteModal = () => {
+    setDeleteOpen(false);
+    setSelected(null);
+  };
+
+  const confirmDelete = async () => {
+    if (selected) {
+      setDeleteResponse(true);
+      try {
+        const response = await cancelOrder(selected);
+        if (response?.success) {
+          toast.success(response.message);
+          setDeleteOpen(false);
+          setSelected(null);
+          ordersList();
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Something went wrong");
+        }
+      } finally {
+        setDeleteResponse(false);
+      }
+    }
+  };
+
+  localStorage.setItem("isCategory", "0");
   return (
     <>
       {isLoader ? (
         <MarketSkeleton />
       ) : (
         <div className="dark:bg-[#0f172a]">
-          <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-28 ">
+          <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-40 ">
             <div className="container mx-auto pb-6 ">
               <div className="md:flex lg:items-center mb-6">
                 <Image
@@ -389,7 +556,7 @@ const Page = () => {
                     Vol.
                   </p>
                   <div className="lg:flex space-x-4 mt-1 text-sm">
-                    {data?.options?.map((item: any, index: any) => (
+                    {data?.options?.map((item: OptionItem, index: number) => (
                       <div key={index} className=" text-wrap items-center">
                         <span
                           className={`rounded-full ${
@@ -419,14 +586,10 @@ const Page = () => {
 
               <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-6">
-                  {graphData?.series?.length > 0 ? (
+                  {Number(graphData?.series?.length) > 0 ? (
                     <div className=" h-64 mb-6 flex">
                       <span className="text-gray-500 ">
-                        <ChartRealtime
-                          data={
-                            graphData?.series?.length > 0 && graphData?.series
-                          }
-                        />
+                        <ChartRealtime data={graphData?.series} />
                       </span>
                     </div>
                   ) : (
@@ -435,7 +598,7 @@ const Page = () => {
                     </div>
                   )}
 
-                  {data?.options?.length > 0 && (
+                  {Number(data?.options?.length) > 0 && (
                     <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold dark:!text-white !text-[#080b11] md:border-0 lg:bg-transparent">
                       <div className="w-64  text-start">Options</div>
                       {useToken && (
@@ -449,7 +612,7 @@ const Page = () => {
                     </div>
                   )}
                   <div className="flex flex-col gap-2">
-                    {data?.options?.map((item: any, index: number) => {
+                    {data?.options?.map((item: OptionItem, index: number) => {
                       const pnl = Number(item?.userPosition?.pnl || 0);
                       const bgClass = getBgClass(Number(item?.price));
 
@@ -457,13 +620,13 @@ const Page = () => {
                         <div
                           key={index}
                           className={`
-          flex flex-col md:flex-row items-center justify-between
-          px-3 py-3 rounded-xl
-          border border-white/10
-          backdrop-blur-md
-          transition-all duration-300
-          ${bgClass}
-        `}
+                            flex flex-col md:flex-row items-center justify-between
+                            px-3 py-3 rounded-xl
+                            border border-white/10
+                            backdrop-blur-md
+                            transition-all duration-300
+                            ${bgClass}
+                          `}
                         >
                           {/* OPTION NAME */}
                           <div
@@ -477,8 +640,8 @@ const Page = () => {
                           {useToken && (
                             <>
                               <div className="w-20 text-sm text-slate-300 text-center">
-                                {item?.userPosition?.invested > 0
-                                  ? Number(item.userPosition.invested).toFixed(
+                                {(item.userPosition?.invested ?? 0) > 0
+                                  ? Number(item.userPosition?.invested).toFixed(
                                       1
                                     )
                                   : "--"}
@@ -493,8 +656,8 @@ const Page = () => {
                               </div>
 
                               <div className="w-24 text-sm text-slate-300 text-center">
-                                {item?.userPosition?.shares > 0
-                                  ? Number(item.userPosition.shares).toFixed(2)
+                                {(item.userPosition?.shares ?? 0) > 0
+                                  ? Number(item.userPosition?.shares).toFixed(1)
                                   : "--"}
                               </div>
                             </>
@@ -509,8 +672,8 @@ const Page = () => {
                             <button
                               onClick={() => handleBuyNow(item, "sell", index)}
                               className="px-4 py-1.5 rounded-md text-xs font-semibold
-              bg-red-500/20 text-red-400 border border-red-500/30
-              hover:bg-red-500/30 transition"
+                              bg-red-500/20 text-red-400 border border-red-500/30
+                              hover:bg-red-500/30 transition"
                             >
                               Sell
                             </button>
@@ -518,8 +681,8 @@ const Page = () => {
                             <button
                               onClick={() => handleBuyNow(item, "buy", index)}
                               className="px-4 py-1.5 rounded-md text-xs font-semibold
-              bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
-              hover:bg-emerald-500/30 transition"
+                              bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
+                              hover:bg-emerald-500/30 transition"
                             >
                               Buy
                             </button>
@@ -530,7 +693,7 @@ const Page = () => {
                   </div>
                 </div>
 
-                <div className="md:col-span-1 border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg-p-6">
+                <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg-p-6">
                   <div className="flex justify-between pr-14 items-center ">
                     <span className="text-lg font-semibold text-gray-900 dark:text-gray-200">
                       Shares
@@ -540,15 +703,15 @@ const Page = () => {
                     </span>
                   </div>
 
-                  <div className="dark:bg-[#151922]/50 bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden border dark:border-[#1c1f26] border-[#d6d6d6]">
+                  <div className="dark:bg-[#151922]/50  bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden border dark:border-[#1c1f26] border-[#d6d6d6]">
                     <div className="divide-y max-h-[160px] hideScrollbar overflow-y-auto dark:divide-[#1c1f26] divide-[#d6d6d6]">
                       {orderFlow?.sells?.length > 0 ? (
-                        orderFlow.sells.map((item: any, index: number) => {
+                        orderFlow.sells.map((item: OrderFlowItem) => {
                           const price = Number(item?.saleAtPrice) || 0;
 
                           return (
                             <div
-                              key={index}
+                              key={item?.id}
                               className="relative flex justify-between px-2 py-1 text-sm text-red-400 font-medium overflow-hidden"
                             >
                               {/* Background bar */}
@@ -584,10 +747,13 @@ const Page = () => {
 
                     <div className="divide-y max-h-[160px] hideScrollbar overflow-y-auto dark:divide-[#2e3139] divide-[#d6d6d6]">
                       {orderFlow?.buys?.length > 0 ? (
-                        orderFlow.buys.map((item: any, index: number) => {
+                        orderFlow.buys.map((item: OrderFlowItem) => {
                           const price = Number(item?.saleAtPrice) || 0;
                           return (
-                            <div className="relative flex justify-between px-2 py-1 text-sm text-green-400 font-medium">
+                            <div
+                              key={item?.id}
+                              className="relative flex justify-between px-2 py-1 text-sm text-green-400 font-medium"
+                            >
                               <div
                                 className="absolute right-0 top-0 h-full bg-green-500 opacity-10 z-0 transition-all duration-300"
                                 style={{ width: getBuyBarWidth(price) }}
@@ -609,7 +775,13 @@ const Page = () => {
                 </div>
               </div>
             </div>
-            <MarketLeaderboard data={leaderBoard} />
+            <div className="flex flex-col gap-4">
+              <MarketLeaderboard data={leaderBoard} />
+
+              {orderData?.length > 0 && (
+                <OrderList data={orderData} cancelOrders={handleDelete} />
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -619,16 +791,24 @@ const Page = () => {
         handleClose={() => setIsOpen(false)}
       />
       <BuySell
-        rowDetails={data}
+        rowDetailss={data as null}
         isOpen={isOpenBuySell}
         onClose={() => setIsOpenBuySell(false)}
-        orderType={buyType}
+        orderType={buyType as string}
         handleChangeOrderType={setBuyType}
         option={options}
-        optionIndex={optionIndex}
+        optionIndex={optionIndex as number}
+        fetchOrders={ordersList}
+      />
+
+      <ConfirmationModal
+        open={deleteOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        isDelete={deleteResponse}
       />
     </>
   );
 };
 
-export default Page;
+export default Details;

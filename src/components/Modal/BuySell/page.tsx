@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
@@ -17,41 +17,122 @@ import { TfiExchangeVertical } from "react-icons/tfi";
 import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
 import { userBalance } from "@/components/service/apiService/user";
-interface ModalProps {
+
+interface UserPosition {
+  shares: number;
+  invested?: number;
+  pnl?: number;
+}
+
+interface OptionItem {
+  id: number;
+  name: string;
+  price: number;
+  userPosition?: UserPosition;
+  winningProbability: number;
+}
+
+// interface QuestionDetails {
+//   id: number;
+//   question?: {
+//     id: number;
+//     question: string;
+//   };
+//   user?: {
+//     [index: number]: {
+//       shares: number;
+//     };
+//   };
+// }
+
+// interface QuestionDetails {
+//   id: number;
+//   question?: {
+//     id: number;
+//     question: string;
+//   };
+//   user?: {
+//     [index: number]: {
+//       shares: number;
+//     };
+//   };
+// }
+
+// rowDetails?.question?.question
+
+interface QuoteDetails {
+  shares?: number;
+  grossCost?: number;
+  grossProceeds?: number;
+  netCost?: number;
+  netProceeds?: number;
+  fee?: number;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T;
+}
+
+interface QuestionStats {
+  totalVolume: number;
+}
+
+interface UserPosition {
+  shares: number;
+  invested?: number;
+  pnl?: number;
+}
+interface QuestionItemSecond {
+  id: number;
+  question: {
+    question: string;
+    id: number;
+  };
+  options: OptionItem[];
+  stats?: QuestionStats;
+  user?: Record<number, UserPosition>;
+}
+
+interface BuySellProps {
   isOpen: boolean;
   onClose: () => void;
-  rowDetails: any;
+  rowDetailss: QuestionItemSecond | null;
   orderType: string;
-  option: any;
-  optionIndex: any;
-  handleChangeOrderType: (type: "buy" | "sell") => void;
+  option: OptionItem | null;
+  optionIndex: number;
+  fetchOrders: () => void;
+  handleChangeOrderType: (value: string) => void;
 }
 
 export default function BuySell({
   isOpen,
   onClose,
-  rowDetails,
+  rowDetailss,
   orderType,
   option,
   optionIndex,
+  fetchOrders,
   handleChangeOrderType,
-}: ModalProps) {
+}: BuySellProps) {
   const [share, setShare] = useState<number | "">("");
   const [limitShare, setLimitShare] = useState<number | "">("");
   const [amount, setAmount] = useState<number | "">("");
-  const [types, setTypes] = useState<any | "">("market");
+  const [types, setTypes] = useState<string>("market");
   const balance = localStorage.getItem("balance");
   const token = localStorage.getItem("token");
   const { theme } = useTheme();
   const [activeField, setActiveField] = useState<"shares" | "amount" | null>(
     null
   );
-  const [shareDetailAmount, setShareDetailAmount] = useState<any>({});
-  const [debouncedValue, setDebouncedValue] = useState(0);
-  const [errorResponse, setErrorResponse] = useState<any>({});
+  const [shareDetailAmount, setShareDetailAmount] = useState<QuoteDetails>({});
+  const [debouncedValue, setDebouncedValue] = useState<number>(0);
+  const [errorResponse, setErrorResponse] = useState<{
+    success?: boolean;
+    message?: string;
+  }>({});
   console.log(types, "types");
-
-  const checkMarketISOpen = true;
 
   useEffect(() => {
     if (activeField == "shares") {
@@ -74,8 +155,9 @@ export default function BuySell({
     return () => clearTimeout(t);
   }, [share, amount, activeField]);
 
-  const rowDetailsId = rowDetails?.question?.id || rowDetails?.id;
-  const orderDetailsGet = async () => {
+  const rowDetailsId =
+    Number(rowDetailss?.question?.id) || (rowDetailss?.id as number);
+  const orderDetailsGet = useCallback(async () => {
     if (orderType == "buy") {
       if (activeField == "shares") {
         try {
@@ -91,14 +173,14 @@ export default function BuySell({
             setAmount("");
             setShareDetailAmount({});
           }
-        } catch (error) {
+        } catch {
           setAmount("");
           setShareDetailAmount({});
         }
       }
       if (activeField == "amount") {
         try {
-          const response: any = await getQuoteByBudget(
+          const response = await getQuoteByBudget(
             rowDetailsId,
             optionIndex,
             debouncedValue
@@ -110,7 +192,7 @@ export default function BuySell({
             setShare("");
             setShareDetailAmount({});
           }
-        } catch (error) {
+        } catch {
           setShare("");
           setShareDetailAmount({});
         }
@@ -134,22 +216,21 @@ export default function BuySell({
           setAmount("");
           setShareDetailAmount({});
         }
-      } catch (error) {
+      } catch {
         setErrorResponse({});
-        console.log(error, "getCommonQuoteSell===error");
         setAmount("");
         setShareDetailAmount({});
       }
     }
-  };
+  }, [rowDetailsId, optionIndex, debouncedValue, orderType, activeField]);
 
-  console.log(option, "orderType");
   useEffect(() => {
     if (!rowDetailsId) return;
-    if (orderType && types === "market") {
+
+    if (types === "market") {
       orderDetailsGet();
     }
-  }, [debouncedValue, rowDetailsId, option?.index]);
+  }, [orderDetailsGet, rowDetailsId, types]);
 
   const handleClose = () => {
     setAmount("");
@@ -171,7 +252,7 @@ export default function BuySell({
       } else {
         localStorage.removeItem("balance");
       }
-    } catch (error: any) {
+    } catch {
       localStorage.removeItem("balance");
     }
   };
@@ -202,22 +283,25 @@ export default function BuySell({
     console.log(reqBody, "reqBody");
 
     try {
-      const response = await submitOrder(reqBody);
+      const response: ApiResponse<unknown> = await submitOrder(reqBody);
       if (response?.success) {
-        toast.success(response.message);
+        toast.success(response.message || "");
+        if (types == "limit") {
+          fetchOrders();
+        }
         getUserBalance();
         handleClose();
       } else {
       }
-    } catch (error: any) {
+    } catch {
       toast.error("internal server error");
     }
   };
 
   const getTotalSharesDetails =
-    Number(rowDetails?.user?.[optionIndex]?.shares) || 0;
+    Number(rowDetailss?.user?.[optionIndex]?.shares) || 0;
 
-  console.log(getTotalSharesDetails, "getTotalSharesDetails======");
+  console.log(typeof getTotalSharesDetails, "getTotalSharesDetails======");
   console.log(debouncedValue, "debouncedValue======");
 
   const maxShares = option?.userPosition?.shares ?? 0;
@@ -293,7 +377,9 @@ export default function BuySell({
             />
             <div className="w-full">
               <div className="text-sm w-[85%] text-black truncate   dark:text-white">
-                {rowDetails?.question?.question || rowDetails?.question || "--"}{" "}
+                {typeof rowDetailss?.question === "string"
+                  ? rowDetailss.question
+                  : rowDetailss?.question?.question ?? "--"}
               </div>
               <div className="flex items-center gap-1 text-gray-400">
                 <span className="text-sm">Price</span> :
@@ -317,7 +403,7 @@ export default function BuySell({
           <div className="border-b border-gray-300 mb-4 relative">
             <div className="absolute right-0 top-0">
               <Dropdown
-                onSelect={(v) => {
+                onSelect={(v: string) => {
                   setLimitShare("");
                   setShare("");
                   setTypes(v);
@@ -614,7 +700,7 @@ export default function BuySell({
                           option?.userPosition?.shares ||
                           getTotalSharesDetails ||
                           0
-                        ).toFixed(2)}
+                        )?.toFixed(2)}
                       </span>
                     </div>
 

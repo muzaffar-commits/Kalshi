@@ -1,17 +1,25 @@
 "use client";
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 interface RightDrawerProps {
-  buttonLabel?: any;
+  buttonLabel?: React.ReactNode;
   className?: string;
 }
 
 export default function Drawer({ buttonLabel, className }: RightDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const closeDrawer = () => {
+    setIsOpen(false);
+  };
   return (
     <>
       {/* Button to open drawer */}
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setIsOpen(true);
+        }}
         className={`cursor-pointer text-white px-3 py-2 ${className ?? ""}`}
       >
         {buttonLabel}
@@ -33,9 +41,19 @@ export default function Drawer({ buttonLabel, className }: RightDrawerProps) {
       >
         {/* Drawer Header */}
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-semibold dark:text-white text-gray-800">
-            Menu
-          </h2>
+          <div className=" flex items-center gap-2">
+            <Image
+              src="/img/opinionLogo.jpg"
+              alt="Opinion logo"
+              width={40}
+              height={40}
+              className="h-auto rounded-full"
+            />
+            <span className="font-serif text-xl text-gray-400">
+              Opinion Kings
+            </span>
+          </div>
+
           <button
             onClick={() => setIsOpen(false)}
             className="text-gray-600 cursor-pointer dark:text-gray-300 hover:opacity-50"
@@ -45,146 +63,27 @@ export default function Drawer({ buttonLabel, className }: RightDrawerProps) {
         </div>
 
         {/* Drawer Content (Scrollable) */}
-        <nav className="p-4 space-y-3 overflow-y-auto h-[calc(100%-64px)]">
-          <h5 className="font-bold uppercase dark:text-white text-[#0f172a] underline text-sm">
-            World
-          </h5>
-          <a
-            href="#"
-            className="block text-gray-700 dark:text-gray-300 text-sm hover:text-blue-600"
+        <div className="space-y-2.5 mt-5">
+          {/* Privacy Policy */}
+          <Link
+            href="/privacyPolicy"
+            onClick={closeDrawer}
+            className="block px-4 rounded-lg text-base font-medium text-gray-800 dark:text-gray-200 
+                           hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#0099ff] transition"
           >
-            Trending
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
+            Privacy Policy
+          </Link>
+
+          {/* Terms & Conditions */}
+          <Link
+            href="/termsAndConditions"
+            onClick={closeDrawer}
+            className="block px-4  rounded-lg text-base font-medium text-gray-800 dark:text-gray-200 
+                           hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#0099ff] transition"
           >
-            New
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Politics
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Sports
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Culture
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            World
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Trump
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Putin
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            World
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Tariffs
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            IPOs
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Tech and Science
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Health
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Crypto
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Economics
-          </a>
-          <h5 className="font-bold uppercase dark:text-white text-[#0f172a] underline text-sm">
-            Sports
-          </h5>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300  hover:text-blue-600"
-          >
-            Cricket
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Football
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Tennis
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Badminton
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Gold
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Skydiving
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 text-sm dark:text-gray-300 hover:text-blue-600"
-          >
-            Chess
-          </a>
-        </nav>
+            Terms & Conditions
+          </Link>
+        </div>
       </div>
     </>
   );

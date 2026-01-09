@@ -105,7 +105,7 @@ export default function CustomMenu() {
           onClick={userProfile}
         >
           <Link
-            href={"/userPortfolio"}
+            href={"/userProfile"}
             className="flex items-center gap-2 text-lg"
           >
             <FaUser className="text-color" /> Profile

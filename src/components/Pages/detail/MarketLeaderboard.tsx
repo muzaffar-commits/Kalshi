@@ -1,4 +1,14 @@
-export default function MarketLeaderboard({ data }: { data: any }) {
+type LeaderboardItem = {
+  rank: number;
+  username: string;
+  profit: number;
+  roi: number;
+};
+
+interface MarketLeaderboardProps {
+  data: LeaderboardItem[];
+}
+export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
   return (
     <div className="w-full  rounded-2xl border border-white/10 p-5 ">
       <div className="flex items-center justify-between mb-4">
@@ -8,7 +18,7 @@ export default function MarketLeaderboard({ data }: { data: any }) {
         <span className="text-xs text-slate-400">Live Ranking</span>
       </div>
 
-      <div className="grid grid-cols-4 text-xs text-slate-400 px-3 py-2">
+      <div className="grid grid-cols-4 text-xs text-slate-200 px-3 py-2">
         <span>Rank</span>
         <span>User</span>
         <span className="text-right">Profit</span>
@@ -16,7 +26,7 @@ export default function MarketLeaderboard({ data }: { data: any }) {
       </div>
 
       <div className="space-y-2">
-        {data.map((item: any, index: any) => (
+        {data.map((item: LeaderboardItem, index: number) => (
           <div
             key={index}
             className={`grid grid-cols-4 items-center px-3 py-3 rounded-xl
