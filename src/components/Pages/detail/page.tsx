@@ -483,7 +483,7 @@ const Details = () => {
     const intensity = getIntensity(price);
 
     if (intensity > 0.8)
-      return "bg-emerald-500/20 shadow-[0_0_25px_rgba(16,185,129,0.45)]";
+      return "border border-gray-200 ";
 
     if (intensity > 0.6) return "bg-emerald-400/15";
 
@@ -587,8 +587,8 @@ const Details = () => {
               <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-6">
                   {Number(graphData?.series?.length) > 0 ? (
-                    <div className=" h-64 mb-6 flex">
-                      <span className="text-gray-500 ">
+                    <div className="h-64 mb-6 flex">
+                      <span className="text-gray-500">
                         <ChartRealtime data={graphData?.series} />
                       </span>
                     </div>
@@ -599,8 +599,8 @@ const Details = () => {
                   )}
 
                   {Number(data?.options?.length) > 0 && (
-                    <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold dark:!text-white !text-[#080b11] md:border-0 lg:bg-transparent">
-                      <div className="w-64  text-start">Options</div>
+                    <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold dark:text-[#c3a66e] text-[#080b11] md:border-0 lg:bg-transparent">
+                      <div className="w-64 text-start">Options</div>
                       {useToken && (
                         <>
                           <div className="!w-20">Invested</div>
@@ -622,8 +622,9 @@ const Details = () => {
                           className={`
                             flex flex-col md:flex-row items-center justify-between
                             px-3 py-3 rounded-xl
-                            border border-white/10
-                            backdrop-blur-md
+                            border dark:border-[#c3a66e]/60
+                            border-gray-400
+                            backdrop-blur-md 
                             transition-all duration-300
                             ${bgClass}
                           `}
@@ -632,7 +633,7 @@ const Details = () => {
                           <div
                             className={`${
                               useToken ? "w-64" : "w-full"
-                            } font-medium text-white`}
+                            } font-medium dark:text-white`}
                           >
                             {item?.name || "--"}
                           </div>

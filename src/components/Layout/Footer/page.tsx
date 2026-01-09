@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const Footer = () => {
   return (
@@ -9,21 +10,36 @@ const Footer = () => {
             <div className="col-span-2 md:col-span-1">
               <a href="#">
                 <div className="flex items-center space-x-2 mb-1">
-                  <div className="w-8 h-8 bg-[#0099FF] rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">X</span>
-                  </div>
-                  <h1 className="block text-xl font-bold text-[#0099FF]">
-                    <span>OPINION</span> <span>KINGS</span>
-                  </h1>
+              <div className="hidden md:block text-xl font-bold">
+  {/* Light mode logo */}
+  <Image
+    src="/img/opinionLogo-dark.png"
+    alt="Opinion logo"
+    width={60}
+    height={60}
+    className="h-auto block dark:hidden"
+    priority
+  />
+
+  {/* Dark mode logo */}
+  <Image
+    src="/img/opinionLogo-light.png"
+    alt="Opinion logo"
+    width={60}
+    height={60}
+    className="h-auto hidden dark:block"
+    priority
+  />
+</div>
                 </div>
               </a>
-              <hr className="my-5 border-b border-gray-300" />
+              <hr className="my-5 border-b dark:border-gray-600 border-gray-300" />
               <div className="text-end flex items-center gap-3 mt-4 mr-12">
                 <a href="#" className="inline-block">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 1200 1227"
-                    className="w-5 h-5 fill-gray-600 dark:fill-gray-100 hover:fill-[#0099FF] transition-colors duration-300"
+                    className="w-5 h-5 fill-gray-600 dark:fill-[#c7ac77]/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
                   >
                     <path
                       d="M714.163 519.284L1160.89 0H1051.61L670.79 442.357 368.573 0H0L468.769 681.821 0 1226.37h109.285l403.16-471.205 317.712 471.205H1200L714.163 519.284ZM568.89 691.351l-46.55-67.251L148.727 
@@ -36,7 +52,7 @@ const Footer = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 320 512"
-                    className="w-6 h-6 fill-gray-600 dark:fill-gray-100 hover:fill-[#0099FF] transition-colors duration-300"
+                    className="w-6 h-6 fill-gray-600 dark:fill-[#c7ac77]/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
                   >
                     <path
                       d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35
@@ -50,7 +66,7 @@ const Footer = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 448 512"
-                    className="w-6 h-6 fill-gray-600 dark:fill-gray-100 hover:fill-[#0099FF] transition-colors duration-300"
+                    className="w-6 h-6 fill-gray-600 dark:fill-[#c7ac77]/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
                   >
                     <path
                       d="M224.1 141c-63.6 0-114.9 51.3-114.9
@@ -85,32 +101,32 @@ const Footer = () => {
               <div className="text-end"></div>
             </div>
             <div className="inline-block mr-0 md:ml-10">
-              <h4 className="font-bold mb-3 text-black/80 dark:text-gray-200">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
                 Links
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Market Data
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Opinion
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Audio
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Magazines
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Events
                   </a>
                 </li>
@@ -118,37 +134,37 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-gray-200">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
                 News
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Market
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Economics
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Technology
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Politics
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Crypto
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     AI
                   </a>
                 </li>
@@ -156,42 +172,42 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-gray-200">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
                 Sports
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Cricket
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Football
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Tennis
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Badminton
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Swimming
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Golf
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Skydiving
                   </a>
                 </li>
@@ -199,37 +215,37 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-gray-200">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
                 Crypto
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Bitcoin
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Ethereum
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Binance
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Tether
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Solana
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     TRX
                   </a>
                 </li>
@@ -237,46 +253,46 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-gray-200">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
                 Trending
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Trump
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Middle East
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Politics
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Culture
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     World
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-[#0099FF]">
+                  <a href="#" className="hover:text-[#c7ac77]">
                     Election
                   </a>
                 </li>
               </ul>
             </div>
           </div>
-          <hr className="my-5 border-t-0 border-b border-gray-300 h-2" />
+          <hr className="my-5 border-t-0 border-b dark:border-[#c9ab77]/80 border-gray-300 h-2" />
           <p className="text-center text-[13px] text-[#868e98]">
-            &copy;2025 Demosite. All rights reserved.
+            &copy;2025 <span className="font-bold dark:text-[#c7ac77]/80">Opinion Kings</span>. All rights reserved.
           </p>
         </div>
       </div>

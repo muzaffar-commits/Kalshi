@@ -10,15 +10,15 @@ interface MarketLeaderboardProps {
 }
 export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
   return (
-    <div className="w-full  rounded-2xl border border-white/10 p-5 ">
+    <div className="w-full  rounded-2xl border dark:border-[#c3a66e]/50 border-gray-300 p-5 ">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold tracking-wide text-white">
+        <h2 className="text-sm font-semibold tracking-wide text-gray-700 dark:text-[#c3a66e]">
           🏆 Market Leaderboard
         </h2>
         <span className="text-xs text-slate-400">Live Ranking</span>
       </div>
 
-      <div className="grid grid-cols-4 text-xs text-slate-200 px-3 py-2">
+      <div className="grid grid-cols-4 text-xs dark:text-[#c3a66e] text-gray-700 px-3 py-2">
         <span>Rank</span>
         <span>User</span>
         <span className="text-right">Profit</span>
@@ -30,10 +30,10 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
           <div
             key={index}
             className={`grid grid-cols-4 items-center px-3 py-3 rounded-xl
-              border border-white/5
+              border dark:border-[#c3a66e]/40 border-gray-300
               ${
                 item.rank === 1
-                  ? "bg-gradient-to-r from-amber-500/20 to-transparent shadow-[0_0_25px_rgba(245,158,11,0.25)]"
+                  ? ""
                   : "bg-white/5 hover:bg-white/10"
               }
               transition`}
@@ -53,7 +53,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
             </div>
 
             {/* Username */}
-            <div className="text-sm text-white font-medium truncate">
+            <div className="text-sm text-gray-600 dark:text-[#c3a66e] font-medium truncate">
               {item.username}
             </div>
 
@@ -71,7 +71,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
       </div>
 
       {/* Footer */}
-      <div className="mt-4 text-center text-[11px] text-slate-500">
+      <div className="mt-4 text-center text-[11px] text-[#c3a66e]/80">
         Rankings based on profit & ROI
       </div>
     </div>
