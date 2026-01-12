@@ -1,8 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MobileMenu from "@/components/IdeaList/page";
 import IdeaTabs from "@/components/IdeaTabs/page";
+import { getBookMarkList, getFeed } from "@/components/service/apiService/user";
+import { useSelector } from "react-redux";
 
 const Ideas = () => {
+  const [allPosts, setAllPosts] = React.useState([]);
+  const users = useSelector((state: any) => state?.user?.user);
+  const getListOfPost = async () => {
+    try {
+      const response = await getFeed(users?.id);
+      if (response?.success) {
+        setAllPosts(response.data ?? []);
+      } else {
+        setAllPosts([]);
+      }
+    } catch {
+      setAllPosts([]);
+    }
+  };
+  useEffect(() => {
+    getListOfPost();
+  }, []);
+
+  const bookMarkList = async () => {
+    try {
+      const response = await getBookMarkList(users?.id);
+      console.log(response, "response");
+
+      // if (response?.success) {
+      //   setAllPosts(response.data ?? []);
+      // } else {
+      //   setAllPosts([]);
+      // }
+    } catch {
+      // setAllPosts([]);
+    }
+  };
+  useEffect(() => {
+    bookMarkList();
+  }, []);
+
+  //
   return (
     <>
       <div className="dark:bg-[#0f172a] mt-40">
@@ -19,7 +58,11 @@ const Ideas = () => {
             </div>
             <div className="md:w-3/4 w-full lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
               <div className="lg:border-r dark:border-gray-700 border-gray-200">
-                <IdeaTabs />
+                <IdeaTabs
+                  allPosts={allPosts}
+                  fetchPostList={getListOfPost}
+                  setAllPosts={setAllPosts}
+                />
               </div>
             </div>
           </div>

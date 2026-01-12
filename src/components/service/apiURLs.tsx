@@ -20,9 +20,12 @@ export const API_URLs = {
   userDetails: "/user",
   userPositions: "/user/positions",
   // user post feedback/delete/get
-  getFeed: "/user/feed",
+  getFeed: "/user/get-posts",
   userPost: "/user/post",
   imageUpload: "/upload/images",
+  likeOrUnlike: "/user/like-or-unlike",
+  bookmarkOrUnBookMark: "/user/bookmark-or-unbookmark",
+  bookMarkList: "/user/bookmarks",
 };
 
 // images

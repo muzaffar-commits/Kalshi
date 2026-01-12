@@ -44,8 +44,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       PaperProps={{
         className: "rounded-xl shadow-2xl dark:bg-gray-800 dark:text-gray-100",
       }}
-      // Backdrop click → close
-      // onBackdropClick={onClose}
     >
       <DialogTitle className="flex items-center space-x-2 pb-2">
         <MdWarningAmber className="w-7 h-7 text-red-500" />

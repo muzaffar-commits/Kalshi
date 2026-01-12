@@ -14,6 +14,7 @@ import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
+import GlobalLoader from "@/components/common/Loader";
 
 interface CategoryState {
   category?: {
@@ -119,7 +120,13 @@ const Header = () => {
     <>
       <header className="w-full dark:bg-[#0f172a] bg-[#fff] fixed top-0 z-30">
         <div className="max-w-[1268px] mx-auto px-4">
-          <div className="flex items-center justify-between py-3 border-b dark:border-gray-800 border-gray-300  relative">
+          <div
+            className={`flex items-center justify-between ${
+              pathname === "/"
+                ? ""
+                : "border-b dark:border-gray-800 border-gray-300"
+            } py-3   relative`}
+          >
             <Link href="/">
               <div className="flex items-center space-x-2">
                 <div className="hidden md:block text-xl font-bold">

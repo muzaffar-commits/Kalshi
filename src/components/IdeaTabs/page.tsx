@@ -9,16 +9,16 @@ import { FaCentSign } from "react-icons/fa6";
 import { LuUpload } from "react-icons/lu";
 import {
   FaRegCommentAlt,
-  FaArrowUp,
   FaRegBookmark,
   FaRegHeart,
   FaRegClock,
 } from "react-icons/fa";
 import IdeaTabsTwo from "@/components/IdeaTabsTwo/page";
 import { getFeed, imageUpload, userPost } from "../service/apiService/user";
-import { delay } from "@/utils/Content";
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
+import InputTextArea from "./InputTextArea";
+import { useSelector } from "react-redux";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -49,42 +49,33 @@ function a11yProps(index: number) {
   };
 }
 
-export default function IdeaTabs() {
+interface UploadedImage {
+  url: string;
+}
+
+export default function IdeaTabs({
+  allPosts,
+  fetchPostList,
+  setAllPosts,
+}: {
+  allPosts: any;
+  fetchPostList: () => void;
+  setAllPosts: any;
+}) {
   const [value, setValue] = React.useState(0);
   const fileInputRef: any = useRef(null);
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
-  const [uploadedImage, setUploadedImage] = React.useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = React.useState<
+    UploadedImage[] | null
+  >(null);
   const [message, setMessage] = React.useState<string | null>("");
   const [isPostLoader, setIsPostLoader] = React.useState<boolean>(false);
-
-  console.log(uploadedImage, "uploadedImage");
+  const users = useSelector((state: any) => state?.user?.user);
+  console.log(allPosts, "allPosts");
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
-  const getListOfPost = async () => {
-    // getFeed
-
-    try {
-      const response = await getFeed("2");
-
-      console.log(response, "rpx");
-
-      if (response?.success) {
-        // setQuestionData(response.data.questions ?? []);
-      } else {
-        // setQuestionData([]);
-      }
-    } catch {
-      // setQuestionData([]);
-    } finally {
-      // setLoader(false);
-    }
-  };
-  useEffect(() => {
-    getListOfPost();
-  }, []);
 
   const chooseImages = async (file: any) => {
     try {
@@ -119,6 +110,8 @@ export default function IdeaTabs() {
   };
 
   const postUserMessage = async () => {
+    console.log(message, "message========");
+
     setIsPostLoader(true);
     try {
       const metadata = {
@@ -134,6 +127,7 @@ export default function IdeaTabs() {
         toast.success("Message post successfully!");
         removeImage();
         setMessage("");
+        fetchPostList();
         setIsPostLoader(false);
       } else {
         toast.error(response?.reponse?.status);
@@ -150,7 +144,12 @@ export default function IdeaTabs() {
       }
     }
   };
-  // userPost
+
+  const canPost =
+    Boolean(selectedImage?.name) || String(message).trim().length > 3;
+
+  console.log(!canPost, String(message).trim().length > 3, "rplll");
+
   return (
     <Box sx={{ width: "100%" }}>
       <Box
@@ -178,8 +177,8 @@ export default function IdeaTabs() {
           }}
         >
           <Tab label="Ideas" {...a11yProps(0)} />
-          <Tab label="Live Trades" {...a11yProps(1)} />
-          <Tab label="Market Builder" {...a11yProps(2)} />
+          {/* <Tab label="Live Trades" {...a11yProps(1)} />
+          <Tab label="Market Builder" {...a11yProps(2)} /> */}
         </Tabs>
       </Box>
 
@@ -194,27 +193,7 @@ export default function IdeaTabs() {
               className="rounded-full mt-1"
             />
 
-            <textarea
-              rows={4}
-              value={message || ""}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="What is your prediction?"
-              className="pt-4
-      flex-1
-      min-h-[80px]
-      text-lg
-      leading-relaxed
-      bg-transparent
-      border-0
-      resize-none
-      outline-none
-      focus:outline-none
-      focus:ring-0
-      dark:text-gray-400
-      text-gray-900
-      placeholder-gray-400
-    "
-            />
+            <InputTextArea message={message || ""} setMessage={setMessage} />
           </div>
 
           <div className=" flex flex-row pl-7 justify-between items-center">
@@ -235,7 +214,6 @@ export default function IdeaTabs() {
             )}
 
             <div className="flex justify-end gap-4 mr-7">
-              {/* GIF Button */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -243,8 +221,6 @@ export default function IdeaTabs() {
               >
                 GIF
               </button>
-
-              {/* Hidden File Input */}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -252,14 +228,8 @@ export default function IdeaTabs() {
                 accept="image/gif,image/png,image/jpeg,image/webp"
                 onChange={handleFileChange}
               />
-
-              {/* Post Button */}
               <button
-                disabled={
-                  selectedImage?.name ||
-                  String(message).trim().length > 3 ||
-                  false
-                }
+                disabled={!canPost || !(String(message).trim().length > 3)}
                 onClick={postUserMessage}
                 className={`py-2 px-4 w-16 flex items-center justify-center rounded-md ${
                   selectedImage?.name || String(message).trim().length > 3
@@ -277,7 +247,7 @@ export default function IdeaTabs() {
           </div>
 
           <div className="border-t dark:border-gray-700 border-gray-200 mt-3">
-            <IdeaTabsTwo />
+            <IdeaTabsTwo postedList={allPosts} setAllPosts={setAllPosts} />
           </div>
         </div>
       </CustomTabPanel>
@@ -371,21 +341,21 @@ export default function IdeaTabs() {
               rows={2}
               placeholder="Your market title"
               className="pt-4
-      flex-1
-      min-h-[80px]
-      text-md
-      leading-relaxed
-      bg-transparent
-      border-0
-      resize-none
-      outline-none
-      focus:outline-none
-      focus:ring-0
-      dark:text-gray-400
-      text-gray-900
-      dark:placeholder-gray-600
-      placeholder-gray-300
-    "
+              flex-1
+              min-h-[80px]
+              text-md
+              leading-relaxed
+              bg-transparent
+              border-0
+              resize-none
+              outline-none
+              focus:outline-none
+              focus:ring-0
+              dark:text-gray-400
+              text-gray-900
+              dark:placeholder-gray-600
+              placeholder-gray-300
+            "
             />
           </div>
 

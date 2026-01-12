@@ -39,7 +39,9 @@ export const userPositions = async () => {
 };
 export const getFeed = async (id: string) => {
   try {
-    const response = await apiInstance.get(`${API_URLs.getFeed}?userId=${id}`);
+    const response = await apiInstance.get(
+      `${API_URLs.getFeed}${id ? `?userId=${id}` : ""}`
+    );
     return response?.data;
   } catch (error: unknown) {
     return {
@@ -68,6 +70,46 @@ export const imageUpload = async (images: any) => {
 export const userPost = async (reqBody: any) => {
   try {
     const response = await apiInstance.post(API_URLs.userPost, reqBody);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+export const postLikeOrUnlike = async (reqBody: any) => {
+  try {
+    const response = await apiInstance.post(API_URLs.likeOrUnlike, reqBody);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const postBookmarkOrUnBookMark = async (reqBody: any) => {
+  try {
+    const response = await apiInstance.post(
+      API_URLs.bookmarkOrUnBookMark,
+      reqBody
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const getBookMarkList = async (id: string) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.bookMarkList}${id ? `?userId=${id}` : ""}`
+    );
     return response?.data;
   } catch (error: unknown) {
     return {

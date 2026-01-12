@@ -116,6 +116,8 @@ const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
     },
   };
 
+  console.log(series, "series");
+
   return (
     <div className="w-full -mx-4 sm:mx-0">
       <ApexChart
