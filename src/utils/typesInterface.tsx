@@ -101,3 +101,25 @@ export interface ChartSeries {
 export interface GraphData {
   series: RawSeries[];
 }
+
+interface UserDetails {
+  id: number;
+  username: string | null;
+  image_url: string | null;
+}
+export interface PostFeeBack {
+  id: number;
+  userId: number;
+  metadata: string;
+  status: boolean;
+  questionId: number | null;
+  createdAt: string;
+  updatedAt: string;
+  likeCount: number;
+  commentCount: number;
+  isLiked: number; // 0 | 1
+  isBookmarked: number; // 0 | 1
+  User: UserDetails;
+}
+
+export type SetPosts = React.Dispatch<React.SetStateAction<PostFeeBack[]>>;

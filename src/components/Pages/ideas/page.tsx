@@ -1,13 +1,25 @@
-import React, { useEffect } from "react";
-import MobileMenu from "@/components/IdeaList/page";
-import IdeaTabs from "@/components/IdeaTabs/page";
+import React, { useCallback, useEffect, useState } from "react";
+// import MobileMenu from "@/components/IdeaList/page";
+// import IdeaTabs from "@/components/IdeaTabs/page";
 import { getBookMarkList, getFeed } from "@/components/service/apiService/user";
 import { useSelector } from "react-redux";
+import MobileMenu from "./component/IdeaList/page";
+import IdeaTabs from "./component/IdeaTabs/page";
+import { PostFeeBack } from "@/utils/typesInterface";
+
+interface userDetails {
+  user: {
+    user: {
+      id: string;
+    };
+  };
+}
 
 const Ideas = () => {
-  const [allPosts, setAllPosts] = React.useState([]);
-  const users = useSelector((state: any) => state?.user?.user);
-  const getListOfPost = async () => {
+  const [allPosts, setAllPosts] = useState<PostFeeBack[]>([]);
+  const users = useSelector((state: userDetails) => state?.user?.user);
+
+  const getListOfPost = useCallback(async () => {
     try {
       const response = await getFeed(users?.id);
       if (response?.success) {
@@ -18,28 +30,22 @@ const Ideas = () => {
     } catch {
       setAllPosts([]);
     }
-  };
+  }, [users?.id]);
+
   useEffect(() => {
     getListOfPost();
-  }, []);
+  }, [getListOfPost]);
 
-  const bookMarkList = async () => {
+  const bookMarkList = useCallback(async () => {
     try {
       const response = await getBookMarkList(users?.id);
       console.log(response, "response");
+    } catch {}
+  }, [users?.id]);
 
-      // if (response?.success) {
-      //   setAllPosts(response.data ?? []);
-      // } else {
-      //   setAllPosts([]);
-      // }
-    } catch {
-      // setAllPosts([]);
-    }
-  };
   useEffect(() => {
     bookMarkList();
-  }, []);
+  }, [bookMarkList]);
 
   //
   return (

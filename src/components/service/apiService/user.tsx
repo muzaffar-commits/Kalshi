@@ -51,7 +51,7 @@ export const getFeed = async (id: string) => {
   }
 };
 
-export const imageUpload = async (images: any) => {
+export const imageUpload = async (images: unknown) => {
   try {
     const response = await apiInstance.post(API_URLs.imageUpload, images, {
       headers: {
@@ -67,7 +67,7 @@ export const imageUpload = async (images: any) => {
   }
 };
 
-export const userPost = async (reqBody: any) => {
+export const userPost = async (reqBody: unknown) => {
   try {
     const response = await apiInstance.post(API_URLs.userPost, reqBody);
     return response?.data;
@@ -78,7 +78,7 @@ export const userPost = async (reqBody: any) => {
     };
   }
 };
-export const postLikeOrUnlike = async (reqBody: any) => {
+export const postLikeOrUnlike = async (reqBody: unknown) => {
   try {
     const response = await apiInstance.post(API_URLs.likeOrUnlike, reqBody);
     return response?.data;
@@ -90,7 +90,7 @@ export const postLikeOrUnlike = async (reqBody: any) => {
   }
 };
 
-export const postBookmarkOrUnBookMark = async (reqBody: any) => {
+export const postBookmarkOrUnBookMark = async (reqBody: unknown) => {
   try {
     const response = await apiInstance.post(
       API_URLs.bookmarkOrUnBookMark,

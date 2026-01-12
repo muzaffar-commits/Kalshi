@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -14,11 +14,12 @@ import {
   FaRegClock,
 } from "react-icons/fa";
 import IdeaTabsTwo from "@/components/IdeaTabsTwo/page";
-import { getFeed, imageUpload, userPost } from "../service/apiService/user";
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
 import InputTextArea from "./InputTextArea";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
+import { imageUpload, userPost } from "@/components/service/apiService/user";
+import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -58,26 +59,27 @@ export default function IdeaTabs({
   fetchPostList,
   setAllPosts,
 }: {
-  allPosts: any;
+  allPosts: PostFeeBack[];
   fetchPostList: () => void;
-  setAllPosts: any;
+  setAllPosts: SetPosts;
 }) {
   const [value, setValue] = React.useState(0);
-  const fileInputRef: any = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = React.useState<
     UploadedImage[] | null
   >(null);
   const [message, setMessage] = React.useState<string | null>("");
   const [isPostLoader, setIsPostLoader] = React.useState<boolean>(false);
-  const users = useSelector((state: any) => state?.user?.user);
+  // const users = useSelector((state: any) => state?.user?.user);
   console.log(allPosts, "allPosts");
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const chooseImages = async (file: any) => {
+  const chooseImages = async (file: File) => {
     try {
       const formData = new FormData();
       formData.append("images", file);

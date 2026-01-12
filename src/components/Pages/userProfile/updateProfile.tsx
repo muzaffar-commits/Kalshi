@@ -2,6 +2,7 @@ import { UserProfileData } from "@/utils/typesInterface";
 import { Backdrop, Box, CircularProgress, Fade, Modal } from "@mui/material";
 import { useFormik } from "formik";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import React, { useState } from "react";
 import * as Yup from "yup";
 
@@ -125,7 +126,7 @@ export default function UpdateProfile({
                   border-gray-300 dark:border-gray-600 hover:border-blue-500 transition"
                 >
                   {formik.values.image ? (
-                    <img
+                    <Image
                       src={formik.values.image}
                       alt="Preview"
                       className="h-full w-full object-cover rounded-xl"

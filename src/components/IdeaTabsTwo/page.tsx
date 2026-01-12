@@ -17,6 +17,7 @@ import {
 } from "../service/apiService/user";
 import { FcLike } from "react-icons/fc";
 import toast from "react-hot-toast";
+import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -51,8 +52,8 @@ export default function IdeaTabsTwo({
   postedList,
   setAllPosts,
 }: {
-  postedList: any;
-  setAllPosts: any;
+  postedList: PostFeeBack[];
+  setAllPosts: SetPosts;
 }) {
   const [value, setValue] = React.useState(0);
 
@@ -62,20 +63,20 @@ export default function IdeaTabsTwo({
 
   console.log(postedList, "postedList");
 
-  const handleShareNow = (postDetails: any) => {
-    console.log("share===>");
-  };
+  // const handleShareNow = (postDetails: any) => {
+  //   console.log(postDetails, "share===>");
+  // };
 
-  const handleLikeUnlike = async (id: string, isLike: string) => {
+  const handleLikeUnlike = async (id: number, isLike: number) => {
     try {
-      if (isLike == "1") {
+      if (isLike == 1) {
         toast.success("Unlike");
       } else {
         toast.success("like");
       }
-      setAllPosts((prev: any[]) =>
+      setAllPosts((prev) =>
         prev.map((item) => {
-          if (item.id === id) {
+          if (item.id == id) {
             const isLiked = item.isLiked === 1 ? 0 : 1;
 
             return {
@@ -105,11 +106,11 @@ export default function IdeaTabsTwo({
   };
 
   const handleBookMarkOrUnBookMark = async (
-    id: string,
-    isBookmarked: string
+    id: number,
+    isBookmarked: number
   ) => {
     try {
-      setAllPosts((prev: any[]) =>
+      setAllPosts((prev) =>
         prev.map((item) => {
           if (item.id === id) {
             const booked = item.isBookmarked === 1 ? 0 : 1;
@@ -121,7 +122,7 @@ export default function IdeaTabsTwo({
           return item;
         })
       );
-      if (isBookmarked == "1") {
+      if (isBookmarked == 1) {
         toast.success("Remove for bookmarks");
       } else {
         toast.success("Bookmark successfully");
@@ -176,7 +177,7 @@ export default function IdeaTabsTwo({
       <CustomTabPanel value={value} index={0}>
         <div className="p-3 border-b dark:border-gray-700 border-gray-200">
           {postedList?.length > 0 &&
-            postedList?.map((row: any, index: number) => {
+            postedList?.map((row: PostFeeBack, index: number) => {
               const contentForPost = JSON.parse(row?.metadata);
               console.log(contentForPost, "contentForPost");
 
@@ -348,14 +349,10 @@ export default function IdeaTabsTwo({
                               ease-in-out text-lg cursor-pointer
                             "
                           >
-                            <LuUpload onClick={() => handleShareNow(row)} />
+                            <LuUpload />
+                            {/* <LuUpload onClick={() => handleShareNow(row)} /> */}
                           </span>
                         </div>
-                        {/* <div>
-                          <button className="bg-[#caac75] hover:bg-[#caac75]/80 text-white text-sm font-semibold rounded py-2 px-4 cursor-pointer">
-                            Buy
-                          </button>
-                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -364,462 +361,6 @@ export default function IdeaTabsTwo({
             })}
         </div>
       </CustomTabPanel>
-      {/* <CustomTabPanel value={value} index={1}>
-        <div className="p-3 border-b dark:border-gray-700 border-gray-200">
-          <div className="md:flex items-start gap-4 w-full md:px-4 px-0">
-            <div>
-              <Image
-                src="/img/nick.jpg"
-                alt="user"
-                width={70}
-                height={70}
-                className="rounded-md mt-1"
-              />
-            </div>
-            <div>
-              <h4>
-                <a
-                  href="#"
-                  className="dark:text-gray-300 hover:underline font-semibold text-gray-700"
-                >
-                  riggs916
-                </a>{" "}
-                <span className="text-xs dark:text-gray-500 text-gray-500">
-                  1h
-                </span>
-              </h4>
-              <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
-                Bang!
-              </p>
-
-              <div className="md:min-w-[330px] w-full bg-green-500/70 p-3 rounded-md min-h-5 md:mt-7 mt-3">
-                <div className="bg-white m-1 rounded-md p-3">
-                  <div>
-                    <Image
-                      src="/img/nick.jpg"
-                      alt="user"
-                      width={50}
-                      height={50}
-                      className="rounded-md mt-1"
-                    />
-                  </div>
-                  <p className="dark:text-gray-500 text-gray-950 text-md mt-4">
-                    Dallas at Sacramento
-                  </p>
-                  <p className="dark:text-gray-500 text-gray-950 text-md mt-4 mb-3">
-                    No. Sacramento
-                  </p>
-
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Odds</span>
-                      <span className="text-gray-700 font-semibold">52%</span>
-                    </div>
-                  </div>
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Cost</span>
-                      <span className="text-gray-700 font-semibold">
-                        $6,669.42
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Current Now</span>
-                      <span className="text-gray-700 font-semibold">
-                        $12,870
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="flex justify-between">
-                  <div className="flex gap-3 items-center">
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <FaRegCommentAlt />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-xl cursor-pointer
-"
-                    >
-                      <FaRegHeart />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <FaRegBookmark />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <LuUpload />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <div className="p-3 border-b dark:border-gray-700 border-gray-200">
-          <div className="md:flex items-start gap-4 w-full md:px-4 px-0">
-            <div>
-              <Image
-                src="/img/blockimg2.jpg"
-                alt="user"
-                width={70}
-                height={70}
-                className="rounded-md mt-1"
-              />
-            </div>
-            <div>
-              <h4>
-                <a
-                  href="#"
-                  className="dark:text-gray-300 hover:underline font-semibold text-gray-700"
-                >
-                  riggs916
-                </a>{" "}
-                <span className="text-xs dark:text-gray-500 text-gray-500">
-                  Jan 6
-                </span>
-              </h4>
-              <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
-                Bang!
-              </p>
-
-              <div className="md:min-w-[330px] w-full bg-green-500/70 p-3 rounded-md min-h-5 md:mt-7 mt-3">
-                <div className="bg-white m-1 rounded-md p-3">
-                  <div>
-                    <Image
-                      src="/img/blockimg2.jpg"
-                      alt="user"
-                      width={50}
-                      height={50}
-                      className="rounded-md mt-1"
-                    />
-                  </div>
-                  <p className="dark:text-gray-500 text-gray-950 text-md mt-4">
-                    Dallas at Sacramento
-                  </p>
-                  <p className="dark:text-gray-500 text-gray-950 text-md mt-4 mb-3">
-                    No. Sacramento
-                  </p>
-
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Odds</span>
-                      <span className="text-gray-700 font-semibold">52%</span>
-                    </div>
-                  </div>
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Cost</span>
-                      <span className="text-gray-700 font-semibold">
-                        $6,669.42
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Current Now</span>
-                      <span className="text-gray-700 font-semibold">
-                        $12,870
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="flex justify-between">
-                  <div className="flex gap-3 items-center">
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <FaRegCommentAlt />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-xl cursor-pointer
-"
-                    >
-                      <FaRegHeart />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <FaRegBookmark />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <LuUpload />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={3}>
-        <div className="p-3 border-b dark:border-gray-700 border-gray-200">
-          <div className="md:flex items-start gap-4 w-full md:px-4 px-0">
-            <div>
-              <Image
-                src="/img/andrew.jpg"
-                alt="user"
-                width={70}
-                height={70}
-                className="rounded-md mt-1"
-              />
-            </div>
-            <div>
-              <h4>
-                <a
-                  href="#"
-                  className="dark:text-gray-300 hover:underline font-semibold text-gray-700"
-                >
-                  riggs916
-                </a>{" "}
-                <span className="text-xs dark:text-gray-500 text-gray-500">
-                  Dec 23 2025
-                </span>
-              </h4>
-              <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
-                Bang!
-              </p>
-
-              <div className="md:min-w-[330px] w-full bg-green-500/70 p-3 rounded-md min-h-5 md:mt-7 mt-3">
-                <div className="bg-white m-1 rounded-md p-3">
-                  <div>
-                    <Image
-                      src="/img/andrew.jpg"
-                      alt="user"
-                      width={50}
-                      height={50}
-                      className="rounded-md mt-1"
-                    />
-                  </div>
-                  <p className="dark:text-gray-500 text-gray-950 text-md mt-4">
-                    Dallas at Sacramento
-                  </p>
-                  <p className="dark:text-gray-500 text-gray-950 text-md mt-4 mb-3">
-                    No. Sacramento
-                  </p>
-
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Odds</span>
-                      <span className="text-gray-700 font-semibold">52%</span>
-                    </div>
-                  </div>
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Cost</span>
-                      <span className="text-gray-700 font-semibold">
-                        $6,669.42
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mb-1 bg-gray-200/60 px-4 py-2 rounded-md">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Current Now</span>
-                      <span className="text-gray-700 font-semibold">
-                        $12,870
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="flex justify-between">
-                  <div className="flex gap-3 items-center">
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <FaRegCommentAlt />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-xl cursor-pointer
-"
-                    >
-                      <FaRegHeart />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <FaRegBookmark />
-                    </span>
-                    <span className="inline-block relative -left-3 font-light text-gray-400">
-                      3
-                    </span>
-                    <span
-                      className="
-  p-2
-  rounded
-  inline-block
-  text-gray-500
-  dark:text-gray-400
-  hover:bg-gray-400/30
-  transition-all
-  duration-200
-  ease-in-out text-lg cursor-pointer
-"
-                    >
-                      <LuUpload />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CustomTabPanel> */}
     </Box>
   );
 }

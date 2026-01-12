@@ -7,14 +7,12 @@ import Authentication from "@/components/Pages/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { getCommonCategoryAll } from "@/components/service/apiService/category";
 import { saveCategory } from "@/components/store/slice/category";
-import Trend from "../../../../public/img/icon/trend.png";
 import ThemeToggle from "@/components/ThemeToggle";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import GlobalLoader from "@/components/common/Loader";
 
 interface CategoryState {
   category?: {
@@ -58,8 +56,8 @@ const Header = () => {
   const [category, setCategory] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
   console.log(pathname, "pathname");
 
   const user = useSelector((state: RootState) => state?.user);
