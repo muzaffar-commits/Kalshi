@@ -1,11 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 // import MobileMenu from "@/components/IdeaList/page";
 // import IdeaTabs from "@/components/IdeaTabs/page";
-import { getBookMarkList, getFeed } from "@/components/service/apiService/user";
+import { getFeed } from "@/components/service/apiService/user";
 import { useSelector } from "react-redux";
 import MobileMenu from "./component/IdeaList/page";
 import IdeaTabs from "./component/IdeaTabs/page";
 import { PostFeeBack } from "@/utils/typesInterface";
+import Replies from "./component/replies/page";
+import BookMarks from "./component/bookMarks/page";
+import Profile from "./component/profile/page";
+import CommunityGuidelines from "./component/communityGuidelines/page";
+import Supports from "./component/supports/page";
+import FAQs from "./component/faqs/page";
 
 interface userDetails {
   user: {
@@ -17,6 +23,7 @@ interface userDetails {
 
 const Ideas = () => {
   const [allPosts, setAllPosts] = useState<PostFeeBack[]>([]);
+  const [currentTabs, setCurrentTabs] = useState("Home");
   const users = useSelector((state: userDetails) => state?.user?.user);
 
   const getListOfPost = useCallback(async () => {
@@ -36,17 +43,6 @@ const Ideas = () => {
     getListOfPost();
   }, [getListOfPost]);
 
-  const bookMarkList = useCallback(async () => {
-    try {
-      const response = await getBookMarkList(users?.id);
-      console.log(response, "response");
-    } catch {}
-  }, [users?.id]);
-
-  useEffect(() => {
-    bookMarkList();
-  }, [bookMarkList]);
-
   //
   return (
     <>
@@ -60,15 +56,32 @@ const Ideas = () => {
               <span className="text-gray-500 text-xs">
                 Serving public conversation
               </span>
-              <MobileMenu />
+              <MobileMenu
+                currentTabs={currentTabs}
+                handleTabs={setCurrentTabs}
+              />
             </div>
             <div className="md:w-3/4 w-full lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
               <div className="lg:border-r dark:border-gray-700 border-gray-200">
-                <IdeaTabs
-                  allPosts={allPosts}
-                  fetchPostList={getListOfPost}
-                  setAllPosts={setAllPosts}
-                />
+                {currentTabs == "Home" ? (
+                  <IdeaTabs
+                    allPosts={allPosts}
+                    fetchPostList={getListOfPost}
+                    setAllPosts={setAllPosts}
+                  />
+                ) : currentTabs == "Replies" ? (
+                  <Replies />
+                ) : currentTabs == "Bookmarks" ? (
+                  <BookMarks userId={users?.id} />
+                ) : currentTabs == "Profile" ? (
+                  <Profile />
+                ) : currentTabs == "Community Guidelines" ? (
+                  <CommunityGuidelines />
+                ) : currentTabs == "Support" ? (
+                  <Supports />
+                ) : (
+                  <FAQs />
+                )}
               </div>
             </div>
           </div>

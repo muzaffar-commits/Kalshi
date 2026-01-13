@@ -26,6 +26,8 @@ export const API_URLs = {
   likeOrUnlike: "/user/like-or-unlike",
   bookmarkOrUnBookMark: "/user/bookmark-or-unbookmark",
   bookMarkList: "/user/bookmarks",
+  followUser: "/user/follow",
+  unFollowUser: "/user/unfollow",
 };
 
 // images

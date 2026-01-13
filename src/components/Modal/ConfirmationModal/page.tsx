@@ -73,7 +73,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           className="bg-red-600 hover:bg-red-700 normal-case font-medium text-white"
           disabled={isDelete}
         >
-          {isDelete ? <CircularProgress color={"white"} size={22} /> : "Delete"}
+          {isDelete ? (
+            <CircularProgress className="!text-white" size={22} />
+          ) : (
+            "Delete"
+          )}
         </Button>
       </DialogActions>
     </Dialog>
