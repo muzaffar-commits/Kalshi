@@ -194,7 +194,7 @@ export default function Register({
   "
           >
             {isLoader ? (
-              <CircularProgress size={28} color="white" />
+              <CircularProgress size={28} className="!text-white" />
             ) : (
               `Sign${isLogin ? "In" : "Up"}`
             )}{" "}

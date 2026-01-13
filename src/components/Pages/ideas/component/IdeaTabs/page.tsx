@@ -240,7 +240,7 @@ export default function IdeaTabs({
                 }`}
               >
                 {isPostLoader ? (
-                  <CircularProgress size={20} color="white" />
+                  <CircularProgress size={20} className="!text-white" />
                 ) : (
                   "Post"
                 )}
