@@ -13,13 +13,13 @@ import {
   FaRegHeart,
   FaRegClock,
 } from "react-icons/fa";
-import IdeaTabsTwo from "@/components/IdeaTabsTwo/page";
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
 import InputTextArea from "./InputTextArea";
 // import { useSelector } from "react-redux";
 import { imageUpload, userPost } from "@/components/service/apiService/user";
 import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
+import IdeaTabsTwo from "../IdeaTabsTwo/page";
 
 interface TabPanelProps {
   children?: React.ReactNode;

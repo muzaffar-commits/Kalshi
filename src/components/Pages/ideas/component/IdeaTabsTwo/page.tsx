@@ -11,13 +11,17 @@ import {
   FaBookmark,
 } from "react-icons/fa";
 import { HighlightTextss, timeAgoCompact } from "@/utils/Content";
-import {
-  postBookmarkOrUnBookMark,
-  postLikeOrUnlike,
-} from "../service/apiService/user";
+// import {
+//   postBookmarkOrUnBookMark,
+//   postLikeOrUnlike,
+// } from "../service/apiService/user";
 import { FcLike } from "react-icons/fc";
 import toast from "react-hot-toast";
 import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
+import {
+  postBookmarkOrUnBookMark,
+  postLikeOrUnlike,
+} from "@/components/service/apiService/user";
 
 interface TabPanelProps {
   children?: React.ReactNode;
