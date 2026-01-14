@@ -10,7 +10,7 @@ import {
   FaRegHeart,
   FaBookmark,
 } from "react-icons/fa";
-import { HighlightTextss, timeAgoCompact } from "@/utils/Content";
+import { HighlightTexts, timeAgoCompact } from "@/utils/Content";
 // import {
 //   postBookmarkOrUnBookMark,
 //   postLikeOrUnlike,
@@ -51,13 +51,16 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+type HandleComment = (post: PostFeeBack) => void;
 
 export default function IdeaTabsTwo({
   postedList,
   setAllPosts,
+  handleComment,
 }: {
   postedList: PostFeeBack[];
   setAllPosts: SetPosts;
+  handleComment: HandleComment;
 }) {
   const [value, setValue] = React.useState(0);
 
@@ -144,8 +147,6 @@ export default function IdeaTabsTwo({
     }
   };
 
-  //
-
   return (
     <Box sx={{ width: "100%" }}>
       <Box
@@ -180,7 +181,7 @@ export default function IdeaTabsTwo({
       </Box>
       <CustomTabPanel value={value} index={0}>
         <div className="p-3 border-b dark:border-gray-700 border-gray-200">
-          {postedList?.length > 0 &&
+          {postedList?.length > 0 ? (
             postedList?.map((row: PostFeeBack, index: number) => {
               const contentForPost = JSON.parse(row?.metadata);
               console.log(contentForPost, "contentForPost");
@@ -205,20 +206,19 @@ export default function IdeaTabsTwo({
                     />
                   </div>
                   <div>
-                    <h4>
-                      <a
-                        href="#"
-                        className="dark:text-gray-300 hover:underline font-semibold text-gray-700"
-                      >
-                        {row?.User?.username || "Unknown"}
-                      </a>{" "}
-                      <span className="text-xs dark:text-gray-500 text-gray-500">
-                        {timeAgoCompact(row?.updatedAt)}
-                      </span>
-                    </h4>
+                    <div className="flex items-center gap-2">
+                      <h4>
+                        <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
+                          {row?.User?.username || "Unknown"} dd
+                        </span>{" "}
+                        <span className="text-xs dark:text-gray-500 text-gray-500">
+                          {timeAgoCompact(row?.updatedAt)}
+                        </span>
+                      </h4>
+                    </div>
                     <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
                       {contentForPost?.content && (
-                        <HighlightTextss
+                        <HighlightTexts
                           key={index}
                           text={contentForPost?.content}
                         />
@@ -267,7 +267,9 @@ export default function IdeaTabsTwo({
                               ease-in-out text-lg cursor-pointer
                             "
                           >
-                            <FaRegCommentAlt />
+                            <FaRegCommentAlt
+                              onClick={() => handleComment(row)}
+                            />
                           </span>
                           <span className="inline-block relative -left-3 font-light text-gray-400">
                             {row?.commentCount || 0}
@@ -362,7 +364,10 @@ export default function IdeaTabsTwo({
                   </div>
                 </div>
               );
-            })}
+            })
+          ) : (
+            <div className="text-gray-400 text-center">Not found any list</div>
+          )}
         </div>
       </CustomTabPanel>
     </Box>

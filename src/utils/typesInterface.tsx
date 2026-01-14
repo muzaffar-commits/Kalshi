@@ -123,3 +123,32 @@ export interface PostFeeBack {
 }
 
 export type SetPosts = React.Dispatch<React.SetStateAction<PostFeeBack[]>>;
+
+interface UserPost {
+  id: number;
+  username: string;
+  image_url?: string | null;
+}
+
+export interface PostMetadata {
+  content?: string;
+  images?: string[];
+}
+
+export interface PostDetails {
+  id: number;
+  metadata: PostMetadata;
+  updatedAt: string;
+  commentCount: number;
+  likeCount: number;
+  isLiked: number;
+  isBookmarked: number;
+  User?: UserPost;
+}
+
+export interface CommentInterface {
+  id: number;
+  content: string;
+  updatedAt: string;
+  User?: UserPost;
+}

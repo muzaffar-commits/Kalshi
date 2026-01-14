@@ -81,7 +81,7 @@ body {
   }
 }
 
-.css-19kzrtu{
+.css-19kzrtu {
   padding: 0 !important;
 }
 :root {
@@ -90,4 +90,14 @@ body {
 
 .dark {
   --border-color: #374151; /* dark mode (gray-700) */
+}
+
+.ideasScrollbarHide {
+  overflow: auto; /* or scroll */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE & Edge */
+}
+
+.ideasScrollbarHide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }

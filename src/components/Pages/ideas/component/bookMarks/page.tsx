@@ -21,9 +21,14 @@ export default function BookMarks({ userId }: { userId: string }) {
   useEffect(() => {
     bookMarkList();
   }, [bookMarkList]);
+  const handleComment = () => {};
   return (
     <div>
-      <IdeaTabsTwo postedList={bookMarks} setAllPosts={setBookMarks} />
+      <IdeaTabsTwo
+        postedList={bookMarks}
+        handleComment={handleComment}
+        setAllPosts={setBookMarks}
+      />
     </div>
   );
 }

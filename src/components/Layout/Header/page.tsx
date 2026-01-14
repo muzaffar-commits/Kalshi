@@ -127,29 +127,47 @@ const Header = () => {
           >
             <Link href="/">
               <div className="flex items-center space-x-2">
-                <div className="hidden md:block text-xl font-bold">
-                  <div className="hidden md:block text-xl font-bold">
+                <div className=" text-xl font-bold">
+                  <div className=" text-xl font-bold">
                     {/* Light mode logo */}
                     <Image
                       src="/img/opinionLogo-dark.png"
                       alt="Opinion logo"
-                      width={80}
-                      height={80}
-                      className="h-auto block dark:hidden"
+                      width={160}
+                      height={160}
                       priority
+                      className="
+                          h-auto
+                          w-[40px]
+                          sm:w-[50px]
+                          md:w-[60px]
+                          lg:w-[70px]
+                          xl:w-[80px]
+                          block
+                          dark:hidden
+                        "
                     />
 
                     {/* Dark mode logo */}
                     <Image
                       src="/img/opinionLogo-light.png"
                       alt="Opinion logo"
-                      width={80}
-                      height={80}
-                      className="h-auto hidden dark:block"
+                      width={160}
+                      height={160}
                       priority
+                      className="
+                            h-auto
+                            w-[40px]
+                            sm:w-[50px]
+                            md:w-[60px]
+                            lg:w-[70px]
+                            xl:w-[80px]
+                            hidden
+                            dark:block
+                          "
                     />
                   </div>
-                  <span className="text-white"></span>
+                  <span className="text-white"> </span>
                 </div>
               </div>
             </Link>
@@ -157,19 +175,6 @@ const Header = () => {
               <div className="relative">
                 <span className="absolute inset-y-0 right-3 flex items-center pl-3 text-gray-400">
                   <FaSearch className="dark:text-[#c7ac77]/60" />
-                  {/* <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
-                    />
-                  </svg> */}
                 </span>
                 {/* Input Box */}
                 <input

@@ -118,3 +118,29 @@ export const getBookMarkList = async (id: string) => {
     };
   }
 };
+
+export const getCommentsList = async (id: number | null) => {
+  try {
+    const response = await apiInstance.get(`${API_URLs.getComments}/${id}`);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const replyComments = async (reqBody: unknown) => {
+  try {
+    const response = await apiInstance.post(API_URLs.postComments, reqBody);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+//

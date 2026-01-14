@@ -134,7 +134,7 @@ function escapeHtml(str: string) {
     .replace(/'/g, "&#039;");
 }
 
-export function HighlightTextss({ text }: { text: string }) {
+export function HighlightTexts({ text }: { text: string }) {
   if (!text) return null;
 
   const escaped = escapeHtml(text);

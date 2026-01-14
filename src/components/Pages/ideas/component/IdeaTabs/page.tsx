@@ -20,7 +20,7 @@ import InputTextArea from "./InputTextArea";
 import { imageUpload, userPost } from "@/components/service/apiService/user";
 import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
 import IdeaTabsTwo from "../IdeaTabsTwo/page";
-
+import { IoImageOutline } from "react-icons/io5";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -54,15 +54,32 @@ interface UploadedImage {
   url: string;
 }
 
+type HandleComment = (post: PostFeeBack) => void;
+
+interface IdeaTabsProps {
+  allPosts: PostFeeBack[];
+  fetchPostList: () => void;
+  setAllPosts: SetPosts;
+  handleComment: HandleComment;
+}
+
 export default function IdeaTabs({
   allPosts,
   fetchPostList,
   setAllPosts,
-}: {
-  allPosts: PostFeeBack[];
-  fetchPostList: () => void;
-  setAllPosts: SetPosts;
-}) {
+  handleComment,
+}: IdeaTabsProps) {
+  // export default function IdeaTabs({
+  //   allPosts,
+  //   fetchPostList,
+  //   setAllPosts,
+  //   handleComment,
+  // }: {
+  //   allPosts: PostFeeBack[];
+  //   fetchPostList: () => void;
+  //   setAllPosts: SetPosts;
+  //   handleComment: HandleComment;
+  // }) {
   const [value, setValue] = React.useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -221,7 +238,7 @@ export default function IdeaTabs({
                 onClick={() => fileInputRef.current?.click()}
                 className="py-2 px-4 cursor-pointer dark:text-gray-300 text-gray-800"
               >
-                GIF
+                <IoImageOutline size={25} className="!text-sky-600" />
               </button>
               <input
                 type="file"
@@ -249,7 +266,11 @@ export default function IdeaTabs({
           </div>
 
           <div className="border-t dark:border-gray-700 border-gray-200 mt-3">
-            <IdeaTabsTwo postedList={allPosts} setAllPosts={setAllPosts} />
+            <IdeaTabsTwo
+              handleComment={handleComment}
+              postedList={allPosts}
+              setAllPosts={setAllPosts}
+            />
           </div>
         </div>
       </CustomTabPanel>

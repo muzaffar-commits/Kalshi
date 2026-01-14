@@ -28,6 +28,8 @@ export const API_URLs = {
   bookMarkList: "/user/bookmarks",
   followUser: "/user/follow",
   unFollowUser: "/user/unfollow",
+  getComments: "/user/comments",
+  postComments: "/user/comment",
 };
 
 // images

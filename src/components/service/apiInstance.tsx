@@ -3,8 +3,8 @@
 import axios from "axios";
 
 // export const developmentBaseURL = "http://192.168.1.55:3000/api";
-export const developmentBaseURL = "http://192.168.29.218:3000/api";
-// export const productionBaseURL = "https://api.opinionkings.com/api";
+// export const developmentBaseURL = "http://192.168.29.218:3000/api";
+export const developmentBaseURL = "https://api.opinionkings.com/api";
 
 const apiInstance = axios.create({
   baseURL: developmentBaseURL,
