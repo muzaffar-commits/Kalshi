@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { questionDetails } from "@/components/service/apiService/category";
 import { useSearchParams } from "next/navigation";
-import ChartRealtime from "./realTimeChart";
+import ChartRealtime from "./component/realTimeChart";
 import socket from "@/components/socket";
 import BuySell from "@/components/Modal/BuySell/page";
 import {
@@ -15,12 +15,13 @@ import {
 import { useSelector } from "react-redux";
 import MarketSkeleton from "@/components/common/CartDetailLoader";
 import Authentication from "@/components/Pages/auth";
-import MarketLeaderboard from "./MarketLeaderboard";
-import OrderList from "./OrderList";
+import MarketLeaderboard from "./component/MarketLeaderboard";
+
 import ConfirmationModal from "@/components/Modal/ConfirmationModal/page";
 import toast from "react-hot-toast";
 import { GraphData } from "@/utils/typesInterface";
 import { delay } from "@/utils/Content";
+import OrderList from "./component/OrderList";
 
 type OrderSide = "BUY" | "SELL";
 
@@ -482,8 +483,7 @@ const Details = () => {
   const getBgClass = (price: number) => {
     const intensity = getIntensity(price);
 
-    if (intensity > 0.8)
-      return "border border-gray-200 ";
+    if (intensity > 0.8) return "border border-gray-200 ";
 
     if (intensity > 0.6) return "bg-emerald-400/15";
 

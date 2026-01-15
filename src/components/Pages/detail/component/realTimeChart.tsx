@@ -83,7 +83,7 @@ const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
 
     yaxis: {
       min: 0,
-      max: 1.5,
+      max: 1,
       labels: {
         style: {
           colors: "#6b7280",

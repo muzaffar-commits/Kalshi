@@ -16,16 +16,18 @@ import {
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
 import InputTextArea from "./InputTextArea";
-// import { useSelector } from "react-redux";
 import { imageUpload, userPost } from "@/components/service/apiService/user";
-import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
+import {
+  PostFeeBack,
+  SetPosts,
+  TabPanelProps,
+  UploadedImage,
+} from "@/utils/typesInterface";
 import IdeaTabsTwo from "../IdeaTabsTwo/page";
 import { IoImageOutline } from "react-icons/io5";
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
+import { CreatePostSkeleton } from "@/utils/customSkeleton";
+
+type HandleComment = (post: PostFeeBack) => void;
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -49,18 +51,13 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-
-interface UploadedImage {
-  url: string;
-}
-
-type HandleComment = (post: PostFeeBack) => void;
-
 interface IdeaTabsProps {
   allPosts: PostFeeBack[];
   fetchPostList: () => void;
   setAllPosts: SetPosts;
   handleComment: HandleComment;
+  isLoader: boolean;
+  handleUserDetails: (id: string) => void;
 }
 
 export default function IdeaTabs({
@@ -68,18 +65,9 @@ export default function IdeaTabs({
   fetchPostList,
   setAllPosts,
   handleComment,
+  isLoader,
+  handleUserDetails,
 }: IdeaTabsProps) {
-  // export default function IdeaTabs({
-  //   allPosts,
-  //   fetchPostList,
-  //   setAllPosts,
-  //   handleComment,
-  // }: {
-  //   allPosts: PostFeeBack[];
-  //   fetchPostList: () => void;
-  //   setAllPosts: SetPosts;
-  //   handleComment: HandleComment;
-  // }) {
   const [value, setValue] = React.useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -203,73 +191,85 @@ export default function IdeaTabs({
 
       <CustomTabPanel value={value} index={0}>
         <div>
-          <div className="flex items-start gap-4 w-full px-4 mt-4">
-            <Image
-              src="/img/user.png"
-              alt="user"
-              width={60}
-              height={60}
-              className="rounded-full mt-1"
-            />
+          {isLoader ? (
+            <CreatePostSkeleton />
+          ) : (
+            <div>
+              <div className="flex items-start gap-4 w-full px-4 mt-4">
+                <Image
+                  src="/img/user.png"
+                  alt="user"
+                  width={60}
+                  height={60}
+                  className="rounded-full mt-1"
+                />
 
-            <InputTextArea message={message || ""} setMessage={setMessage} />
-          </div>
-
-          <div className=" flex flex-row pl-7 justify-between items-center">
-            {selectedImage?.name ? (
-              <div className="text-xs gap-4 items-center flex flex-row">
-                {selectedImage?.name || ""}
-                {String(selectedImage?.name)?.length > 0 && (
-                  <div
-                    onClick={removeImage}
-                    className="text-black text-sm cursor-pointer bg-white px-1.5 rounded"
-                  >
-                    x
-                  </div>
-                )}
+                <InputTextArea
+                  message={message || ""}
+                  setMessage={setMessage}
+                />
               </div>
-            ) : (
-              <div></div>
-            )}
 
-            <div className="flex justify-end gap-4 mr-7">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="py-2 px-4 cursor-pointer dark:text-gray-300 text-gray-800"
-              >
-                <IoImageOutline size={25} className="!text-sky-600" />
-              </button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="image/gif,image/png,image/jpeg,image/webp"
-                onChange={handleFileChange}
-              />
-              <button
-                disabled={!canPost || !(String(message).trim().length > 3)}
-                onClick={postUserMessage}
-                className={`py-2 px-4 w-16 flex items-center justify-center rounded-md ${
-                  selectedImage?.name || String(message).trim().length > 3
-                    ? "bg-[#c8aa76] text-black cursor-pointer"
-                    : "bg-gray-700 text-gray-400 cursor-not-allowed"
-                }`}
-              >
-                {isPostLoader ? (
-                  <CircularProgress size={20} className="!text-white" />
+              <div className=" flex flex-row pl-7 justify-between items-center">
+                {selectedImage?.name ? (
+                  <div className="text-xs gap-4 items-center flex flex-row">
+                    {selectedImage?.name || ""}
+                    {String(selectedImage?.name)?.length > 0 && (
+                      <div
+                        onClick={removeImage}
+                        className="text-black text-sm cursor-pointer bg-white px-1.5 rounded"
+                      >
+                        x
+                      </div>
+                    )}
+                  </div>
                 ) : (
-                  "Post"
+                  <div></div>
                 )}
-              </button>
+
+                <div className="flex justify-end gap-4 mr-7">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="py-2 px-4 cursor-pointer dark:text-gray-300 text-gray-800"
+                  >
+                    <IoImageOutline size={25} className="!text-sky-600" />
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/gif,image/png,image/jpeg,image/webp"
+                    onChange={handleFileChange}
+                  />
+                  <button
+                    disabled={!canPost || !(String(message).trim().length > 3)}
+                    onClick={postUserMessage}
+                    className={`py-2 px-4 w-16 flex items-center justify-center rounded-md ${
+                      selectedImage?.name || String(message).trim().length > 3
+                        ? "bg-[#c8aa76] text-black cursor-pointer"
+                        : "bg-gray-700 text-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    {isPostLoader ? (
+                      <CircularProgress size={20} className="!text-white" />
+                    ) : (
+                      "Post"
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="border-t dark:border-gray-700 border-gray-200 mt-3">
             <IdeaTabsTwo
               handleComment={handleComment}
               postedList={allPosts}
               setAllPosts={setAllPosts}
+              isBookMark={false}
+              loader={isLoader}
+              handleUserDetails={handleUserDetails}
             />
           </div>
         </div>

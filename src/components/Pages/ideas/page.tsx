@@ -14,6 +14,8 @@ import Supports from "./component/supports/page";
 import FAQs from "./component/faqs/page";
 import CommentPage from "./component/comments/page";
 
+import { delay } from "@/utils/Content";
+
 interface userDetails {
   user: {
     user: {
@@ -24,13 +26,16 @@ interface userDetails {
 
 const Ideas = () => {
   const [allPosts, setAllPosts] = useState<PostFeeBack[]>([]);
+  const [isLoader, setIsLoader] = useState(false);
   const [currentTabs, setCurrentTabs] = useState("Home");
   const users = useSelector((state: userDetails) => state?.user?.user);
   const [isComment, setIsComment] = useState(false);
-  const [postDetails, setPostDetails] = useState<PostFeeBack>();
+  const [postDetails, setPostDetails] = useState<PostFeeBack | null>(null);
+  const [targetId, setTargetId] = useState("");
   const getListOfPost = useCallback(async () => {
+    setIsLoader(true);
     try {
-      const response = await getFeed(users?.id);
+      const [response] = await Promise.all([getFeed(users?.id), delay(1000)]);
       if (response?.success) {
         setAllPosts(response.data ?? []);
       } else {
@@ -38,16 +43,33 @@ const Ideas = () => {
       }
     } catch {
       setAllPosts([]);
+    } finally {
+      setIsLoader(false);
     }
-  }, [users?.id]);
+  }, [users?.id, currentTabs]);
 
   useEffect(() => {
     getListOfPost();
   }, [getListOfPost]);
 
   const handleComment = (row: PostFeeBack) => {
+    console.log(row, "sdlkfjslkdjfjskdf");
+
     setPostDetails(row);
     setIsComment(true);
+  };
+  const handleCloseComment = () => {
+    setPostDetails(null);
+    setIsComment(false);
+  };
+  const changeForTabs = (values: string) => {
+    setCurrentTabs(values);
+    setIsComment(false);
+    setTargetId("");
+  };
+
+  const handleUserDetails = (id: string) => {
+    setTargetId(id);
   };
   return (
     <>
@@ -63,28 +85,48 @@ const Ideas = () => {
               </span>
               <MobileMenu
                 currentTabs={currentTabs}
-                handleTabs={setCurrentTabs}
+                handleTabs={changeForTabs}
               />
             </div>
             <div className="md:w-3/4 w-full lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
               <div className="lg:border-r dark:border-gray-700 border-gray-200">
                 {currentTabs == "Home" ? (
                   isComment ? (
-                    postDetails && <CommentPage postDetails={postDetails} />
+                    postDetails && (
+                      <CommentPage
+                        postDetails={postDetails}
+                        handleCloseComment={handleCloseComment}
+                      />
+                    )
                   ) : (
                     <IdeaTabs
                       allPosts={allPosts}
                       fetchPostList={getListOfPost}
                       setAllPosts={setAllPosts}
                       handleComment={handleComment}
+                      isLoader={isLoader}
+                      handleUserDetails={handleUserDetails}
                     />
                   )
                 ) : currentTabs == "Replies" ? (
                   <Replies />
                 ) : currentTabs == "Bookmarks" ? (
-                  <BookMarks userId={users?.id} />
+                  isComment ? (
+                    postDetails && (
+                      <CommentPage
+                        postDetails={postDetails}
+                        handleCloseComment={handleCloseComment}
+                      />
+                    )
+                  ) : (
+                    <BookMarks
+                      userId={users?.id}
+                      handleComment={handleComment}
+                      handleUserDetails={handleUserDetails}
+                    />
+                  )
                 ) : currentTabs == "Profile" ? (
-                  <Profile />
+                  <Profile targetId={targetId} userId={users?.id} />
                 ) : currentTabs == "Community Guidelines" ? (
                   <CommunityGuidelines />
                 ) : currentTabs == "Support" ? (

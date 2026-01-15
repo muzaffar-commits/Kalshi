@@ -30,6 +30,7 @@ export const API_URLs = {
   unFollowUser: "/user/unfollow",
   getComments: "/user/comments",
   postComments: "/user/comment",
+  getProfileListAllUser: "/user/get-social-user-profile",
 };
 
 // images

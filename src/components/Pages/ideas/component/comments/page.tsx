@@ -4,11 +4,12 @@ import {
   getCommentsList,
   replyComments,
 } from "@/components/service/apiService/user";
-import { HighlightTexts, timeAgoCompact } from "@/utils/Content";
+import { delay, HighlightTexts, timeAgoCompact } from "@/utils/Content";
 import Image from "next/image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   FaBookmark,
+  FaChevronLeft,
   FaRegBookmark,
   FaRegCommentAlt,
   FaRegHeart,
@@ -22,7 +23,7 @@ import {
   PostFeeBack,
   PostMetadata,
 } from "@/utils/typesInterface";
-
+import { CircularProgress } from "@mui/material";
 const PROFESSIONAL_EMOJIS = [
   "🙂",
   "😊",
@@ -47,19 +48,25 @@ const PROFESSIONAL_EMOJIS = [
 
 export default function CommentPage({
   postDetails,
+  handleCloseComment,
 }: {
   postDetails: PostFeeBack;
+  handleCloseComment: () => void;
 }) {
   const [commentList, setCommentList] = useState<CommentInterface[]>([]);
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   console.log(commentList, "commentList");
 
   const commentLists = useCallback(async () => {
+    setIsLoader(true);
     try {
-      const response = await getCommentsList(postDetails?.id || null);
-      console.log(response, "response");
+      const [response] = await Promise.all([
+        getCommentsList(postDetails?.id || null),
+        delay(1000),
+      ]);
 
       if (response?.success) {
         setCommentList(response.data ?? []);
@@ -68,6 +75,8 @@ export default function CommentPage({
       }
     } catch {
       setCommentList([]);
+    } finally {
+      setIsLoader(false);
     }
   }, [postDetails?.id]);
 
@@ -143,7 +152,16 @@ export default function CommentPage({
     }, 0);
   };
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-0">
+      <div className="pl-5 flex flex-row items-center gap-3">
+        <FaChevronLeft
+          className="cursor-pointer text-sky-300"
+          onClick={handleCloseComment}
+        />
+        <span className="text-gray-600 font-semibold dark:text-gray-400">
+          Details
+        </span>
+      </div>
       <div className="flex flex-col gap-2">
         <div
           className={`md:flex 
@@ -192,7 +210,7 @@ export default function CommentPage({
             <div className="mt-4">
               <div className="flex justify-between">
                 <div className="flex gap-3 items-center">
-                  <span
+                  {/* <span
                     className="
                                       p-2
                                       rounded
@@ -208,10 +226,10 @@ export default function CommentPage({
                     <FaRegCommentAlt
                     //   onClick={() => handleComment(row)}
                     />
-                  </span>
-                  <span className="inline-block relative -left-3 font-light text-gray-400">
+                  </span> */}
+                  {/* <span className="inline-block relative -left-3 font-light text-gray-400">
                     {postDetails?.commentCount || 0}
-                  </span>
+                  </span> */}
 
                   <span
                     className="
@@ -361,17 +379,18 @@ export default function CommentPage({
                 onClick={handleSend}
                 disabled={!value.trim()}
                 className="
-          bg-blue-600
-          hover:bg-blue-700
-          disabled:bg-blue-300
-          text-white
-          text-sm
-          flex flex-row items-center gap-2
-          font-medium
-          px-4 py-1.5
-          rounded-md
-          transition
-        "
+                bg-blue-600
+                hover:bg-blue-700
+                disabled:bg-blue-300
+                text-white
+                text-sm
+                cursor-pointer
+                flex flex-row items-center gap-2
+                font-medium
+                px-4 py-1.5
+                rounded-md
+                transition
+              "
               >
                 Reply <MdSend />
               </button>
@@ -417,46 +436,66 @@ export default function CommentPage({
           <hr className="border-gray-700" />
         </div>
         <div>
-          {commentList?.map((row: CommentInterface) => {
-            return (
-              <div
-                key={row?.id}
-                className={`md:flex 
+          {isLoader ? (
+            <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
+              <CircularProgress className="" />
+            </div>
+          ) : commentList?.length > 0 ? (
+            commentList?.map((row: CommentInterface) => {
+              return (
+                <div
+                  key={row?.id}
+                  className={`md:flex 
              pt-4 
           pb-2 items-start gap-4 w-full border-b border-gray-700 md:px-4 px-0`}
-              >
-                <div>
-                  <Image
-                    src={
-                      row?.User?.image_url ||
-                      "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
-                    }
-                    alt="user"
-                    width={30}
-                    height={30}
-                    className="rounded-md mt-1"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4>
-                      <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
-                        {row?.User?.username || "Unknown"} dd
-                      </span>{" "}
-                      <span className="text-xs dark:text-gray-500 text-gray-500">
-                        {timeAgoCompact(row?.updatedAt)}
-                      </span>
-                    </h4>
+                >
+                  <div>
+                    <Image
+                      src={
+                        row?.User?.image_url ||
+                        "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                      }
+                      alt="user"
+                      width={30}
+                      height={30}
+                      className="rounded-md mt-1"
+                    />
                   </div>
-                  <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
-                    {row?.content && <HighlightTexts text={row?.content} />}
-                    <br />
-                    <br />
-                  </p>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4>
+                        <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
+                          {row?.User?.username || "Unknown"} dd
+                        </span>{" "}
+                        <span className="text-xs dark:text-gray-500 text-gray-500">
+                          {timeAgoCompact(row?.updatedAt)}
+                        </span>
+                      </h4>
+                    </div>
+                    <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                      {row?.content && <HighlightTexts text={row?.content} />}
+                      <br />
+                      <br />
+                    </p>
+                  </div>
                 </div>
+              );
+            })
+          ) : (
+            <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800">
+                <FaRegCommentAlt className="text-2xl text-gray-500 dark:text-gray-400" />
               </div>
-            );
-          })}
+
+              <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200">
+                No comments yet
+              </h3>
+
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                Be the first to share your thoughts and start the conversation.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

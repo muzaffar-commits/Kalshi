@@ -40,6 +40,7 @@ export interface OptionItem {
   winningProbability: number;
   userPosition?: UserPosition;
 }
+
 export interface QuestionStats {
   totalVolume: number;
 }
@@ -151,4 +152,24 @@ export interface CommentInterface {
   content: string;
   updatedAt: string;
   User?: UserPost;
+}
+
+export interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+export interface UploadedImage {
+  url: string;
+}
+
+export interface LeaderboardItem {
+  userId: number;
+  username: string;
+  profit: number;
+  invested: number;
+  pnl: number;
+  rank: number;
+  roi: number;
 }

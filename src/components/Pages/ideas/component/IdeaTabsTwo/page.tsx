@@ -11,10 +11,6 @@ import {
   FaBookmark,
 } from "react-icons/fa";
 import { HighlightTexts, timeAgoCompact } from "@/utils/Content";
-// import {
-//   postBookmarkOrUnBookMark,
-//   postLikeOrUnlike,
-// } from "../service/apiService/user";
 import { FcLike } from "react-icons/fc";
 import toast from "react-hot-toast";
 import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
@@ -22,6 +18,7 @@ import {
   postBookmarkOrUnBookMark,
   postLikeOrUnlike,
 } from "@/components/service/apiService/user";
+import { PostSkeleton } from "@/utils/customSkeleton";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -57,10 +54,16 @@ export default function IdeaTabsTwo({
   postedList,
   setAllPosts,
   handleComment,
+  isBookMark = false,
+  loader = false,
+  handleUserDetails,
 }: {
   postedList: PostFeeBack[];
   setAllPosts: SetPosts;
   handleComment: HandleComment;
+  isBookMark: boolean;
+  loader: boolean;
+  handleUserDetails: (id: string) => void;
 }) {
   const [value, setValue] = React.useState(0);
 
@@ -112,23 +115,29 @@ export default function IdeaTabsTwo({
     }
   };
 
+  console.log(isBookMark, "isBookMark");
+
   const handleBookMarkOrUnBookMark = async (
     id: number,
     isBookmarked: number
   ) => {
     try {
-      setAllPosts((prev) =>
-        prev.map((item) => {
-          if (item.id === id) {
-            const booked = item.isBookmarked === 1 ? 0 : 1;
-            return {
-              ...item,
-              isBookmarked: booked,
-            };
-          }
-          return item;
-        })
-      );
+      setAllPosts((prev) => {
+        if (isBookMark === true) {
+          return prev.filter((item) => item.id !== id);
+        } else {
+          return prev.map((item) => {
+            if (item.id === id) {
+              const booked = item.isBookmarked === 1 ? 0 : 1;
+              return {
+                ...item,
+                isBookmarked: booked,
+              };
+            }
+            return item;
+          });
+        }
+      });
       if (isBookmarked == 1) {
         toast.success("Remove for bookmarks");
       } else {
@@ -181,10 +190,15 @@ export default function IdeaTabsTwo({
       </Box>
       <CustomTabPanel value={value} index={0}>
         <div className="p-3 border-b dark:border-gray-700 border-gray-200">
-          {postedList?.length > 0 ? (
+          {loader ? (
+            <PostSkeleton />
+          ) : postedList?.length > 0 ? (
             postedList?.map((row: PostFeeBack, index: number) => {
-              const contentForPost = JSON.parse(row?.metadata);
-              console.log(contentForPost, "contentForPost");
+              const contentForPost =
+                typeof row?.metadata === "string"
+                  ? JSON.parse(row.metadata)
+                  : row.metadata;
+              console.log(row, "contentForPost");
 
               return (
                 <div
@@ -208,8 +222,11 @@ export default function IdeaTabsTwo({
                   <div>
                     <div className="flex items-center gap-2">
                       <h4>
-                        <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
-                          {row?.User?.username || "Unknown"} dd
+                        <span
+                          onClick={() => handleUserDetails(`${row?.User?.id}`)}
+                          className="dark:text-gray-300 hover:underline font-semibold text-gray-700"
+                        >
+                          {row?.User?.username || "Unknown"}
                         </span>{" "}
                         <span className="text-xs dark:text-gray-500 text-gray-500">
                           {timeAgoCompact(row?.updatedAt)}
@@ -287,22 +304,13 @@ export default function IdeaTabsTwo({
                                 duration-200
                                 ease-in-out text-xl cursor-pointer
                               "
+                            onClick={() =>
+                              handleLikeUnlike(row?.id, row?.isLiked)
+                            }
                           >
                             {/* FcLike  */}
 
-                            {row?.isLiked == 1 ? (
-                              <FcLike
-                                onClick={() =>
-                                  handleLikeUnlike(row?.id, row?.isLiked)
-                                }
-                              />
-                            ) : (
-                              <FaRegHeart
-                                onClick={() =>
-                                  handleLikeUnlike(row?.id, row?.isLiked)
-                                }
-                              />
-                            )}
+                            {row?.isLiked == 1 ? <FcLike /> : <FaRegHeart />}
                           </span>
                           <span className="inline-block relative -left-3 font-light text-gray-400">
                             {row?.likeCount || 0}
@@ -319,26 +327,17 @@ export default function IdeaTabsTwo({
                               duration-200
                               ease-in-out text-lg cursor-pointer
                             "
+                            onClick={() =>
+                              handleBookMarkOrUnBookMark(
+                                row?.id,
+                                row?.isBookmarked
+                              )
+                            }
                           >
                             {row?.isBookmarked == 1 ? (
-                              <FaBookmark
-                                className="text-[#156bf7]"
-                                onClick={() =>
-                                  handleBookMarkOrUnBookMark(
-                                    row?.id,
-                                    row?.isBookmarked
-                                  )
-                                }
-                              />
+                              <FaBookmark className="text-[#156bf7]" />
                             ) : (
-                              <FaRegBookmark
-                                onClick={() =>
-                                  handleBookMarkOrUnBookMark(
-                                    row?.id,
-                                    row?.isBookmarked
-                                  )
-                                }
-                              />
+                              <FaRegBookmark />
                             )}
                           </span>
                           <span className="inline-block relative -left-3 font-light text-gray-400"></span>
@@ -366,7 +365,19 @@ export default function IdeaTabsTwo({
               );
             })
           ) : (
-            <div className="text-gray-400 text-center">Not found any list</div>
+            <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800">
+                <FaRegCommentAlt className="text-2xl text-gray-500 dark:text-gray-400" />
+              </div>
+
+              <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200">
+                No Post yet
+              </h3>
+
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                Be the first to share your thoughts and spark a conversation.
+              </p>
+            </div>
           )}
         </div>
       </CustomTabPanel>

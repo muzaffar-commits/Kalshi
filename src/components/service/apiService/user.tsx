@@ -142,5 +142,20 @@ export const replyComments = async (reqBody: unknown) => {
     };
   }
 };
+export const getUsersAllDetails = async (id: string, userId: string) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.getProfileListAllUser}${id ? `?targetId=${id}` : ""}${
+        userId ? `?userId=${userId}` : ""
+      }`
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
 
 //
