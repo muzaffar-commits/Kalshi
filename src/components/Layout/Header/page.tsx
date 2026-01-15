@@ -13,6 +13,8 @@ import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
+import { CategorySkeleton } from "@/utils/customSkeleton";
+import { delay } from "@/utils/Content";
 
 interface CategoryState {
   category?: {
@@ -56,9 +58,7 @@ const Header = () => {
   const [category, setCategory] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const pathname = usePathname();
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
-  console.log(pathname, "pathname");
+  const [isCategory, setIsCategory] = useState(false);
 
   const user = useSelector((state: RootState) => state?.user);
   const dispatch = useDispatch();
@@ -72,9 +72,14 @@ const Header = () => {
   };
 
   const categoryAllList = useCallback(async () => {
+    setIsCategory(true);
     try {
-      const response: CategoryApiResponse = await getCommonCategoryAll();
+      // const response: CategoryApiResponse = await getCommonCategoryAll();
 
+      const [response] = await Promise.all([
+        getCommonCategoryAll(),
+        delay(1000),
+      ]);
       if (response.success && response.data?.categories?.length) {
         const firstCategory = response.data.categories[0];
 
@@ -86,6 +91,8 @@ const Header = () => {
       }
     } catch {
       setCategory([]);
+    } finally {
+      setIsCategory(false);
     }
   }, [dispatch]);
 
@@ -221,35 +228,32 @@ const Header = () => {
           {pathname === "/" && (
             <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
               <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
-                {category?.map((row: Category, index: number) => (
-                  <li key={index}>
-                    <div
-                      onClick={() => {
-                        dispatch(saveCategory(row));
-                        setCategoryId(row?.id);
-                      }}
-                      className={` ${
-                        row?.id == categoryId
-                          ? "text-black dark:text-[#c7ac77]"
-                          : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
-                      } font-semibold flex items-center`}
-                    >
-                      {index == 0 && (
-                        <span>
-                          <FaArrowTrendUp className="mr-1" />
-                          {/* <Image
-                            src={Trend}
-                            width={14}
-                            height={14}
-                            alt="trending"
-                            className="mr-1"
-                          /> */}
-                        </span>
-                      )}
-                      {row?.name}
-                    </div>
-                  </li>
-                ))}
+                {isCategory ? (
+                  <CategorySkeleton />
+                ) : (
+                  category?.map((row: Category, index: number) => (
+                    <li key={index}>
+                      <div
+                        onClick={() => {
+                          dispatch(saveCategory(row));
+                          setCategoryId(row?.id);
+                        }}
+                        className={` ${
+                          row?.id == categoryId
+                            ? "text-black dark:text-[#c7ac77]"
+                            : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
+                        } font-semibold flex items-center`}
+                      >
+                        {index == 0 && (
+                          <span>
+                            <FaArrowTrendUp className="mr-1" />
+                          </span>
+                        )}
+                        {row?.name}
+                      </div>
+                    </li>
+                  ))
+                )}
               </ul>
             </nav>
           )}

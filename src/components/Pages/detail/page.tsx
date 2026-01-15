@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { questionDetails } from "@/components/service/apiService/category";
 import { useSearchParams } from "next/navigation";
-import ChartRealtime from "./component/realTimeChart";
 import socket from "@/components/socket";
 import BuySell from "@/components/Modal/BuySell/page";
 import {
@@ -20,8 +19,9 @@ import MarketLeaderboard from "./component/MarketLeaderboard";
 import ConfirmationModal from "@/components/Modal/ConfirmationModal/page";
 import toast from "react-hot-toast";
 import { GraphData } from "@/utils/typesInterface";
-import { delay } from "@/utils/Content";
+import { delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
+import StackedAreaChart from "./component/realTimeChart";
 
 type OrderSide = "BUY" | "SELL";
 
@@ -152,9 +152,6 @@ const Details = () => {
   const questionDetailsList = useCallback(async () => {
     setIsLoader(true);
     try {
-      // const [response] = await Promise.all([
-      //   questionDetails(slug as string, userDetails?.user?.id as number),
-      // ]);
       const [response] = await Promise.all([
         questionDetails(slug as string, userDetails?.user?.id as number),
         delay(2000),
@@ -190,12 +187,12 @@ const Details = () => {
   }, [questionDetailsList, getGraphDetails, slug]);
 
   const questionId = slug;
-
+  console.log(socket.connected, "socket.connected");
   useEffect(() => {
     if (!socket.connected) {
       socket.connect();
     }
-    console.log(socket.connected, "socket.connected");
+    console.log(socket.connected, "socket.connected=====>");
 
     socket.on("connect", () => {
       console.log("✅ Socket connected! ID:", socket.id);
@@ -242,11 +239,13 @@ const Details = () => {
     });
 
     socket.on("trade", (payload: SocketTradePayload) => {
-      if (OrderHistoryIdsRef.current.has(payload.orderId)) {
-        return;
-      }
-      OrderHistoryIdsRef.current.add(payload.orderId);
+      console.log(payload, "tradesss=====>");
 
+      // if (OrderHistoryIdsRef.current.has(payload.orderId)) {
+      //   return;
+      // }
+      // OrderHistoryIdsRef.current.add(payload.orderId);
+      console.log(payload, "tradesss=====>11111111");
       const tradeRow: OrderFlowItem = {
         id: payload.orderId,
         optionId: payload.optionId,
@@ -259,8 +258,6 @@ const Details = () => {
       }
       OrderHistoryIdsRef.current.add(payload.orderId);
       setOrderFlow((prev: OrderFlow) => {
-        if (!prev) return prev;
-
         if (payload.side === "BUY") {
           return {
             buys: [tradeRow, ...(prev.buys || [])],
@@ -280,6 +277,8 @@ const Details = () => {
     });
 
     socket.on("order:update", (payload: SocketOrderUpdatePayload) => {
+      console.log(payload, "order:update====>");
+
       if (
         !payload?.questionId ||
         !payload?.optionId ||
@@ -385,8 +384,6 @@ const Details = () => {
     setIsOpenBuySell(true);
   };
 
-  console.log(typeof slug, "slug");
-
   const getLeaderBoardMarketList = useCallback(async () => {
     try {
       const response = await getLeaderBoardMarket(slug);
@@ -396,8 +393,7 @@ const Details = () => {
       } else {
         setLeaderBoard([]);
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       setLeaderBoard([]);
     }
   }, [slug]);
@@ -415,8 +411,7 @@ const Details = () => {
       } else {
         setOrderData([]);
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       setOrderData([]);
     }
   }, [slug]);
@@ -528,7 +523,8 @@ const Details = () => {
     }
   };
 
-  localStorage.setItem("isCategory", "0");
+  // console.log(graphData, "graphData");
+
   return (
     <>
       {isLoader ? (
@@ -551,8 +547,9 @@ const Details = () => {
                   </h1>
                   <p className="text-sm text-[#7F90A7] dark:text-gray-300">
                     ${" "}
-                    {Number(data?.market?.totalMarketVolume || 0).toFixed(2) ||
-                      0}{" "}
+                    {truncateValue(
+                      Number(data?.market?.totalMarketVolume || 0)
+                    ) || 0}{" "}
                     Vol.
                   </p>
                   <div className="lg:flex space-x-4 mt-1 text-sm">
@@ -575,8 +572,8 @@ const Details = () => {
                           style={{ width: "10px", height: "10px" }}
                         ></span>
                         <span className="text-[#7F90A7] font-semibold dark:text-gray-300">
-                          {item?.name || "--"}, {(item?.price * 100).toFixed(1)}{" "}
-                          %
+                          {item?.name || "--"},{" "}
+                          {truncateValue(item?.price * 100, 1)} %
                         </span>
                       </div>
                     ))}
@@ -589,7 +586,7 @@ const Details = () => {
                   {Number(graphData?.series?.length) > 0 ? (
                     <div className="h-64 mb-6 flex">
                       <span className="text-gray-500">
-                        <ChartRealtime data={graphData?.series} />
+                        <StackedAreaChart data={graphData?.series} />
                       </span>
                     </div>
                   ) : (
@@ -642,7 +639,8 @@ const Details = () => {
                             <>
                               <div className="w-20 text-sm text-slate-300 text-center">
                                 {(item.userPosition?.invested ?? 0) > 0
-                                  ? Number(item.userPosition?.invested).toFixed(
+                                  ? truncateValue(
+                                      Number(item.userPosition?.invested),
                                       1
                                     )
                                   : "--"}
@@ -653,12 +651,15 @@ const Details = () => {
                                   pnl < 0 ? "text-red-400" : "text-emerald-400"
                                 }`}
                               >
-                                {pnl !== 0 ? `$${pnl.toFixed(1)}` : "--"}
+                                {pnl !== 0 ? `$${truncateValue(pnl, 1)}` : "--"}
                               </div>
 
                               <div className="w-24 text-sm text-slate-300 text-center">
                                 {(item.userPosition?.shares ?? 0) > 0
-                                  ? Number(item.userPosition?.shares).toFixed(1)
+                                  ? truncateValue(
+                                      Number(item.userPosition?.shares),
+                                      1
+                                    )
                                   : "--"}
                               </div>
                             </>
@@ -667,7 +668,7 @@ const Details = () => {
                           {/* ACTIONS */}
                           <div className="flex items-center gap-2 mt-2 md:mt-0">
                             <div className="text-xs text-slate-400 w-12 text-center">
-                              {(Number(item?.price) * 100).toFixed(1)}%
+                              {truncateValue(Number(item?.price) * 100, 1)}%
                             </div>
 
                             <button
@@ -705,7 +706,7 @@ const Details = () => {
                   </div>
 
                   <div className="dark:bg-[#151922]/50  bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden border dark:border-[#1c1f26] border-[#d6d6d6]">
-                    <div className="divide-y max-h-[160px] hideScrollbar overflow-y-auto dark:divide-[#1c1f26] divide-[#d6d6d6]">
+                    <div className="divide-y h-[160px] hideScrollbar overflow-y-auto dark:divide-[#1c1f26] divide-[#d6d6d6]">
                       {orderFlow?.sells?.length > 0 ? (
                         orderFlow.sells.map((item: OrderFlowItem) => {
                           const price = Number(item?.saleAtPrice) || 0;
@@ -722,9 +723,12 @@ const Details = () => {
                               ></div>
 
                               <span className="z-10">
-                                {Number(item?.shares)?.toFixed(2) || "0.00"}
+                                {truncateValue(Number(item?.shares || 0)) ||
+                                  "0.00"}
                               </span>
-                              <span className="z-10">${price.toFixed(2)}</span>
+                              <span className="z-10">
+                                ${truncateValue(price || 0)}
+                              </span>
                             </div>
                           );
                         })
@@ -737,8 +741,8 @@ const Details = () => {
 
                     <div className="text-center dark:text-white text-black font-bold py-2 text-base border-y dark:border-[#1c1f26] border-[#d6d6d6]">
                       ${" "}
-                      {Number(data?.market?.totalMarketVolume || 0).toFixed(
-                        2
+                      {truncateValue(
+                        Number(data?.market?.totalMarketVolume || 0)
                       ) || 0}{" "}
                       Vol.
                       <span className="text-green-500 text-xs align-top">
@@ -746,7 +750,7 @@ const Details = () => {
                       </span>
                     </div>
 
-                    <div className="divide-y max-h-[160px] hideScrollbar overflow-y-auto dark:divide-[#2e3139] divide-[#d6d6d6]">
+                    <div className="divide-y h-[160px] hideScrollbar overflow-y-auto dark:divide-[#2e3139] divide-[#d6d6d6]">
                       {orderFlow?.buys?.length > 0 ? (
                         orderFlow.buys.map((item: OrderFlowItem) => {
                           const price = Number(item?.saleAtPrice) || 0;
@@ -760,9 +764,12 @@ const Details = () => {
                                 style={{ width: getBuyBarWidth(price) }}
                               ></div>
                               <span className="z-10">
-                                {Number(item?.shares)?.toFixed(2) || "0.00"}
+                                {truncateValue(Number(item?.shares || 0)) ||
+                                  "0.00"}
                               </span>
-                              <span className="z-10">$ {price.toFixed(2)}</span>
+                              <span className="z-10">
+                                $ {truncateValue(price || 0)}
+                              </span>
                             </div>
                           );
                         })

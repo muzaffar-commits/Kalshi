@@ -2,9 +2,9 @@
 
 import axios from "axios";
 
-// export const developmentBaseURL = "http://192.168.1.55:3000/api";
-// export const developmentBaseURL = "http://192.168.29.218:3000/api";
-export const developmentBaseURL = "http://api.opinionkings.com/api";
+export const basedURLs = "http://192.168.29.218:3000";
+// export const basedURLs = "https://api.opinionkings.com";
+export const developmentBaseURL = `${basedURLs}/api`;
 
 const apiInstance = axios.create({
   baseURL: developmentBaseURL,

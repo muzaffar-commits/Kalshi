@@ -1,3 +1,5 @@
+import { Skeleton, Stack } from "@mui/material";
+
 export const PostSkeleton = ({ count = 3 }) => {
   return Array.from({ length: count }).map((_, index) => (
     <div
@@ -68,5 +70,24 @@ export const CreatePostSkeleton = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+export const CategorySkeleton = ({ count = 5 }) => {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, index) => (
+        <li key={index}>
+          <div className="flex items-center font-semibold">
+            <Skeleton
+              variant="text"
+              className=" !bg-gray-300 dark:!bg-gray-700 "
+              width={120}
+              height={40}
+            />
+          </div>
+        </li>
+      ))}
+    </>
   );
 };

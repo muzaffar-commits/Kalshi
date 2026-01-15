@@ -17,6 +17,7 @@ import { TfiExchangeVertical } from "react-icons/tfi";
 import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
 import { userBalance } from "@/components/service/apiService/user";
+import { truncateValue } from "@/utils/Content";
 
 interface UserPosition {
   shares: number;
@@ -127,21 +128,39 @@ export default function BuySell({
     null
   );
   const [shareDetailAmount, setShareDetailAmount] = useState<QuoteDetails>({});
-  const [debouncedValue, setDebouncedValue] = useState<number>(0);
+
   const [errorResponse, setErrorResponse] = useState<{
     success?: boolean;
     message?: string;
+    errors?: [
+      {
+        message: string;
+      }
+    ];
   }>({});
-  console.log(types, "types");
+  const [debouncedValue, setDebouncedValue] = useState<number>(0);
+  console.log(debouncedValue, "debouncedValue");
 
   useEffect(() => {
-    if (activeField == "shares") {
-      setAmount("");
-    }
-    if (activeField == "amount") {
-      setShare("");
-    }
-  }, [activeField]);
+    const t = setTimeout(() => {
+      if (activeField === "shares") {
+        const value = Number(share);
+        if (!isNaN(value)) {
+          setDebouncedValue(value); // 0 bhi chalega
+        }
+      }
+
+      if (activeField === "amount") {
+        const value = Number(amount);
+        if (!isNaN(value)) {
+          setDebouncedValue(value); // 0 bhi chalega
+        }
+      }
+    }, 300);
+
+    return () => clearTimeout(t);
+  }, [share, amount, activeField]);
+
   useEffect(() => {
     const t = setTimeout(() => {
       if (activeField === "shares" && share !== "") {
@@ -167,7 +186,9 @@ export default function BuySell({
             debouncedValue
           );
           if (response?.success) {
-            setAmount(response?.data?.grossCost?.toFixed(2) || "");
+            setAmount(
+              truncateValue(Number(response?.data?.grossCost) || 0) || ""
+            );
             setShareDetailAmount(response?.data || {});
           } else {
             setAmount("");
@@ -186,7 +207,7 @@ export default function BuySell({
             debouncedValue
           );
           if (response?.success) {
-            setShare(response?.data?.shares?.toFixed(2) || "");
+            setShare(truncateValue(Number(response?.data?.shares), 3) || "");
             setShareDetailAmount(response?.data || {});
           } else {
             setShare("");
@@ -209,7 +230,7 @@ export default function BuySell({
         console.log(response, "getCommonQuoteSell");
         if (response?.success) {
           setErrorResponse({});
-          setAmount(response?.data?.fee?.toFixed(2) || "");
+          setAmount(truncateValue(response?.data?.fee) || "");
           setShareDetailAmount(response?.data || {});
         } else {
           setErrorResponse(response || {});
@@ -227,14 +248,16 @@ export default function BuySell({
   useEffect(() => {
     if (!rowDetailsId) return;
 
-    if (types === "market") {
+    if (types === "market" && isOpen === true) {
       orderDetailsGet();
     }
-  }, [orderDetailsGet, rowDetailsId, types]);
+  }, [orderDetailsGet, rowDetailsId, debouncedValue, types]);
 
   const handleClose = () => {
     setAmount("");
     setShare("");
+    setLimitShare("");
+    setDebouncedValue(0);
     onClose();
   };
 
@@ -302,35 +325,45 @@ export default function BuySell({
     Number(rowDetailss?.user?.[optionIndex]?.shares) || 0;
 
   console.log(typeof getTotalSharesDetails, "getTotalSharesDetails======");
-  console.log(debouncedValue, "debouncedValue======");
 
   const maxShares = option?.userPosition?.shares ?? 0;
 
-  console.log(maxShares, maxShares, "maxShares");
+  console.log(maxShares, getTotalSharesDetails, "maxShares");
 
-  let buttonDisable = false;
-  if (debouncedValue === 0) {
-    buttonDisable = true;
-  } else if (orderType === "buy" && types == "limit") {
-    if (Number(balance) <= Number(totalSharesBuy)) {
-      buttonDisable = true;
-    }
-  } else if (orderType === "sell" && types == "limit") {
-    if (
-      Number(share) >=
-      Number(option?.userPosition?.shares || getTotalSharesDetails)
-    ) {
-      buttonDisable = true;
-    }
-  } else if (orderType === "buy" && types == "market") {
-    if (Number(balance) <= Number(amount)) {
-      buttonDisable = true;
-    }
-  } else {
-    if (Number(share) >= Number(maxShares)) {
-      buttonDisable = true;
-    }
-  }
+  // let buttonDisable = false;
+  // if (debouncedValue == 0) {
+  //   buttonDisable = true;
+  // } else if (orderType === "buy" && types == "limit") {
+  //   if (Number(balance) <= Number(totalSharesBuy)) {
+  //     buttonDisable = true;
+  //   }
+  // } else if (orderType === "sell" && types == "limit") {
+  //   if (Number(share) >= Number(maxShares || getTotalSharesDetails)) {
+  //     buttonDisable = true;
+  //   }
+  // } else if (orderType === "buy" && types == "market") {
+  //   if (Number(balance) <= Number(amount)) {
+  //     buttonDisable = true;
+  //   }
+  // } else {
+  //   if (Number(share) >= Number(maxShares)) {
+  //     buttonDisable = true;
+  //   }
+  // }
+
+  const sharesInput = Number(share);
+  const amountInput = Number(amount);
+  const balanceAmount = Number(balance);
+
+  const availableShares = maxShares > 0 ? maxShares : getTotalSharesDetails;
+
+  const buttonDisable =
+    debouncedValue <= 0 ||
+    (orderType === "buy" &&
+      types === "limit" &&
+      balanceAmount <= Number(totalSharesBuy)) ||
+    (orderType === "sell" && sharesInput > availableShares) ||
+    (orderType === "buy" && types === "market" && balanceAmount < amountInput);
 
   return (
     <Modal
@@ -384,7 +417,7 @@ export default function BuySell({
               <div className="flex items-center gap-1 text-gray-400">
                 <span className="text-sm">Price</span> :
                 <span className="text-sm">
-                  {Number(option?.price || 0).toFixed(2)}
+                  {truncateValue(Number(option?.price || 0))}
                 </span>
               </div>
             </div>
@@ -556,7 +589,8 @@ export default function BuySell({
                   <label
                     className={`w-full p-3 border ${
                       errorResponse?.success == false
-                        ? "border-red-400"
+                        ? // && Number(errorResponse?.errors?.length) == 0
+                          "border-red-400"
                         : "border-gray-200"
                     }  rounded-md flex justify-between items-center`}
                   >
@@ -599,7 +633,9 @@ export default function BuySell({
                 IOC{" "}
               </div>
               <div className="text-xs font-normal text-red-500">
-                {errorResponse?.message || ""}
+                {errorResponse?.message == "Invalid value"
+                  ? ""
+                  : errorResponse?.message || ""}
               </div>
             </div>
 
@@ -615,20 +651,20 @@ export default function BuySell({
                         Available Balance
                       </span>
                       <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
-                        $ {Number(balance || 0).toFixed(2) || 0}
+                        $ {truncateValue(Number(balance || 0))}
                       </span>
                     </div>
                   )}
                   <div className="flex flex-row justify-between">
                     <span className="text-gray-400 font-medium">Fee</span>
                     <span className="dark:text-gray-300">
-                      $ {Number(LimitFee || 0)?.toFixed(2)}
+                      $ {truncateValue(Number(LimitFee || 0))}
                     </span>
                   </div>
                   <div className="flex flex-row justify-between">
                     <span className="text-gray-400 font-medium">Net Cost</span>
                     <span className="dark:text-gray-300">
-                      $ {(Number(share) * Number(limitShare) || 0).toFixed(2)}
+                      $ {truncateValue(Number(share) * Number(limitShare) || 0)}
                     </span>
                   </div>
                 </>
@@ -640,11 +676,13 @@ export default function BuySell({
                         Total Buy Share
                       </span>
                       <span className="text-gray-800 dark:text-gray-300 font-semibold">
-                        {(
-                          option?.userPosition?.shares ||
-                          getTotalSharesDetails ||
-                          0
-                        ).toFixed(2)}
+                        {truncateValue(
+                          Number(
+                            option?.userPosition?.shares ||
+                              getTotalSharesDetails ||
+                              0
+                          )
+                        )}
                       </span>
                     </div>
 
@@ -652,13 +690,13 @@ export default function BuySell({
                       <span className="text-gray-400 font-medium">Fee</span>
                       <span className="dark:text-gray-300">
                         $ {LimitFee == 0 ? "" : "-"}{" "}
-                        {Number(LimitFee || 0)?.toFixed(2)}
+                        {truncateValue(Number(LimitFee || 0))}
                       </span>
                     </div>
                     <div className="flex flex-row justify-between">
                       <span className="text-gray-400 font-medium">Receive</span>
                       <span className="dark:text-gray-300">
-                        $ {Number(totalSharesSell || 0).toFixed(2)}
+                        $ {truncateValue(Number(totalSharesSell || 0))}
                       </span>
                     </div>
                   </div>
@@ -671,20 +709,20 @@ export default function BuySell({
                         Available Balance
                       </span>
                       <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
-                        $ {Number(balance || 0).toFixed(2) || 0}
+                        $ {truncateValue(Number(balance || 0))}
                       </span>
                     </div>
                   )}
                   <div className="flex flex-row justify-between">
                     <span className="text-gray-400 font-medium">Fee</span>
                     <span className="dark:text-gray-300">
-                      $ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
+                      $ {truncateValue(Number(shareDetailAmount?.fee || 0))}
                     </span>
                   </div>
                   <div className="flex flex-row justify-between">
                     <span className="text-gray-400 font-medium">Net Cost</span>
                     <span className="dark:text-gray-300">
-                      $ {Number(shareDetailAmount?.netCost || 0).toFixed(2)}
+                      $ {truncateValue(Number(shareDetailAmount?.netCost || 0))}
                     </span>
                   </div>
                 </>
@@ -696,25 +734,29 @@ export default function BuySell({
                         Total Buy Share
                       </span>
                       <span className="text-gray-800 dark:text-gray-300 font-semibold">
-                        {(
-                          option?.userPosition?.shares ||
-                          getTotalSharesDetails ||
-                          0
-                        )?.toFixed(2)}
+                        {truncateValue(
+                          Number(
+                            option?.userPosition?.shares ||
+                              getTotalSharesDetails ||
+                              0
+                          )
+                        )}
                       </span>
                     </div>
 
                     <div className="flex flex-row justify-between">
                       <span className="text-gray-400 font-medium">Fee</span>
                       <span className="dark:text-gray-300">
-                        $ {Number(shareDetailAmount?.fee || 0).toFixed(2)}
+                        $ {truncateValue(Number(shareDetailAmount?.fee || 0))}
                       </span>
                     </div>
                     <div className="flex flex-row justify-between">
                       <span className="text-gray-400 font-medium">Receive</span>
                       <span className="dark:text-gray-300">
                         ${" "}
-                        {Number(shareDetailAmount?.netProceeds || 0).toFixed(2)}
+                        {truncateValue(
+                          Number(shareDetailAmount?.netProceeds || 0)
+                        )}
                       </span>
                     </div>
                   </div>
@@ -735,12 +777,15 @@ export default function BuySell({
               <span className="text-gray-200">$</span>{" "}
               <span className="text-gray-200">
                 {types === "limit" && orderType === "buy"
-                  ? totalSharesBuy
+                  ? truncateValue(Number(totalSharesBuy || 0), 3)
                   : types === "limit" && orderType === "sell"
-                  ? totalSharesSell
+                  ? truncateValue(Number(totalSharesSell || 0), 3)
                   : orderType == "buy"
-                  ? Number(shareDetailAmount?.grossCost || 0).toFixed(2)
-                  : Number(shareDetailAmount?.grossProceeds || 0).toFixed(2)}
+                  ? truncateValue(Number(shareDetailAmount?.grossCost || 0), 3)
+                  : truncateValue(
+                      Number(shareDetailAmount?.grossProceeds) || 0,
+                      3
+                    )}
               </span>
             </button>
           </>
