@@ -173,3 +173,8 @@ export interface LeaderboardItem {
   rank: number;
   roi: number;
 }
+
+export interface CancelOrders {
+  maxCost: number;
+  shares: number;
+}

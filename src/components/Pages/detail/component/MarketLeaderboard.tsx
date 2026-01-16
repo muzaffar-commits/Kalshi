@@ -31,11 +31,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
             key={index}
             className={`grid grid-cols-4 items-center px-3 py-3 rounded-xl
               border dark:border-[#c3a66e]/40 border-gray-300
-              ${
-                item.rank === 1
-                  ? ""
-                  : "bg-white/5 hover:bg-white/10"
-              }
+              ${item.rank === 1 ? "" : "bg-white/5 hover:bg-white/10"}
               transition`}
           >
             {/* Rank */}
@@ -59,7 +55,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
 
             {/* Profit */}
             <div className="text-right text-sm font-semibold text-emerald-400">
-              ₹{item.profit.toFixed(2)}
+              $ {item.profit.toFixed(2)}
             </div>
 
             {/* ROI */}

@@ -1,43 +1,6 @@
 import { AxiosError } from "axios";
 import { ChartSeries, RawSeries } from "./typesInterface";
 
-// export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
-//   if (!data || data.length === 0) return [];
-
-//   const maxLength = Math.max(...data.map((item) => item.data.length));
-
-//   if (maxLength === 0) return [];
-
-//   return data.map((item) => {
-//     const originalData = item.data;
-
-//     const lastPoint = originalData[originalData.length - 1];
-//     const lastPrice = lastPoint?.price ?? 0;
-//     const lastTimestamp = lastPoint?.timestamp ?? 0;
-
-//     const extendedData = [...originalData];
-
-//     if (originalData.length < maxLength) {
-//       const missing = maxLength - originalData.length;
-
-//       for (let i = 0; i < missing; i++) {
-//         extendedData.push({
-//           price: lastPrice,
-//           timestamp: lastTimestamp,
-//         });
-//       }
-//     }
-
-//     return {
-//       name: item.optionName,
-//       data: extendedData.map((d) => ({
-//         x: d.timestamp,
-//         y: Number(d.price.toFixed(2)),
-//       })),
-//     };
-//   });
-// };
-
 export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
   if (!data || data.length === 0) return [];
 
@@ -72,6 +35,41 @@ export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
     };
   });
 };
+
+// export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
+//   if (!data || data.length === 0) return [];
+
+//   // collect all timestamps
+//   const allTimestamps = Array.from(
+//     new Set(data.flatMap((item) => item.data.map((d) => d.timestamp)))
+//   ).sort((a, b) => a - b);
+
+//   return data.map((item) => {
+//     const priceMap = new Map<number, number>();
+
+//     item.data.forEach((d) => {
+//       priceMap.set(d.timestamp, d.price);
+//     });
+
+//     let lastPrice = item.data[0]?.price ?? 0;
+
+//     const normalizedData = allTimestamps.map((timestamp) => {
+//       if (priceMap.has(timestamp)) {
+//         lastPrice = priceMap.get(timestamp)!;
+//       }
+
+//       return {
+//         x: timestamp,
+//         y: lastPrice, // ❗ no toFixed here
+//       };
+//     });
+
+//     return {
+//       name: item.optionName,
+//       data: normalizedData,
+//     };
+//   });
+// };
 
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof AxiosError) {

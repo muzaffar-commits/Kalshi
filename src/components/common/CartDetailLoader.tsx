@@ -27,7 +27,7 @@ const MarketSkeleton = () => {
               <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded" />
               <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded" />
             </div>
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2].map((i) => (
               <div
                 key={i}
                 className="flex items-center justify-between border border-gray-200 dark:border-[#334661] rounded-lg p-3 mb-2"
@@ -44,31 +44,30 @@ const MarketSkeleton = () => {
             ))}
           </div>
 
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 animate-pulse">
+          <div className="border border-gray-200  dark:border-gray-700 rounded-lg p-4 animate-pulse">
             <div className="flex justify-between mb-3">
-              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
-              <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+              <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+              <div className="h-5 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
             </div>
 
-            <div className="h-5 w-32 bg-green-200/50 dark:bg-green-800/40 rounded mb-2" />
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
                 className="flex justify-between px-3 py-1 mb-1 bg-gray-100 dark:bg-gray-800 rounded"
               >
-                <div className="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
-                <div className="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
+                <div className="h-5 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
+                <div className="h-5 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
               </div>
             ))}
 
-            <div className="h-5 w-32 bg-red-200/50 dark:bg-red-800/40 rounded mt-4 mb-2" />
-            {[1, 2, 3].map((i) => (
+            <div className="h-4 w-32 flex items-center mx-auto justify-center bg-green-200/50 dark:bg-green-800/40 rounded my-3" />
+            {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
                 className="flex justify-between px-3 py-1 mb-1 bg-gray-100 dark:bg-gray-800 rounded"
               >
-                <div className="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded" />{" "}
-                <div className="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
+                <div className="h-5 w-16 bg-gray-300 dark:bg-gray-700 rounded" />{" "}
+                <div className="h-5 w-16 bg-gray-300 dark:bg-gray-700 rounded" />
               </div>
             ))}
           </div>

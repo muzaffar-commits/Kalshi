@@ -101,7 +101,7 @@ export const getLeaderBoardMarket = async (questionId: string | null) => {
 };
 
 export const getOrdersList = async (
-  userId: number,
+  userId: number | null,
   questionId: string | null,
   status: string = "NEW",
   type: string = "LIMIT"

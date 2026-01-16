@@ -13,25 +13,42 @@ interface StackedAreaChartProps {
   data?: RawSeries[];
 }
 
+const BASE_COLORS = [
+  "#008FFB",
+  "#00E396",
+  "#FEB019",
+  "#FF4560",
+  "#775DD0",
+  "#3F51B5",
+  "#546E7A",
+  "#D4526E",
+  "#8D5B4C",
+  "#F86624",
+];
+
 const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
   const { theme } = useTheme();
+  console.log(data, "data====>");
   const series = prepareSeries(data);
+  const colors = series.map(
+    (_, index) => BASE_COLORS[index % BASE_COLORS.length]
+  );
   const options: ApexOptions = {
     chart: {
       type: "area",
-      stacked: true,
+      stacked: false,
       toolbar: {
         show: false,
       },
       zoom: {
-        enabled: false,
+        enabled: true,
       },
     },
 
-    colors: ["#008FFB", "#00E396"],
+    colors: colors,
 
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
 
     stroke: {
@@ -50,6 +67,7 @@ const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
     },
 
     legend: {
+      show: false,
       position: "top",
       horizontalAlign: "left",
       floating: true,
@@ -116,14 +134,12 @@ const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
     },
   };
 
-  console.log(series, "series");
-
   return (
     <div className="w-full -mx-4 sm:mx-0">
       <ApexChart
         type="area"
         height={230}
-        width={800}
+        // width={800}
         series={series}
         options={options}
       />

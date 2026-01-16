@@ -18,7 +18,7 @@ import MarketLeaderboard from "./component/MarketLeaderboard";
 
 import ConfirmationModal from "@/components/Modal/ConfirmationModal/page";
 import toast from "react-hot-toast";
-import { GraphData } from "@/utils/typesInterface";
+import { CancelOrders, GraphData } from "@/utils/typesInterface";
 import { delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
 import StackedAreaChart from "./component/realTimeChart";
@@ -53,6 +53,7 @@ interface OrderItem {
   side: OrderSide;
   status: string;
   createdAt: string;
+  maxCost: number;
 }
 
 interface OptionItem {
@@ -87,6 +88,7 @@ interface SocketTradePayload {
   cash: number;
   side: OrderSide;
   ts: number;
+  type: string;
 }
 
 interface SocketOrderUpdatePayload {
@@ -96,6 +98,7 @@ interface SocketOrderUpdatePayload {
   filled: number;
   side: OrderSide;
   prices: number[];
+  type: string;
 }
 
 interface RootState {
@@ -148,6 +151,9 @@ const Details = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [deleteResponse, setDeleteResponse] = useState(false);
+  const [currentVolume, setCurrentVolume] = useState(0);
+  const [selectedOrderDetails, setSelectedOrderDetails] =
+    useState<CancelOrders | null>(null);
 
   const questionDetailsList = useCallback(async () => {
     setIsLoader(true);
@@ -161,6 +167,7 @@ const Details = () => {
           buys: response.data.orderFlow?.buys ?? [],
           sells: response.data.orderFlow?.sells ?? [],
         });
+        setCurrentVolume(response?.data?.market?.totalMarketVolume);
         setData(response.data);
       } else {
         setOrderFlow({ buys: [], sells: [] });
@@ -170,6 +177,8 @@ const Details = () => {
       setIsLoader(false);
     }
   }, [slug, userDetails?.user?.id]);
+
+  console.log(currentVolume, "currentVolume====>");
 
   const getGraphDetails = useCallback(async () => {
     const response = await getGraphData(slug);
@@ -239,78 +248,87 @@ const Details = () => {
     });
 
     socket.on("trade", (payload: SocketTradePayload) => {
-      console.log(payload, "tradesss=====>");
-
-      // if (OrderHistoryIdsRef.current.has(payload.orderId)) {
-      //   return;
-      // }
-      // OrderHistoryIdsRef.current.add(payload.orderId);
-      console.log(payload, "tradesss=====>11111111");
-      const tradeRow: OrderFlowItem = {
-        id: payload.orderId,
-        optionId: payload.optionId,
-        shares: payload.filledShares.toFixed(16),
-        saleAtPrice: (payload.cash / payload.filledShares).toFixed(16),
-        createdAt: new Date(payload.ts).toISOString(),
-      };
-      if (OrderHistoryIdsRef.current.has(payload.orderId)) {
+      if (payload?.type == "LIMIT") {
         return;
+      } else {
+        const tradeRow: OrderFlowItem = {
+          id: payload.orderId,
+          optionId: payload.optionId,
+          shares: payload.filledShares.toFixed(16),
+          saleAtPrice: (payload.cash / payload.filledShares).toFixed(16),
+          createdAt: new Date(payload.ts).toISOString(),
+        };
+        if (OrderHistoryIdsRef.current.has(payload.orderId)) {
+          return;
+        }
+        OrderHistoryIdsRef.current.add(payload.orderId);
+        if (payload?.filledShares) {
+          setCurrentVolume((prev) => prev + Number(payload.filledShares ?? 0));
+        }
+
+        setOrderFlow((prev) => ({
+          buys: payload.side === "BUY" ? [tradeRow, ...prev.buys] : prev.buys,
+          sells:
+            payload.side === "SELL" ? [tradeRow, ...prev.sells] : prev.sells,
+        }));
       }
-      OrderHistoryIdsRef.current.add(payload.orderId);
-      setOrderFlow((prev: OrderFlow) => {
-        if (payload.side === "BUY") {
-          return {
-            buys: [tradeRow, ...(prev.buys || [])],
-            sells: prev.sells || [],
-          };
-        }
-
-        if (payload.side === "SELL") {
-          return {
-            buys: prev.buys || [],
-            sells: [tradeRow, ...(prev.sells || [])],
-          };
-        }
-
-        return prev;
-      });
     });
 
     socket.on("order:update", (payload: SocketOrderUpdatePayload) => {
       console.log(payload, "order:update====>");
-
-      if (
-        !payload?.questionId ||
-        !payload?.optionId ||
-        typeof payload?.orderId !== "number" ||
-        typeof payload?.filled !== "number"
-      ) {
+      if (payload?.type == "LIMIT") {
         return;
-      }
-      if (processedOrderIdsRef.current.has(payload.orderId)) {
-        return;
-      }
-      processedOrderIdsRef.current.add(payload.orderId);
-      setData((prev): MarketData | null => {
-        if (!prev || !Array.isArray(prev.options)) {
-          return prev;
+      } else {
+        if (
+          !payload?.questionId ||
+          !payload?.optionId ||
+          typeof payload?.orderId !== "number" ||
+          typeof payload?.filled !== "number"
+        ) {
+          return;
         }
+        if (processedOrderIdsRef.current.has(payload.orderId)) {
+          return;
+        }
+        processedOrderIdsRef.current.add(payload.orderId);
+        setData((prev): MarketData | null => {
+          if (!prev || !Array.isArray(prev.options)) {
+            return prev;
+          }
 
-        const updatedOptions: OptionItem[] = prev.options.map(
-          (option: OptionItem, index: number) => {
-            const newPrice = payload.prices?.[index];
+          const updatedOptions: OptionItem[] = prev.options.map(
+            (option: OptionItem, index: number) => {
+              const newPrice = payload.prices?.[index];
 
-            if (option.id === payload.optionId) {
-              const prevPosition = option.userPosition ?? {
-                shares: 0,
-                invested: 0,
-                pnl: 0,
-              };
+              if (option.id === payload.optionId) {
+                const prevPosition = option.userPosition ?? {
+                  shares: 0,
+                  invested: 0,
+                  pnl: 0,
+                };
 
-              const updatedShares =
-                payload.side === "BUY"
-                  ? prevPosition.shares + payload.filled
-                  : prevPosition.shares - payload.filled;
+                const updatedShares =
+                  payload.side === "BUY"
+                    ? prevPosition.shares + payload.filled
+                    : prevPosition.shares - payload.filled;
+
+                return {
+                  ...option,
+                  price:
+                    typeof newPrice === "number" && !Number.isNaN(newPrice)
+                      ? newPrice
+                      : option.price,
+                  winningProbability:
+                    typeof newPrice === "number" && !Number.isNaN(newPrice)
+                      ? newPrice
+                      : option.winningProbability,
+                  userPosition: {
+                    shares: updatedShares,
+                    invested: prevPosition.invested,
+                    pnl: prevPosition.pnl,
+                  },
+                };
+              }
 
               return {
                 ...option,
@@ -322,34 +340,17 @@ const Details = () => {
                   typeof newPrice === "number" && !Number.isNaN(newPrice)
                     ? newPrice
                     : option.winningProbability,
-                userPosition: {
-                  shares: updatedShares,
-                  invested: prevPosition.invested,
-                  pnl: prevPosition.pnl,
-                },
               };
             }
+          );
 
-            return {
-              ...option,
-              price:
-                typeof newPrice === "number" && !Number.isNaN(newPrice)
-                  ? newPrice
-                  : option.price,
-              winningProbability:
-                typeof newPrice === "number" && !Number.isNaN(newPrice)
-                  ? newPrice
-                  : option.winningProbability,
-            };
-          }
-        );
-
-        return {
-          ...prev,
-          options: updatedOptions,
-          lastOrderUpdatedAt: new Date().toISOString(),
-        };
-      });
+          return {
+            ...prev,
+            options: updatedOptions,
+            lastOrderUpdatedAt: new Date().toISOString(),
+          };
+        });
+      }
     });
 
     socket.on("connect_error", (err) => {
@@ -404,7 +405,7 @@ const Details = () => {
 
   const ordersList = useCallback(async () => {
     try {
-      const response = await getOrdersList(2, slug);
+      const response = await getOrdersList(userDetails?.user?.id || null, slug);
 
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);
@@ -490,8 +491,21 @@ const Details = () => {
   };
 
   const handleDelete = (row: number) => {
+    console.log(row, "row====");
+
     setSelected(row);
     setDeleteOpen(true);
+
+    const ordersFilter = orderData?.find((item) => item.id == row);
+    setSelectedOrderDetails(
+      ordersFilter
+        ? {
+            maxCost: ordersFilter.maxCost,
+            shares: ordersFilter.shares,
+          }
+        : null
+    );
+    console.log(ordersFilter, "ordersFilter");
   };
   const closeDeleteModal = () => {
     setDeleteOpen(false);
@@ -546,11 +560,7 @@ const Details = () => {
                     {data?.question?.question}
                   </h1>
                   <p className="text-sm text-[#7F90A7] dark:text-gray-300">
-                    ${" "}
-                    {truncateValue(
-                      Number(data?.market?.totalMarketVolume || 0)
-                    ) || 0}{" "}
-                    Vol.
+                    $ {truncateValue(Number(currentVolume || 0)) || 0} Vol.
                   </p>
                   <div className="lg:flex space-x-4 mt-1 text-sm">
                     {data?.options?.map((item: OptionItem, index: number) => (
@@ -584,8 +594,8 @@ const Details = () => {
               <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-6">
                   {Number(graphData?.series?.length) > 0 ? (
-                    <div className="h-64 mb-6 flex">
-                      <span className="text-gray-500">
+                    <div className="h-64 mb-6  flex">
+                      <span className="text-gray-500 w-full ">
                         <StackedAreaChart data={graphData?.series} />
                       </span>
                     </div>
@@ -632,6 +642,7 @@ const Details = () => {
                               useToken ? "w-64" : "w-full"
                             } font-medium dark:text-white`}
                           >
+                            <span className="text-sky-500">{index + 1}.</span>{" "}
                             {item?.name || "--"}
                           </div>
 
@@ -666,27 +677,27 @@ const Details = () => {
                           )}
 
                           {/* ACTIONS */}
-                          <div className="flex items-center gap-2 mt-2 md:mt-0">
-                            <div className="text-xs text-slate-400 w-12 text-center">
+                          <div className="flex items-center gap-1  mt-2 md:mt-0">
+                            <div className="text-xs text-slate-400 w-10 text-center">
                               {truncateValue(Number(item?.price) * 100, 1)}%
                             </div>
 
                             <button
                               onClick={() => handleBuyNow(item, "sell", index)}
-                              className="px-4 py-1.5 rounded-md text-xs font-semibold
+                              className="px-2 py-1.5 rounded-md text-xs font-medium
                               bg-red-500/20 text-red-400 border border-red-500/30
                               hover:bg-red-500/30 transition"
                             >
-                              Sell
+                              Sell ${truncateValue(Number(item?.price || 0))}
                             </button>
 
                             <button
                               onClick={() => handleBuyNow(item, "buy", index)}
-                              className="px-4 py-1.5 rounded-md text-xs font-semibold
+                              className="px-2 py-1.5 rounded-md text-xs font-medium
                               bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
                               hover:bg-emerald-500/30 transition"
                             >
-                              Buy
+                              Buy ${truncateValue(Number(item?.price || 0))}
                             </button>
                           </div>
                         </div>
@@ -696,7 +707,7 @@ const Details = () => {
                 </div>
 
                 <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg-p-6">
-                  <div className="flex justify-between pr-14 items-center ">
+                  <div className="flex justify-between pr-3 items-center ">
                     <span className="text-lg font-semibold text-gray-900 dark:text-gray-200">
                       Shares
                     </span>
@@ -740,11 +751,7 @@ const Details = () => {
                     </div>
 
                     <div className="text-center dark:text-white text-black font-bold py-2 text-base border-y dark:border-[#1c1f26] border-[#d6d6d6]">
-                      ${" "}
-                      {truncateValue(
-                        Number(data?.market?.totalMarketVolume || 0)
-                      ) || 0}{" "}
-                      Vol.
+                      $ {truncateValue(Number(currentVolume || 0)) || 0} Vol.
                       <span className="text-green-500 text-xs align-top">
                         ▲
                       </span>
@@ -813,7 +820,8 @@ const Details = () => {
         open={deleteOpen}
         onClose={closeDeleteModal}
         onConfirm={confirmDelete}
-        isDelete={deleteResponse}
+        isLoading={deleteResponse}
+        selectedOrderDetails={selectedOrderDetails}
       />
     </>
   );

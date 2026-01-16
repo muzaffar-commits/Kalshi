@@ -16,17 +16,15 @@ interface OrderListProps {
 
 export default function OrderList({ data, cancelOrders }: OrderListProps) {
   return (
-    <div className="w-full rounded-2xl border border-white/10 bg-[#0b1220]/80 p-5">
+    <div className="w-full rounded-2xl border border-gray-300 dark:border-white/10 text-gray-800 dark:text-white dark:bg-[#0b1220]/80 p-5">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold tracking-wide text-white">
-          Open Orders
-        </h2>
+        <h2 className="text-sm font-semibold tracking-wide ">Open Orders</h2>
         {/* <span className="text-xs text-slate-400">Live Ranking</span> */}
       </div>
 
       {/* Table Head */}
-      <div className="grid grid-cols-5 px-3 py-2 text-[11px] uppercase tracking-wide text-slate-200 border-b border-white/10">
+      <div className="grid grid-cols-5 px-3 py-2 text-[11px] uppercase tracking-wide text-slate-700 dark:text-gray-200 border-b border-gray-500 dark:border-white/10">
         <span>Shares</span>
         <span>Price</span>
         <span>Type</span>
@@ -53,13 +51,13 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
                 transition-all duration-200`}
             >
               {/* Shares */}
-              <div className="text-sm font-medium text-white">
+              <div className="text-sm font-medium text-slate-700 dark:text-gray-200">
                 {Number(item?.shares || 0).toFixed(2)}
               </div>
 
               {/* Price */}
-              <div className="text-sm text-slate-200">
-                ₹{" "}
+              <div className="text-sm text-slate-700 dark:text-gray-200">
+                ${" "}
                 {Number(isBuy ? item?.maxCost : item?.minProceeds || 0).toFixed(
                   2
                 )}
