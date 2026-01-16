@@ -8,17 +8,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import Image from "next/image";
-import { MdInfoOutline, MdWarningAmber } from "react-icons/md";
 import { truncateValue } from "@/utils/Content";
-import { CancelOrders } from "@/utils/typesInterface";
-
-interface ConfirmationModalProps {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  isLoading?: boolean;
-  selectedOrderDetails?: CancelOrders | null;
-}
+import { ConfirmationModalProps } from "@/utils/typesInterface";
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   open,

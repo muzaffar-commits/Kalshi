@@ -37,13 +37,6 @@ interface Category {
   name: string;
 }
 
-interface CategoryApiResponse {
-  success: boolean;
-  data?: {
-    categories?: Category[];
-  };
-}
-
 interface UserBalanceResponse {
   success: boolean;
 

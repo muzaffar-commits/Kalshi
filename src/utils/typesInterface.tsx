@@ -178,3 +178,60 @@ export interface CancelOrders {
   maxCost: number;
   shares: number;
 }
+
+export interface ConfirmationModalProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isLoading?: boolean;
+  selectedOrderDetails?: CancelOrders | null;
+}
+
+type OrderSide = "BUY" | "SELL";
+export interface SocketTradePayload {
+  orderId: number;
+  optionId: number;
+  filledShares: number;
+  cash: number;
+  side: OrderSide;
+  ts: number;
+  type: string;
+}
+
+export interface SocketOrderUpdatePayload {
+  questionId: string;
+  optionId: number;
+  orderId: number;
+  filled: number;
+  side: OrderSide;
+  prices: number[];
+  type: string;
+}
+
+export interface SocketPricePayload {
+  questionId: string;
+  prices: number[];
+  ts?: number;
+}
+
+export interface MarketData {
+  question?: {
+    question: string;
+  };
+  market?: {
+    totalMarketVolume: number;
+  };
+  options?: OptionItem[];
+  lastOrderUpdatedAt: string;
+}
+
+export interface OrderItem {
+  id: number;
+  optionId: number;
+  shares: number;
+  price: number;
+  side: OrderSide;
+  status: string;
+  createdAt: string;
+  maxCost: number;
+}

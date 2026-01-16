@@ -1,4 +1,4 @@
-import { Skeleton, Stack } from "@mui/material";
+import { Skeleton } from "@mui/material";
 
 export const PostSkeleton = ({ count = 3 }) => {
   return Array.from({ length: count }).map((_, index) => (

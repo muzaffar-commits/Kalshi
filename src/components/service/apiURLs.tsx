@@ -31,6 +31,9 @@ export const API_URLs = {
   getComments: "/user/comments",
   postComments: "/user/comment",
   getProfileListAllUser: "/user/get-social-user-profile",
+  currentBalanceShares: "/user/current-balance",
+  currentPositionShares: "/user/current-position-share",
 };
 
+// images
 // images

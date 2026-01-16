@@ -52,7 +52,7 @@ export const submitOrder = async (reqBody: unknown) => {
 
 export const getGraphData = async (
   questionId: string | null,
-  interval = ""
+  interval = "24h"
 ) => {
   try {
     const response = await apiInstance.get(
@@ -122,6 +122,34 @@ export const cancelOrder = async (questionId: number) => {
   try {
     const response = await apiInstance.post(
       `${API_URLs.cancelOrders}/${questionId}/cancel`
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+export const getCurrentBalance = async () => {
+  try {
+    const response = await apiInstance.get(`${API_URLs.currentBalanceShares}`);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const getCurrentShares = async (
+  questionId: number,
+  optionId: number | null
+) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.currentPositionShares}?questionId=${questionId}&optionId=${optionId}`
     );
     return response?.data;
   } catch (error: unknown) {

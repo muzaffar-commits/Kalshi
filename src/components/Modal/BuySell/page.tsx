@@ -9,6 +9,8 @@ import Dropdown from "@/components/popupDropdown/page";
 import BlockImg from "../../../../public/img/blockimg1.jpg";
 import {
   getCommonQuoteSell,
+  getCurrentBalance,
+  getCurrentShares,
   getOrdersQuoteDetails,
   getQuoteByBudget,
   submitOrder,
@@ -32,34 +34,6 @@ interface OptionItem {
   userPosition?: UserPosition;
   winningProbability: number;
 }
-
-// interface QuestionDetails {
-//   id: number;
-//   question?: {
-//     id: number;
-//     question: string;
-//   };
-//   user?: {
-//     [index: number]: {
-//       shares: number;
-//     };
-//   };
-// }
-
-// interface QuestionDetails {
-//   id: number;
-//   question?: {
-//     id: number;
-//     question: string;
-//   };
-//   user?: {
-//     [index: number]: {
-//       shares: number;
-//     };
-//   };
-// }
-
-// rowDetails?.question?.question
 
 interface QuoteDetails {
   shares?: number;
@@ -139,7 +113,8 @@ export default function BuySell({
     ];
   }>({});
   const [debouncedValue, setDebouncedValue] = useState<number>(0);
-  console.log(debouncedValue, "debouncedValue");
+  const [totalCurrentBalance, setTotalCurrentBalance] = useState<number>(0);
+  const [totalCurrentShare, setTotalCurrentShare] = useState<number>(0);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -328,32 +303,48 @@ export default function BuySell({
 
   const maxShares = option?.userPosition?.shares ?? 0;
 
-  console.log(maxShares, getTotalSharesDetails, "maxShares");
+  console.log(rowDetailsId, option, "option=============");
 
-  // let buttonDisable = false;
-  // if (debouncedValue == 0) {
-  //   buttonDisable = true;
-  // } else if (orderType === "buy" && types == "limit") {
-  //   if (Number(balance) <= Number(totalSharesBuy)) {
-  //     buttonDisable = true;
-  //   }
-  // } else if (orderType === "sell" && types == "limit") {
-  //   if (Number(share) >= Number(maxShares || getTotalSharesDetails)) {
-  //     buttonDisable = true;
-  //   }
-  // } else if (orderType === "buy" && types == "market") {
-  //   if (Number(balance) <= Number(amount)) {
-  //     buttonDisable = true;
-  //   }
-  // } else {
-  //   if (Number(share) >= Number(maxShares)) {
-  //     buttonDisable = true;
-  //   }
-  // }
+  //
+
+  const currentBalanceDetails = async () => {
+    try {
+      const response = await getCurrentBalance();
+      console.log(response, "response===>");
+      if (response?.success) {
+        setTotalCurrentBalance(response?.data || 0);
+      } else {
+        setTotalCurrentBalance(response?.data || 0);
+      }
+    } catch {
+      setTotalCurrentBalance(0);
+    }
+  };
+
+  useEffect(() => {
+    currentBalanceDetails();
+  }, [isOpen]);
+
+  const currentShareDetails = async () => {
+    try {
+      const response = await getCurrentShares(rowDetailsId, option?.id || null);
+      console.log(response, "response===>");
+      if (response?.success) {
+        setTotalCurrentShare(response?.data || 0);
+      } else {
+        setTotalCurrentShare(response?.data || 0);
+      }
+    } catch {
+      setTotalCurrentShare(0);
+    }
+  };
+  useEffect(() => {
+    currentShareDetails();
+  }, [isOpen]);
 
   const sharesInput = Number(share);
   const amountInput = Number(amount);
-  const balanceAmount = Number(balance);
+  const balanceAmount = Number(totalCurrentBalance);
 
   const availableShares = maxShares > 0 ? maxShares : getTotalSharesDetails;
 
@@ -500,7 +491,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="w-full px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "
+                      className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "
                     />
                   </label>
 
@@ -525,7 +516,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className=" w-28 text-2xl font-semibold text-right bg-transparent  border-none outline-none text-gray-900 dark:text-gray-100"
+                      className=" w-28 text-2xl no-arrow font-semibold text-right bg-transparent  border-none outline-none text-gray-900 dark:text-gray-100"
                     />
                   </label>
                 </>
@@ -552,7 +543,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
+                      className="border-none outline-none no-arrow text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
                     />
                   </label>
                   <div className="flex items-center justify-center text-gray-400">
@@ -579,7 +570,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
+                      className="border-none outline-none text-gray-800 no-arrow dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
                     />
                   </label>
                 </>
@@ -589,8 +580,7 @@ export default function BuySell({
                   <label
                     className={`w-full p-3 border ${
                       errorResponse?.success == false
-                        ? // && Number(errorResponse?.errors?.length) == 0
-                          "border-red-400"
+                        ? "border-red-400"
                         : "border-gray-200"
                     }  rounded-md flex justify-between items-center`}
                   >
@@ -619,7 +609,7 @@ export default function BuySell({
                         setShare(value);
                       }}
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
+                      className="border-none outline-none no-arrow text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
                     />
                   </label>
                 </>
@@ -651,7 +641,7 @@ export default function BuySell({
                         Available Balance
                       </span>
                       <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
-                        $ {truncateValue(Number(balance || 0))}
+                        $ {truncateValue(Number(totalCurrentBalance || 0))}
                       </span>
                     </div>
                   )}
@@ -676,13 +666,7 @@ export default function BuySell({
                         Total Buy Share
                       </span>
                       <span className="text-gray-800 dark:text-gray-300 font-semibold">
-                        {truncateValue(
-                          Number(
-                            option?.userPosition?.shares ||
-                              getTotalSharesDetails ||
-                              0
-                          )
-                        )}
+                        {truncateValue(Number(totalCurrentShare || 0))}
                       </span>
                     </div>
 
@@ -709,7 +693,7 @@ export default function BuySell({
                         Available Balance
                       </span>
                       <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
-                        $ {truncateValue(Number(balance || 0))}
+                        $ {truncateValue(Number(totalCurrentBalance || 0))}
                       </span>
                     </div>
                   )}
@@ -734,13 +718,7 @@ export default function BuySell({
                         Total Buy Share
                       </span>
                       <span className="text-gray-800 dark:text-gray-300 font-semibold">
-                        {truncateValue(
-                          Number(
-                            option?.userPosition?.shares ||
-                              getTotalSharesDetails ||
-                              0
-                          )
-                        )}
+                        {truncateValue(Number(totalCurrentShare || 0))}
                       </span>
                     </div>
 

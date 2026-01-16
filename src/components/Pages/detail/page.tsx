@@ -15,16 +15,24 @@ import { useSelector } from "react-redux";
 import MarketSkeleton from "@/components/common/CartDetailLoader";
 import Authentication from "@/components/Pages/auth";
 import MarketLeaderboard from "./component/MarketLeaderboard";
-
 import ConfirmationModal from "@/components/Modal/ConfirmationModal/page";
 import toast from "react-hot-toast";
-import { CancelOrders, GraphData } from "@/utils/typesInterface";
+import {
+  CancelOrders,
+  GraphData,
+  LeaderboardItem,
+  MarketData,
+  OptionItem,
+  OrderItem,
+  SocketOrderUpdatePayload,
+  SocketPricePayload,
+  SocketTradePayload,
+} from "@/utils/typesInterface";
 import { delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
 import StackedAreaChart from "./component/realTimeChart";
 
 type OrderSide = "BUY" | "SELL";
-
 interface OrderFlowItem {
   id: number;
   optionId: number;
@@ -40,88 +48,10 @@ interface OrderFlow {
   sells: OrderFlowItem[];
 }
 
-interface UserPosition {
-  shares: number;
-  invested: number;
-  pnl: number;
-}
-interface OrderItem {
-  id: number;
-  optionId: number;
-  shares: number;
-  price: number;
-  side: OrderSide;
-  status: string;
-  createdAt: string;
-  maxCost: number;
-}
-
-interface OptionItem {
-  id: number;
-  name: string;
-  price: number;
-  winningProbability: number;
-  userPosition?: UserPosition;
-}
-
-interface MarketData {
-  question?: {
-    question: string;
-  };
-  market?: {
-    totalMarketVolume: number;
-  };
-  options?: OptionItem[];
-  lastOrderUpdatedAt: string;
-}
-
-interface SocketPricePayload {
-  questionId: string;
-  prices: number[];
-  ts?: number;
-}
-
-interface SocketTradePayload {
-  orderId: number;
-  optionId: number;
-  filledShares: number;
-  cash: number;
-  side: OrderSide;
-  ts: number;
-  type: string;
-}
-
-interface SocketOrderUpdatePayload {
-  questionId: string;
-  optionId: number;
-  orderId: number;
-  filled: number;
-  side: OrderSide;
-  prices: number[];
-  type: string;
-}
-
 interface RootState {
   user?: {
     user?: { id?: number };
   };
-}
-
-interface OptionItem {
-  id: number;
-  name: string;
-  price: number;
-  winningProbability: number;
-  userPosition?: UserPosition;
-}
-export interface LeaderboardItem {
-  userId: number;
-  username: string;
-  profit: number;
-  invested: number;
-  pnl: number;
-  rank: number;
-  roi: number;
 }
 
 const Details = () => {
@@ -135,7 +65,6 @@ const Details = () => {
   const [graphData, setGraphData] = useState<GraphData>({
     series: [],
   });
-  // const { slug }: { slug: string } = useParams();
   const searchParams = useSearchParams();
   const slug = searchParams.get("id");
   const [isOpenBuySell, setIsOpenBuySell] = useState(false);
@@ -189,7 +118,6 @@ const Details = () => {
     }
   }, [slug]);
 
-  // getGraphData
   useEffect(() => {
     questionDetailsList();
     getGraphDetails();
@@ -606,7 +534,7 @@ const Details = () => {
                   )}
 
                   {Number(data?.options?.length) > 0 && (
-                    <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold dark:text-[#c3a66e] text-[#080b11] md:border-0 lg:bg-transparent">
+                    <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold text-[#c3a66e] md:border-0 lg:bg-transparent">
                       <div className="w-64 text-start">Options</div>
                       {useToken && (
                         <>
@@ -640,7 +568,7 @@ const Details = () => {
                           <div
                             className={`${
                               useToken ? "w-64" : "w-full"
-                            } font-medium dark:text-white`}
+                            } font-medium  dark:text-white`}
                           >
                             <span className="text-sky-500">{index + 1}.</span>{" "}
                             {item?.name || "--"}
