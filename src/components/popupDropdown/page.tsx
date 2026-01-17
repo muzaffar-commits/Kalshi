@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { FaBolt, FaBullseye } from "react-icons/fa";
+import { MdSwapVert } from "react-icons/md";
 
 interface Props {
   label?: string;
@@ -65,6 +66,12 @@ export default function Dropdown({ label = "Market", onSelect }: Props) {
             </MenuItem>
             <MenuItem label="Limit" onClick={() => choose("limit", "limit")}>
               <FaBullseye className="mt-1 text-blue-500" />
+            </MenuItem>
+            <MenuItem
+              label="Take Profit / Stop Loss"
+              onClick={() => choose("tpsl", "tpsl")}
+            >
+              <MdSwapVert size={25} className="mt-1 text-green-500" />
             </MenuItem>
           </div>
         </div>

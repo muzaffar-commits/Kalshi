@@ -86,6 +86,7 @@ const Details = () => {
   const [selected, setSelected] = useState<number | null>(null);
   const [deleteResponse, setDeleteResponse] = useState(false);
   const [currentVolume, setCurrentVolume] = useState(0);
+  const [timeInterval, setTimeInterval] = useState("all");
   const [selectedOrderDetails, setSelectedOrderDetails] =
     useState<CancelOrders | null>(null);
 
@@ -114,17 +115,20 @@ const Details = () => {
 
   console.log(currentVolume, "currentVolume====>");
 
+  useEffect(() => {
+    questionDetailsList();
+  }, [questionDetailsList, slug]);
+
   const getGraphDetails = useCallback(async () => {
-    const response = await getGraphData(slug);
+    const response = await getGraphData(slug, timeInterval);
     if (response?.success) {
       setGraphData(response.data);
     } else {
       setGraphData({ series: [] });
     }
-  }, [slug]);
+  }, [slug, timeInterval]);
 
   useEffect(() => {
-    questionDetailsList();
     getGraphDetails();
   }, [questionDetailsList, getGraphDetails, slug]);
 
@@ -153,7 +157,7 @@ const Details = () => {
 
         const updatedSeries = prev.series.map((series: any) => {
           const livePrice = payload?.options?.find(
-            (p: SocketOption) => p?.optionId === series?.optionId
+            (p: SocketOption) => p?.optionId === series?.optionId,
           );
           if (!livePrice) return series;
           const lastPoint = series.data?.[series.data.length - 1];
@@ -275,7 +279,7 @@ const Details = () => {
                     ? newPrice
                     : option.winningProbability,
               };
-            }
+            },
           );
 
           return {
@@ -437,7 +441,7 @@ const Details = () => {
             maxCost: ordersFilter.maxCost,
             shares: ordersFilter.shares,
           }
-        : null
+        : null,
     );
     console.log(ordersFilter, "ordersFilter");
   };
@@ -527,17 +531,21 @@ const Details = () => {
 
               <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 space-y-6">
-                  {Number(graphData?.series?.length) > 0 ? (
-                    <div className="h-64 mb-6  flex">
-                      <span className="text-gray-500 w-full ">
-                        <StackedAreaChart data={graphData?.series} />
-                      </span>
-                    </div>
-                  ) : (
+                  {/* {Number(graphData?.series?.length) > 0 ? ( */}
+                  <div className="h-64 mb-6  flex">
+                    <span className="text-gray-500 w-full ">
+                      <StackedAreaChart
+                        data={graphData?.series}
+                        setTimeIntervalValue={setTimeInterval}
+                        timeIntervalValue={timeInterval}
+                      />
+                    </span>
+                  </div>
+                  {/* ) : (
                     <div className="bg-cyan-100/80 rounded-lg h-64 mb-6 flex items-center justify-center">
                       <span className="text-gray-500">[Chart Placeholder]</span>
                     </div>
-                  )}
+                  )} */}
 
                   {Number(data?.options?.length) > 0 && (
                     <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold text-[#c3a66e] md:border-0 lg:bg-transparent">
@@ -586,7 +594,7 @@ const Details = () => {
                                 {(item.userPosition?.invested ?? 0) > 0
                                   ? truncateValue(
                                       Number(item.userPosition?.invested),
-                                      1
+                                      1,
                                     )
                                   : "--"}
                               </div>
@@ -603,7 +611,7 @@ const Details = () => {
                                 {(item.userPosition?.shares ?? 0) > 0
                                   ? truncateValue(
                                       Number(item.userPosition?.shares),
-                                      1
+                                      1,
                                     )
                                   : "--"}
                               </div>

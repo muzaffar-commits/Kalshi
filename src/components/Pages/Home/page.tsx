@@ -28,7 +28,7 @@ const Home = () => {
   const getToken = localStorage.getItem("token");
   const router = useRouter();
   const categoryDetails = useSelector(
-    (state: RootState) => state?.category?.category
+    (state: RootState) => state?.category?.category,
   );
   const userDetails = useSelector((state: RootState) => state?.user);
   localStorage.setItem("isCategory", "1");
@@ -39,7 +39,7 @@ const Home = () => {
       const [response] = await Promise.all([
         commonQuestionFindById(
           categoryDetails?.id || 1,
-          userDetails?.user?.id as string
+          userDetails?.user?.id as string,
         ),
         delay(1000),
       ]);
@@ -64,7 +64,7 @@ const Home = () => {
     row: QuestionItemSecond,
     item: OptionItem,
     type: string,
-    idx: number
+    idx: number,
   ) => {
     if (!getToken) {
       setIsOpen(true);
@@ -78,7 +78,7 @@ const Home = () => {
   };
 
   const goToDetails = (userId: string) => {
-    router.push(`/detail?id=${userId}`);
+    router.push(`/Detail?id=${userId}`);
   };
 
   return (

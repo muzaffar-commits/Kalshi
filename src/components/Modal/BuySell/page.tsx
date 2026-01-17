@@ -95,21 +95,19 @@ export default function BuySell({
   const [limitShare, setLimitShare] = useState<number | "">("");
   const [amount, setAmount] = useState<number | "">("");
   const [types, setTypes] = useState<string>("market");
-  const balance = localStorage.getItem("balance");
   const token = localStorage.getItem("token");
   const { theme } = useTheme();
   const [activeField, setActiveField] = useState<"shares" | "amount" | null>(
-    null
+    null,
   );
   const [shareDetailAmount, setShareDetailAmount] = useState<QuoteDetails>({});
-
   const [errorResponse, setErrorResponse] = useState<{
     success?: boolean;
     message?: string;
     errors?: [
       {
         message: string;
-      }
+      },
     ];
   }>({});
   const [debouncedValue, setDebouncedValue] = useState<number>(0);
@@ -121,14 +119,14 @@ export default function BuySell({
       if (activeField === "shares") {
         const value = Number(share);
         if (!isNaN(value)) {
-          setDebouncedValue(value); // 0 bhi chalega
+          setDebouncedValue(value);
         }
       }
 
       if (activeField === "amount") {
         const value = Number(amount);
         if (!isNaN(value)) {
-          setDebouncedValue(value); // 0 bhi chalega
+          setDebouncedValue(value);
         }
       }
     }, 300);
@@ -158,12 +156,10 @@ export default function BuySell({
           const response = await getOrdersQuoteDetails(
             rowDetailsId,
             optionIndex,
-            debouncedValue
+            debouncedValue,
           );
           if (response?.success) {
-            setAmount(
-              truncateValue(Number(response?.data?.grossCost) || 0) || ""
-            );
+            setAmount(Number(response?.data?.grossCost) || 0);
             setShareDetailAmount(response?.data || {});
           } else {
             setAmount("");
@@ -179,10 +175,10 @@ export default function BuySell({
           const response = await getQuoteByBudget(
             rowDetailsId,
             optionIndex,
-            debouncedValue
+            debouncedValue,
           );
           if (response?.success) {
-            setShare(truncateValue(Number(response?.data?.shares), 3) || "");
+            setShare(response?.data?.shares || 0);
             setShareDetailAmount(response?.data || {});
           } else {
             setShare("");
@@ -200,12 +196,12 @@ export default function BuySell({
         const response = await getCommonQuoteSell(
           rowDetailsId,
           optionIndex,
-          debouncedValue
+          debouncedValue,
         );
         console.log(response, "getCommonQuoteSell");
         if (response?.success) {
           setErrorResponse({});
-          setAmount(truncateValue(response?.data?.fee) || "");
+          setAmount(Number(response?.data?.fee || 0));
           setShareDetailAmount(response?.data || {});
         } else {
           setErrorResponse(response || {});
@@ -265,8 +261,8 @@ export default function BuySell({
         types === "limit" && orderType === "buy"
           ? share
           : types === "limit" && orderType === "sell"
-          ? share
-          : shareDetailAmount?.shares || "", //shares
+            ? share
+            : shareDetailAmount?.shares || "", //shares
 
       ...(types === "limit" && orderType === "buy"
         ? { maxCost: totalSharesBuy }
@@ -381,7 +377,7 @@ export default function BuySell({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className="bg-white dark:bg-[#0f172a] p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
+          className="bg-white dark:bg-[#0f172a] !border !border-gray-700 p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
         >
           {/* Close */}
           <button
@@ -403,11 +399,11 @@ export default function BuySell({
               <div className="text-sm w-[85%] text-black truncate   dark:text-white">
                 {typeof rowDetailss?.question === "string"
                   ? rowDetailss.question
-                  : rowDetailss?.question?.question ?? "--"}
+                  : (rowDetailss?.question?.question ?? "--")}
               </div>
-              <div className="flex items-center gap-1 text-gray-400">
+              <div className="flex items-center gap-1 font-semibold text-gray-400">
                 <span className="text-sm">Price</span> :
-                <span className="text-sm">
+                <span className="text-sm text-green-500">
                   {truncateValue(Number(option?.price || 0))}
                 </span>
               </div>
@@ -487,7 +483,7 @@ export default function BuySell({
                       value={limitShare}
                       onChange={(e) =>
                         setLimitShare(
-                          e.target.value === "" ? 0 : Number(e.target.value)
+                          e.target.value === "" ? 0 : Number(e.target.value),
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
@@ -512,7 +508,7 @@ export default function BuySell({
                       value={share}
                       onChange={(e) =>
                         setShare(
-                          e.target.value === "" ? 0 : Number(e.target.value)
+                          e.target.value === "" ? 0 : Number(e.target.value),
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
@@ -539,7 +535,7 @@ export default function BuySell({
                       onFocus={() => setActiveField("shares")}
                       onChange={(e) =>
                         setShare(
-                          e.target.value === "" ? 0 : Number(e.target.value)
+                          e.target.value === "" ? 0 : Number(e.target.value),
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
@@ -566,7 +562,7 @@ export default function BuySell({
                       onFocus={() => setActiveField("amount")}
                       onChange={(e) =>
                         setAmount(
-                          e.target.value === "" ? "" : Number(e.target.value)
+                          e.target.value === "" ? "" : Number(e.target.value),
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
@@ -733,7 +729,7 @@ export default function BuySell({
                       <span className="dark:text-gray-300">
                         ${" "}
                         {truncateValue(
-                          Number(shareDetailAmount?.netProceeds || 0)
+                          Number(shareDetailAmount?.netProceeds || 0),
                         )}
                       </span>
                     </div>
@@ -757,13 +753,16 @@ export default function BuySell({
                 {types === "limit" && orderType === "buy"
                   ? truncateValue(Number(totalSharesBuy || 0), 3)
                   : types === "limit" && orderType === "sell"
-                  ? truncateValue(Number(totalSharesSell || 0), 3)
-                  : orderType == "buy"
-                  ? truncateValue(Number(shareDetailAmount?.grossCost || 0), 3)
-                  : truncateValue(
-                      Number(shareDetailAmount?.grossProceeds) || 0,
-                      3
-                    )}
+                    ? truncateValue(Number(totalSharesSell || 0), 3)
+                    : orderType == "buy"
+                      ? truncateValue(
+                          Number(shareDetailAmount?.grossCost || 0),
+                          3,
+                        )
+                      : truncateValue(
+                          Number(shareDetailAmount?.grossProceeds) || 0,
+                          3,
+                        )}
               </span>
             </button>
           </>

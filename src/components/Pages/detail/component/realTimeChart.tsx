@@ -11,6 +11,8 @@ const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface StackedAreaChartProps {
   data?: RawSeries[];
+  timeIntervalValue: string;
+  setTimeIntervalValue: (value: string) => void;
 }
 
 const BASE_COLORS = [
@@ -26,15 +28,19 @@ const BASE_COLORS = [
   "#F86624",
 ];
 
-const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
+const StackedAreaChart = ({
+  data = [],
+  timeIntervalValue = "all",
+  setTimeIntervalValue,
+}: StackedAreaChartProps) => {
   const { theme } = useTheme();
   console.log(data, "data====>");
   const series = prepareSeries(data);
 
-  console.log(series, "series");
+  console.log(series, "series=====>");
 
   const colors = series.map(
-    (_, index) => BASE_COLORS[index % BASE_COLORS.length]
+    (_, index) => BASE_COLORS[index % BASE_COLORS.length],
   );
   const options: ApexOptions = {
     chart: {
@@ -137,15 +143,48 @@ const StackedAreaChart = ({ data = [] }: StackedAreaChartProps) => {
     },
   };
 
+  const timeInterval = ["5m", "15m", "30m", "1h", "24h", "7d", "all"];
+
   return (
-    <div className="w-full -mx-4 sm:mx-0">
-      <ApexChart
-        type="area"
-        height={230}
-        // width={800}
-        series={series}
-        options={options}
-      />
+    <div className="w-full flex  relative -mx-4 sm:mx-0">
+      <div
+        className="absolute right-0 top-0 flex items-center gap-1
+  bg-[#141b2d]  rounded-lg px-1 py-1
+"
+      >
+        {timeInterval.map((item) => (
+          <button
+            key={item}
+            onClick={() => setTimeIntervalValue(item)}
+            className={`
+        px-3 py-1 text-xs font-medium rounded-md
+        transition-all
+        ${
+          item === timeIntervalValue
+            ? "bg-[#1f2a44] text-white"
+            : "text-gray-400 hover:text-white cursor-pointer hover:bg-white/5"
+        }
+      `}
+          >
+            {item.toUpperCase()}
+          </button>
+        ))}
+      </div>
+      <div className="mt-4 w-full">
+        {Number(data?.length) > 0 ? (
+          <ApexChart
+            type="area"
+            height={230}
+            // width={800}
+            series={series}
+            options={options}
+          />
+        ) : (
+          <div className="bg-cyan-100/80 rounded-lg h-56 mt-6 flex items-center justify-center">
+            <span className="text-gray-500">[Chart Placeholder]</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -34,6 +34,7 @@ export const API_URLs = {
   currentBalanceShares: "/user/current-balance",
   currentPositionShares: "/user/current-position-share",
   profileUpdate: "/user/update-user-profile",
+  ordersTpAndSl: "/orders/submit-tpsl",
 };
 
 // images

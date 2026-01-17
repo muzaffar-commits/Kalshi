@@ -6,7 +6,7 @@ export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
 
   // 1️⃣ Collect ALL unique timestamps
   const allTimestamps = Array.from(
-    new Set(data.flatMap((item) => item.data.map((d) => d.timestamp)))
+    new Set(data.flatMap((item) => item.data.map((d) => d.timestamp))),
   ).sort((a, b) => a - b);
 
   console.log(data, "allTimestamps");
@@ -149,15 +149,15 @@ export function HighlightTexts({ text }: { text: string }) {
   const highlightedHtml = withBreaks
     .replace(
       urlRegex,
-      `$1<span class="text-blue-500 text-sm dark:text-blue-400 underline font-medium">$2</span>`
+      `$1<span class="text-blue-500 text-sm dark:text-blue-400 underline font-medium">$2</span>`,
     )
     .replace(
       mentionRegex,
-      `$1<span class="text-emerald-500 dark:text-emerald-400 font-medium">$2</span>`
+      `$1<span class="text-emerald-500 dark:text-emerald-400 font-medium">$2</span>`,
     )
     .replace(
       hashRegex,
-      `$1<span class="text-sky-500 dark:text-sky-400 font-medium">$2</span>`
+      `$1<span class="text-sky-500 dark:text-sky-400 font-medium">$2</span>`,
     );
 
   return (
@@ -168,7 +168,7 @@ export function HighlightTexts({ text }: { text: string }) {
   );
 }
 
-export const truncateValue = (num: number, decimals = 2): string => {
+export const truncateValue = (num: number, decimals: number = 2) => {
   const factor = Math.pow(10, decimals);
   const truncated = Math.floor(num * factor) / factor;
   return truncated.toFixed(decimals);
