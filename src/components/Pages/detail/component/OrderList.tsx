@@ -1,3 +1,6 @@
+import { truncateValue } from "@/utils/Content";
+import { MdOpenInNew } from "react-icons/md";
+
 type OrderSide = "BUY" | "SELL";
 
 type OrderItem = {
@@ -16,76 +19,87 @@ interface OrderListProps {
 
 export default function OrderList({ data, cancelOrders }: OrderListProps) {
   return (
-    <div className="w-full rounded-2xl border border-gray-300 dark:border-white/10 text-gray-800 dark:text-white dark:bg-[#0b1220]/80 p-5">
-      {/* Header */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold tracking-wide ">Open Orders</h2>
-        {/* <span className="text-xs text-slate-400">Live Ranking</span> */}
+    <div className="w-full rounded-2xl bg-transparent border border-gray-300 dark:border-white/10 p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="flex items-center gap-2 text-sm font-semibold text-[#c3a66e]">
+          <MdOpenInNew size={18} />
+          Open Orders
+        </h2>
       </div>
 
-      {/* Table Head */}
-      <div className="grid grid-cols-5 px-3 py-2 text-[11px] uppercase tracking-wide text-slate-700 dark:text-gray-200 border-b border-gray-500 dark:border-white/10">
-        <span>Shares</span>
-        <span>Price</span>
-        <span>Type</span>
-        <span className="text-right">Status</span>
-        <span className="text-right">Action</span>
+      <div className="grid grid-cols-5 px-4 py-3 text-[12px] font-semibold tracking-wide text-[#c3a66e] border-b border-white/10">
+        <div>SHARES</div>
+        <div>PRICE</div>
+        <div>TYPE</div>
+        <div className="text-right">STATUS</div>
+        <div className="text-right">ACTION</div>
       </div>
 
-      {/* Rows */}
-      <div className="mt-2 space-y-1">
-        {data.map((item, index) => {
-          const isTop = item.rank === 1;
-          const isBuy = item?.side === "BUY";
-
+      <div className="mt-2 space-y-2">
+        {data.map((item) => {
+          const isBuy = item.side === "BUY";
           return (
             <div
-              key={index}
-              className={`grid grid-cols-5 items-center rounded-xl px-3 py-3
+              key={item.id}
+              className="
+                grid grid-cols-5 items-center
+                px-4 py-1.5
+                rounded-xl
+                bg-gray-200
+                dark:bg-[#111a2e]
                 border border-white/5
-                ${
-                  isTop
-                    ? "bg-gradient-to-r from-amber-500/15 to-transparent shadow-[0_0_30px_rgba(245,158,11,0.2)]"
-                    : "bg-white/[0.03] hover:bg-white/[0.06]"
-                }
-                transition-all duration-200`}
+                dark:hover:bg-[#16203a]
+                transition
+              "
             >
               {/* Shares */}
-              <div className="text-sm font-medium text-slate-700 dark:text-gray-200">
-                {Number(item?.shares || 0).toFixed(2)}
+              <div className="text-sm dark:text-white text-gray-700 font-medium">
+                {truncateValue(Number(item?.shares || 0))}
               </div>
 
               {/* Price */}
-              <div className="text-sm text-slate-700 dark:text-gray-200">
-                ${" "}
+              <div className="text-sm dark:text-white text-gray-700">
                 {Number(isBuy ? item?.maxCost : item?.minProceeds || 0).toFixed(
                   2
                 )}
               </div>
 
-              <div
-                className={`text-xs font-semibold w-fit px-2 py-1 rounded-md
-                  ${
-                    isBuy
-                      ? "bg-emerald-500/15 text-emerald-400"
-                      : "bg-rose-500/15 text-rose-400"
-                  }`}
-              >
-                {item?.side || "--"}
+              {/* Type */}
+              <div>
+                <span
+                  className={`
+                    text-xs font-semibold px-3 py-1 rounded-md
+                    ${
+                      isBuy
+                        ? "bg-emerald-500/20 text-emerald-400"
+                        : "bg-rose-500/20 text-rose-400"
+                    }
+                  `}
+                >
+                  {item.side}
+                </span>
               </div>
 
               {/* Status */}
               <div className="text-right">
-                <span className="text-xs font-medium px-2 py-1 rounded-md bg-blue-500/15 text-blue-400">
+                <span className="text-xs px-3 py-1 rounded-md bg-blue-500/20 text-blue-400">
                   Open
                 </span>
               </div>
 
-              {/* ROI */}
-              <div className="flx flex-row items-end justify-end">
+              {/* Action */}
+              <div className="text-right">
                 <button
-                  onClick={() => cancelOrders(item?.id)}
-                  className=" float-end text-sm font-semibold py-1 cursor-pointer px-2 rounded bg-red-400 text-white w-fit"
+                  onClick={() => cancelOrders(item.id)}
+                  className="
+                    text-xs font-semibold
+                    px-4 py-1.5
+                    rounded-md
+                    bg-[#ff5b5b]
+                    text-white
+                    hover:bg-[#ff3b3b]
+                    transition
+                  "
                 >
                   Cancel
                 </button>

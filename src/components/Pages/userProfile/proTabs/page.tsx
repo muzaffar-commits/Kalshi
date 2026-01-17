@@ -3,8 +3,8 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { TabPanelProps } from "@/utils/typesInterface";
-import { userPositions } from "../service/apiService/user";
 import moment from "moment";
+import { userPositions } from "@/components/service/apiService/user";
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -61,7 +61,7 @@ export interface PortfolioData {
 }
 
 export interface StatsData {
-  activeMarkets?: number;
+  activeMarkets?: string | number;
   totalTrades?: string | number;
 }
 
@@ -94,6 +94,8 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
   React.useEffect(() => {
     fetchPositions();
   }, []);
+
+  console.log(data, "data");
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -134,7 +136,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
             Loading positions...
           </div>
         ) : positions && positions?.length > 0 ? (
-          <div className="space-y-2">
+          <div className="space-y-2 mt-4">
             {positions?.length > 0 ? (
               positions?.map((position, i) => {
                 const myOption = position.option;
@@ -222,7 +224,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
 
       {/* Top Categories */}
       <CustomTabPanel value={value} index={1}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 border-b border-gray-800 pb-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 mt-4 gap-3 border-b border-gray-800 pb-3">
           {[
             [
               "Invested",
@@ -256,7 +258,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={2}>
-        <div className="bg-[#0f172a] border border-gray-800 rounded-lg p-5">
+        <div className="bg-[#0f172a] mt-4 border border-gray-800 rounded-lg p-5">
           <h3 className="text-base sm:text-lg font-semibold text-white mb-2">
             Create Your Own Prediction Market
           </h3>

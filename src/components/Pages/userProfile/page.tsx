@@ -1,6 +1,5 @@
 "use client";
 
-import ProfileTabs from "@/components/proTabs/page";
 import { userBalance, userDetails } from "@/components/service/apiService/user";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -11,14 +10,18 @@ import {
   UserBalanceData,
   UserProfileData,
 } from "@/utils/typesInterface";
+import ProfileTabs from "./proTabs/page";
 
 // Define the shape expected by ProfileTabs
 interface ProfileStats {
   portfolio: {
     investedAmount: number;
+    currentValue: number;
+    totalPnL: number;
   };
   stats: {
     totalTrades: string | number;
+    activeMarkets: string | number;
   };
 }
 
@@ -29,16 +32,22 @@ const UserProfile = () => {
 
   // Derived safe data
   const userData = user?.[0] || null;
+  const portFolioData = user?.[1] || null;
 
   // Safe portfolio & stats with defaults
   const profileStats: ProfileStats = {
     portfolio: {
-      investedAmount: userData?.portfolio?.investedAmount || 0,
+      investedAmount: portFolioData?.portfolio?.investedAmount || 0,
+      currentValue: portFolioData?.portfolio?.currentValue || 0,
+      totalPnL: portFolioData?.portfolio?.totalPnL || 0,
     },
     stats: {
-      totalTrades: userData?.totalTrades || "0",
+      totalTrades: portFolioData?.stats?.totalTrades || "0",
+      activeMarkets: portFolioData?.stats?.activeMarkets || "0",
     },
   };
+
+  console.log(portFolioData, "portFolioData");
 
   const handleClose = () => {
     setOpen(false);
@@ -81,10 +90,10 @@ const UserProfile = () => {
       <div className="dark:bg-[#0f172a] mt-44">
         <div className="max-w-[800px] xl:max-w-[65%] mx-auto px-4 mt-24 lg:mt-28">
           <div className="md:flex justify-between">
-            <div className="md:w-3/4 flex md:mb-0 mb-4">
-              <div>
+            <div className="md:w-3/4 gap-3 flex md:mb-0 mb-4">
+              <div className="h-24 w-24 flex items-center justify-center rounded bg-gray-300/20">
                 <Image
-                  src="/img/nick.jpg"
+                  src={userData?.user?.image_url || "/img/nick.jpg"}
                   alt="Profile"
                   width={80}
                   height={80}
@@ -219,7 +228,8 @@ const UserProfile = () => {
 
               <div>
                 <span className="bg-green-700 text-white py-1 px-4 text-sm rounded">
-                  ${profileStats.portfolio.investedAmount.toFixed(3)}
+                  ${Number(profileStats.portfolio.investedAmount).toFixed(3)}{" "}
+                  ffff
                 </span>
               </div>
             </div>
@@ -235,6 +245,7 @@ const UserProfile = () => {
           isOpen={open}
           handleClose={handleClose}
           userDetails={userData}
+          fetchUserDetails={userDetailsList}
         />
       </div>
     </>

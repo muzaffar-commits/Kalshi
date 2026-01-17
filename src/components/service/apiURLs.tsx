@@ -33,6 +33,7 @@ export const API_URLs = {
   getProfileListAllUser: "/user/get-social-user-profile",
   currentBalanceShares: "/user/current-balance",
   currentPositionShares: "/user/current-position-share",
+  profileUpdate: "/user/update-user-profile",
 };
 
 // images

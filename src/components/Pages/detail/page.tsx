@@ -54,6 +54,11 @@ interface RootState {
   };
 }
 
+type SocketOption = {
+  optionId: number;
+  price: number;
+};
+
 const Details = () => {
   const [orderFlow, setOrderFlow] = useState<OrderFlow>({
     buys: [],
@@ -125,6 +130,8 @@ const Details = () => {
 
   const questionId = slug;
   console.log(socket.connected, "socket.connected");
+
+  console.log(graphData, "graphData");
   useEffect(() => {
     if (!socket.connected) {
       socket.connect();
@@ -138,40 +145,39 @@ const Details = () => {
         socket.emit("subscribe:user", userDetails?.user?.id);
       }
     });
-
-    // socket.onAny((, ...args) => {});
     socket.on("market:prices", (payload: SocketPricePayload) => {
-      console.log("MarketPrices received:", payload);
-      if (!payload?.questionId || !Array.isArray(payload.prices)) {
-        return;
-      }
+      if (!payload?.questionId || !payload?.timestamp) return;
 
-      setData((prev): MarketData | null => {
-        if (!prev?.options || !Array.isArray(prev.options)) {
-          return prev;
-        }
-        const updatedOptions = prev.options.map(
-          (option: OptionItem, index: number) => {
-            const newPrice = payload.prices[index];
-            return {
-              ...option,
-              price:
-                typeof newPrice === "number" && !isNaN(newPrice)
-                  ? newPrice
-                  : option.price,
-              winningProbability:
-                typeof newPrice === "number" && !isNaN(newPrice)
-                  ? newPrice
-                  : option.winningProbability,
-            };
+      setGraphData((prev: any) => {
+        if (!prev.series?.length) return prev;
+
+        const updatedSeries = prev.series.map((series: any) => {
+          const livePrice = payload?.options?.find(
+            (p: SocketOption) => p?.optionId === series?.optionId
+          );
+          if (!livePrice) return series;
+          const lastPoint = series.data?.[series.data.length - 1];
+          if (
+            lastPoint &&
+            lastPoint.timestamp === payload.timestamp &&
+            lastPoint.price === livePrice.price
+          ) {
+            return series;
           }
-        );
 
-        return {
-          ...prev,
-          options: updatedOptions,
-          lastOrderUpdatedAt: new Date(payload.ts || Date.now()).toISOString(),
-        };
+          return {
+            ...series,
+            data: [
+              ...series.data,
+              {
+                timestamp: payload.timestamp,
+                price: livePrice.price,
+              },
+            ],
+          };
+        });
+
+        return { series: updatedSeries };
       });
     });
 
@@ -407,13 +413,13 @@ const Details = () => {
   const getBgClass = (price: number) => {
     const intensity = getIntensity(price);
 
-    if (intensity > 0.8) return "border border-gray-200 ";
+    if (intensity > 0.8) return "border !border-gray-200 ";
 
-    if (intensity > 0.6) return "bg-emerald-400/15";
+    if (intensity > 0.6) return "!bg-emerald-400/15";
 
-    if (intensity > 0.4) return "bg-sky-500/10";
+    if (intensity > 0.4) return "!bg-sky-500/10";
 
-    if (intensity > 0.2) return "bg-slate-500/10";
+    if (intensity > 0.2) return "!bg-slate-500/10";
 
     return "bg-slate-700/10";
   };
@@ -498,14 +504,14 @@ const Details = () => {
                             index === 0
                               ? "bg-red-700 "
                               : index === 1
-                              ? "bg-blue-500 "
-                              : index === 2
-                              ? "bg-green-500 "
-                              : index === 3
-                              ? "bg-purple-600 "
-                              : index === 4
-                              ? "bg-yellow-700 "
-                              : "bg-pink-500"
+                                ? "bg-blue-500 "
+                                : index === 2
+                                  ? "bg-green-500 "
+                                  : index === 3
+                                    ? "bg-purple-600 "
+                                    : index === 4
+                                      ? "bg-yellow-700 "
+                                      : "bg-pink-500"
                           } inline-block mr-2`}
                           style={{ width: "10px", height: "10px" }}
                         ></span>
@@ -568,7 +574,7 @@ const Details = () => {
                           <div
                             className={`${
                               useToken ? "w-64" : "w-full"
-                            } font-medium  dark:text-white`}
+                            } font-medium  text-gray-700 dark:text-slate-300`}
                           >
                             <span className="text-sky-500">{index + 1}.</span>{" "}
                             {item?.name || "--"}
@@ -576,7 +582,7 @@ const Details = () => {
 
                           {useToken && (
                             <>
-                              <div className="w-20 text-sm text-slate-300 text-center">
+                              <div className="w-20 text-sm text-gray-700 dark:text-slate-300  text-center">
                                 {(item.userPosition?.invested ?? 0) > 0
                                   ? truncateValue(
                                       Number(item.userPosition?.invested),
@@ -593,7 +599,7 @@ const Details = () => {
                                 {pnl !== 0 ? `$${truncateValue(pnl, 1)}` : "--"}
                               </div>
 
-                              <div className="w-24 text-sm text-slate-300 text-center">
+                              <div className="w-24 text-sm text-gray-700 dark:text-slate-300 text-center">
                                 {(item.userPosition?.shares ?? 0) > 0
                                   ? truncateValue(
                                       Number(item.userPosition?.shares),
@@ -616,7 +622,9 @@ const Details = () => {
                               bg-red-500/20 text-red-400 border border-red-500/30
                               hover:bg-red-500/30 transition"
                             >
-                              Sell ${truncateValue(Number(item?.price || 0))}
+                              Sell
+                              {/* {item?.price} */}$
+                              {truncateValue(Number(item?.price), 2)}
                             </button>
 
                             <button
@@ -625,7 +633,7 @@ const Details = () => {
                               bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
                               hover:bg-emerald-500/30 transition"
                             >
-                              Buy ${truncateValue(Number(item?.price || 0))}
+                              Buy ${truncateValue(Number(item?.price || 0), 2)}
                             </button>
                           </div>
                         </div>

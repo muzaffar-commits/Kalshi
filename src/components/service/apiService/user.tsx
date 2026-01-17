@@ -67,6 +67,18 @@ export const imageUpload = async (images: unknown) => {
   }
 };
 
+export const postProfileUpdate = async (reqBody: unknown) => {
+  try {
+    const response = await apiInstance.post(API_URLs.profileUpdate, reqBody);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
 export const userPost = async (reqBody: unknown) => {
   try {
     const response = await apiInstance.post(API_URLs.userPost, reqBody);

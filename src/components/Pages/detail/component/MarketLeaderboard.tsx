@@ -18,7 +18,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
         <span className="text-xs text-slate-400">Live Ranking</span>
       </div>
 
-      <div className="grid grid-cols-4 text-xs dark:text-[#c3a66e] text-gray-700 px-3 py-2">
+      <div className="grid grid-cols-4 text-xs text-[#c3a66e]  px-3 py-2">
         <span>Rank</span>
         <span>User</span>
         <span className="text-right">Profit</span>
@@ -49,7 +49,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
             </div>
 
             {/* Username */}
-            <div className="text-sm text-gray-600 dark:text-[#c3a66e] font-medium truncate">
+            <div className="text-sm text-[#c3a66e] font-medium truncate">
               {item.username}
             </div>
 

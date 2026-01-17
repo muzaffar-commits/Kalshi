@@ -8,14 +8,23 @@ export interface UserCore {
   username: string;
   email: string;
   createdAt: string;
+  image_url?: string;
 }
 
 export interface UserProfileData {
   user?: UserCore;
   following?: number;
+  stats: {
+    totalTrades: number;
+    activeMarkets: number;
+  };
   follower?: number;
-  totalTrades?: number;
-  portfolio: { investedAmount: number };
+  totalTrades?: string | number;
+  portfolio: {
+    investedAmount: number;
+    currentValue: number;
+    totalPnL: number;
+  };
 }
 
 export interface UserBalanceData {
@@ -85,6 +94,7 @@ export interface RawDataPoint {
 
 export interface RawSeries {
   optionName: string;
+  name: string;
   data: RawDataPoint[];
 }
 
@@ -212,6 +222,8 @@ export interface SocketPricePayload {
   questionId: string;
   prices: number[];
   ts?: number;
+  options: [];
+  timestamp: string;
 }
 
 export interface MarketData {
@@ -234,4 +246,17 @@ export interface OrderItem {
   status: string;
   createdAt: string;
   maxCost: number;
+}
+
+export interface UpdateProfilePRops {
+  isOpen: boolean;
+  handleClose: () => void;
+  userDetails: UserProfileData | null;
+  fetchUserDetails: () => void;
+}
+
+export interface userDetailProps {
+  username: string;
+  email: string;
+  image_url: string;
 }

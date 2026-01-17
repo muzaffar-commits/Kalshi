@@ -1,20 +1,21 @@
-import { UserProfileData } from "@/utils/typesInterface";
-import { Backdrop, Box, CircularProgress, Fade, Modal } from "@mui/material";
+import CustomButton from "@/components/common/CustomButton";
+import {
+  imageUpload,
+  postProfileUpdate,
+} from "@/components/service/apiService/user";
+import {
+  UpdateProfilePRops,
+  UploadedImage,
+  userDetailProps,
+} from "@/utils/typesInterface";
+import { Backdrop, Box, Fade, Modal } from "@mui/material";
 import { useFormik } from "formik";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { MdClose } from "react-icons/md";
 import * as Yup from "yup";
-
-interface userDetailProps {
-  username: string;
-  email: string;
-}
-interface ModalProps {
-  isOpen: boolean;
-  handleClose: () => void;
-  userDetails: UserProfileData | null;
-}
 
 const userUpdateSchema = Yup.object().shape({
   userName: Yup.string()
@@ -28,49 +29,91 @@ export default function UpdateProfile({
   isOpen,
   handleClose,
   userDetails,
-}: ModalProps) {
+  fetchUserDetails,
+}: UpdateProfilePRops) {
   const { theme } = useTheme();
   const [isLoader, setIsLoader] = useState(false);
-
+  const [uploadedImage, setUploadedImage] = React.useState<
+    UploadedImage[] | null
+  >(null);
   const users = userDetails?.user as userDetailProps;
-  console.log(users, "userDetails");
+  console.log(uploadedImage, "uploadedImage");
+
+  const chooseImages = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("images", file);
+      const response = await imageUpload(formData);
+      if (response?.success) {
+        setUploadedImage(response?.data);
+      } else {
+        setUploadedImage(null);
+        toast.error(response?.message);
+      }
+    } catch (error: unknown) {
+      setUploadedImage(null);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    chooseImages(file);
+  };
+  const removeImage = () => {
+    setUploadedImage(null);
+  };
 
   const formik = useFormik({
     initialValues: {
       userName: users?.username || "",
       email: users?.email || "",
-      image: "",
+      image: uploadedImage?.[0]?.url || users?.image_url || "",
     },
     validationSchema: userUpdateSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
       setIsLoader(true);
 
-      // 🔥 API call here
-      console.log("Updated Data:", values);
-
-      // setTimeout(() => {
-      //   setIsLoader(false);
-      //   handleClose();
-      // }, 1500);
+      try {
+        const payload = {
+          username: values.userName,
+          imageUrl: values.image,
+        };
+        const response = await postProfileUpdate(payload);
+        if (response?.status) {
+          toast.success(response.message);
+          fetchUserDetails();
+          setUploadedImage(null);
+          handleClose();
+        } else {
+          toast.success(response.message);
+          setUploadedImage(null);
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Something went wrong");
+        }
+      } finally {
+        setIsLoader(false);
+      }
     },
   });
-
-  /* IMAGE HANDLER */
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      formik.setFieldValue("image", reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
 
   const handleCloseModal = () => {
     formik.resetForm();
     handleClose();
+  };
+  const changeUserName = (name: string) => {
+    const noSpaceName = name.replace(/\s+/g, "");
+    formik.setFieldValue("userName", noSpaceName);
   };
 
   return (
@@ -106,7 +149,7 @@ export default function UpdateProfile({
             </h2>
             <button
               onClick={handleCloseModal}
-              className="text-gray-400 cursor-pointer hover:text-gray-600 dark:hover:text-gray-200"
+              className="text-[#c7ac77] text-xl cursor-pointer hover:text-[#c7ac77] dark:hover:text-[#c7ac77]"
             >
               ✕
             </button>
@@ -126,11 +169,21 @@ export default function UpdateProfile({
                   border-gray-300 dark:border-gray-600 hover:border-blue-500 transition"
                 >
                   {formik.values.image ? (
-                    <Image
-                      src={formik.values.image}
-                      alt="Preview"
-                      className="h-full w-full object-cover rounded-xl"
-                    />
+                    <span className="relative h-full">
+                      <Image
+                        src={formik.values.image}
+                        alt="Preview"
+                        height={100}
+                        width={100}
+                        className="h-full w-32 object-cover rounded-xl"
+                      />
+                      <div
+                        onClick={removeImage}
+                        className="absolute top-0 z-50 text-gray-200 right-0 text-xl bg-red-500/80 rounded-xl "
+                      >
+                        <MdClose />
+                      </div>
+                    </span>
                   ) : (
                     <div className="flex flex-col items-center gap-2 text-gray-400  ">
                       <span className="text-2xl">📷</span>
@@ -142,9 +195,9 @@ export default function UpdateProfile({
                     id="image"
                     name="image"
                     type="file"
-                    accept="image/*"
                     className="hidden"
-                    onChange={handleImageChange}
+                    accept="image/gif,image/png,image/jpeg,image/webp"
+                    onChange={handleFileChange}
                   />
                 </label>
               </div>
@@ -159,13 +212,13 @@ export default function UpdateProfile({
             {/* NAME */}
             <div>
               <label className="text-sm font-medium dark:text-gray-300 text-gray-800 ">
-                Name
+                User Name
               </label>
               <input
                 type="text"
                 name="userName"
                 value={formik.values.userName}
-                onChange={formik.handleChange}
+                onChange={(e) => changeUserName(e.target.value)}
                 onBlur={formik.handleBlur}
                 className="w-full mt-1 px-4 py-3 rounded-xl border 
                 border-gray-300 dark:border-gray-600 bg-transparent 
@@ -202,20 +255,11 @@ export default function UpdateProfile({
               )}
             </div>
 
-            <button
+            <CustomButton
               type="submit"
-              disabled={isLoader}
-              className="w-full py-3 rounded-xl text-lg font-semibold text-white
-              bg-gradient-to-r from-sky-500 to-blue-500
-              hover:from-sky-600 hover:to-blue-600
-              transition-all flex items-center justify-center"
-            >
-              {isLoader ? (
-                <CircularProgress size={26} sx={{ color: "white" }} />
-              ) : (
-                "Update Profile"
-              )}
-            </button>
+              label="Update Profile"
+              loading={isLoader}
+            />
           </form>
         </Box>
       </Fade>

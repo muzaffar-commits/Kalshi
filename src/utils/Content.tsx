@@ -9,7 +9,8 @@ export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
     new Set(data.flatMap((item) => item.data.map((d) => d.timestamp)))
   ).sort((a, b) => a - b);
 
-  // 2️⃣ Normalize each series
+  console.log(data, "allTimestamps");
+
   return data.map((item) => {
     const priceMap = new Map<number, number>();
 
@@ -25,12 +26,12 @@ export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
       }
       return {
         x: timestamp,
-        y: Number(lastPrice.toFixed(2)),
+        y: Number(truncateValue(Number(lastPrice || 0))),
       };
     });
 
     return {
-      name: item.optionName,
+      name: item.name,
       data: normalizedData,
     };
   });
@@ -167,7 +168,8 @@ export function HighlightTexts({ text }: { text: string }) {
   );
 }
 
-export const truncateValue = (num: number, decimals = 2) => {
+export const truncateValue = (num: number, decimals = 2): string => {
   const factor = Math.pow(10, decimals);
-  return Math.floor(num * factor) / factor;
+  const truncated = Math.floor(num * factor) / factor;
+  return truncated.toFixed(decimals);
 };
