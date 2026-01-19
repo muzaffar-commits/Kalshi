@@ -81,9 +81,16 @@ const Home = () => {
     router.push(`/Detail?id=${userId}`);
   };
 
+   const goToSubCategory = () => {
+    router.push(`/subCategory`);
+  };
+
+
+  
   return (
     <>
       <div className="max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48">
+        <div onClick={goToSubCategory}>goToSubCategory</div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0">
           {loader ? (
             [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
