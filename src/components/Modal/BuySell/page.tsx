@@ -14,6 +14,7 @@ import {
   getOrdersQuoteDetails,
   getQuoteByBudget,
   submitOrder,
+  submitOrdersTpAndSl,
 } from "@/components/service/apiService/buySell";
 import { TfiExchangeVertical } from "react-icons/tfi";
 import toast from "react-hot-toast";
@@ -113,6 +114,20 @@ export default function BuySell({
   const [debouncedValue, setDebouncedValue] = useState<number>(0);
   const [totalCurrentBalance, setTotalCurrentBalance] = useState<number>(0);
   const [totalCurrentShare, setTotalCurrentShare] = useState<number>(0);
+
+  // tpsl state manage
+
+  const [tpslShare, setTpslShare] = useState<number>(0);
+  const [takeProfit, setTakeProfit] = useState<number>(0);
+  const [stopLoss, setStopLoss] = useState<number>(0);
+
+  const [tpTouched, setTpTouched] = useState(false);
+  const [slTouched, setSlTouched] = useState(false);
+  const [btnLoader, setBtnLoader] = useState(false);
+
+  //   end
+
+  console.log(types, "types");
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -228,6 +243,9 @@ export default function BuySell({
     setAmount("");
     setShare("");
     setLimitShare("");
+    setTpslShare(0);
+    setTakeProfit(0);
+    setStopLoss(0);
     setDebouncedValue(0);
     onClose();
   };
@@ -252,11 +270,13 @@ export default function BuySell({
   };
 
   const handleSubmit = async () => {
+    const orderId = crypto.randomUUID();
     const reqBody = {
       questionId: rowDetailsId,
       outcomeIndex: optionIndex,
       side: orderType,
       type: types,
+      idempotencyKey: orderId,
       shares:
         types === "limit" && orderType === "buy"
           ? share
@@ -352,6 +372,44 @@ export default function BuySell({
     (orderType === "sell" && sharesInput > availableShares) ||
     (orderType === "buy" && types === "market" && balanceAmount < amountInput);
 
+  const takeProfitFee = (Number(tpslShare) * takeProfit * 2) / 100;
+  const takeProfitReceive = tpslShare - takeProfitFee;
+
+  const stopLossFee = (Number(tpslShare) * stopLoss * 2) / 100;
+  const stopLossReceive = tpslShare - stopLossFee;
+
+  const currentPrice = option?.price || 0;
+
+  const handleTpspSubmit = async () => {
+    const orderId = crypto.randomUUID();
+    const payload = {
+      questionId: rowDetailsId,
+      outcomeIndex: optionIndex,
+      shares: tpslShare,
+      takeProfitPrice: takeProfit,
+      stopLossPrice: stopLoss,
+      side: orderType,
+      type: types,
+      timeInForce: "IOC",
+      idempotencyKey: orderId,
+    };
+    setBtnLoader(true);
+    try {
+      const response: ApiResponse<unknown> = await submitOrdersTpAndSl(payload);
+      if (response?.success) {
+        toast.success(response.message || "");
+        if (types == "tpsl") {
+          fetchOrders();
+        }
+        handleClose();
+      } else {
+      }
+    } catch {
+      toast.error("internal server error");
+    } finally {
+      setBtnLoader(false);
+    }
+  };
   return (
     <Modal
       open={isOpen}
@@ -427,27 +485,32 @@ export default function BuySell({
                   setLimitShare("");
                   setShare("");
                   setTypes(v);
+                  if (v === "tpsl") {
+                    handleChangeOrderType("sell");
+                  }
                 }}
               />
             </div>
 
-            <button
-              onClick={() => {
-                handleChangeOrderType("buy");
-                setShareDetailAmount({});
-                setErrorResponse({});
-                setDebouncedValue(0);
-                setAmount("");
-                setShare("");
-              }}
-              className={`py-2 mr-6 font-medium ${
-                orderType === "buy"
-                  ? "border-b-2 border-[#0099FF] text-[#0099FF]"
-                  : "text-gray-600 dark:text-gray-300 cursor-pointer"
-              }`}
-            >
-              Buy
-            </button>
+            {types !== "tpsl" && (
+              <button
+                onClick={() => {
+                  handleChangeOrderType("buy");
+                  setShareDetailAmount({});
+                  setErrorResponse({});
+                  setDebouncedValue(0);
+                  setAmount("");
+                  setShare("");
+                }}
+                className={`py-2 mr-6 font-medium ${
+                  orderType === "buy"
+                    ? "border-b-2 border-[#0099FF] text-[#0099FF]"
+                    : "text-gray-600 dark:text-gray-300 cursor-pointer"
+                }`}
+              >
+                Buy
+              </button>
+            )}
 
             <button
               onClick={() => {
@@ -470,9 +533,169 @@ export default function BuySell({
 
           <>
             <div className="flex flex-col gap-3">
-              {types === "limit" ? (
+              {types === "tpsl" ? (
                 <>
-                  {/* PRICE INPUT */}
+                  <div className="flex justify-between text-lg">
+                    <span className="text-gray-200 font-medium">
+                      Total Buy Share
+                    </span>
+                    <span className="text-gray-800 dark:text-gray-300 font-semibold">
+                      {truncateValue(Number(totalCurrentShare || 0))}
+                    </span>
+                  </div>
+                  <div className="border border-gray-800 rounded ">
+                    <div className="border-b border-gray-800 px-3 pt-2">
+                      <label className="w-full flex flex-col gap-1">
+                        <span className="text-xs flex justify-between items-center text-gray-200 font-medium">
+                          <span>Take Profit</span>{" "}
+                          {tpTouched && takeProfit < currentPrice && (
+                            <span className="text-xs text-yellow-300">
+                              ⚠ Up to current market price (
+                              {truncateValue(currentPrice)})
+                            </span>
+                          )}
+                        </span>
+                        <input
+                          placeholder="0.00"
+                          type="number"
+                          value={takeProfit || ""}
+                          onChange={(e) => {
+                            setTpTouched(true);
+                            const value =
+                              e.target.value === ""
+                                ? 0
+                                : Number(e.target.value);
+                            setTakeProfit(value);
+                          }}
+                          onWheel={(e) => e.currentTarget.blur()}
+                          className={`
+                          w-full no-arrow px-3 py-2 text-2xl font-semibold text-right
+                          bg-transparent border rounded-md outline-none
+                          text-gray-900 dark:text-gray-100
+                          ${
+                            tpTouched && takeProfit < currentPrice
+                              ? "border-yellow-400 ring-1 focus:ring-yellow-400"
+                              : "border-gray-300 dark:border-gray-700 focus:border-[#0099FF] focus:ring-[#0099FF]"
+                          }
+                          focus:ring-1
+                        `}
+                        />
+                      </label>
+
+                      <div className="space-y-0  text-sm py-2 ">
+                        <div className="flex flex-row justify-between">
+                          <span className="text-gray-400 font-medium">Fee</span>
+                          <span className="text-gray-400">
+                            ${truncateValue(Number(takeProfitFee || 0))}
+                          </span>
+                        </div>
+                        <div className="flex flex-row items-center justify-between">
+                          <span className="text-gray-400 font-medium">
+                            Receive
+                          </span>
+                          <span className="text-green-500 text-lg">
+                            $ {truncateValue(Number(takeProfitReceive || 0))}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <label className="w-full p-3 flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-200 font-medium">
+                          Shares
+                        </span>
+                        <div className="text-xs flex gap-3">
+                          <span className="text-gray-400">
+                            {" "}
+                            Current Price :{" "}
+                          </span>
+                          <span className="text-amber-500">
+                            {truncateValue(Number(option?.price || 0))}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <input
+                          placeholder="0.00"
+                          type="number"
+                          value={tpslShare || ""}
+                          onChange={(e) =>
+                            setTpslShare(
+                              e.target.value === ""
+                                ? 0
+                                : Number(e.target.value),
+                            )
+                          }
+                          onWheel={(e) => e.currentTarget.blur()}
+                          className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-start bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "
+                        />
+                        <span className="absolute top-3 bg-gray-500 font-serif text-gray-100 rounded px-1 right-2 ">
+                          max
+                        </span>
+                      </div>
+                    </label>
+
+                    <div className="p-3 border-t border-gray-800">
+                      <label className="w-full flex flex-col gap-1">
+                        <span className="text-xs flex justify-between text-gray-200 font-medium">
+                          <span>Stop Loss</span>{" "}
+                          {slTouched && stopLoss > currentPrice && (
+                            <span className="text-xs text-yellow-300">
+                              ⚠ Down to current market price (
+                              {truncateValue(currentPrice)})
+                            </span>
+                          )}
+                        </span>
+
+                        <input
+                          placeholder="0.00"
+                          type="number"
+                          value={stopLoss || ""}
+                          onChange={(e) => {
+                            setSlTouched(true);
+                            const value =
+                              e.target.value === ""
+                                ? 0
+                                : Number(e.target.value);
+                            setStopLoss(value);
+                          }}
+                          onWheel={(e) => e.currentTarget.blur()}
+                          className={`
+                          w-full no-arrow px-3 py-2 text-2xl font-semibold text-right
+                          bg-transparent border rounded-md outline-none
+                          text-gray-900 dark:text-gray-100
+                          ${
+                            slTouched && stopLoss > currentPrice
+                              ? "border-yellow-400 ring-1 focus:ring-yellow-400"
+                              : "border-gray-300 dark:border-gray-700 focus:border-[#0099FF] focus:ring-[#0099FF]"
+                          }
+                          focus:ring-1
+                        `}
+                        />
+                      </label>
+
+                      <div className="space-y-0  text-sm py-2 ">
+                        <div className="flex flex-row justify-between">
+                          <span className="text-gray-400 font-medium">Fee</span>
+                          <span className="text-gray-400">
+                            $ {truncateValue(Number(stopLossFee || 0))}
+                          </span>
+                        </div>
+                        <div className="flex flex-row  items-center justify-between">
+                          <span className="text-gray-400 font-medium">
+                            Receive
+                          </span>
+                          <span className="text-red-500 text-lg">
+                            - $ {truncateValue(Number(stopLossReceive || 0))}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : types === "limit" ? (
+                <>
                   <label className="w-full flex flex-col gap-1">
                     <span className="text-xs text-gray-400 font-medium">
                       {orderType === "sell" ? "Sell" : "Buy"} at price
@@ -612,112 +835,95 @@ export default function BuySell({
               )}
             </div>
 
-            <div className="flex flex-row justify-between gap-2 mt-2">
-              {" "}
-              <div className="bg-[#0099FF] font-semibold text-white px-2 py-1 rounded">
+            {types !== "tpsl" && (
+              <div className="flex flex-row justify-between gap-2 mt-2">
                 {" "}
-                IOC{" "}
+                <div className="bg-[#0099FF] font-semibold text-white px-2 py-1 rounded">
+                  {" "}
+                  IOC{" "}
+                </div>
+                <div className="text-xs font-normal text-red-500">
+                  {errorResponse?.message == "Invalid value"
+                    ? ""
+                    : errorResponse?.message || ""}
+                </div>
               </div>
-              <div className="text-xs font-normal text-red-500">
-                {errorResponse?.message == "Invalid value"
-                  ? ""
-                  : errorResponse?.message || ""}
-              </div>
-            </div>
+            )}
 
-            <div className="flex text-black py-3 text-sm flex-col gap-2">
-              <div className="text-[#0099FF] font-semibold text-lg">
-                Share Details :
-              </div>
-              {types === "limit" && orderType == "buy" ? (
-                <>
-                  {token && (
-                    <div className="flex flex-row justify-between">
-                      <span className="text-gray-400 font-medium">
-                        Available Balance
-                      </span>
-                      <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
-                        $ {truncateValue(Number(totalCurrentBalance || 0))}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex flex-row justify-between">
-                    <span className="text-gray-400 font-medium">Fee</span>
-                    <span className="dark:text-gray-300">
-                      $ {truncateValue(Number(LimitFee || 0))}
-                    </span>
-                  </div>
-                  <div className="flex flex-row justify-between">
-                    <span className="text-gray-400 font-medium">Net Cost</span>
-                    <span className="dark:text-gray-300">
-                      $ {truncateValue(Number(share) * Number(limitShare) || 0)}
-                    </span>
-                  </div>
-                </>
-              ) : types === "limit" && orderType == "sell" ? (
-                <>
-                  <div className="space-y-2  ">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400 font-medium">
-                        Total Buy Share
-                      </span>
-                      <span className="text-gray-800 dark:text-gray-300 font-semibold">
-                        {truncateValue(Number(totalCurrentShare || 0))}
-                      </span>
-                    </div>
-
+            {types !== "tpsl" && (
+              <div className="flex text-black py-3 text-sm flex-col gap-2">
+                <div className="text-[#0099FF] font-semibold text-lg">
+                  Share Details :
+                </div>
+                {types === "limit" && orderType == "buy" ? (
+                  <>
+                    {token && (
+                      <div className="flex flex-row justify-between">
+                        <span className="text-gray-400 font-medium">
+                          Available Balance
+                        </span>
+                        <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
+                          $ {truncateValue(Number(totalCurrentBalance || 0))}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex flex-row justify-between">
                       <span className="text-gray-400 font-medium">Fee</span>
                       <span className="dark:text-gray-300">
-                        $ {LimitFee == 0 ? "" : "-"}{" "}
-                        {truncateValue(Number(LimitFee || 0))}
+                        $ {truncateValue(Number(LimitFee || 0))}
                       </span>
                     </div>
                     <div className="flex flex-row justify-between">
-                      <span className="text-gray-400 font-medium">Receive</span>
+                      <span className="text-gray-400 font-medium">
+                        Net Cost
+                      </span>
                       <span className="dark:text-gray-300">
-                        $ {truncateValue(Number(totalSharesSell || 0))}
+                        ${" "}
+                        {truncateValue(Number(share) * Number(limitShare) || 0)}
                       </span>
                     </div>
-                  </div>
-                </>
-              ) : orderType === "buy" ? (
-                <>
-                  {token && (
-                    <div className="flex flex-row justify-between">
-                      <span className="text-gray-400 font-medium">
-                        Available Balance
-                      </span>
-                      <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
-                        $ {truncateValue(Number(totalCurrentBalance || 0))}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex flex-row justify-between">
-                    <span className="text-gray-400 font-medium">Fee</span>
-                    <span className="dark:text-gray-300">
-                      $ {truncateValue(Number(shareDetailAmount?.fee || 0))}
-                    </span>
-                  </div>
-                  <div className="flex flex-row justify-between">
-                    <span className="text-gray-400 font-medium">Net Cost</span>
-                    <span className="dark:text-gray-300">
-                      $ {truncateValue(Number(shareDetailAmount?.netCost || 0))}
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-2   py-2 ">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400 font-medium">
-                        Total Buy Share
-                      </span>
-                      <span className="text-gray-800 dark:text-gray-300 font-semibold">
-                        {truncateValue(Number(totalCurrentShare || 0))}
-                      </span>
-                    </div>
+                  </>
+                ) : types === "limit" && orderType == "sell" ? (
+                  <>
+                    <div className="space-y-2  ">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400 font-medium">
+                          Total Buy Share
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-300 font-semibold">
+                          {truncateValue(Number(totalCurrentShare || 0))}
+                        </span>
+                      </div>
 
+                      <div className="flex flex-row justify-between">
+                        <span className="text-gray-400 font-medium">Fee</span>
+                        <span className="dark:text-gray-300">
+                          $ {LimitFee == 0 ? "" : "-"}{" "}
+                          {truncateValue(Number(LimitFee || 0))}
+                        </span>
+                      </div>
+                      <div className="flex flex-row justify-between">
+                        <span className="text-gray-400 font-medium">
+                          Receive
+                        </span>
+                        <span className="dark:text-gray-300">
+                          $ {truncateValue(Number(totalSharesSell || 0))}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                ) : orderType === "buy" ? (
+                  <>
+                    {token && (
+                      <div className="flex flex-row justify-between">
+                        <span className="text-gray-400 font-medium">
+                          Available Balance
+                        </span>
+                        <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
+                          $ {truncateValue(Number(totalCurrentBalance || 0))}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex flex-row justify-between">
                       <span className="text-gray-400 font-medium">Fee</span>
                       <span className="dark:text-gray-300">
@@ -725,46 +931,91 @@ export default function BuySell({
                       </span>
                     </div>
                     <div className="flex flex-row justify-between">
-                      <span className="text-gray-400 font-medium">Receive</span>
+                      <span className="text-gray-400 font-medium">
+                        Net Cost
+                      </span>
                       <span className="dark:text-gray-300">
                         ${" "}
-                        {truncateValue(
-                          Number(shareDetailAmount?.netProceeds || 0),
-                        )}
+                        {truncateValue(Number(shareDetailAmount?.netCost || 0))}
                       </span>
                     </div>
-                  </div>
-                </>
-              )}
-            </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="space-y-2   py-2 ">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400 font-medium">
+                          Total Buy Share
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-300 font-semibold">
+                          {truncateValue(Number(totalCurrentShare || 0))}
+                        </span>
+                      </div>
 
-            <button
-              disabled={buttonDisable}
-              onClick={handleSubmit}
-              className={`mt-4 py-3 text-lg text-white font-bold ${
-                buttonDisable
-                  ? "bg-[#62bdfa]"
-                  : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
-              }  rounded-xl w-full`}
-            >
-              <span className="capitalize">{orderType || "--"}</span>{" "}
-              <span className="text-gray-200">$</span>{" "}
-              <span className="text-gray-200">
-                {types === "limit" && orderType === "buy"
-                  ? truncateValue(Number(totalSharesBuy || 0), 3)
-                  : types === "limit" && orderType === "sell"
-                    ? truncateValue(Number(totalSharesSell || 0), 3)
-                    : orderType == "buy"
-                      ? truncateValue(
-                          Number(shareDetailAmount?.grossCost || 0),
-                          3,
-                        )
-                      : truncateValue(
-                          Number(shareDetailAmount?.grossProceeds) || 0,
-                          3,
-                        )}
-              </span>
-            </button>
+                      <div className="flex flex-row justify-between">
+                        <span className="text-gray-400 font-medium">Fee</span>
+                        <span className="dark:text-gray-300">
+                          $ {truncateValue(Number(shareDetailAmount?.fee || 0))}
+                        </span>
+                      </div>
+                      <div className="flex flex-row justify-between">
+                        <span className="text-gray-400 font-medium">
+                          Receive
+                        </span>
+                        <span className="dark:text-gray-300">
+                          ${" "}
+                          {truncateValue(
+                            Number(shareDetailAmount?.netProceeds || 0),
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {types === "tpsl" ? (
+              <button
+                disabled={!tpTouched && !slTouched}
+                onClick={handleTpspSubmit}
+                className={`mt-4 py-3 text-lg text-white font-bold ${
+                  !tpTouched && !slTouched
+                    ? "bg-[#62bdfa]"
+                    : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
+                }  rounded-xl w-full`}
+              >
+                Sell
+              </button>
+            ) : (
+              <button
+                disabled={buttonDisable}
+                onClick={handleSubmit}
+                className={`mt-4 py-3 text-lg text-white font-bold ${
+                  buttonDisable
+                    ? "bg-[#62bdfa]"
+                    : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
+                }  rounded-xl w-full`}
+              >
+                <span className="capitalize">{orderType || "--"}</span>{" "}
+                <span className="text-gray-200">$</span>{" "}
+                <span className="text-gray-200">
+                  {types === "limit" && orderType === "buy"
+                    ? truncateValue(Number(totalSharesBuy || 0), 3)
+                    : types === "limit" && orderType === "sell"
+                      ? truncateValue(Number(totalSharesSell || 0), 3)
+                      : orderType == "buy"
+                        ? truncateValue(
+                            Number(shareDetailAmount?.grossCost || 0),
+                            3,
+                          )
+                        : truncateValue(
+                            Number(shareDetailAmount?.grossProceeds) || 0,
+                            3,
+                          )}
+                </span>
+              </button>
+            )}
           </>
         </Box>
       </Fade>

@@ -26,7 +26,7 @@ if (typeof window !== "undefined") {
       }
       return config;
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
   );
 }
 
