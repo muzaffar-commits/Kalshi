@@ -410,6 +410,15 @@ export default function BuySell({
       setBtnLoader(false);
     }
   };
+  const isSharesValid = tpslShare > 0;
+  const isTPValid = takeProfit > 0;
+  const isSLValid = stopLoss > 0;
+
+  const isTouched = tpTouched && slTouched;
+
+  const disabledTpslBtn =
+    !isTouched || !isSharesValid || !isTPValid || !isSLValid;
+
   return (
     <Modal
       open={isOpen}
@@ -611,7 +620,7 @@ export default function BuySell({
                             Current Price :{" "}
                           </span>
                           <span className="text-amber-500">
-                            {truncateValue(Number(option?.price || 0))}
+                            {truncateValue(Number(option?.price || 0), 5)}
                           </span>
                         </div>
                       </div>
@@ -630,8 +639,8 @@ export default function BuySell({
                           onWheel={(e) => e.currentTarget.blur()}
                           className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-start bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "
                         />
-                        <span className="absolute top-3 bg-gray-500 font-serif text-gray-100 rounded px-1 right-2 ">
-                          max
+                        <span className="absolute top-3 bg-gray-700/50 font-serif text-gray-300 rounded px-1.5 right-2 ">
+                          Max
                         </span>
                       </div>
                     </label>
@@ -977,10 +986,10 @@ export default function BuySell({
 
             {types === "tpsl" ? (
               <button
-                disabled={!tpTouched && !slTouched}
+                disabled={disabledTpslBtn}
                 onClick={handleTpspSubmit}
                 className={`mt-4 py-3 text-lg text-white font-bold ${
-                  !tpTouched && !slTouched
+                  disabledTpslBtn
                     ? "bg-[#62bdfa]"
                     : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
                 }  rounded-xl w-full`}

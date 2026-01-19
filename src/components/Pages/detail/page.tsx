@@ -87,6 +87,7 @@ const Details = () => {
   const [deleteResponse, setDeleteResponse] = useState(false);
   const [currentVolume, setCurrentVolume] = useState(0);
   const [timeInterval, setTimeInterval] = useState("all");
+  const [orderPage, setOrderPage] = useState<string | null>("1");
   const [selectedOrderDetails, setSelectedOrderDetails] =
     useState<CancelOrders | null>(null);
 
@@ -343,11 +344,17 @@ const Details = () => {
 
   const ordersList = useCallback(async () => {
     try {
-      const response = await getOrdersList(userDetails?.user?.id || null, slug);
+      const response = await getOrdersList(
+        userDetails?.user?.id || null,
+        slug,
+        "NEW",
+      );
 
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);
+        setOrderPage(response?.data?.nextOffset);
       } else {
+        setOrderPage(null);
         setOrderData([]);
       }
     } catch {

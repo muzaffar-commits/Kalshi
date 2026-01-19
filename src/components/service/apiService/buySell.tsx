@@ -105,10 +105,11 @@ export const getOrdersList = async (
   questionId: string | null,
   status: string = "NEW",
   type: string = "LIMIT",
+  page: string | null = "0",
 ) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getOrders}/?userId=${userId}&questionId=${questionId}&status=${status}&type=${type}`,
+      `${API_URLs.getOrders}/?userId=${userId}&questionId=${questionId}&status=${status}&type=${type}&limit=5&offset=0`,
     );
     return response?.data;
   } catch (error: unknown) {

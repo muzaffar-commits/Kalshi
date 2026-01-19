@@ -1,3 +1,4 @@
+import CustomPagination from "@/components/common/CustomPagination";
 import { truncateValue } from "@/utils/Content";
 import { MdOpenInNew } from "react-icons/md";
 
@@ -10,6 +11,8 @@ type OrderItem = {
   side: OrderSide;
   maxCost?: number;
   minProceeds?: number;
+  triggerPrice?: number;
+  tpslLeg?: string;
 };
 
 interface OrderListProps {
@@ -38,6 +41,7 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
       <div className="mt-2 space-y-2">
         {data.map((item) => {
           const isBuy = item.side === "BUY";
+          const isTpsl = item.tpslLeg === "TP_OR_SL";
           return (
             <div
               key={item.id}
@@ -59,8 +63,14 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
 
               {/* Price */}
               <div className="text-sm dark:text-white text-gray-700">
-                {Number(isBuy ? item?.maxCost : item?.minProceeds || 0).toFixed(
-                  2
+                {truncateValue(
+                  Number(
+                    isTpsl
+                      ? item?.triggerPrice
+                      : isBuy
+                        ? item?.maxCost
+                        : item?.minProceeds || 0,
+                  ),
                 )}
               </div>
 
@@ -108,6 +118,7 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
           );
         })}
       </div>
+      <CustomPagination count={100} onChange={() => null} page={10} />
     </div>
   );
 }
