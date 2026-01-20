@@ -17,9 +17,9 @@ export const getCommonCategoryAll = async () => {
 export const commonQuestionFindById = async (id: number, userId: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.commonQuestionFindById}/${id}${
-        userId ? `?userId=${userId}` : ""
-      }`
+      `${API_URLs.commonQuestionFindById}/?categoryId=${id}${
+        userId ? `&userId=${userId}` : ""
+      }`,
     );
     return response?.data;
   } catch (error: unknown) {
@@ -33,8 +33,20 @@ export const commonQuestionFindById = async (id: number, userId: string) => {
 export const questionDetails = async (id: string, userId: number) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.questionDetails}/${id}${userId ? `?userId=${userId}` : ""}`
+      `${API_URLs.questionDetails}/${id}${userId ? `?userId=${userId}` : ""}`,
     );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const fetchSubCategory = async (id: number) => {
+  try {
+    const response = await apiInstance.get(`${API_URLs.subCategory}/${id}`);
     return response?.data;
   } catch (error: unknown) {
     return {

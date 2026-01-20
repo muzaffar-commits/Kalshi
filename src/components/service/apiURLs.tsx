@@ -35,6 +35,7 @@ export const API_URLs = {
   currentPositionShares: "/user/current-position-share",
   profileUpdate: "/user/update-user-profile",
   ordersTpAndSl: "/orders/submit-tpsl",
+  subCategory: "/common/get-sub-catagory",
 };
 
 // images

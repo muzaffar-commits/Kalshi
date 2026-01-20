@@ -2,13 +2,32 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const categorySlice = createSlice({
   name: "auth",
-  initialState: { category: {} },
+  initialState: {
+    category: {},
+    subCategory: [],
+    eventCategory: [],
+    selectSubCategory: {},
+  },
   reducers: {
     saveCategory: (state, action) => {
       state.category = action.payload;
     },
+    saveSubCategory: (state, action) => {
+      state.subCategory = action.payload;
+    },
+    saveEventCategory: (state, action) => {
+      state.eventCategory = action.payload;
+    },
+    saveSelectSubCategory: (state, action) => {
+      state.selectSubCategory = action.payload;
+    },
   },
 });
 
-export const { saveCategory } = categorySlice.actions;
+export const {
+  saveCategory,
+  saveSubCategory,
+  saveEventCategory,
+  saveSelectSubCategory,
+} = categorySlice.actions;
 export default categorySlice.reducer;

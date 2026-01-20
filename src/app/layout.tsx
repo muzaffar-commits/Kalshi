@@ -43,6 +43,9 @@ export default function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
+            defaultTheme="light"
+            // forcedTheme="light"
+            // themes={}
             // disableTransitionOnChange
           >
             <Toaster position="top-right" />

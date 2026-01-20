@@ -16,6 +16,17 @@ import {
 } from "@/utils/typesInterface";
 import { delay } from "@/utils/Content";
 
+interface selectedSubCategory {
+  category: {
+    selectSubCategory: {
+      id: number;
+      isActive: Boolean;
+      name: String;
+      slug: String;
+    };
+  };
+}
+
 const Home = () => {
   const [loader, setLoader] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,8 +41,13 @@ const Home = () => {
   const categoryDetails = useSelector(
     (state: RootState) => state?.category?.category,
   );
+  const selectedSubCategory = useSelector(
+    (state: selectedSubCategory) => state?.category?.selectSubCategory,
+  );
+
   const userDetails = useSelector((state: RootState) => state?.user);
-  localStorage.setItem("isCategory", "1");
+
+  console.log(selectedSubCategory, "selectedSubCategory");
 
   const questionAllList = useCallback(async () => {
     setLoader(true);
@@ -87,7 +103,9 @@ const Home = () => {
 
   return (
     <>
-      <div className="max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48">
+      <div
+        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-56" : "lg:mt-56"}`}
+      >
         {/* <div onClick={goToSubCategory}>goToSubCategory</div> */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0">
           {loader ? (

@@ -260,3 +260,15 @@ export interface userDetailProps {
   email: string;
   image_url: string;
 }
+
+export interface headerRootState {
+  category?: {
+    category?: {
+      id?: number;
+    };
+  };
+  user?: {
+    id?: number;
+    isAuth: boolean;
+  };
+}
