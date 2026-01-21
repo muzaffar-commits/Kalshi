@@ -185,13 +185,13 @@ const Home = () => {
                         </span>
                         <button
                           onClick={() => handleBuyNow(row, item, "sell", idx)}
-                          className="p-2 bg-red-500/40 cursor-pointer text-red-700 dark:text-red-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-red-500 hover:text-white  transition-all duration-200 ease-in-out"
+                          className="p-2 bg-red-500/30 cursor-pointer text-red-700 dark:text-red-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-red-500 hover:text-white  transition-all duration-200 ease-in-out"
                         >
                           Sell
                         </button>
                         <button
                           onClick={() => handleBuyNow(row, item, "buy", idx)}
-                          className="p-2 bg-green-600/40 cursor-pointer text-green-700 dark:text-green-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-green-600 hover:text-white transition-all duration-200 ease-in-out"
+                          className="p-2 bg-green-600/30 cursor-pointer text-green-700 dark:text-green-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-green-600 hover:text-white transition-all duration-200 ease-in-out"
                         >
                           Buy
                         </button>

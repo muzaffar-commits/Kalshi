@@ -22,15 +22,15 @@ interface OrderListProps {
 
 export default function OrderList({ data, cancelOrders }: OrderListProps) {
   return (
-    <div className="w-full rounded-2xl bg-transparent border border-gray-300 dark:border-white/10 p-6">
+    <div className="w-full rounded-2xl bg-transparent border border-gray-200 dark:border-white/10 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="flex items-center gap-2 text-sm font-semibold text-[#c3a66e]">
+        <h2 className="flex items-center gap-2 text-sm font-semibold dark:text-white text-black/80">
           <MdOpenInNew size={18} />
           Open Orders
         </h2>
       </div>
 
-      <div className="grid grid-cols-5 px-4 py-3 text-[12px] font-semibold tracking-wide text-[#c3a66e] border-b border-white/10">
+      <div className="grid grid-cols-5 px-4 py-3 text-[12px] font-semibold tracking-wide dark:text-white text-black/80 border-b border-white/10">
         <div>SHARES</div>
         <div>PRICE</div>
         <div>TYPE</div>
@@ -78,7 +78,7 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
               <div>
                 <span
                   className={`
-                    text-xs font-semibold px-3 py-1 rounded-md
+                    text-xs font-semibold px-3 py-1 rounded-sm
                     ${
                       isBuy
                         ? "bg-emerald-500/20 text-emerald-400"
@@ -92,7 +92,7 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
 
               {/* Status */}
               <div className="text-right">
-                <span className="text-xs px-3 py-1 rounded-md bg-blue-500/20 text-blue-400">
+                <span className="text-xs px-3 py-1 rounded-sm bg-blue-500/20 text-blue-400">
                   Open
                 </span>
               </div>
