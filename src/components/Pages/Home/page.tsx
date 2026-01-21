@@ -18,6 +18,8 @@ import {
 } from "@/utils/typesInterface";
 import { delay } from "@/utils/Content";
 import SubCategory from "../subCategory/page";
+import { postQuestionBookUnBookMark } from "@/components/service/apiService/user";
+import toast from "react-hot-toast";
 
 interface selectedSubCategory {
   category: {
@@ -118,6 +120,20 @@ const Home = () => {
     router.push(`/Detail?id=${userId}`);
   };
 
+  const bookMarkUnBookMark = async (id: string) => {
+    try {
+      const payload = { questionId: id };
+      const response = await postQuestionBookUnBookMark(payload);
+      if (response.success) {
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+    } catch {
+      toast.success("");
+    }
+  };
+
   return (
     <>
       <div
@@ -135,7 +151,6 @@ const Home = () => {
               eventSubCategoryId={eventSubCategoryId}
               setEventSubCategoryId={setEventSubCategoryId}
               questionData={questionData}
-              handleBuyNow={handleBuyNow}
             />
           ) : loader ? (
             [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
@@ -206,7 +221,9 @@ const Home = () => {
                   </span>
                   <span className="cursor-pointer">
                     {" "}
-                    <FaRegBookmark />
+                    {/* <FaRegBookmark
+                      onClick={() => bookMarkUnBookMark(row?.id)}
+                    /> */}
                   </span>
                 </div>
               </div>

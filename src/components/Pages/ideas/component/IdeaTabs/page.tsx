@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -26,6 +26,7 @@ import {
 import IdeaTabsTwo from "../IdeaTabsTwo/page";
 import { IoImageOutline } from "react-icons/io5";
 import { CreatePostSkeleton } from "@/utils/customSkeleton";
+import socket from "@/components/socket";
 
 type HandleComment = (post: PostFeeBack) => void;
 
@@ -157,6 +158,32 @@ export default function IdeaTabs({
 
   console.log(!canPost, String(message).trim().length > 3, "rplll");
 
+  useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+    console.log(socket.connected, "socket.connected=====>");
+
+    socket.on("connect", () => {
+      console.log("Socket connected! ID:====", socket.id);
+      socket.emit("subscribeLiveTrade");
+      // if (userDetails?.user?.id) {
+      //   socket.emit("subscribe:user", userDetails?.user?.id);
+      // }
+    });
+    socket.on("tradeLive", (payload) => {
+      console.log(payload, "subscribeLiveTrade");
+    });
+
+    return () => {
+      // socket.emit("unsubscribe:market", questionId);
+      // socket.off("connect");
+      // socket.off("market:prices");
+      // socket.off("trade");
+      socket.off("unsubscribeLiveTrade");
+      socket.offAny();
+    };
+  });
   return (
     <Box sx={{ width: "100%" }}>
       <Box
@@ -184,8 +211,8 @@ export default function IdeaTabs({
           }}
         >
           <Tab label="Ideas" {...a11yProps(0)} />
-          {/* <Tab label="Live Trades" {...a11yProps(1)} />
-          <Tab label="Market Builder" {...a11yProps(2)} /> */}
+          <Tab label="Live Trades" {...a11yProps(1)} />
+          {/* <Tab label="Market Builder" {...a11yProps(2)} /> */}
         </Tabs>
       </Box>
 
@@ -290,7 +317,7 @@ export default function IdeaTabs({
               </div>
               <div>
                 <p className="dark:text-gray-400 text-gray-800 text-sm">
-                  Majchrzak vs Opelka
+                  Majchrzak vs Opelka gg
                 </p>
                 <p className="text-md mt-4">
                   <Link href="/">

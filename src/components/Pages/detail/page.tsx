@@ -36,13 +36,13 @@ type OrderSide = "BUY" | "SELL";
 interface OrderFlowItem {
   id: number;
   optionId: number;
-  shares: string;
-  saleAtPrice: string;
+  shares: number;
+  saleAtPrice: number;
   createdAt: string;
 }
-type SellOrder = {
+interface SellOrder {
   saleAtPrice?: number | string;
-};
+}
 interface OrderFlow {
   buys: OrderFlowItem[];
   sells: OrderFlowItem[];
@@ -144,13 +144,15 @@ const Details = () => {
     console.log(socket.connected, "socket.connected=====>");
 
     socket.on("connect", () => {
-      console.log("✅ Socket connected! ID:", socket.id);
+      console.log("Socket connected! ID:====", socket.id);
       socket.emit("subscribe:market", questionId);
       if (userDetails?.user?.id) {
         socket.emit("subscribe:user", userDetails?.user?.id);
       }
     });
     socket.on("market:prices", (payload: SocketPricePayload) => {
+      console.log(payload, "market:price=======");
+
       if (!payload?.questionId || !payload?.timestamp) return;
 
       setGraphData((prev: any) => {
@@ -161,7 +163,10 @@ const Details = () => {
             (p: SocketOption) => p?.optionId === series?.optionId,
           );
           if (!livePrice) return series;
-          const lastPoint = series.data?.[series.data.length - 1];
+          const lastPoint: {
+            timestamp: string;
+            price: number;
+          } = series.data?.[series.data.length - 1];
           if (
             lastPoint &&
             lastPoint.timestamp === payload.timestamp &&
@@ -187,22 +192,20 @@ const Details = () => {
     });
 
     socket.on("trade", (payload: SocketTradePayload) => {
-      if (payload?.type == "LIMIT") {
-        return;
-      } else {
+      if (payload?.type == "LIMIT" && payload?.share > 0) {
         const tradeRow: OrderFlowItem = {
           id: payload.orderId,
           optionId: payload.optionId,
-          shares: payload.filledShares.toFixed(16),
-          saleAtPrice: (payload.cash / payload.filledShares).toFixed(16),
+          shares: Number(payload.share),
+          saleAtPrice: Number(payload.share / payload.cash),
           createdAt: new Date(payload.ts).toISOString(),
         };
         if (OrderHistoryIdsRef.current.has(payload.orderId)) {
           return;
         }
         OrderHistoryIdsRef.current.add(payload.orderId);
-        if (payload?.filledShares) {
-          setCurrentVolume((prev) => prev + Number(payload.filledShares ?? 0));
+        if (payload?.share) {
+          setCurrentVolume((prev) => prev + Number(payload.share ?? 0));
         }
 
         setOrderFlow((prev) => ({
@@ -210,6 +213,8 @@ const Details = () => {
           sells:
             payload.side === "SELL" ? [tradeRow, ...prev.sells] : prev.sells,
         }));
+      } else {
+        return;
       }
     });
 
@@ -366,18 +371,13 @@ const Details = () => {
     ordersList();
   }, [ordersList]);
 
-  //
   const sellPrices =
     orderFlow?.sells?.map((i: SellOrder) => Number(i?.saleAtPrice) || 0) || [];
-
   const minSellPrice = Math.min(...sellPrices);
   const maxSellPrice = Math.max(...sellPrices);
-
   const getBarWidth = (price: number) => {
     const minWidth = 10;
     const maxWidth = 80;
-
-    // Edge case: sab prices same ho
     if (maxSellPrice === minSellPrice) return "45%";
 
     const width =
@@ -591,7 +591,9 @@ const Details = () => {
                               useToken ? "w-64" : "w-[60%]"
                             } font-medium text-black/80 dark:text-slate-300`}
                           >
-                            <span className="dark:text-white text-balck">{index + 1}.</span>{" "}
+                            <span className="dark:text-white text-balck">
+                              {index + 1}.
+                            </span>{" "}
                             {item?.name || "--"}
                           </div>
 

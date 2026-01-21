@@ -36,6 +36,7 @@ export const API_URLs = {
   profileUpdate: "/user/update-user-profile",
   ordersTpAndSl: "/orders/submit-tpsl",
   subCategory: "/common/get-sub-catagory",
+  questionBookMark: "/user/question-bookmark-or-unbookmark",
 };
 
 // images

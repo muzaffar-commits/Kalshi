@@ -109,7 +109,7 @@ export const getOrdersList = async (
 ) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getOrders}/?userId=${userId}&questionId=${questionId}&status=${status}&type=${type}&limit=5&offset=0`,
+      `${API_URLs.getOrders}/?userId=${userId}&questionId=${questionId}&status=${status}&type=${type}&limit=30&offset=0`,
     );
     return response?.data;
   } catch (error: unknown) {
@@ -146,11 +146,13 @@ export const getCurrentBalance = async () => {
 
 export const getCurrentShares = async (
   questionId: number,
-  optionId: number | null,
+  optionId: number,
 ) => {
+  console.log(questionId, optionId, "optionId");
+
   try {
     const response = await apiInstance.get(
-      `${API_URLs.currentPositionShares}?questionId=${questionId}&optionId=${optionId}`,
+      `${API_URLs.currentPositionShares}/?questionId=${questionId}&optionId=${optionId}`,
     );
     return response?.data;
   } catch (error: unknown) {
