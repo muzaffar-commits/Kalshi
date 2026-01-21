@@ -8,6 +8,8 @@ import LoadingCard from "@/components/common/LoadingCard";
 import BuySell from "@/components/Modal/BuySell/page";
 import { commonQuestionFindById } from "@/components/service/apiService/category";
 import { useRouter } from "next/navigation";
+import { FaRegBookmark } from "react-icons/fa";
+
 import {
   OptionItem,
   QuestionItem,
@@ -104,7 +106,7 @@ const Home = () => {
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-56" : "lg:mt-56"}`}
+        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-36" : "lg:mt-36"}`}
       >
         {/* <div onClick={goToSubCategory}>goToSubCategory</div> */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0">
@@ -127,7 +129,7 @@ const Home = () => {
                     alt="trending"
                     className="mr-2 rounded"
                   />
-                  <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-gray-800">
+                  <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-black/80">
                     <div onClick={() => goToDetails(row.id)}>
                       <div className="block">
                         <div
@@ -150,17 +152,16 @@ const Home = () => {
                       <span className="block max-w-full truncate">
                         {item?.name || "--"}
                       </span>
-                      <div className="flex items-center gap-1.5">
-                        <span>{(item?.price * 100).toFixed(1)}%</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[16px] font-semibold">{(item?.price * 100).toFixed(1)}%</span>
                         <button
                           onClick={() => handleBuyNow(row, item, "sell", idx)}
-                          className="py-1 px-2 bg-[#c7ac77]/80 cursor-pointer text-white font-semibold rounded-xs text-[10px]"
-                        >
+                          className="p-2 bg-red-500/40 cursor-pointer text-red-700 dark:text-red-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-red-500 hover:text-white  transition-all duration-200 ease-in-out">
                           Sell
                         </button>
                         <button
                           onClick={() => handleBuyNow(row, item, "buy", idx)}
-                          className="py-1 px-2 border border-[#c7ac77]/80 cursor-pointer text-[#c7ac77] font-semibold rounded-xs text-[10px]"
+                          className="p-2 bg-green-600/40 cursor-pointer text-green-700 dark:text-green-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-green-600 hover:text-white transition-all duration-200 ease-in-out"
                         >
                           Buy
                         </button>
@@ -173,7 +174,7 @@ const Home = () => {
                   <span>
                     $ {Number(row?.stats?.totalVolume || 0)?.toFixed(2) || 0}
                   </span>
-                  <span></span>
+                  <span className="cursor-pointer"> <FaRegBookmark/></span>
                 </div>
               </div>
             ))

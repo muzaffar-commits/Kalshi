@@ -17,8 +17,8 @@ export const getCommonCategoryAll = async () => {
 export const commonQuestionFindById = async (id: number, userId: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.commonQuestionFindById}/?categoryId=${id}${
-        userId ? `&userId=${userId}` : ""
+      `${API_URLs.commonQuestionFindById}/${id}${
+        userId ? `?userId=${userId}` : ""
       }`,
     );
     return response?.data;

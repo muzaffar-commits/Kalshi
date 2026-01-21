@@ -59,7 +59,7 @@ export default function CustomMenu() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <FaUserCircle className="!text-blue-500" size={40} />
+            <FaUserCircle className="text-gray-300" size={30} />
           </IconButton>
         </Tooltip>
       </Box>

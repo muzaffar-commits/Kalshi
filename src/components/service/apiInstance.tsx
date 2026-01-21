@@ -2,8 +2,8 @@
 
 import axios from "axios";
 
-export const basedURLs = "http://192.168.29.218:3000";
-// export const basedURLs = "https://api.opinionkings.com";
+// export const basedURLs = "http://192.168.29.218:3000";
+ export const basedURLs = "https://api.opinionkings.com";
 export const developmentBaseURL = `${basedURLs}/api`;
 
 const apiInstance = axios.create({
@@ -13,6 +13,9 @@ const apiInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// https://api.opinionkings.com/api/common/questions-list/1
+// https://api.opinionkings.com/api/common/questions-list/?categoryId=1
 
 // Add interceptors if needed
 if (typeof window !== "undefined") {

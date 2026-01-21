@@ -163,10 +163,10 @@ const Header = () => {
                   <div className=" text-xl font-bold">
                     {/* Light mode logo */}
                     <Image
-                      src="/img/opinionLogo-dark.png"
+                      src="/img/opinionLogo-light.png"
                       alt="Opinion logo"
-                      width={160}
-                      height={160}
+                      width={120}
+                      height={120}
                       priority
                       className="
                           h-auto
@@ -184,8 +184,8 @@ const Header = () => {
                     <Image
                       src="/img/opinionLogo-light.png"
                       alt="Opinion logo"
-                      width={160}
-                      height={160}
+                      width={120}
+                      height={120}
                       priority
                       className="
                             h-auto
@@ -220,20 +220,20 @@ const Header = () => {
             </div>
 
             {/* Buttons */}
-            <div className="flex items-center space-x-2 ml-auto">
+            <div className="flex items-center space-x-2 ml-auto relative">
               {user?.isAuth ? (
                 <CustomMenu />
               ) : (
                 <>
                   <button
                     onClick={handleLogin}
-                    className="px-4 py-1 border border-[#c7ac77] text-[#c7ac77] rounded-md hover:bg-[#c7ac77] font-bold hover:text-white"
+                    className="px-4 py-2  text-[#c7ac77] rounded-md hover:bg-[#c7ac77]/40 font-semibold hover:text-white text-sm"
                   >
                     Log In
                   </button>
                   <button
                     onClick={handleSignup}
-                    className="px-4 py-1 rounded-md text-white font-bold bg-[#c7ac77] hover:bg-gray-500"
+                    className="px-4 py-2 rounded-md text-white font-semibold bg-[#c7ac77] hover:bg-gray-500 text-sm"
                   >
                     Sign Up
                   </button>

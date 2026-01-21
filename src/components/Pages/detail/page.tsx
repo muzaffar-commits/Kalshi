@@ -424,7 +424,7 @@ const Details = () => {
   const getBgClass = (price: number) => {
     const intensity = getIntensity(price);
 
-    if (intensity > 0.8) return "border !border-gray-200 ";
+    if (intensity > 0.8) return "border !border-green-600/50 ";
 
     if (intensity > 0.6) return "!bg-emerald-400/15";
 
@@ -490,8 +490,8 @@ const Details = () => {
         <MarketSkeleton />
       ) : (
         <div className="dark:bg-[#0f172a]">
-          <div className="max-w-[1268px] mx-auto px-4 mt-24 lg:mt-40 ">
-            <div className="container mx-auto pb-6 ">
+          <div className="max-w-[1268px] mx-auto px-4 mt-40">
+            <div className="container mx-auto pb-6">
               <div className="md:flex lg:items-center mb-6">
                 <Image
                   src="/img/blockimg1.jpg"
@@ -555,8 +555,8 @@ const Details = () => {
                   )} */}
 
                   {Number(data?.options?.length) > 0 && (
-                    <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0  font-bold text-[#c3a66e] md:border-0 lg:bg-transparent">
-                      <div className="w-64 text-start">Options</div>
+                    <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0 font-bold dark:text-white text-black/80 md:border-0 lg:bg-transparent">
+                      <div className="w-64 text-start text-xl">Options</div>
                       {useToken && (
                         <>
                           <div className="!w-20">Invested</div>
@@ -576,10 +576,10 @@ const Details = () => {
                         <div
                           key={index}
                           className={`
-                            flex flex-col md:flex-row items-center justify-between
-                            px-3 py-3 rounded-xl
+                            lg:flex flex-col lg:flex-row items-center justify-between
+                            px-3 py-3 rounded-lg
                             border dark:border-[#c3a66e]/60
-                            border-gray-400
+                            border-gray-300
                             backdrop-blur-md 
                             transition-all duration-300
                             ${bgClass}
@@ -588,16 +588,16 @@ const Details = () => {
                           {/* OPTION NAME */}
                           <div
                             className={`${
-                              useToken ? "w-64" : "w-full"
-                            } font-medium  text-gray-700 dark:text-slate-300`}
+                              useToken ? "w-64" : "w-[60%]"
+                            } font-medium text-black/80 dark:text-slate-300`}
                           >
-                            <span className="text-sky-500">{index + 1}.</span>{" "}
+                            <span className="dark:text-white text-balck">{index + 1}.</span>{" "}
                             {item?.name || "--"}
                           </div>
 
                           {useToken && (
                             <>
-                              <div className="w-20 text-sm text-gray-700 dark:text-slate-300  text-center">
+                              <div className="w-20 text-sm text-black/80 dark:text-slate-300  text-center ">
                                 {(item.userPosition?.invested ?? 0) > 0
                                   ? truncateValue(
                                       Number(item.userPosition?.invested),
@@ -607,7 +607,7 @@ const Details = () => {
                               </div>
 
                               <div
-                                className={`w-16 text-sm font-semibold text-center ${
+                                className={`w-22 text-sm font-semibold text-center ${
                                   pnl < 0 ? "text-red-400" : "text-emerald-400"
                                 }`}
                               >
@@ -626,27 +626,27 @@ const Details = () => {
                           )}
 
                           {/* ACTIONS */}
-                          <div className="flex items-center gap-1  mt-2 md:mt-0">
-                            <div className="text-xs text-slate-400 w-10 text-center">
+                          <div className="flex items-center gap-2  mt-2 md:mt-0">
+                            <div className="lg:text-lg text-md text-black/80 dark:text-white/80 font-semibold w-10 text-center mr-2">
                               {truncateValue(Number(item?.price) * 100, 1)}%
                             </div>
 
                             <button
                               onClick={() => handleBuyNow(item, "sell", index)}
-                              className="px-2 py-1.5 rounded-md text-xs font-medium
+                              className="px-2 md:py-2 py-1 rounded-md text-md font-medium
                               bg-red-500/20 text-red-400 border border-red-500/30
-                              hover:bg-red-500/30 transition"
+                              hover:bg-red-500/30 transition cursor-pointer"
                             >
                               Sell
-                              {/* {item?.price} */}$
+                              {/* {item?.price} */} $
                               {truncateValue(Number(item?.price), 2)}
                             </button>
 
                             <button
                               onClick={() => handleBuyNow(item, "buy", index)}
-                              className="px-2 py-1.5 rounded-md text-xs font-medium
+                              className="px-2 md:py-2 py-1  rounded-md text-md font-medium
                               bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
-                              hover:bg-emerald-500/30 transition"
+                              hover:bg-emerald-500/30 transition cursor-pointer"
                             >
                               Buy ${truncateValue(Number(item?.price || 0), 2)}
                             </button>
@@ -657,8 +657,8 @@ const Details = () => {
                   </div>
                 </div>
 
-                <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-700 rounded-lg p-3 lg-p-6">
-                  <div className="flex justify-between pr-3 items-center ">
+                <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-800 rounded-lg p-3 lg-p-6">
+                  <div className="flex justify-between pr-3 items-center">
                     <span className="text-lg font-semibold text-gray-900 dark:text-gray-200">
                       Shares
                     </span>
@@ -667,7 +667,7 @@ const Details = () => {
                     </span>
                   </div>
 
-                  <div className="dark:bg-[#151922]/50  bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden border dark:border-[#1c1f26] border-[#d6d6d6]">
+                  <div className="dark:bg-[#151922]/50  bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden">
                     <div className="divide-y h-[160px] hideScrollbar overflow-y-auto dark:divide-[#1c1f26] divide-[#d6d6d6]">
                       {orderFlow?.sells?.length > 0 ? (
                         orderFlow.sells.map((item: OrderFlowItem) => {

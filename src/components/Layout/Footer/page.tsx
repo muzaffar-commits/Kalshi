@@ -13,7 +13,7 @@ const Footer = () => {
               <div className="hidden md:block text-xl font-bold">
   {/* Light mode logo */}
   <Image
-    src="/img/opinionLogo-dark.png"
+    src="/img/opinionLogo-light.png"
     alt="Opinion logo"
     width={60}
     height={60}
