@@ -34,11 +34,7 @@ const StackedAreaChart = ({
   setTimeIntervalValue,
 }: StackedAreaChartProps) => {
   const { theme } = useTheme();
-  console.log(data, "data====>");
   const series = prepareSeries(data);
-
-  console.log(series, "series=====>");
-
   const colors = series.map(
     (_, index) => BASE_COLORS[index % BASE_COLORS.length],
   );
@@ -134,6 +130,8 @@ const StackedAreaChart = ({
     },
 
     tooltip: {
+      shared: false, // ❌ sabka data ek sath nahi
+      intersect: true,
       x: {
         format: "dd MMM yyyy HH:mm",
       },

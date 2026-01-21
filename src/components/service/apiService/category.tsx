@@ -22,8 +22,8 @@ export const commonQuestionFindById = async (
   // ?categoryId=
   try {
     const response = await apiInstance.get(
-      `${API_URLs.commonQuestionFindById}/${id}${
-        userId ? `?userId=${userId}` : ""
+      `${API_URLs.commonQuestionFindById}/?categoryId=${id}${
+        userId ? `&userId=${userId}` : ""
       }${subCategoryId ? `&eventSectionId=${subCategoryId}` : ""}`,
     );
     return response?.data;

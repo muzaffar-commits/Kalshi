@@ -310,18 +310,11 @@ export default function BuySell({
   const getTotalSharesDetails =
     Number(rowDetailss?.user?.[optionIndex]?.shares) || 0;
 
-  console.log(typeof getTotalSharesDetails, "getTotalSharesDetails======");
-
   const maxShares = option?.userPosition?.shares ?? 0;
-
-  console.log(rowDetailsId, option, "option=============");
-
-  //
-
   const currentBalanceDetails = async () => {
     try {
       const response = await getCurrentBalance();
-      console.log(response, "response===>");
+
       if (response?.success) {
         setTotalCurrentBalance(response?.data || 0);
       } else {
@@ -338,7 +331,7 @@ export default function BuySell({
 
   const currentShareDetails = async () => {
     try {
-      const response = await getCurrentShares(rowDetailsId, option?.id || null);
+      const response = await getCurrentShares(rowDetailsId, Number(option?.id));
       console.log(response, "response===>");
       if (response?.success) {
         setTotalCurrentShare(response?.data || 0);

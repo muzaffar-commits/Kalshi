@@ -1,10 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import Modal from "@mui/material/Modal";
-import Backdrop from "@mui/material/Backdrop";
-import Fade from "@mui/material/Fade";
-import Box from "@mui/material/Box";
 import Dropdown from "@/components/popupDropdown/page";
 import BlockImg from "../../../../../../public/img/blockimg1.jpg";
 import { Minus, Plus } from "lucide-react";
@@ -20,7 +16,6 @@ import {
 import { TfiExchangeVertical } from "react-icons/tfi";
 import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
-import { userBalance } from "@/components/service/apiService/user";
 import { truncateValue } from "@/utils/Content";
 
 interface UserPosition {
@@ -28,13 +23,15 @@ interface UserPosition {
   invested?: number;
   pnl?: number;
 }
-
 interface OptionItem {
   id: number;
   name: string;
   price: number;
   userPosition?: UserPosition;
   winningProbability: number;
+  trading: {
+    totalVolume: number;
+  };
 }
 
 interface QuoteDetails {
@@ -61,6 +58,7 @@ interface UserPosition {
   invested?: number;
   pnl?: number;
 }
+
 interface QuestionItemSecond {
   id: number;
   question: {
@@ -76,7 +74,7 @@ interface BuySellProps {
   rowDetailss: QuestionItemSecond | null;
   orderType: string;
   option: OptionItem | null;
-  optionIndex: number;
+  optionIndex: number | null;
   handleChangeOrderType: (value: string) => void;
 }
 
@@ -119,6 +117,9 @@ export default function BuySell({
   const [tpTouched, setTpTouched] = useState(false);
   const [slTouched, setSlTouched] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
+
+  console.log(rowDetailss, "rowDetailss");
+
   useEffect(() => {
     const t = setTimeout(() => {
       if (activeField === "shares") {
@@ -160,7 +161,7 @@ export default function BuySell({
         try {
           const response = await getOrdersQuoteDetails(
             rowDetailsId,
-            optionIndex,
+            Number(optionIndex),
             debouncedValue,
           );
           if (response?.success) {
@@ -179,7 +180,7 @@ export default function BuySell({
         try {
           const response = await getQuoteByBudget(
             rowDetailsId,
-            optionIndex,
+            Number(optionIndex),
             debouncedValue,
           );
           if (response?.success) {
@@ -200,7 +201,7 @@ export default function BuySell({
       try {
         const response = await getCommonQuoteSell(
           rowDetailsId,
-          optionIndex,
+          Number(optionIndex),
           debouncedValue,
         );
         console.log(response, "getCommonQuoteSell");
@@ -243,20 +244,7 @@ export default function BuySell({
   const totalSharesBuy = Number(share) * Number(limitShare) + LimitFee;
   const totalSharesSell = Number(share) * Number(limitShare) - LimitFee;
 
-  console.log(LimitFee, "LimitFee", totalSharesBuy, "minProceedsValue");
-
-  const getUserBalance = async () => {
-    try {
-      const response = await userBalance();
-      if (response?.success) {
-        localStorage.setItem("balance", response?.data?.balance);
-      } else {
-        localStorage.removeItem("balance");
-      }
-    } catch {
-      localStorage.removeItem("balance");
-    }
-  };
+  console.log(share, "LimitFee", totalSharesBuy, "minProceedsValue");
 
   const handleSubmit = async () => {
     const orderId = crypto.randomUUID();
@@ -289,8 +277,9 @@ export default function BuySell({
       const response: ApiResponse<unknown> = await submitOrder(reqBody);
       if (response?.success) {
         toast.success(response.message || "");
-        getUserBalance();
         handleClose();
+        currentShareDetails();
+        currentBalanceDetails();
       } else {
       }
     } catch {
@@ -299,20 +288,15 @@ export default function BuySell({
   };
 
   const getTotalSharesDetails =
-    Number(rowDetailss?.user?.[optionIndex]?.shares) || 0;
+    Number(rowDetailss?.options?.[optionIndex || 0]?.trading?.totalVolume) || 0;
 
-  console.log(typeof getTotalSharesDetails, "getTotalSharesDetails======");
+  console.log(rowDetailss?.options, "getTotalSharesDetails======");
 
   const maxShares = option?.userPosition?.shares ?? 0;
-
-  console.log(rowDetailsId, option, "option=============");
-
-  //
 
   const currentBalanceDetails = async () => {
     try {
       const response = await getCurrentBalance();
-      console.log(response, "response===>");
       if (response?.success) {
         setTotalCurrentBalance(response?.data || 0);
       } else {
@@ -329,8 +313,8 @@ export default function BuySell({
 
   const currentShareDetails = async () => {
     try {
-      const response = await getCurrentShares(rowDetailsId, option?.id || null);
-      console.log(response, "response===>");
+      const response = await getCurrentShares(rowDetailsId, Number(option?.id));
+
       if (response?.success) {
         setTotalCurrentShare(response?.data || 0);
       } else {
@@ -342,7 +326,7 @@ export default function BuySell({
   };
   useEffect(() => {
     currentShareDetails();
-  }, []);
+  }, [rowDetailsId, option?.id]);
 
   const sharesInput = Number(share);
   const amountInput = Number(amount);
@@ -357,6 +341,8 @@ export default function BuySell({
       balanceAmount <= Number(totalSharesBuy)) ||
     (orderType === "sell" && sharesInput > availableShares) ||
     (orderType === "buy" && types === "market" && balanceAmount < amountInput);
+
+  console.log(sharesInput, availableShares, "totalSharesBuy");
 
   const takeProfitFee = (Number(tpslShare) * takeProfit * 2) / 100;
   const takeProfitReceive = tpslShare - takeProfitFee;
@@ -385,6 +371,8 @@ export default function BuySell({
       if (response?.success) {
         toast.success(response.message || "");
         handleClose();
+        currentShareDetails();
+        currentBalanceDetails();
       } else {
       }
     } catch {
@@ -405,6 +393,25 @@ export default function BuySell({
   const STEP = 0.01;
   const MIN = 0;
   const MAX = 1;
+
+  console.log(buttonDisable, "buttonDisable");
+
+  const hasShares = totalCurrentShare > 0;
+
+  const isTakeProfitValid = takeProfit > 0 && takeProfit > currentPrice;
+
+  const isStopLossValid = stopLoss > 0 && stopLoss < currentPrice;
+
+  const tpslPriceIs = hasShares && isTakeProfitValid && isStopLossValid;
+
+  const disabledTpslBtnNew =
+    btnLoader ||
+    tpslShare <= 0 ||
+    tpslShare > totalCurrentShare ||
+    !tpTouched ||
+    !slTouched ||
+    !tpslPriceIs;
+
   return (
     <>
       <div className="bg-white dark:bg-[#0f172a] mt-12 border border-gray-200 dark:border-gray-700 p-2 rounded-xl overflow-hidden shadow-lg w-full outline-none">
@@ -431,14 +438,15 @@ export default function BuySell({
           </div>
         </div>
 
-        <div className="flex  text-wrap ml-14 mb-3 text-sm   gap-3">
+        <div className="flex  text-wrap ml-14 mb-3 text-sm   gap-1">
           <span
             className={`${orderType === "buy" ? "text-green-600" : "text-[#E43A36]"} text-nowrap font-semibold`}
           >
             {orderType === "buy" ? "Buy" : "Sell"} Now
           </span>
+          :
           <span className="text-gray-500 dark:text-gray-400">
-            - {option?.name || "--"}
+            {option?.name || "--"}
           </span>
         </div>
 
@@ -652,24 +660,6 @@ export default function BuySell({
               </>
             ) : types === "limit" ? (
               <>
-                {/* <label className="w-full flex flex-row items-center gap-10 justify-between gap-1">
-                  <span className="text-xl text-nowrap  text-gray-100 font-medium">
-                    {orderType === "sell" ? "Sell" : "Buy"} at price
-                    Limit Price
-                  </span>
-                  <input
-                    placeholder="0.00"
-                    type="number"
-                    value={limitShare}
-                    onChange={(e) =>
-                      setLimitShare(
-                        e.target.value === "" ? 0 : Number(e.target.value),
-                      )
-                    }
-                    onWheel={(e) => e.currentTarget.blur()}
-                    className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "
-                  />
-                </label> */}
                 <label className="w-full flex flex-row items-center gap-10 gap-1">
                   <span className="text-xl text-nowrap text-gray-100 font-medium">
                     Limit Price
@@ -777,7 +767,7 @@ export default function BuySell({
                   <input
                     type="number"
                     placeholder="0"
-                    value={share}
+                    value={share || ""}
                     onFocus={() => setActiveField("shares")}
                     onChange={(e) =>
                       setShare(
@@ -802,7 +792,7 @@ export default function BuySell({
                   <input
                     type="number"
                     placeholder="0"
-                    value={amount}
+                    value={amount || ""}
                     onFocus={() => setActiveField("amount")}
                     onChange={(e) =>
                       setAmount(
@@ -838,7 +828,7 @@ export default function BuySell({
                     max={
                       option?.userPosition?.shares ?? getTotalSharesDetails ?? 0
                     }
-                    value={share}
+                    value={share || ""}
                     onFocus={() => setActiveField("shares")}
                     onChange={(e) => {
                       const value = Number(e.target.value);
@@ -984,10 +974,10 @@ export default function BuySell({
 
           {types === "tpsl" ? (
             <button
-              disabled={disabledTpslBtn}
+              disabled={disabledTpslBtnNew}
               onClick={handleTpspSubmit}
               className={`mt-4 py-3 text-lg text-white font-bold ${
-                disabledTpslBtn
+                disabledTpslBtnNew
                   ? "bg-[#62bdfa]"
                   : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
               }  rounded-xl w-full`}

@@ -48,6 +48,9 @@ export interface OptionItem {
   price: number;
   winningProbability: number;
   userPosition?: UserPosition;
+  trading: {
+    totalVolume: number;
+  };
 }
 
 export interface QuestionStats {
@@ -202,9 +205,11 @@ export interface SocketTradePayload {
   orderId: number;
   optionId: number;
   filledShares: number;
+  share: number;
   cash: number;
   side: OrderSide;
   ts: number;
+
   type: string;
 }
 
