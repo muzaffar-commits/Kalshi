@@ -1,142 +1,88 @@
 import { useState } from "react";
 import { FaAngleDown } from "react-icons/fa";
+import { FaArrowTrendUp } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
-export default function SportsMenu() {
-  const [open, setOpen] = useState(null);
-  const toggle = (menu) => {
-    setOpen(open === menu ? null : menu);
+export default function SportsMenu({
+  eventSubCategoryId,
+  setEventSubCategoryId,
+}: {
+  eventSubCategoryId: number | null;
+  setEventSubCategoryId: (id: number | null) => void;
+}) {
+  const [open, setOpen] = useState<number | null>(null);
+
+  const eventCategoryList = useSelector(
+    (state: any) => state?.category?.subCategory,
+  );
+
+  const toggle = (id: number) => {
+    setOpen(open === id ? null : id);
+  };
+
+  const handleSubClick = (subId: number) => {
+    setEventSubCategoryId(subId);
+    console.log("Clicked sub category id:", subId);
+    // 👉 navigate / dispatch / filter logic here
   };
 
   return (
     <ul className="my-6 mt-0 space-y-4 text-sm">
-      {/* FOOTBALL */}
+      {/* ALL */}
       <li>
-        <button
-          onClick={() => toggle("football")}
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68]"
-        >
-          <span>Football</span>
-          <FaAngleDown
-            className={`transition-transform duration-300 ${
-              open === "football" ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-
-        {open === "football" && (
-          <ul className="mt-2 ml-4 space-y-3">
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">College Football</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">College Football Playoff</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">Pro Football</li>
-          </ul>
-        )}
+        <li>
+          <div
+            onClick={() => {
+              setEventSubCategoryId(null);
+            }}
+            className={` ${
+              eventSubCategoryId == null
+                ? "text-black dark:text-[#c7ac77]"
+                : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
+            } font-semibold flex items-center`}
+          >
+            <span>
+              <FaArrowTrendUp className="mr-1" />
+            </span>
+            All
+          </div>
+        </li>
       </li>
 
-      {/* HOCKEY */}
-      <li>
-        <button
-          onClick={() => toggle("hockey")}
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68]"
-        >
-          <span>Hockey</span>
-          <FaAngleDown
-            className={`transition-transform duration-300 ${
-              open === "hockey" ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+      {eventCategoryList?.map(
+        (row: any) =>
+          row?.event_section?.length > 0 && (
+            <li key={row.id}>
+              {/* CATEGORY */}
+              <button
+                onClick={() => toggle(row.id)}
+                className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68]"
+              >
+                <span>{row.name}</span>
+                <FaAngleDown
+                  className={`transition-transform duration-300 ${
+                    open === row.id ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
-        {open === "hockey" && (
-          <ul className="mt-2 ml-4 space-y-3">
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">Ice Hockey</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">Field Hockey</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">International Hockey</li>
-          </ul>
-        )}
-      </li>
-
-      {/* TENNIS */}
-      <li>
-        <button
-          onClick={() => toggle("tennis")}
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68]"
-        >
-          <span>Tennis</span>
-          <FaAngleDown
-            className={`transition-transform duration-300 ${
-              open === "tennis" ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-
-        {open === "tennis" && (
-          <ul className="mt-2 ml-4 space-y-3">
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">ATP Tour</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">WTA Tour</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">Grand Slams</li>
-          </ul>
-        )}
-      </li>
-
-      {/* BASKETBALL */}
-      <li>
-        <button
-          onClick={() => toggle("basketball")}
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68]"
-        >
-          <span>Basketball</span>
-          <FaAngleDown
-            className={`transition-transform duration-300 ${
-              open === "basketball" ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-
-        {open === "basketball" && (
-          <ul className="mt-2 ml-4 space-y-3">
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">NBA</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">College Basketball</li>
-            <li className="dark:text-gray-300 text-gray-700 hover:text-[#ba9c68] text-sm cursor-pointer">International Leagues</li>
-          </ul>
-        )}
-      </li>
-
-      <li>
-        <button
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68] cursor-pointer">
-          <span>Golf</span>
-          </button>
-     </li>
-     <li>
-        <button
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68] cursor-pointer">
-          <span>MMA</span>
-          </button>
-     </li>
-     <li>
-        <button
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68] cursor-pointer">
-          <span>Baseball</span>
-          </button>
-     </li>
-     <li>
-        <button
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68] cursor-pointer">
-          <span>Chess</span>
-          </button>
-     </li>
-     <li>
-        <button
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68] cursor-pointer">
-          <span>Motorsport</span>
-          </button>
-     </li>
-     <li>
-        <button
-          className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68] cursor-pointer">
-          <span>Table Tennis</span>
-          </button>
-     </li>
+              {/* SUB CATEGORY */}
+              {open === row.id && (
+                <ul className="mt-2 ml-4 space-y-3">
+                  {row?.event_section?.map((item: any) => (
+                    <li
+                      key={item.id}
+                      onClick={() => handleSubClick(item.id)}
+                      className={`dark:text-gray-300  ${eventSubCategoryId == item?.id ? "dark:text-[#ba9c68] text-black/80 font-bold" : "text-gray-700"} hover:text-[#ba9c68] text-sm cursor-pointer`}
+                    >
+                      {item.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ),
+      )}
     </ul>
   );
 }

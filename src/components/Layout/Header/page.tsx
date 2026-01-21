@@ -10,6 +10,7 @@ import {
   getCommonCategoryAll,
 } from "@/components/service/apiService/category";
 import {
+  changeIsEvent,
   saveCategory,
   saveEventCategory,
   saveSelectSubCategory,
@@ -95,11 +96,13 @@ const Header = () => {
         setSubCategory([]);
         dispatch(saveSelectSubCategory(null));
         dispatch(saveEventCategory(subCategoryList));
+        dispatch(changeIsEvent(false));
         dispatch(saveSubCategory([]));
       } else if (response.success && response?.data?.isMultiple) {
         const subCategoryResponse =
           response?.data?.category?.sub_category || [];
         setEventCategory([]);
+        dispatch(changeIsEvent(true));
         dispatch(saveSelectSubCategory(null));
         setSubCategory(subCategoryResponse);
         dispatch(saveSubCategory(subCategoryResponse));
@@ -109,9 +112,11 @@ const Header = () => {
         dispatch(saveSelectSubCategory(null));
         dispatch(saveSubCategory([]));
         dispatch(saveEventCategory([]));
+        dispatch(changeIsEvent(false));
         setEventCategory([]);
       }
     } catch {
+      dispatch(changeIsEvent(false));
       setSubCategory([]);
       dispatch(saveSelectSubCategory(null));
       setEventCategory([]);
@@ -169,14 +174,7 @@ const Header = () => {
                       height={160}
                       priority
                       className="
-                          h-auto
-                          w-[40px]
-                          sm:w-[50px]
-                          md:w-[60px]
-                          lg:w-[70px]
-                          xl:w-[80px]
-                          block
-                          dark:hidden
+                          h-auto w-[40px] sm:w-[50px] md:w-[60px]  lg:w-[70px] xl:w-[80px]  block  dark:hidden
                         "
                     />
 
@@ -263,6 +261,7 @@ const Header = () => {
                           dispatch(saveCategory(row));
                           dispatch(saveSelectSubCategory(null));
                           setCategoryId(row?.id);
+                          dispatch(changeIsEvent(false));
                         }}
                         className={` ${
                           row?.id == categoryId

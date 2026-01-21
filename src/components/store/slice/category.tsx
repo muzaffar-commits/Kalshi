@@ -7,6 +7,7 @@ const categorySlice = createSlice({
     subCategory: [],
     eventCategory: [],
     selectSubCategory: {},
+    isEvent: false,
   },
   reducers: {
     saveCategory: (state, action) => {
@@ -21,6 +22,9 @@ const categorySlice = createSlice({
     saveSelectSubCategory: (state, action) => {
       state.selectSubCategory = action.payload;
     },
+    changeIsEvent: (state, action) => {
+      state.isEvent = action.payload;
+    },
   },
 });
 
@@ -29,5 +33,6 @@ export const {
   saveSubCategory,
   saveEventCategory,
   saveSelectSubCategory,
+  changeIsEvent,
 } = categorySlice.actions;
 export default categorySlice.reducer;

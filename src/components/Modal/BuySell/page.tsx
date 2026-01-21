@@ -124,11 +124,6 @@ export default function BuySell({
   const [tpTouched, setTpTouched] = useState(false);
   const [slTouched, setSlTouched] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
-
-  //   end
-
-  console.log(types, "types");
-
   useEffect(() => {
     const t = setTimeout(() => {
       if (activeField === "shares") {
@@ -545,7 +540,7 @@ export default function BuySell({
               {types === "tpsl" ? (
                 <>
                   <div className="flex justify-between text-lg">
-                    <span className="text-gray-200 font-medium">
+                    <span className="dark:text-gray-200 text-gray-700 font-medium">
                       Total Buy Share
                     </span>
                     <span className="text-gray-800 dark:text-gray-300 font-semibold">
@@ -555,7 +550,7 @@ export default function BuySell({
                   <div className="border border-gray-800 rounded ">
                     <div className="border-b border-gray-800 px-3 pt-2">
                       <label className="w-full flex flex-col gap-1">
-                        <span className="text-xs flex justify-between items-center text-gray-200 font-medium">
+                        <span className="text-xs flex justify-between items-center dark:text-gray-200 text-gray-700 font-medium">
                           <span>Take Profit</span>{" "}
                           {tpTouched && takeProfit < currentPrice && (
                             <span className="text-xs text-yellow-300">

@@ -15,6 +15,7 @@ import {
   RootState,
 } from "@/utils/typesInterface";
 import { delay } from "@/utils/Content";
+import SubCategory from "../subCategory/page";
 
 interface selectedSubCategory {
   category: {
@@ -24,6 +25,11 @@ interface selectedSubCategory {
       name: String;
       slug: String;
     };
+  };
+}
+interface eventSubCategory {
+  category: {
+    isEvent: boolean;
   };
 }
 
@@ -36,6 +42,9 @@ const Home = () => {
   const [options, setOptions] = useState<OptionItem | null>(null);
   const [rowDetails, setRowDetails] = useState<QuestionItemSecond | null>(null);
   const [optionIndex, setOptionIndex] = useState<number | null>(null);
+  const [eventSubCategoryId, setEventSubCategoryId] = useState<number | null>(
+    null,
+  );
   const getToken = localStorage.getItem("token");
   const router = useRouter();
   const categoryDetails = useSelector(
@@ -44,18 +53,23 @@ const Home = () => {
   const selectedSubCategory = useSelector(
     (state: selectedSubCategory) => state?.category?.selectSubCategory,
   );
+  const isEvent = useSelector(
+    (state: eventSubCategory) => state?.category?.isEvent,
+  );
 
   const userDetails = useSelector((state: RootState) => state?.user);
 
-  console.log(selectedSubCategory, "selectedSubCategory");
+  console.log(isEvent, "isEvent");
 
   const questionAllList = useCallback(async () => {
     setLoader(true);
     try {
+      const ids = isEvent ? eventSubCategoryId : selectedSubCategory?.id;
       const [response] = await Promise.all([
         commonQuestionFindById(
           categoryDetails?.id || 1,
           userDetails?.user?.id as string,
+          ids,
         ),
         delay(1000),
       ]);
@@ -70,7 +84,12 @@ const Home = () => {
     } finally {
       setLoader(false);
     }
-  }, [categoryDetails?.id, userDetails?.user?.id]);
+  }, [
+    categoryDetails?.id,
+    userDetails?.user?.id,
+    selectedSubCategory?.id,
+    eventSubCategoryId,
+  ]);
 
   useEffect(() => {
     questionAllList();
@@ -97,18 +116,26 @@ const Home = () => {
     router.push(`/Detail?id=${userId}`);
   };
 
-  const goToSubCategory = () => {
-    router.push(`/subCategory`);
-  };
-
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-56" : "lg:mt-56"}`}
+        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-40" : "lg:mt-56"}`}
       >
-        {/* <div onClick={goToSubCategory}>goToSubCategory</div> */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0">
-          {loader ? (
+        <div
+          className={
+            isEvent
+              ? ""
+              : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0"
+          }
+        >
+          {isEvent ? (
+            <SubCategory
+              eventSubCategoryId={eventSubCategoryId}
+              setEventSubCategoryId={setEventSubCategoryId}
+              questionData={questionData}
+              handleBuyNow={handleBuyNow}
+            />
+          ) : loader ? (
             [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
           ) : questionData && questionData.length > 0 ? (
             questionData?.map((row: QuestionItem, index) => (

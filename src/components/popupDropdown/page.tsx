@@ -33,7 +33,7 @@ export default function Dropdown({ label = "Market", onSelect }: Props) {
   return (
     <div ref={ref} className="relative inline-block">
       <div className="flex flex-row gap-1 items-center">
-        <span className="text-black dark:text-white text-sm">Order Type :</span>
+        {/* <span className="text-black dark:text-white text-sm">Order Type :</span> */}
         <button
           onClick={() => setOpen((v) => !v)}
           aria-haspopup="true"

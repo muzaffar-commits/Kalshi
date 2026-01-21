@@ -14,12 +14,17 @@ export const getCommonCategoryAll = async () => {
   }
 };
 
-export const commonQuestionFindById = async (id: number, userId: string) => {
+export const commonQuestionFindById = async (
+  id: number,
+  userId: string,
+  subCategoryId: number | null,
+) => {
+  // ?categoryId=
   try {
     const response = await apiInstance.get(
-      `${API_URLs.commonQuestionFindById}/?categoryId=${id}${
-        userId ? `&userId=${userId}` : ""
-      }`,
+      `${API_URLs.commonQuestionFindById}/${id}${
+        userId ? `?userId=${userId}` : ""
+      }${subCategoryId ? `&eventSectionId=${subCategoryId}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {
