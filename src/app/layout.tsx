@@ -6,6 +6,8 @@ import Footer from "@/components/Layout/Footer/page";
 import ReduxProvider from "@/components/store/providers";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
+import SocketProvider from "@/components/socket/SocketProvider"; // 👈 new
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -23,9 +25,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" className="bg-white dark:bg-[#0f172a]">
       <body
@@ -36,20 +38,13 @@ export default function RootLayout({
           ${geistSans.variable}
           ${geistMono.variable}
           antialiased
-          min-h-screen `}
+          min-h-screen
+        `}
       >
         <ReduxProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            defaultTheme="light"
-            // forcedTheme="light"
-            // themes={}
-            // disableTransitionOnChange
-          >
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Toaster position="top-right" />
-
+            <SocketProvider />
             <Header />
             {children}
             <Footer />

@@ -31,6 +31,7 @@ import {
 import { delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
 import StackedAreaChart from "./component/realTimeChart";
+import UserPosts from "./component/userPosts";
 
 type OrderSide = "BUY" | "SELL";
 interface OrderFlowItem {
@@ -138,11 +139,7 @@ const Details = () => {
 
   console.log(graphData, "graphData");
   useEffect(() => {
-    if (!socket.connected) {
-      socket.connect();
-    }
     console.log(socket.connected, "socket.connected=====>");
-
     socket.on("connect", () => {
       console.log("Socket connected! ID:====", socket.id);
       socket.emit("subscribe:market", questionId);
@@ -749,6 +746,7 @@ const Details = () => {
               {orderData?.length > 0 && (
                 <OrderList data={orderData} cancelOrders={handleDelete} />
               )}
+              <UserPosts />
             </div>
           </div>
         </div>

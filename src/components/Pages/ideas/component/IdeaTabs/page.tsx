@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -27,6 +27,9 @@ import IdeaTabsTwo from "../IdeaTabsTwo/page";
 import { IoImageOutline } from "react-icons/io5";
 import { CreatePostSkeleton } from "@/utils/customSkeleton";
 import socket from "@/components/socket";
+import { timeAgoCompact, truncateValue } from "@/utils/Content";
+import { Activity } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type HandleComment = (post: PostFeeBack) => void;
 
@@ -52,6 +55,7 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
 interface IdeaTabsProps {
   allPosts: PostFeeBack[];
   fetchPostList: () => void;
@@ -78,8 +82,8 @@ export default function IdeaTabs({
   >(null);
   const [message, setMessage] = React.useState<string | null>("");
   const [isPostLoader, setIsPostLoader] = React.useState<boolean>(false);
-  // const users = useSelector((state: any) => state?.user?.user);
-  console.log(allPosts, "allPosts");
+  const [liveTrades, setLiveTrades] = useState<any>([]);
+  const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -158,32 +162,27 @@ export default function IdeaTabs({
 
   console.log(!canPost, String(message).trim().length > 3, "rplll");
 
+  console.log(socket.connected, "socket.connected");
   useEffect(() => {
-    if (!socket.connected) {
-      socket.connect();
-    }
-    console.log(socket.connected, "socket.connected=====>");
+    socket.emit("subscribeLiveTrade");
 
-    socket.on("connect", () => {
-      console.log("Socket connected! ID:====", socket.id);
-      socket.emit("subscribeLiveTrade");
-      // if (userDetails?.user?.id) {
-      //   socket.emit("subscribe:user", userDetails?.user?.id);
-      // }
-    });
-    socket.on("tradeLive", (payload) => {
-      console.log(payload, "subscribeLiveTrade");
-    });
+    const handleTradeLive = (payload: any) => {
+      setLiveTrades((prev: any[]) => [payload, ...prev]);
+      console.log(payload, "payload====>");
+    };
+
+    socket.on("tradeLive", handleTradeLive);
 
     return () => {
-      // socket.emit("unsubscribe:market", questionId);
-      // socket.off("connect");
-      // socket.off("market:prices");
-      // socket.off("trade");
-      socket.off("unsubscribeLiveTrade");
-      socket.offAny();
+      socket.emit("unsubscribeLiveTrade");
+      socket.off("tradeLive", handleTradeLive);
     };
-  });
+  }, []);
+
+  const goToQuestionDetails = (userId: string) => {
+    router.push(`/Detail?id=${userId}`);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Box
@@ -302,43 +301,71 @@ export default function IdeaTabs({
         </div>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <div className="p-3 border-b dark:border-gray-700 border-gray-200">
-          <div className="flex justify-between">
-            <div className="md:flex justify-start gap-4">
-              <div>
-                {" "}
-                <Image
-                  src="/img/nick.jpg"
-                  alt="user"
-                  width={70}
-                  height={70}
-                  className="rounded-md mt-1"
-                />
-              </div>
-              <div>
-                <p className="dark:text-gray-400 text-gray-800 text-sm">
-                  Majchrzak vs Opelka gg
-                </p>
-                <p className="text-md mt-4">
-                  <Link href="/">
-                    <span className="cursor-pointer text-[#c8aa76]">
-                      Bought YES:{" "}
-                      <span className="dark:text-gray-200 text-gray-800">
-                        Reilly Opelka
-                      </span>{" "}
-                    </span>
-                  </Link>
-                </p>
-                <p className="text-sm dark:text-gray-500 text-gray-600">
-                  100 contracts (28
-                  <FaCentSign className="inline-block text-xs" />)
-                </p>
+        {liveTrades?.length > 0 ? (
+          liveTrades?.map((row: any, index: number) => (
+            <div
+              key={index}
+              className="p-3 border-b dark:border-gray-700 border-gray-200"
+            >
+              <div className="flex justify-between">
+                <div className="md:flex justify-start gap-4">
+                  <div>
+                    {" "}
+                    <Image
+                      src={row?.imageUrl || "/img/nick.jpg"}
+                      alt="user"
+                      width={70}
+                      height={70}
+                      className="rounded-md mt-1"
+                    />
+                  </div>
+                  <div>
+                    <p className="dark:text-gray-400 text-gray-800 text-sm">
+                      {row?.username || "unknown"}
+                    </p>
+                    <p className="text-md mt-4">
+                      <>
+                        <span className="cursor-pointer text-[#c8aa76]">
+                          {row?.option?.optionContent}:{" "}
+                          <span
+                            onClick={() =>
+                              goToQuestionDetails(row?.question?.id)
+                            }
+                            className="dark:text-gray-200 hover:underline text-gray-800"
+                          >
+                            {row?.question?.question || "--"}
+                          </span>{" "}
+                        </span>
+                      </>
+                    </p>
+                    <p className="text-sm dark:text-gray-500 text-gray-600">
+                      ${truncateValue(row?.question?.liquidity || 0)}
+                    </p>
+                  </div>
+                </div>
+                <div className="dark:text-gray-500 text-gray-400 text-sm">
+                  {timeAgoCompact(row?.ts)}
+                </div>
               </div>
             </div>
-            <div className="dark:text-gray-500 text-gray-400 text-sm">Now</div>
-          </div>
-        </div>
+          ))
+        ) : (
+          <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
+            <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800">
+              <Activity className="text-3xl text-gray-500 dark:text-gray-400" />
+            </div>
 
+            <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200">
+              No Live Trades Yet
+            </h3>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+              Trades will appear here as soon as market activity begins. Stay
+              tuned for real-time updates.
+            </p>
+          </div>
+        )}
+        {/* 
         <div className="p-3 border-b dark:border-gray-700 border-gray-200">
           <div className="flex justify-between">
             <div className="md:flex justify-start gap-4">
@@ -374,7 +401,7 @@ export default function IdeaTabs({
             </div>
             <div className="dark:text-gray-500 text-gray-400 text-sm">2m</div>
           </div>
-        </div>
+        </div> */}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <div className="border-b dark:border-gray-700 border-gray-200 pb-3">

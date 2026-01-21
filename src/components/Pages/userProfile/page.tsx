@@ -228,8 +228,10 @@ const UserProfile = () => {
 
               <div>
                 <span className="bg-green-700 text-white py-1 px-4 text-sm rounded">
-                  ${Number(profileStats.portfolio.investedAmount).toFixed(3)}{" "}
-                  ffff
+                  $
+                  {Number(profileStats.portfolio.investedAmount).toFixed(
+                    3,
+                  )}{" "}
                 </span>
               </div>
             </div>

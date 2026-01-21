@@ -24,6 +24,7 @@ import {
   PostMetadata,
 } from "@/utils/typesInterface";
 import { CircularProgress } from "@mui/material";
+import { Heart } from "lucide-react";
 const PROFESSIONAL_EMOJIS = [
   "🙂",
   "😊",
@@ -58,8 +59,9 @@ export default function CommentPage({
   const [open, setOpen] = useState(false);
   const [isLoader, setIsLoader] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  console.log(commentList, "commentList");
-
+  const [subCommentData, setSubCommentData] = useState<any>({});
+  const [replyText, setReplyText] = useState("");
+  const [subRepliesData, setSubRepliesData] = useState<any>({});
   const commentLists = useCallback(async () => {
     setIsLoader(true);
     try {
@@ -151,6 +153,45 @@ export default function CommentPage({
       textarea.focus();
     }, 0);
   };
+
+  const handleSubComment = (row: any, replies: any) => {
+    setSubCommentData(row);
+    setSubRepliesData(replies);
+    console.log(row, replies, "jjjjjjjjjjj");
+  };
+
+  const handleSubmitForSubComment = async () => {
+    try {
+      const payload = {
+        postId: postDetails?.id,
+        comment: replyText,
+        replyCommentId: subCommentData?.id,
+      };
+      const response = await replyComments(payload);
+      if (response.success) {
+        toast.success("Message send successfully!");
+        commentLists();
+        setValue("");
+        setSubCommentData({});
+        setSubRepliesData(null);
+        setReplyText("");
+        setOpen(false);
+      } else {
+        toast.error(response?.message || "something went wrong");
+        setValue("");
+        setOpen(false);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  console.log(subRepliesData, "subRepliesData");
+
   return (
     <div className="flex flex-col gap-0">
       <div className="pl-5 flex flex-row items-center gap-3">
@@ -210,27 +251,6 @@ export default function CommentPage({
             <div className="mt-4">
               <div className="flex justify-between">
                 <div className="flex gap-3 items-center">
-                  {/* <span
-                    className="
-                                      p-2
-                                      rounded
-                                      inline-block
-                                      text-gray-500
-                                      dark:text-gray-400
-                                      hover:bg-gray-400/30
-                                      transition-all
-                                      duration-200
-                                      ease-in-out text-lg cursor-pointer
-                                    "
-                  >
-                    <FaRegCommentAlt
-                    //   onClick={() => handleComment(row)}
-                    />
-                  </span> */}
-                  {/* <span className="inline-block relative -left-3 font-light text-gray-400">
-                    {postDetails?.commentCount || 0}
-                  </span> */}
-
                   <span
                     className="
                                         p-2
@@ -277,24 +297,9 @@ export default function CommentPage({
                                     "
                   >
                     {postDetails?.isBookmarked == 1 ? (
-                      <FaBookmark
-                        className="text-[#156bf7]"
-                        // onClick={() =>
-                        //   handleBookMarkOrUnBookMark(
-                        //     postDetails?.id,
-                        //     postDetails?.isBookmarked
-                        //   )
-                        // }
-                      />
+                      <FaBookmark className="text-[#156bf7]" />
                     ) : (
-                      <FaRegBookmark
-                      // onClick={() =>
-                      //   handleBookMarkOrUnBookMark(
-                      //     row?.id,
-                      //     row?.isBookmarked
-                      //   )
-                      // }
-                      />
+                      <FaRegBookmark />
                     )}
                   </span>
                   <span className="inline-block relative -left-3 font-light text-gray-400"></span>
@@ -445,38 +450,154 @@ export default function CommentPage({
               return (
                 <div
                   key={row?.id}
-                  className={`md:flex 
-             pt-4 
-          pb-2 items-start gap-4 w-full border-b border-gray-700 md:px-4 px-0`}
+                  className={` w-full border-b border-gray-700 md:px-4 px-0`}
                 >
-                  <div>
-                    <Image
-                      src={
-                        row?.User?.image_url ||
-                        "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
-                      }
-                      alt="user"
-                      width={30}
-                      height={30}
-                      className="rounded-md mt-1"
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4>
-                        <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
-                          {row?.User?.username || "Unknown"} dd
-                        </span>{" "}
-                        <span className="text-xs dark:text-gray-500 text-gray-500">
-                          {timeAgoCompact(row?.updatedAt)}
-                        </span>
-                      </h4>
+                  <div className="md:flex  pt-4  items-start gap-4 ">
+                    <div className="h-11 w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-500">
+                      <Image
+                        src={
+                          row?.User?.image_url ||
+                          "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                        }
+                        alt="user"
+                        width={30}
+                        height={30}
+                        className="rounded-md mt-1 h-8 w-8"
+                      />
                     </div>
-                    <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
-                      {row?.content && <HighlightTexts text={row?.content} />}
-                      <br />
-                      <br />
-                    </p>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4>
+                          <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
+                            {row?.User?.username || "Unknown"} dd
+                          </span>{" "}
+                          <span className="text-xs dark:text-gray-500 text-gray-500">
+                            {timeAgoCompact(row?.updatedAt)}
+                          </span>
+                        </h4>
+                      </div>
+                      <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                        {row?.content && (
+                          <HighlightTexts text={row?.content} />
+                        )}{" "}
+                      </p>
+                    </div>
+                  </div>
+                  <div className=" pl-10 py-2">
+                    <div className="flex text-gray-400 flex-row items-center gap-4">
+                      <span className="flex items-center gap-2">
+                        <Heart size={18} /> 8
+                      </span>
+                      <div
+                        className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
+                        onClick={() => handleSubComment(row, null)}
+                      >
+                        Reply
+                      </div>
+                    </div>
+                    {row?.id == subCommentData?.id &&
+                      subRepliesData == null && (
+                        <div className="mt-2 w-full flex items-center gap-3 bg-[#0f172a] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
+                          <input
+                            type="text"
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder={`Reply to ${subCommentData?.User?.username || "--"}`}
+                            className="flex-1 bg-transparent outline-none text-sm text-gray-200 placeholder-gray-500"
+                          />
+                          <button
+                            disabled={replyText.trim().length < 2}
+                            className={`text-sm font-medium transition ${
+                              replyText.trim().length >= 2
+                                ? "text-sky-400 hover:text-sky-300 cursor-pointer"
+                                : "text-gray-500 cursor-not-allowed"
+                            }`}
+                            onClick={() => handleSubmitForSubComment()}
+                          >
+                            Reply
+                          </button>
+                        </div>
+                      )}
+                    <div className="pb-2">
+                      {row?.replies?.length > 0 &&
+                        row?.replies?.map((replies: any, index: any) => (
+                          <div>
+                            <div className="md:flex  pt-4  items-start gap-4 ">
+                              <div className="h-11 w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-500">
+                                <Image
+                                  src={
+                                    replies?.User?.image_url ||
+                                    "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                  }
+                                  alt="user"
+                                  width={30}
+                                  height={30}
+                                  className="rounded-md mt-1 h-8 w-8"
+                                />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h4>
+                                    <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
+                                      {row?.User?.username || "Unknown"} dd
+                                    </span>{" "}
+                                    <span className="text-xs dark:text-gray-500 text-gray-500">
+                                      {timeAgoCompact(row?.updatedAt)}
+                                    </span>
+                                  </h4>
+                                </div>
+                                <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                                  {replies?.content && (
+                                    <HighlightTexts text={replies?.content} />
+                                  )}{" "}
+                                </p>
+                                <div className=" py-2">
+                                  <div className="flex text-gray-400 flex-row items-center gap-4">
+                                    <span className="flex items-center gap-2">
+                                      <Heart size={18} /> 8
+                                    </span>
+                                    <div
+                                      className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
+                                      onClick={() =>
+                                        handleSubComment(row, replies)
+                                      }
+                                    >
+                                      Reply
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {row?.id == subCommentData?.id &&
+                              replies?.id == subRepliesData?.id && (
+                                <div className="mt-2 w-full flex items-center gap-3 bg-[#0f172a] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
+                                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
+                                  <input
+                                    type="text"
+                                    value={replyText}
+                                    onChange={(e) =>
+                                      setReplyText(e.target.value)
+                                    }
+                                    placeholder={`Reply to ${subCommentData?.User?.username || "--"}`}
+                                    className="flex-1 bg-transparent outline-none text-sm text-gray-200 placeholder-gray-500"
+                                  />
+                                  <button
+                                    disabled={replyText.trim().length < 2}
+                                    className={`text-sm font-medium transition ${
+                                      replyText.trim().length >= 2
+                                        ? "text-sky-400 hover:text-sky-300 cursor-pointer"
+                                        : "text-gray-500 cursor-not-allowed"
+                                    }`}
+                                    onClick={() => handleSubmitForSubComment()}
+                                  >
+                                    Reply
+                                  </button>
+                                </div>
+                              )}
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
               );
