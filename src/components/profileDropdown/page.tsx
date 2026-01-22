@@ -2,10 +2,13 @@
 import ThemeToggle from "@/components/ThemeToggle";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, PlusCircle } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/slice/auth";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch();
 
   // Close on outside click
   useEffect(() => {
@@ -18,6 +21,12 @@ export default function ProfileDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    // handleClose();
+    localStorage.clear();
+    dispatch(logout());
+    window.location.href = "/";
+  };
   return (
     <div className="relative" ref={ref}>
       {/* Profile Icon */}
@@ -84,7 +93,10 @@ export default function ProfileDropdown() {
 
           <div className="border-t my-2 dark:border-gray-800" />
 
-          <div className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer text-center font-semibold">
+          <div
+            onClick={handleLogout}
+            className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer text-center font-semibold"
+          >
             Logout
           </div>
         </div>

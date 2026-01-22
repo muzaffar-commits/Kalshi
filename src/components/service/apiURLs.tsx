@@ -38,6 +38,7 @@ export const API_URLs = {
   subCategory: "/common/get-sub-catagory",
   questionBookMark: "/user/question-bookmark-or-unbookmark",
   userCommentLikeOrUnlike: "/user/comment-like-or-unlike",
+  getWatchList: "/user/get-question-bookmarks",
 };
 
 // images

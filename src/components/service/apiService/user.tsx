@@ -182,4 +182,21 @@ export const postQuestionBookUnBookMark = async (reqBody: unknown) => {
   }
 };
 
+export const fetchWatchList = async (offset = 0, limit = 30) => {
+  try {
+    const response = await apiInstance.get(API_URLs.getWatchList, {
+      params: {
+        offset,
+        limit,
+      },
+    });
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
 //

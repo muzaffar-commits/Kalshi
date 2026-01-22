@@ -22,7 +22,7 @@ export const commonQuestionFindById = async (
   frequency: string,
   status: string,
   search: string,
-  excludeCategories: [],
+  excludeCategories: number[],
 ) => {
   // ?categoryId=
   try {
@@ -36,7 +36,7 @@ export const commonQuestionFindById = async (
         ...(status && { status: status == "Active" ? "OPEN" : "RESOLVED" }),
         ...(search && { search }),
         ...(excludeCategories?.length > 0 && {
-          excludeCategories: excludeCategories.join(","), // IMPORTANT
+          excludeCategories: excludeCategories,
         }),
       },
     });

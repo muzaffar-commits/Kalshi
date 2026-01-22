@@ -62,6 +62,7 @@ export interface QuestionItem {
   question: string;
   options: OptionItem[];
   stats?: QuestionStats;
+  isBookmark: boolean;
 }
 
 export interface QuestionItemSecond {
@@ -298,4 +299,8 @@ export interface headerRootState {
     id?: number;
     isAuth: boolean;
   };
+}
+
+export interface isWatchListInterface {
+  category: { isWatchList: boolean };
 }

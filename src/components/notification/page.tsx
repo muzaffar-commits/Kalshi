@@ -47,7 +47,7 @@ export default function NotificationBell() {
         onClick={() => setOpen((prev) => !prev)}
         className="text-gray-500 hover:text-black dark:hover:text-white cursor-pointer"
       >
-        <Bell size={18} className="dark:text-white" />
+        <Bell size={18} className="dark:text-white text-black" />
       </button>
 
       {/* Dropdown */}
@@ -66,7 +66,7 @@ export default function NotificationBell() {
         `}
       >
         {/* Header */}
-        <div className="px-4 py-3 border-b dark:border-gray-800 font-semibold text-sm">
+        <div className="px-4 py-3 border-b dark:border-gray-800 border-gray-300 text-gray-800 font-semibold text-sm">
           Notifications
         </div>
 

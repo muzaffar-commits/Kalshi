@@ -8,9 +8,10 @@ import LoadingCard from "@/components/common/LoadingCard";
 import BuySell from "@/components/Modal/BuySell/page";
 import { commonQuestionFindById } from "@/components/service/apiService/category";
 import { useRouter } from "next/navigation";
-import { FaRegBookmark } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 
 import {
+  isWatchListInterface,
   OptionItem,
   QuestionItem,
   QuestionItemSecond,
@@ -18,7 +19,10 @@ import {
 } from "@/utils/typesInterface";
 import { delay } from "@/utils/Content";
 import SubCategory from "../subCategory/page";
-import { postQuestionBookUnBookMark } from "@/components/service/apiService/user";
+import {
+  fetchWatchList,
+  postQuestionBookUnBookMark,
+} from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
 
 interface selectedSubCategory {
@@ -44,6 +48,7 @@ export interface HideFilter {
 }
 
 export interface CategoryFilters {
+  search: "";
   frequency: "All" | "Daily" | "Weekly" | "Monthly";
   status: "Active" | "Resolved";
   sortBy:
@@ -73,6 +78,7 @@ const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [questionData, setQuestionData] = useState<QuestionItem[]>([]);
+  const [questionBookMark, setQuestionBookMark] = useState<QuestionItem[]>([]);
   const [buyType, setBuyType] = useState<string | null>(null);
   const [options, setOptions] = useState<OptionItem | null>(null);
   const [rowDetails, setRowDetails] = useState<QuestionItemSecond | null>(null);
@@ -94,17 +100,23 @@ const Home = () => {
   const filtersForCategory = useSelector(
     (state: RootStateNewssss) => state?.category?.filters,
   );
-
-  console.log(filtersForCategory, "filtersForCategory");
-
+  const isWatchList = useSelector(
+    (state: isWatchListInterface) => state?.category?.isWatchList,
+  );
   const userDetails = useSelector((state: RootState) => state?.user);
 
-  console.log(isEvent, "isEvent");
-
   const { search, sortBy, frequency, status, hideFilter } = filtersForCategory;
+  const CATEGORY_MAP: Record<string, number> = {
+    earnings: 18,
+    sports: 7,
+    crypto: 14,
+  };
+
   const hiddenCategories = Object.entries(hideFilter)
     .filter(([_, value]) => value === true)
-    .map(([key]) => key);
+    .map(([key]) => CATEGORY_MAP[key]);
+
+  console.log(frequency, "frequency");
 
   const questionAllList = useCallback(async () => {
     setLoader(true);
@@ -120,7 +132,7 @@ const Home = () => {
           frequency,
           status,
           search,
-          [], // ✅ NOW hideFilter passed
+          hiddenCategories,
         ),
         delay(1000),
       ]);
@@ -145,7 +157,7 @@ const Home = () => {
     frequency,
     status,
     search,
-    hiddenCategories.join(","), // ✅ important
+    hiddenCategories.join(","),
   ]);
 
   useEffect(() => {
@@ -173,12 +185,28 @@ const Home = () => {
     router.push(`/Detail?id=${userId}`);
   };
 
-  const bookMarkUnBookMark = async (id: string) => {
+  const bookMarkUnBookMark = async (id: string, status: boolean) => {
     try {
+      if (isWatchList) {
+        setQuestionBookMark((prev: any[]) =>
+          prev.filter((item) => item.id !== id),
+        );
+      } else {
+        setQuestionData((prev: any[]) =>
+          prev.map((item) =>
+            item.id === id ? { ...item, isBookmark: !item.isBookmark } : item,
+          ),
+        );
+      }
+
       const payload = { questionId: id };
       const response = await postQuestionBookUnBookMark(payload);
       if (response.success) {
-        toast.success(response.message);
+        toast.success(
+          response.data?.bookmarked
+            ? "Question added to bookmarks"
+            : "Question removed from bookmarks",
+        );
       } else {
         toast.error(response.message);
       }
@@ -186,6 +214,27 @@ const Home = () => {
       toast.success("");
     }
   };
+  const getWatchList = async () => {
+    try {
+      const response = await fetchWatchList();
+      console.log(response?.data?.questions, "kkkkkkkkkkk");
+
+      if (response.success) {
+        setQuestionBookMark(response?.data?.questions || []);
+      } else {
+        setQuestionBookMark([]);
+      }
+    } catch {
+      setQuestionBookMark([]);
+    }
+  };
+  useEffect(() => {
+    if (isWatchList) {
+      getWatchList();
+    }
+  }, [isWatchList]);
+
+  const questionListFilter = isWatchList ? questionBookMark : questionData;
 
   return (
     <>
@@ -203,15 +252,15 @@ const Home = () => {
             <SubCategory
               eventSubCategoryId={eventSubCategoryId}
               setEventSubCategoryId={setEventSubCategoryId}
-              questionData={questionData}
+              questionData={questionListFilter}
             />
           ) : loader ? (
             [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
-          ) : questionData && questionData.length > 0 ? (
-            questionData?.map((row: QuestionItem, index) => (
+          ) : questionListFilter && questionListFilter.length > 0 ? (
+            questionListFilter?.map((row: QuestionItem, index) => (
               <div
                 key={index}
-                className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#162033] 
+                className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#2B394D] 
                   relative min-h-48 rounded-xl p-4 
                   transition-transform duration-300 ease-in-out 
                   transform hover:scale-105 hover:shadow-md "
@@ -274,9 +323,20 @@ const Home = () => {
                   </span>
                   <span className="cursor-pointer">
                     {" "}
-                    <FaRegBookmark
-                      onClick={() => bookMarkUnBookMark(row?.id)}
-                    />
+                    {!row?.isBookmark ? (
+                      <FaRegBookmark
+                        onClick={() =>
+                          bookMarkUnBookMark(row?.id, row?.isBookmark)
+                        }
+                      />
+                    ) : (
+                      <FaBookmark
+                        onClick={() =>
+                          bookMarkUnBookMark(row?.id, row?.isBookmark)
+                        }
+                        className="text-sky-500"
+                      />
+                    )}
                   </span>
                 </div>
               </div>
