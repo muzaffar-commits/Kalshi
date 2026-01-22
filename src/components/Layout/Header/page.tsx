@@ -1,8 +1,11 @@
+
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Drawer from "@/components/Drawer/page";
+// import Drawer from "@/components/Drawer/page";
+import ProfileDropdown from "@/components/profileDropdown/page";
+import NotificationBell from "@/components/notification/page";
 import Authentication from "@/components/Pages/auth";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,9 +19,9 @@ import {
   saveSelectSubCategory,
   saveSubCategory,
 } from "@/components/store/slice/category";
-import ThemeToggle from "@/components/ThemeToggle";
+
 import { usePathname } from "next/navigation";
-import CustomMenu from "@/components/common/CustomMenu";
+// import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
@@ -153,102 +156,66 @@ const Header = () => {
 
   return (
     <>
-      <header className="w-full dark:bg-[#0f172a] bg-[#fff] fixed top-0 z-30">
-        <div className="max-w-[1268px] mx-auto px-4">
-          <div
-            className={`flex items-center justify-between ${
-              pathname === "/"
-                ? ""
-                : "border-b dark:border-gray-800 border-gray-300"
-            } py-3   relative`}
-          >
-            <Link href="/">
-              <div className="flex items-center space-x-2">
-                <div className=" text-xl font-bold">
-                  <div className=" text-xl font-bold">
-                    {/* Light mode logo */}
-                    <Image
-                      src="/img/opinionLogo-light.png"
-                      alt="Opinion logo"
-                      width={120}
-                      height={120}
-                      priority
-                      className="
-                          h-auto w-[40px] sm:w-[50px] md:w-[60px]  lg:w-[70px] xl:w-[80px]  block  dark:hidden
-                        "
-                    />
+   <div className="hidden lg:block">
+     <header className="w-full bg-white dark:bg-[#0f172a] fixed top-0 z-30 border-b dark:border-gray-800">
+  <div className="max-w-[1268px] mx-auto px-4 py-3 h-auto dark:bg-black bg-white">
+<div className="flex items-center gap-6 justify-between">
+    {/* LEFT: Logo */}
+    <Link href="/" className="flex items-center gap-2 shrink-0">
+      <Image
+        src="/img/opinionLogo-light.png"
+        alt="Logo"
+        width={80}
+        height={80}
+       
+      />
+     </Link>
 
-                    {/* Dark mode logo */}
-                    <Image
-                      src="/img/opinionLogo-light.png"
-                      alt="Opinion logo"
-                      width={120}
-                      height={120}
-                      priority
-                      className="
-                            h-auto
-                            w-[40px]
-                            sm:w-[50px]
-                            md:w-[60px]
-                            lg:w-[70px]
-                            xl:w-[80px]
-                            hidden
-                            dark:block
-                          "
-                    />
-                  </div>
-                  <span className="text-white"> </span>
-                </div>
-              </div>
-            </Link>
-            <div className="absolute top-full left-0 w-full lg:ml-20 lg:px-4 md:static md:w-[800px] md:max-w-lg md:mx-3 mx-auto">
-              <div className="relative">
-                <span className="absolute inset-y-0 right-3 flex items-center pl-3 text-gray-400">
-                  <FaSearch className="dark:text-[#c7ac77]/60" />
-                </span>
-                {/* Input Box */}
-                <input
-                  type="text"
-                  placeholder="Search opinion kings"
-                  className="w-full pl-4 pr-4 py-2 rounded-md dark:bg-[#1e293b] bg-[#eff3f9] 
-                 dark:text-gray-900 text-gray-200 placeholder-gray-400 
-                  focus:outline-none focus:ring-1 focus:ring-gray-200"
-                />
-              </div>
-            </div>
+    {/* CENTER: Search */}
+    <div className="flex-1 max-w-xl">
+      <div className="relative">
+        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 dark:text-gray-200 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search opinion kings"
+          className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-[#1e293b] text-md focus:outline-none dark:placeholder-gray-600 dark:text-gray-200 text-gray-600 placeholder-gray-400/60"
+        />
+      </div>
+    </div>
 
-            {/* Buttons */}
-            <div className="flex items-center space-x-2 ml-auto relative">
-              {user?.isAuth ? (
-                <CustomMenu />
-              ) : (
-                <>
-                  <button
-                    onClick={handleLogin}
-                    className="px-4 py-2  text-[#c7ac77] rounded-md hover:bg-[#c7ac77]/40 font-semibold hover:text-white text-sm"
-                  >
-                    Log In
-                  </button>
-                  <button
-                    onClick={handleSignup}
-                    className="px-4 py-2 rounded-md text-white font-semibold bg-[#c7ac77] hover:bg-gray-500 text-sm"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-              <ThemeToggle />
-            </div>
-            <Drawer
-              buttonLabel={
-                <span className="text-black dark:text-[#c7ac77] text-xl">
-                  ☰
-                </span>
-              }
-              className="cursor-pointer"
-            />
-          </div>
-          {pathname === "/" && (
+    {/* RIGHT: Portfolio / Cash / Actions */}
+    <div className="flex items-center gap-5 shrink-0">
+
+      {/* Portfolio */}
+      <div className="text-center">
+        <div className="text-gray-400 text-sm">Portfolio</div>
+        <div className="font-semibold text-green-600 text-md">$0.00</div>
+      </div>
+
+      {/* Cash */}
+      <div className="text-center">
+        <div className="text-gray-400 text-sm">Cash</div>
+        <div className="font-semibold text-green-600 text-md">$0.00</div>
+      </div>
+
+      {/* Deposit */}
+     
+      <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium">
+        Deposit
+      </button>
+
+      {/* Notification */}
+     <NotificationBell/>
+
+      {/* Profile */}
+      {/* <div className="w-8 h-8 rounded-full bg-blue-400 cursor-pointer" />
+    </div> */}
+    <ProfileDropdown/>
+   </div>
+  
+  </div>
+  <div>
+    {pathname === "/" && (
             <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
               <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
                 {isCategory ? (
@@ -323,8 +290,54 @@ const Header = () => {
               </ul>
             </nav>
           )}
-        </div>
-      </header>
+  </div>
+  </div>
+</header>
+</div>
+
+{/* MOBILE & TABLET HEADER */}
+<div className="flex lg:hidden flex-col gap-2">
+  
+  {/* Top Row */}
+  <div className="fixed top-0 z-30 border-b dark:border-gray-800 right-0 w-full bg-white dark:bg-[#0f172a] px-4 py-3">
+  <div className="flex items-center justify-between mb-3">
+    
+    {/* Left: Menu + Logo */}
+    <div className="flex items-center gap-3">
+      {/* <button className="text-xl">☰</button> */}
+
+      <Link href="/">
+        <Image
+          src="/img/opinionLogo-light.png"
+          alt="Logo"
+          width={50}
+          height={50}
+          
+        />
+      
+      </Link>
+    </div>
+
+    {/* Right: Notification + Profile */}
+    <div className="flex items-center gap-4">
+      <NotificationBell />
+      <ProfileDropdown />
+    </div>
+  </div>
+
+  {/* Search Row */}
+  <div className="relative">
+    <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+    <input
+      type="text"
+      placeholder="Search opinion kings"
+      className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-[#1e293b] focus:outline-none text-sm dark:placeholder-gray-600 placeholder-gray-400"
+    />
+  </div>
+  </div>
+</div>
+
+
       <Authentication
         isLogin={isLogin}
         isOpen={isOpen}

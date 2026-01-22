@@ -1,10 +1,12 @@
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { questionDetails } from "@/components/service/apiService/category";
 import { useSearchParams } from "next/navigation";
 import socket from "@/components/socket";
 import BuySell from "@/components/Modal/BuySell/page";
+import IdeasActivityTabs from "./component/ideaComment";
 import {
   cancelOrder,
   getGraphData,
@@ -31,6 +33,7 @@ import {
 import { delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
 import StackedAreaChart from "./component/realTimeChart";
+import { Link } from "lucide-react";
 
 type OrderSide = "BUY" | "SELL";
 interface OrderFlowItem {
@@ -536,7 +539,7 @@ const Details = () => {
                 </div>
               </div>
 
-              <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-visible">
                 <div className="md:col-span-2 space-y-6">
                   {/* {Number(graphData?.series?.length) > 0 ? ( */}
                   <div className="h-64 mb-6  flex">
@@ -657,9 +660,61 @@ const Details = () => {
                       );
                     })}
                   </div>
+
+                   <div className="flex flex-col gap-4">
+              <MarketLeaderboard data={leaderBoard} />
+
+              {orderData?.length > 0 && (
+                <OrderList data={orderData} cancelOrders={handleDelete} />
+              )}
+            </div>
+      
+
+            <div className="mt-4"><h1 className="md:text-xl font-semibold tracking-wide text-black/80 dark:text-white md:mb-5 mb-4">
+            People are also buying</h1>
+            <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
+              <div><Image
+                  src="/img/blockimg1.jpg"
+                  alt="NYC Flag"
+                  width={50}
+                  height={50}
+                  className="mr-4 rounded-lg"
+                /></div>
+              <div><p className="dark:text-white text-black/80 text-md font-normal">Who will be the next Supreme Leader of Iran?</p></div>
+            </div>
+
+            <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
+              <div><Image
+                  src="/img/blockimg1.jpg"
+                  alt="NYC Flag"
+                  width={50}
+                  height={50}
+                  className="mr-4 rounded-lg"
+                /></div>
+              <div><p className="dark:text-white text-black/80 text-md font-normal">Who will be the next Supreme Leader of Iran?</p></div>
+            </div>
+
+            <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
+              <div><Image
+                  src="/img/blockimg1.jpg"
+                  alt="NYC Flag"
+                  width={50}
+                  height={50}
+                  className="mr-4 rounded-lg"
+                /></div>
+              <div><p className="dark:text-white text-black/80 text-md font-normal">Who will be the next Supreme Leader of Iran?</p></div>
+            </div>
+
+            <div className="mt-5"><button className="cursor-pointer py-2 px-4 text-md border border-gray-500 rounded-lg dark:text-white text-black/80 hover:text-[#bfa16d]">Show More <ArrowRight className="inline-block w-4 h-4"/></button></div>
+
+            <div className="mt-5 md:mt-10">
+              <IdeasActivityTabs/>
+            </div>
+            
+            </div>
                 </div>
 
-                <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-800 rounded-lg p-3 lg-p-6">
+                <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-800 rounded-lg p-3 lg-p-6 sticky top-32">
                   <div className="flex justify-between pr-3 items-center">
                     <span className="text-lg font-semibold text-gray-900 dark:text-gray-200">
                       Shares
@@ -741,15 +796,11 @@ const Details = () => {
                     </div>
                   </div>
                 </div>
+                 
               </div>
             </div>
-            <div className="flex flex-col gap-4">
-              <MarketLeaderboard data={leaderBoard} />
+          
 
-              {orderData?.length > 0 && (
-                <OrderList data={orderData} cancelOrders={handleDelete} />
-              )}
-            </div>
           </div>
         </div>
       )}
