@@ -1,1 +1,1120 @@
-"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[853],{7365:(e,t,a)=>{a.d(t,{D5:()=>c,DR:()=>i,N4:()=>m,W1:()=>x,YL:()=>n,Z7:()=>o,_R:()=>d,yb:()=>u});var s=a(30),l=a(6417),r=a(6363);let n=async(e,t,a)=>{try{let r=await s.Ay.get("".concat(l.y.ordersQuoteDetails,"/?questionId=").concat(e,"&outcomeIndex=").concat(t,"&shares=").concat(a));return null==r?void 0:r.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}},c=async(e,t,a)=>{try{let r=await s.Ay.get("".concat(l.y.quoteByBudget,"/?questionId=").concat(e,"&outcomeIndex=").concat(t,"&budgetGross=").concat(a));return null==r?void 0:r.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}},o=async e=>{try{let t=await s.Ay.post(l.y.submitOrder,e);return null==t?void 0:t.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}},i=async function(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"";try{let a=await s.Ay.get("".concat(l.y.graphData,"/").concat(e,"/graph").concat(t&&"?interval=".concat(t)));return null==a?void 0:a.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}},d=async(e,t,a)=>{try{let r=await s.Ay.get("".concat(l.y.commonQuoteSell,"/?questionId=").concat(e,"&outcomeIndex=").concat(t,"&shares=").concat(a));return null==r?void 0:r.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}},u=async e=>{try{let t=await s.Ay.get("".concat(l.y.leaderBoardMarketList,"/").concat(e,"/?sort=profit"));return null==t?void 0:t.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}},x=async function(e,t){let a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"NEW",n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"LIMIT";try{let r=await s.Ay.get("".concat(l.y.getOrders,"/?userId=").concat(e,"&questionId=").concat(t,"&status=").concat(a,"&type=").concat(n));return null==r?void 0:r.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}},m=async e=>{try{let t=await s.Ay.post("".concat(l.y.cancelOrders,"/").concat(e,"/cancel"));return null==t?void 0:t.data}catch(e){return{success:!1,message:(0,r.u1)(e)}}}},8853:(e,t,a)=>{a.d(t,{A:()=>f});var s=a(5155),l=a(2115),r=a(5239),n=a(7346),c=a(9102),o=a(6031),i=a(1574),d=a(898);function u(e){let{label:t="Market",onSelect:a}=e,[r,n]=(0,l.useState)(!1),[c,o]=(0,l.useState)(t),i=(0,l.useRef)(null);(0,l.useEffect)(()=>{function e(e){i.current&&!i.current.contains(e.target)&&n(!1)}return document.addEventListener("mousedown",e),()=>document.removeEventListener("mousedown",e)},[]);let u=(e,t)=>{o(t),n(!1),null==a||a(e)};return(0,s.jsxs)("div",{ref:i,className:"relative inline-block",children:[(0,s.jsxs)("div",{className:"flex flex-row gap-1 items-center",children:[(0,s.jsx)("span",{className:"text-black dark:text-white text-sm",children:"Order Type :"}),(0,s.jsxs)("button",{onClick:()=>n(e=>!e),"aria-haspopup":"true","aria-expanded":r,className:"flex items-center capitalize justify-between gap-2 text-gray-600 dark:text-gray-300 w-24  rounded text-sm bg-gray-100 dark:bg-[#1a253f] px-3 py-2 hover:dark:bg-[#1e2b4b] hover:bg-gray-50",children:[c,(0,s.jsx)("svg",{width:"14",height:"14",viewBox:"0 0 24 24",className:"stroke-gray-700 dark:stroke-gray-300",children:(0,s.jsx)("path",{d:"M6 9l6 6 6-6",fill:"none",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"})})]})]}),r&&(0,s.jsx)("div",{className:"absolute right-0 mt-2 w-36 rounded-lg bg-white dark:bg-[#1a253f]   shadow-xl shadow-black/50 z-20",children:(0,s.jsxs)("div",{role:"menu",className:"flex flex-col py-2 ",children:[(0,s.jsx)(x,{label:"Market",onClick:()=>u("market","market"),children:(0,s.jsx)(d.lHQ,{className:"mt-1 text-yellow-400 "})}),(0,s.jsx)(x,{label:"Limit",onClick:()=>u("limit","limit"),children:(0,s.jsx)(d.RBv,{className:"mt-1 text-blue-500"})})]})})]})}function x(e){let{label:t,onClick:a,children:l}=e;return(0,s.jsxs)("button",{onClick:a,className:"flex items-center gap-3 px-4 py-2 text-sm text-gray-800 dark:text-white  dark:hover:bg-[#26365c]  hover:bg-gray-100",children:[(0,s.jsx)("span",{className:"w-5 h-5",children:l}),(0,s.jsx)("span",{children:t})]})}let m={src:"/_next/static/media/blockimg1.20b37b97.jpg",height:316,width:316,blurDataURL:"data:image/jpeg;base64,/9j/2wBDAAoKCgoKCgsMDAsPEA4QDxYUExMUFiIYGhgaGCIzICUgICUgMy03LCksNy1RQDg4QFFeT0pPXnFlZXGPiI+7u/v/2wBDAQoKCgoKCgsMDAsPEA4QDxYUExMUFiIYGhgaGCIzICUgICUgMy03LCksNy1RQDg4QFFeT0pPXnFlZXGPiI+7u/v/wgARCAAIAAgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAVAQEBAAAAAAAAAAAAAAAAAAAFBv/aAAwDAQACEAMQAAAAsgCn/8QAHBAAAQMFAAAAAAAAAAAAAAAAAQADEgQFFiOz/9oACAEBAAE/ALKavEGhHRFzqv/EABkRAAEFAAAAAAAAAAAAAAAAAAABBjSCwv/aAAgBAgEBPwBwz66U/8QAGREAAQUAAAAAAAAAAAAAAAAAAQAGNHLC/9oACAEDAQE/AG5BN8hf/9k=",blurWidth:8,blurHeight:8};var g=a(7365),h=a(1980),b=a(4517),y=a(5379),A=a(5174),N=a(6363);function f(e){var t,a,d,x,f,p,j,v,w,k,F,C;let{isOpen:I,onClose:B,rowDetailss:S,orderType:E,option:Q,optionIndex:D,fetchOrders:P,handleChangeOrderType:T}=e,[L,R]=(0,l.useState)(""),[q,M]=(0,l.useState)(""),[$,U]=(0,l.useState)(""),[G,z]=(0,l.useState)("market"),W=localStorage.getItem("balance"),O=localStorage.getItem("token"),{theme:Y}=(0,y.D)(),[_,H]=(0,l.useState)(null),[K,X]=(0,l.useState)({}),[Z,V]=(0,l.useState)({}),[J,ee]=(0,l.useState)(0);console.log(J,"debouncedValue"),(0,l.useEffect)(()=>{let e=setTimeout(()=>{if("shares"===_){let e=Number(L);isNaN(e)||ee(e)}if("amount"===_){let e=Number($);isNaN(e)||ee(e)}},300);return()=>clearTimeout(e)},[L,$,_]),(0,l.useEffect)(()=>{let e=setTimeout(()=>{"shares"===_&&""!==L&&ee(Number(L)),"amount"===_&&""!==$&&ee(Number($))},300);return()=>clearTimeout(e)},[L,$,_]);let et=Number(null==S||null==(t=S.question)?void 0:t.id)||(null==S?void 0:S.id),ea=(0,l.useCallback)(async()=>{var e,t,a;if("buy"==E){if("shares"==_)try{let t=await (0,g.YL)(et,D,J);(null==t?void 0:t.success)?(U((0,N.ao)(Number(null==t||null==(e=t.data)?void 0:e.grossCost)||0)||""),X((null==t?void 0:t.data)||{})):(U(""),X({}))}catch(e){U(""),X({})}if("amount"==_)try{let e=await (0,g.D5)(et,D,J);(null==e?void 0:e.success)?(R((0,N.ao)(Number(null==e||null==(t=e.data)?void 0:t.shares),3)||""),X((null==e?void 0:e.data)||{})):(R(""),X({}))}catch(e){R(""),X({})}}if("sell"==E)try{let e=await (0,g._R)(et,D,J);console.log(e,"getCommonQuoteSell"),(null==e?void 0:e.success)?(V({}),U((0,N.ao)(null==e||null==(a=e.data)?void 0:a.fee)||""),X((null==e?void 0:e.data)||{})):(V(e||{}),U(""),X({}))}catch(e){V({}),U(""),X({})}},[et,D,J,E,_]);(0,l.useEffect)(()=>{et&&"market"===G&&!0===I&&ea()},[ea,et,J,G]);let es=()=>{U(""),R(""),M(""),ee(0),B()},el=Number(L)*Number(q)*2/100,er=Number(L)*Number(q)+el,en=Number(L)*Number(q)-el;console.log(el,"LimitFee",er,"minProceedsValue");let ec=async()=>{try{let t=await (0,A.i$)();if(null==t?void 0:t.success){var e;localStorage.setItem("balance",null==t||null==(e=t.data)?void 0:e.balance)}else localStorage.removeItem("balance")}catch(e){localStorage.removeItem("balance")}},eo=async()=>{let e={questionId:et,outcomeIndex:D,side:E,type:G,shares:"limit"===G&&"buy"===E||"limit"===G&&"sell"===E?L:(null==K?void 0:K.shares)||"",..."limit"===G&&"buy"===E?{maxCost:er}:{},..."limit"===G&&"sell"===E?{minProceeds:en}:{},timeInForce:"IOC"};console.log(e,"reqBody");try{let t=await (0,g.Z7)(e);(null==t?void 0:t.success)&&(b.Ay.success(t.message||""),"limit"==G&&P(),ec(),es())}catch(e){b.Ay.error("internal server error")}},ei=Number(null==S||null==(d=S.user)||null==(a=d[D])?void 0:a.shares)||0;console.log(typeof ei,"getTotalSharesDetails======");let ed=null!=(w=null==Q||null==(x=Q.userPosition)?void 0:x.shares)?w:0;console.log(ed,ei,"maxShares");let eu=Number(L),ex=Number($),em=Number(W),eg=ed>0?ed:ei,eh=J<=0||"buy"===E&&"limit"===G&&em<=Number(er)||"sell"===E&&eu>eg||"buy"===E&&"market"===G&&em<ex;return(0,s.jsx)(n.A,{open:I,closeAfterTransition:!0,BackdropComponent:c.A,BackdropProps:{timeout:300,sx:{backdropFilter:"blur(10px)",backgroundColor:"dark"==Y?"rgba(15, 23, 42, 0.7)":"rgba(255, 255, 255, 0.7)"}},children:(0,s.jsx)(o.A,{in:I,children:(0,s.jsxs)(i.A,{sx:{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)"},className:"bg-white dark:bg-[#0f172a] p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none",children:[(0,s.jsx)("button",{onClick:es,className:"absolute top-3 right-3 cursor-pointer text-gray-900 dark:text-gray-200 hover:text-gray-500",children:"✕"}),(0,s.jsxs)("div",{className:"flex flex-row gap-2 w-full justify-between mb-0",children:[(0,s.jsx)(r.default,{src:m,alt:"Block",width:60,height:60,className:"rounded-lg max-h-[45px]"}),(0,s.jsxs)("div",{className:"w-full",children:[(0,s.jsx)("div",{className:"text-sm w-[85%] text-black truncate   dark:text-white",children:"string"==typeof(null==S?void 0:S.question)?S.question:null!=(k=null==S||null==(f=S.question)?void 0:f.question)?k:"--"}),(0,s.jsxs)("div",{className:"flex items-center gap-1 text-gray-400",children:[(0,s.jsx)("span",{className:"text-sm",children:"Price"})," :",(0,s.jsx)("span",{className:"text-sm",children:(0,N.ao)(Number((null==Q?void 0:Q.price)||0))})]})]})]}),(0,s.jsxs)("div",{className:"flex  text-wrap ml-14 mb-3 text-sm   gap-3",children:[(0,s.jsxs)("span",{className:"text-[#0099FF] text-nowrap font-semibold",children:["buy"===E?"Buy":"Sell"," Now"]}),(0,s.jsxs)("span",{className:"text-gray-500 dark:text-gray-400",children:["- ",(null==Q?void 0:Q.name)||"--"]})]}),(0,s.jsxs)("div",{className:"border-b border-gray-300 mb-4 relative",children:[(0,s.jsx)("div",{className:"absolute right-0 top-0",children:(0,s.jsx)(u,{onSelect:e=>{M(""),R(""),z(e)}})}),(0,s.jsx)("button",{onClick:()=>{T("buy"),X({}),V({}),ee(0),U(""),R("")},className:"py-2 mr-6 font-medium ".concat("buy"===E?"border-b-2 border-[#0099FF] text-[#0099FF]":"text-gray-600 dark:text-gray-300 cursor-pointer"),children:"Buy"}),(0,s.jsx)("button",{onClick:()=>{T("sell"),V({}),X({}),ee(0),U(""),R("")},className:"py-2 font-medium ".concat("sell"===E?"border-b-2 border-[#0099FF] text-[#0099FF]":"text-gray-600 dark:text-gray-300 cursor-pointer"),children:"Sell"})]}),(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)("div",{className:"flex flex-col gap-3",children:"limit"===G?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsxs)("label",{className:"w-full flex flex-col gap-1",children:[(0,s.jsxs)("span",{className:"text-xs text-gray-400 font-medium",children:["sell"===E?"Sell":"Buy"," at price"]}),(0,s.jsx)("input",{placeholder:"0.00",type:"number",value:q,onChange:e=>M(""===e.target.value?0:Number(e.target.value)),onWheel:e=>e.currentTarget.blur(),className:"w-full px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "})]}),(0,s.jsxs)("label",{className:"w-full px-3 py-2 border border-gray-200 dark:border-gray-700  rounded-md  flex items-center justify-between bg-transparent ",children:[(0,s.jsxs)("div",{className:"flex flex-col leading-tight",children:[(0,s.jsx)("span",{className:"text-xs text-gray-400 font-medium",children:"Quantity of Shares"}),(0,s.jsx)("span",{className:"text-xs text-[#0099FF] font-medium",children:"USD"})]}),(0,s.jsx)("input",{type:"number",placeholder:"0.00",onFocus:()=>H("shares"),value:L,onChange:e=>R(""===e.target.value?0:Number(e.target.value)),onWheel:e=>e.currentTarget.blur(),className:" w-28 text-2xl font-semibold text-right bg-transparent  border-none outline-none text-gray-900 dark:text-gray-100"})]})]}):"buy"===E?(0,s.jsxs)(s.Fragment,{children:[(0,s.jsxs)("label",{className:"w-full p-3 border border-gray-200 rounded-md flex justify-between items-center",children:[(0,s.jsxs)("span",{children:[(0,s.jsx)("span",{className:"block text-sm text-gray-400",children:"Shares"}),(0,s.jsx)("span",{className:"block text-sm text-[#0099FF]",children:"No Interest"})]}),(0,s.jsx)("input",{type:"number",placeholder:"0",value:L,onFocus:()=>H("shares"),onChange:e=>R(""===e.target.value?0:Number(e.target.value)),onWheel:e=>e.currentTarget.blur(),className:"border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"})]}),(0,s.jsx)("div",{className:"flex items-center justify-center text-gray-400",children:(0,s.jsx)(h.$xY,{size:25})}),(0,s.jsxs)("label",{className:"w-full p-3 border border-gray-200 rounded-md flex justify-between items-center",children:[(0,s.jsxs)("span",{children:[(0,s.jsx)("span",{className:"block text-sm text-gray-400",children:"Amount"}),(0,s.jsx)("span",{className:"block text-sm text-[#0099FF]",children:"No Interest"})]}),(0,s.jsx)("input",{type:"number",placeholder:"0",value:$,onFocus:()=>H("amount"),onChange:e=>U(""===e.target.value?"":Number(e.target.value)),onWheel:e=>e.currentTarget.blur(),className:"border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"})]})]}):(0,s.jsxs)(s.Fragment,{children:[" ",(0,s.jsxs)("label",{className:"w-full p-3 border ".concat((null==Z?void 0:Z.success)==!1?"border-red-400":"border-gray-200","  rounded-md flex justify-between items-center"),children:[(0,s.jsxs)("span",{children:[(0,s.jsx)("span",{className:"block text-sm text-gray-400",children:"Shares"}),(0,s.jsx)("span",{className:"block text-sm text-[#0099FF]",children:"No Interest"})]}),(0,s.jsx)("input",{type:"number",placeholder:"0",min:0,max:null!=(C=null!=(F=null==Q||null==(p=Q.userPosition)?void 0:p.shares)?F:ei)?C:0,value:L,onFocus:()=>H("shares"),onChange:e=>{R(Number(e.target.value))},onWheel:e=>e.currentTarget.blur(),className:"border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"})]})]})}),(0,s.jsxs)("div",{className:"flex flex-row justify-between gap-2 mt-2",children:[" ",(0,s.jsxs)("div",{className:"bg-[#0099FF] font-semibold text-white px-2 py-1 rounded",children:[" ","IOC"," "]}),(0,s.jsx)("div",{className:"text-xs font-normal text-red-500",children:(null==Z?void 0:Z.message)=="Invalid value"?"":(null==Z?void 0:Z.message)||""})]}),(0,s.jsxs)("div",{className:"flex text-black py-3 text-sm flex-col gap-2",children:[(0,s.jsx)("div",{className:"text-[#0099FF] font-semibold text-lg",children:"Share Details :"}),"limit"===G&&"buy"==E?(0,s.jsxs)(s.Fragment,{children:[O&&(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Available Balance"}),(0,s.jsxs)("span",{className:"text-gray-600 dark:text-gray-300 text-sm font-medium",children:["$ ",(0,N.ao)(Number(W||0))]})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Fee"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$ ",(0,N.ao)(Number(el||0))]})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Net Cost"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$ ",(0,N.ao)(Number(L)*Number(q)||0)]})]})]}):"limit"===G&&"sell"==E?(0,s.jsx)(s.Fragment,{children:(0,s.jsxs)("div",{className:"space-y-2  ",children:[(0,s.jsxs)("div",{className:"flex justify-between text-sm",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Total Buy Share"}),(0,s.jsx)("span",{className:"text-gray-800 dark:text-gray-300 font-semibold",children:(0,N.ao)(Number((null==Q||null==(j=Q.userPosition)?void 0:j.shares)||ei||0))})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Fee"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$ ",0==el?"":"-"," ",(0,N.ao)(Number(el||0))]})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Receive"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$ ",(0,N.ao)(Number(en||0))]})]})]})}):"buy"===E?(0,s.jsxs)(s.Fragment,{children:[O&&(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Available Balance"}),(0,s.jsxs)("span",{className:"text-gray-600 dark:text-gray-300 text-sm font-medium",children:["$ ",(0,N.ao)(Number(W||0))]})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Fee"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$ ",(0,N.ao)(Number((null==K?void 0:K.fee)||0))]})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Net Cost"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$ ",(0,N.ao)(Number((null==K?void 0:K.netCost)||0))]})]})]}):(0,s.jsx)(s.Fragment,{children:(0,s.jsxs)("div",{className:"space-y-2   py-2 ",children:[(0,s.jsxs)("div",{className:"flex justify-between text-sm",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Total Buy Share"}),(0,s.jsx)("span",{className:"text-gray-800 dark:text-gray-300 font-semibold",children:(0,N.ao)(Number((null==Q||null==(v=Q.userPosition)?void 0:v.shares)||ei||0))})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Fee"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$ ",(0,N.ao)(Number((null==K?void 0:K.fee)||0))]})]}),(0,s.jsxs)("div",{className:"flex flex-row justify-between",children:[(0,s.jsx)("span",{className:"text-gray-400 font-medium",children:"Receive"}),(0,s.jsxs)("span",{className:"dark:text-gray-300",children:["$"," ",(0,N.ao)(Number((null==K?void 0:K.netProceeds)||0))]})]})]})})]}),(0,s.jsxs)("button",{disabled:eh,onClick:eo,className:"mt-4 py-3 text-lg text-white font-bold ".concat(eh?"bg-[#62bdfa]":"bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer","  rounded-xl w-full"),children:[(0,s.jsx)("span",{className:"capitalize",children:E||"--"})," ",(0,s.jsx)("span",{className:"text-gray-200",children:"$"})," ",(0,s.jsx)("span",{className:"text-gray-200",children:"limit"===G&&"buy"===E?(0,N.ao)(Number(er||0),3):"limit"===G&&"sell"===E?(0,N.ao)(Number(en||0),3):"buy"==E?(0,N.ao)(Number((null==K?void 0:K.grossCost)||0),3):(0,N.ao)(Number(null==K?void 0:K.grossProceeds)||0,3)})]})]})]})})})}}}]);
+"use strict";
+(self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
+  [853],
+  {
+    7365: (e, t, a) => {
+      a.d(t, {
+        D5: () => c,
+        DR: () => i,
+        N4: () => m,
+        W1: () => x,
+        YL: () => n,
+        Z7: () => o,
+        _R: () => d,
+        yb: () => u,
+      });
+      var s = a(30),
+        l = a(6417),
+        r = a(6363);
+      let n = async (e, t, a) => {
+          try {
+            let r = await s.Ay.get(
+              ""
+                .concat(l.y.ordersQuoteDetails, "/?questionId=")
+                .concat(e, "&outcomeIndex=")
+                .concat(t, "&shares=")
+                .concat(a),
+            );
+            return null == r ? void 0 : r.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        },
+        c = async (e, t, a) => {
+          try {
+            let r = await s.Ay.get(
+              ""
+                .concat(l.y.quoteByBudget, "/?questionId=")
+                .concat(e, "&outcomeIndex=")
+                .concat(t, "&budgetGross=")
+                .concat(a),
+            );
+            return null == r ? void 0 : r.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        },
+        o = async (e) => {
+          try {
+            let t = await s.Ay.post(l.y.submitOrder, e);
+            return null == t ? void 0 : t.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        },
+        i = async function (e) {
+          let t =
+            arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "";
+          try {
+            let a = await s.Ay.get(
+              ""
+                .concat(l.y.graphData, "/")
+                .concat(e, "/graph")
+                .concat(t && "?interval=".concat(t)),
+            );
+            return null == a ? void 0 : a.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        },
+        d = async (e, t, a) => {
+          try {
+            let r = await s.Ay.get(
+              ""
+                .concat(l.y.commonQuoteSell, "/?questionId=")
+                .concat(e, "&outcomeIndex=")
+                .concat(t, "&shares=")
+                .concat(a),
+            );
+            return null == r ? void 0 : r.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        },
+        u = async (e) => {
+          try {
+            let t = await s.Ay.get(
+              ""
+                .concat(l.y.leaderBoardMarketList, "/")
+                .concat(e, "/?sort=profit"),
+            );
+            return null == t ? void 0 : t.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        },
+        x = async function (e, t) {
+          let a =
+              arguments.length > 2 && void 0 !== arguments[2]
+                ? arguments[2]
+                : "NEW",
+            n =
+              arguments.length > 3 && void 0 !== arguments[3]
+                ? arguments[3]
+                : "LIMIT";
+          try {
+            let r = await s.Ay.get(
+              ""
+                .concat(l.y.getOrders, "/?userId=")
+                .concat(e, "&questionId=")
+                .concat(t, "&status=")
+                .concat(a, "&type=")
+                .concat(n),
+            );
+            return null == r ? void 0 : r.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        },
+        m = async (e) => {
+          try {
+            let t = await s.Ay.post(
+              "".concat(l.y.cancelOrders, "/").concat(e, "/cancel"),
+            );
+            return null == t ? void 0 : t.data;
+          } catch (e) {
+            return { success: !1, message: (0, r.u1)(e) };
+          }
+        };
+    },
+    8853: (e, t, a) => {
+      a.d(t, { A: () => f });
+      var s = a(5155),
+        l = a(2115),
+        r = a(5239),
+        n = a(7346),
+        c = a(9102),
+        o = a(6031),
+        i = a(1574),
+        d = a(898);
+      function u(e) {
+        let { label: t = "Market", onSelect: a } = e,
+          [r, n] = (0, l.useState)(!1),
+          [c, o] = (0, l.useState)(t),
+          i = (0, l.useRef)(null);
+        (0, l.useEffect)(() => {
+          function e(e) {
+            i.current && !i.current.contains(e.target) && n(!1);
+          }
+          return (
+            document.addEventListener("mousedown", e),
+            () => document.removeEventListener("mousedown", e)
+          );
+        }, []);
+        let u = (e, t) => {
+          (o(t), n(!1), null == a || a(e));
+        };
+        return (0, s.jsxs)("div", {
+          ref: i,
+          className: "relative inline-block",
+          children: [
+            (0, s.jsxs)("div", {
+              className: "flex flex-row gap-1 items-center",
+              children: [
+                (0, s.jsx)("span", {
+                  className: "text-black dark:text-white text-sm",
+                  children: "Order Type :",
+                }),
+                (0, s.jsxs)("button", {
+                  onClick: () => n((e) => !e),
+                  "aria-haspopup": "true",
+                  "aria-expanded": r,
+                  className:
+                    "flex items-center capitalize justify-between gap-2 text-gray-600 dark:text-gray-300 w-24  rounded text-sm bg-gray-100 dark:bg-[#1a253f] px-3 py-2 hover:dark:bg-[#1e2b4b] hover:bg-gray-50",
+                  children: [
+                    c,
+                    (0, s.jsx)("svg", {
+                      width: "14",
+                      height: "14",
+                      viewBox: "0 0 24 24",
+                      className: "stroke-gray-700 dark:stroke-gray-300",
+                      children: (0, s.jsx)("path", {
+                        d: "M6 9l6 6 6-6",
+                        fill: "none",
+                        strokeWidth: "2",
+                        strokeLinecap: "round",
+                        strokeLinejoin: "round",
+                      }),
+                    }),
+                  ],
+                }),
+              ],
+            }),
+            r &&
+              (0, s.jsx)("div", {
+                className:
+                  "absolute right-0 mt-2 w-36 rounded-lg bg-white dark:bg-[#1a253f]   shadow-xl shadow-black/50 z-20",
+                children: (0, s.jsxs)("div", {
+                  role: "menu",
+                  className: "flex flex-col py-2 ",
+                  children: [
+                    (0, s.jsx)(x, {
+                      label: "Market",
+                      onClick: () => u("market", "market"),
+                      children: (0, s.jsx)(d.lHQ, {
+                        className: "mt-1 text-yellow-400 ",
+                      }),
+                    }),
+                    (0, s.jsx)(x, {
+                      label: "Limit",
+                      onClick: () => u("limit", "limit"),
+                      children: (0, s.jsx)(d.RBv, {
+                        className: "mt-1 text-blue-500",
+                      }),
+                    }),
+                  ],
+                }),
+              }),
+          ],
+        });
+      }
+      function x(e) {
+        let { label: t, onClick: a, children: l } = e;
+        return (0, s.jsxs)("button", {
+          onClick: a,
+          className:
+            "flex items-center gap-3 px-4 py-2 text-sm text-gray-800 dark:text-white  dark:hover:bg-[#26365c]  hover:bg-gray-100",
+          children: [
+            (0, s.jsx)("span", { className: "w-5 h-5", children: l }),
+            (0, s.jsx)("span", { children: t }),
+          ],
+        });
+      }
+      let m = {
+        src: "/_next/static/media/blockimg1.20b37b97.jpg",
+        height: 316,
+        width: 316,
+        blurDataURL:
+          "data:image/jpeg;base64,/9j/2wBDAAoKCgoKCgsMDAsPEA4QDxYUExMUFiIYGhgaGCIzICUgICUgMy03LCksNy1RQDg4QFFeT0pPXnFlZXGPiI+7u/v/2wBDAQoKCgoKCgsMDAsPEA4QDxYUExMUFiIYGhgaGCIzICUgICUgMy03LCksNy1RQDg4QFFeT0pPXnFlZXGPiI+7u/v/wgARCAAIAAgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAVAQEBAAAAAAAAAAAAAAAAAAAFBv/aAAwDAQACEAMQAAAAsgCn/8QAHBAAAQMFAAAAAAAAAAAAAAAAAQADEgQFFiOz/9oACAEBAAE/ALKavEGhHRFzqv/EABkRAAEFAAAAAAAAAAAAAAAAAAABBjSCwv/aAAgBAgEBPwBwz66U/8QAGREAAQUAAAAAAAAAAAAAAAAAAQAGNHLC/9oACAEDAQE/AG5BN8hf/9k=",
+        blurWidth: 8,
+        blurHeight: 8,
+      };
+      var g = a(7365),
+        h = a(1980),
+        b = a(4517),
+        y = a(5379),
+        A = a(5174),
+        N = a(6363);
+      function f(e) {
+        var t, a, d, x, f, p, j, v, w, k, F, C;
+        let {
+            isOpen: I,
+            onClose: B,
+            rowDetailss: S,
+            orderType: E,
+            option: Q,
+            optionIndex: D,
+            fetchOrders: P,
+            handleChangeOrderType: T,
+          } = e,
+          [L, R] = (0, l.useState)(""),
+          [q, M] = (0, l.useState)(""),
+          [$, U] = (0, l.useState)(""),
+          [G, z] = (0, l.useState)("market"),
+          W = localStorage.getItem("balance"),
+          O = localStorage.getItem("token"),
+          { theme: Y } = (0, y.D)(),
+          [_, H] = (0, l.useState)(null),
+          [K, X] = (0, l.useState)({}),
+          [Z, V] = (0, l.useState)({}),
+          [J, ee] = (0, l.useState)(0);
+        (console.log(J, "debouncedValue"),
+          (0, l.useEffect)(() => {
+            let e = setTimeout(() => {
+              if ("shares" === _) {
+                let e = Number(L);
+                isNaN(e) || ee(e);
+              }
+              if ("amount" === _) {
+                let e = Number($);
+                isNaN(e) || ee(e);
+              }
+            }, 300);
+            return () => clearTimeout(e);
+          }, [L, $, _]),
+          (0, l.useEffect)(() => {
+            let e = setTimeout(() => {
+              ("shares" === _ && "" !== L && ee(Number(L)),
+                "amount" === _ && "" !== $ && ee(Number($)));
+            }, 300);
+            return () => clearTimeout(e);
+          }, [L, $, _]));
+        let et =
+            Number(null == S || null == (t = S.question) ? void 0 : t.id) ||
+            (null == S ? void 0 : S.id),
+          ea = (0, l.useCallback)(async () => {
+            var e, t, a;
+            if ("buy" == E) {
+              if ("shares" == _)
+                try {
+                  let t = await (0, g.YL)(et, D, J);
+                  (null == t ? void 0 : t.success)
+                    ? (U(
+                        (0, N.ao)(
+                          Number(
+                            null == t || null == (e = t.data)
+                              ? void 0
+                              : e.grossCost,
+                          ) || 0,
+                        ) || "",
+                      ),
+                      X((null == t ? void 0 : t.data) || {}))
+                    : (U(""), X({}));
+                } catch (e) {
+                  (U(""), X({}));
+                }
+              if ("amount" == _)
+                try {
+                  let e = await (0, g.D5)(et, D, J);
+                  (null == e ? void 0 : e.success)
+                    ? (R(
+                        (0, N.ao)(
+                          Number(
+                            null == e || null == (t = e.data)
+                              ? void 0
+                              : t.shares,
+                          ),
+                          3,
+                        ) || "",
+                      ),
+                      X((null == e ? void 0 : e.data) || {}))
+                    : (R(""), X({}));
+                } catch (e) {
+                  (R(""), X({}));
+                }
+            }
+            if ("sell" == E)
+              try {
+                let e = await (0, g._R)(et, D, J);
+                (console.log(e, "getCommonQuoteSell"),
+                  (null == e ? void 0 : e.success)
+                    ? (V({}),
+                      U(
+                        (0, N.ao)(
+                          null == e || null == (a = e.data) ? void 0 : a.fee,
+                        ) || "",
+                      ),
+                      X((null == e ? void 0 : e.data) || {}))
+                    : (V(e || {}), U(""), X({})));
+              } catch (e) {
+                (V({}), U(""), X({}));
+              }
+          }, [et, D, J, E, _]);
+        (0, l.useEffect)(() => {
+          et && "market" === G && !0 === I && ea();
+        }, [ea, et, J, G]);
+        let es = () => {
+            (U(""), R(""), M(""), ee(0), B());
+          },
+          el = (Number(L) * Number(q) * 2) / 100,
+          er = Number(L) * Number(q) + el,
+          en = Number(L) * Number(q) - el;
+        console.log(el, "LimitFee", er, "minProceedsValue");
+        let ec = async () => {
+            try {
+              let t = await (0, A.i$)();
+              if (null == t ? void 0 : t.success) {
+                var e;
+                localStorage.setItem(
+                  "balance",
+                  null == t || null == (e = t.data) ? void 0 : e.balance,
+                );
+              } else localStorage.removeItem("balance");
+            } catch (e) {
+              localStorage.removeItem("balance");
+            }
+          },
+          eo = async () => {
+            let e = {
+              questionId: et,
+              outcomeIndex: D,
+              side: E,
+              type: G,
+              shares:
+                ("limit" === G && "buy" === E) ||
+                ("limit" === G && "sell" === E)
+                  ? L
+                  : (null == K ? void 0 : K.shares) || "",
+              ...("limit" === G && "buy" === E ? { maxCost: er } : {}),
+              ...("limit" === G && "sell" === E ? { minProceeds: en } : {}),
+              timeInForce: "IOC",
+            };
+            console.log(e, "reqBody");
+            try {
+              let t = await (0, g.Z7)(e);
+              (null == t ? void 0 : t.success) &&
+                (b.Ay.success(t.message || ""),
+                "limit" == G && P(),
+                ec(),
+                es());
+            } catch (e) {
+              b.Ay.error("internal server error");
+            }
+          },
+          ei =
+            Number(
+              null == S || null == (d = S.user) || null == (a = d[D])
+                ? void 0
+                : a.shares,
+            ) || 0;
+        console.log(typeof ei, "getTotalSharesDetails======");
+        let ed =
+          null !=
+          (w = null == Q || null == (x = Q.userPosition) ? void 0 : x.shares)
+            ? w
+            : 0;
+        console.log(ed, ei, "maxShares");
+        let eu = Number(L),
+          ex = Number($),
+          em = Number(W),
+          eg = ed > 0 ? ed : ei,
+          eh =
+            J <= 0 ||
+            ("buy" === E && "limit" === G && em <= Number(er)) ||
+            ("sell" === E && eu > eg) ||
+            ("buy" === E && "market" === G && em < ex);
+        return (0, s.jsx)(n.A, {
+          open: I,
+          closeAfterTransition: !0,
+          BackdropComponent: c.A,
+          BackdropProps: {
+            timeout: 300,
+            sx: {
+              backdropFilter: "blur(10px)",
+              backgroundColor:
+                "dark" == Y
+                  ? "rgba(15, 23, 42, 0.7)"
+                  : "rgba(255, 255, 255, 0.7)",
+            },
+          },
+          children: (0, s.jsx)(o.A, {
+            in: I,
+            children: (0, s.jsxs)(i.A, {
+              sx: {
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              },
+              className:
+                "bg-white dark:bg-[#1D293D] p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none",
+              children: [
+                (0, s.jsx)("button", {
+                  onClick: es,
+                  className:
+                    "absolute top-3 right-3 cursor-pointer text-gray-900 dark:text-gray-200 hover:text-gray-500",
+                  children: "✕",
+                }),
+                (0, s.jsxs)("div", {
+                  className: "flex flex-row gap-2 w-full justify-between mb-0",
+                  children: [
+                    (0, s.jsx)(r.default, {
+                      src: m,
+                      alt: "Block",
+                      width: 60,
+                      height: 60,
+                      className: "rounded-lg max-h-[45px]",
+                    }),
+                    (0, s.jsxs)("div", {
+                      className: "w-full",
+                      children: [
+                        (0, s.jsx)("div", {
+                          className:
+                            "text-sm w-[85%] text-black truncate   dark:text-white",
+                          children:
+                            "string" == typeof (null == S ? void 0 : S.question)
+                              ? S.question
+                              : null !=
+                                  (k =
+                                    null == S || null == (f = S.question)
+                                      ? void 0
+                                      : f.question)
+                                ? k
+                                : "--",
+                        }),
+                        (0, s.jsxs)("div", {
+                          className: "flex items-center gap-1 text-gray-400",
+                          children: [
+                            (0, s.jsx)("span", {
+                              className: "text-sm",
+                              children: "Price",
+                            }),
+                            " :",
+                            (0, s.jsx)("span", {
+                              className: "text-sm",
+                              children: (0, N.ao)(
+                                Number((null == Q ? void 0 : Q.price) || 0),
+                              ),
+                            }),
+                          ],
+                        }),
+                      ],
+                    }),
+                  ],
+                }),
+                (0, s.jsxs)("div", {
+                  className: "flex  text-wrap ml-14 mb-3 text-sm   gap-3",
+                  children: [
+                    (0, s.jsxs)("span", {
+                      className: "text-[#0099FF] text-nowrap font-semibold",
+                      children: ["buy" === E ? "Buy" : "Sell", " Now"],
+                    }),
+                    (0, s.jsxs)("span", {
+                      className: "text-gray-500 dark:text-gray-400",
+                      children: ["- ", (null == Q ? void 0 : Q.name) || "--"],
+                    }),
+                  ],
+                }),
+                (0, s.jsxs)("div", {
+                  className: "border-b border-gray-300 mb-4 relative",
+                  children: [
+                    (0, s.jsx)("div", {
+                      className: "absolute right-0 top-0",
+                      children: (0, s.jsx)(u, {
+                        onSelect: (e) => {
+                          (M(""), R(""), z(e));
+                        },
+                      }),
+                    }),
+                    (0, s.jsx)("button", {
+                      onClick: () => {
+                        (T("buy"), X({}), V({}), ee(0), U(""), R(""));
+                      },
+                      className: "py-2 mr-6 font-medium ".concat(
+                        "buy" === E
+                          ? "border-b-2 border-[#0099FF] text-[#0099FF]"
+                          : "text-gray-600 dark:text-gray-300 cursor-pointer",
+                      ),
+                      children: "Buy",
+                    }),
+                    (0, s.jsx)("button", {
+                      onClick: () => {
+                        (T("sell"), V({}), X({}), ee(0), U(""), R(""));
+                      },
+                      className: "py-2 font-medium ".concat(
+                        "sell" === E
+                          ? "border-b-2 border-[#0099FF] text-[#0099FF]"
+                          : "text-gray-600 dark:text-gray-300 cursor-pointer",
+                      ),
+                      children: "Sell",
+                    }),
+                  ],
+                }),
+                (0, s.jsxs)(s.Fragment, {
+                  children: [
+                    (0, s.jsx)("div", {
+                      className: "flex flex-col gap-3",
+                      children:
+                        "limit" === G
+                          ? (0, s.jsxs)(s.Fragment, {
+                              children: [
+                                (0, s.jsxs)("label", {
+                                  className: "w-full flex flex-col gap-1",
+                                  children: [
+                                    (0, s.jsxs)("span", {
+                                      className:
+                                        "text-xs text-gray-400 font-medium",
+                                      children: [
+                                        "sell" === E ? "Sell" : "Buy",
+                                        " at price",
+                                      ],
+                                    }),
+                                    (0, s.jsx)("input", {
+                                      placeholder: "0.00",
+                                      type: "number",
+                                      value: q,
+                                      onChange: (e) =>
+                                        M(
+                                          "" === e.target.value
+                                            ? 0
+                                            : Number(e.target.value),
+                                        ),
+                                      onWheel: (e) => e.currentTarget.blur(),
+                                      className:
+                                        "w-full px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  ",
+                                    }),
+                                  ],
+                                }),
+                                (0, s.jsxs)("label", {
+                                  className:
+                                    "w-full px-3 py-2 border border-gray-200 dark:border-gray-700  rounded-md  flex items-center justify-between bg-transparent ",
+                                  children: [
+                                    (0, s.jsxs)("div", {
+                                      className: "flex flex-col leading-tight",
+                                      children: [
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-xs text-gray-400 font-medium",
+                                          children: "Quantity of Shares",
+                                        }),
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-xs text-[#0099FF] font-medium",
+                                          children: "USD",
+                                        }),
+                                      ],
+                                    }),
+                                    (0, s.jsx)("input", {
+                                      type: "number",
+                                      placeholder: "0.00",
+                                      onFocus: () => H("shares"),
+                                      value: L,
+                                      onChange: (e) =>
+                                        R(
+                                          "" === e.target.value
+                                            ? 0
+                                            : Number(e.target.value),
+                                        ),
+                                      onWheel: (e) => e.currentTarget.blur(),
+                                      className:
+                                        " w-28 text-2xl font-semibold text-right bg-transparent  border-none outline-none text-gray-900 dark:text-gray-100",
+                                    }),
+                                  ],
+                                }),
+                              ],
+                            })
+                          : "buy" === E
+                            ? (0, s.jsxs)(s.Fragment, {
+                                children: [
+                                  (0, s.jsxs)("label", {
+                                    className:
+                                      "w-full p-3 border border-gray-200 rounded-md flex justify-between items-center",
+                                    children: [
+                                      (0, s.jsxs)("span", {
+                                        children: [
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "block text-sm text-gray-400",
+                                            children: "Shares",
+                                          }),
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "block text-sm text-[#0099FF]",
+                                            children: "No Interest",
+                                          }),
+                                        ],
+                                      }),
+                                      (0, s.jsx)("input", {
+                                        type: "number",
+                                        placeholder: "0",
+                                        value: L,
+                                        onFocus: () => H("shares"),
+                                        onChange: (e) =>
+                                          R(
+                                            "" === e.target.value
+                                              ? 0
+                                              : Number(e.target.value),
+                                          ),
+                                        onWheel: (e) => e.currentTarget.blur(),
+                                        className:
+                                          "border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent",
+                                      }),
+                                    ],
+                                  }),
+                                  (0, s.jsx)("div", {
+                                    className:
+                                      "flex items-center justify-center text-gray-400",
+                                    children: (0, s.jsx)(h.$xY, { size: 25 }),
+                                  }),
+                                  (0, s.jsxs)("label", {
+                                    className:
+                                      "w-full p-3 border border-gray-200 rounded-md flex justify-between items-center",
+                                    children: [
+                                      (0, s.jsxs)("span", {
+                                        children: [
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "block text-sm text-gray-400",
+                                            children: "Amount",
+                                          }),
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "block text-sm text-[#0099FF]",
+                                            children: "No Interest",
+                                          }),
+                                        ],
+                                      }),
+                                      (0, s.jsx)("input", {
+                                        type: "number",
+                                        placeholder: "0",
+                                        value: $,
+                                        onFocus: () => H("amount"),
+                                        onChange: (e) =>
+                                          U(
+                                            "" === e.target.value
+                                              ? ""
+                                              : Number(e.target.value),
+                                          ),
+                                        onWheel: (e) => e.currentTarget.blur(),
+                                        className:
+                                          "border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent",
+                                      }),
+                                    ],
+                                  }),
+                                ],
+                              })
+                            : (0, s.jsxs)(s.Fragment, {
+                                children: [
+                                  " ",
+                                  (0, s.jsxs)("label", {
+                                    className: "w-full p-3 border ".concat(
+                                      (null == Z ? void 0 : Z.success) == !1
+                                        ? "border-red-400"
+                                        : "border-gray-200",
+                                      "  rounded-md flex justify-between items-center",
+                                    ),
+                                    children: [
+                                      (0, s.jsxs)("span", {
+                                        children: [
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "block text-sm text-gray-400",
+                                            children: "Shares",
+                                          }),
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "block text-sm text-[#0099FF]",
+                                            children: "No Interest",
+                                          }),
+                                        ],
+                                      }),
+                                      (0, s.jsx)("input", {
+                                        type: "number",
+                                        placeholder: "0",
+                                        min: 0,
+                                        max:
+                                          null !=
+                                          (C =
+                                            null !=
+                                            (F =
+                                              null == Q ||
+                                              null == (p = Q.userPosition)
+                                                ? void 0
+                                                : p.shares)
+                                              ? F
+                                              : ei)
+                                            ? C
+                                            : 0,
+                                        value: L,
+                                        onFocus: () => H("shares"),
+                                        onChange: (e) => {
+                                          R(Number(e.target.value));
+                                        },
+                                        onWheel: (e) => e.currentTarget.blur(),
+                                        className:
+                                          "border-none outline-none text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent",
+                                      }),
+                                    ],
+                                  }),
+                                ],
+                              }),
+                    }),
+                    (0, s.jsxs)("div", {
+                      className: "flex flex-row justify-between gap-2 mt-2",
+                      children: [
+                        " ",
+                        (0, s.jsxs)("div", {
+                          className:
+                            "bg-[#0099FF] font-semibold text-white px-2 py-1 rounded",
+                          children: [" ", "IOC", " "],
+                        }),
+                        (0, s.jsx)("div", {
+                          className: "text-xs font-normal text-red-500",
+                          children:
+                            (null == Z ? void 0 : Z.message) == "Invalid value"
+                              ? ""
+                              : (null == Z ? void 0 : Z.message) || "",
+                        }),
+                      ],
+                    }),
+                    (0, s.jsxs)("div", {
+                      className: "flex text-black py-3 text-sm flex-col gap-2",
+                      children: [
+                        (0, s.jsx)("div", {
+                          className: "text-[#0099FF] font-semibold text-lg",
+                          children: "Share Details :",
+                        }),
+                        "limit" === G && "buy" == E
+                          ? (0, s.jsxs)(s.Fragment, {
+                              children: [
+                                O &&
+                                  (0, s.jsxs)("div", {
+                                    className: "flex flex-row justify-between",
+                                    children: [
+                                      (0, s.jsx)("span", {
+                                        className: "text-gray-400 font-medium",
+                                        children: "Available Balance",
+                                      }),
+                                      (0, s.jsxs)("span", {
+                                        className:
+                                          "text-gray-600 dark:text-gray-300 text-sm font-medium",
+                                        children: [
+                                          "$ ",
+                                          (0, N.ao)(Number(W || 0)),
+                                        ],
+                                      }),
+                                    ],
+                                  }),
+                                (0, s.jsxs)("div", {
+                                  className: "flex flex-row justify-between",
+                                  children: [
+                                    (0, s.jsx)("span", {
+                                      className: "text-gray-400 font-medium",
+                                      children: "Fee",
+                                    }),
+                                    (0, s.jsxs)("span", {
+                                      className: "dark:text-gray-300",
+                                      children: [
+                                        "$ ",
+                                        (0, N.ao)(Number(el || 0)),
+                                      ],
+                                    }),
+                                  ],
+                                }),
+                                (0, s.jsxs)("div", {
+                                  className: "flex flex-row justify-between",
+                                  children: [
+                                    (0, s.jsx)("span", {
+                                      className: "text-gray-400 font-medium",
+                                      children: "Net Cost",
+                                    }),
+                                    (0, s.jsxs)("span", {
+                                      className: "dark:text-gray-300",
+                                      children: [
+                                        "$ ",
+                                        (0, N.ao)(Number(L) * Number(q) || 0),
+                                      ],
+                                    }),
+                                  ],
+                                }),
+                              ],
+                            })
+                          : "limit" === G && "sell" == E
+                            ? (0, s.jsx)(s.Fragment, {
+                                children: (0, s.jsxs)("div", {
+                                  className: "space-y-2  ",
+                                  children: [
+                                    (0, s.jsxs)("div", {
+                                      className: "flex justify-between text-sm",
+                                      children: [
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-gray-400 font-medium",
+                                          children: "Total Buy Share",
+                                        }),
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-gray-800 dark:text-gray-300 font-semibold",
+                                          children: (0, N.ao)(
+                                            Number(
+                                              (null == Q ||
+                                              null == (j = Q.userPosition)
+                                                ? void 0
+                                                : j.shares) ||
+                                                ei ||
+                                                0,
+                                            ),
+                                          ),
+                                        }),
+                                      ],
+                                    }),
+                                    (0, s.jsxs)("div", {
+                                      className:
+                                        "flex flex-row justify-between",
+                                      children: [
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-gray-400 font-medium",
+                                          children: "Fee",
+                                        }),
+                                        (0, s.jsxs)("span", {
+                                          className: "dark:text-gray-300",
+                                          children: [
+                                            "$ ",
+                                            0 == el ? "" : "-",
+                                            " ",
+                                            (0, N.ao)(Number(el || 0)),
+                                          ],
+                                        }),
+                                      ],
+                                    }),
+                                    (0, s.jsxs)("div", {
+                                      className:
+                                        "flex flex-row justify-between",
+                                      children: [
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-gray-400 font-medium",
+                                          children: "Receive",
+                                        }),
+                                        (0, s.jsxs)("span", {
+                                          className: "dark:text-gray-300",
+                                          children: [
+                                            "$ ",
+                                            (0, N.ao)(Number(en || 0)),
+                                          ],
+                                        }),
+                                      ],
+                                    }),
+                                  ],
+                                }),
+                              })
+                            : "buy" === E
+                              ? (0, s.jsxs)(s.Fragment, {
+                                  children: [
+                                    O &&
+                                      (0, s.jsxs)("div", {
+                                        className:
+                                          "flex flex-row justify-between",
+                                        children: [
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "text-gray-400 font-medium",
+                                            children: "Available Balance",
+                                          }),
+                                          (0, s.jsxs)("span", {
+                                            className:
+                                              "text-gray-600 dark:text-gray-300 text-sm font-medium",
+                                            children: [
+                                              "$ ",
+                                              (0, N.ao)(Number(W || 0)),
+                                            ],
+                                          }),
+                                        ],
+                                      }),
+                                    (0, s.jsxs)("div", {
+                                      className:
+                                        "flex flex-row justify-between",
+                                      children: [
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-gray-400 font-medium",
+                                          children: "Fee",
+                                        }),
+                                        (0, s.jsxs)("span", {
+                                          className: "dark:text-gray-300",
+                                          children: [
+                                            "$ ",
+                                            (0, N.ao)(
+                                              Number(
+                                                (null == K ? void 0 : K.fee) ||
+                                                  0,
+                                              ),
+                                            ),
+                                          ],
+                                        }),
+                                      ],
+                                    }),
+                                    (0, s.jsxs)("div", {
+                                      className:
+                                        "flex flex-row justify-between",
+                                      children: [
+                                        (0, s.jsx)("span", {
+                                          className:
+                                            "text-gray-400 font-medium",
+                                          children: "Net Cost",
+                                        }),
+                                        (0, s.jsxs)("span", {
+                                          className: "dark:text-gray-300",
+                                          children: [
+                                            "$ ",
+                                            (0, N.ao)(
+                                              Number(
+                                                (null == K
+                                                  ? void 0
+                                                  : K.netCost) || 0,
+                                              ),
+                                            ),
+                                          ],
+                                        }),
+                                      ],
+                                    }),
+                                  ],
+                                })
+                              : (0, s.jsx)(s.Fragment, {
+                                  children: (0, s.jsxs)("div", {
+                                    className: "space-y-2   py-2 ",
+                                    children: [
+                                      (0, s.jsxs)("div", {
+                                        className:
+                                          "flex justify-between text-sm",
+                                        children: [
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "text-gray-400 font-medium",
+                                            children: "Total Buy Share",
+                                          }),
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "text-gray-800 dark:text-gray-300 font-semibold",
+                                            children: (0, N.ao)(
+                                              Number(
+                                                (null == Q ||
+                                                null == (v = Q.userPosition)
+                                                  ? void 0
+                                                  : v.shares) ||
+                                                  ei ||
+                                                  0,
+                                              ),
+                                            ),
+                                          }),
+                                        ],
+                                      }),
+                                      (0, s.jsxs)("div", {
+                                        className:
+                                          "flex flex-row justify-between",
+                                        children: [
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "text-gray-400 font-medium",
+                                            children: "Fee",
+                                          }),
+                                          (0, s.jsxs)("span", {
+                                            className: "dark:text-gray-300",
+                                            children: [
+                                              "$ ",
+                                              (0, N.ao)(
+                                                Number(
+                                                  (null == K
+                                                    ? void 0
+                                                    : K.fee) || 0,
+                                                ),
+                                              ),
+                                            ],
+                                          }),
+                                        ],
+                                      }),
+                                      (0, s.jsxs)("div", {
+                                        className:
+                                          "flex flex-row justify-between",
+                                        children: [
+                                          (0, s.jsx)("span", {
+                                            className:
+                                              "text-gray-400 font-medium",
+                                            children: "Receive",
+                                          }),
+                                          (0, s.jsxs)("span", {
+                                            className: "dark:text-gray-300",
+                                            children: [
+                                              "$",
+                                              " ",
+                                              (0, N.ao)(
+                                                Number(
+                                                  (null == K
+                                                    ? void 0
+                                                    : K.netProceeds) || 0,
+                                                ),
+                                              ),
+                                            ],
+                                          }),
+                                        ],
+                                      }),
+                                    ],
+                                  }),
+                                }),
+                      ],
+                    }),
+                    (0, s.jsxs)("button", {
+                      disabled: eh,
+                      onClick: eo,
+                      className:
+                        "mt-4 py-3 text-lg text-white font-bold ".concat(
+                          eh
+                            ? "bg-[#62bdfa]"
+                            : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer",
+                          "  rounded-xl w-full",
+                        ),
+                      children: [
+                        (0, s.jsx)("span", {
+                          className: "capitalize",
+                          children: E || "--",
+                        }),
+                        " ",
+                        (0, s.jsx)("span", {
+                          className: "text-gray-200",
+                          children: "$",
+                        }),
+                        " ",
+                        (0, s.jsx)("span", {
+                          className: "text-gray-200",
+                          children:
+                            "limit" === G && "buy" === E
+                              ? (0, N.ao)(Number(er || 0), 3)
+                              : "limit" === G && "sell" === E
+                                ? (0, N.ao)(Number(en || 0), 3)
+                                : "buy" == E
+                                  ? (0, N.ao)(
+                                      Number(
+                                        (null == K ? void 0 : K.grossCost) || 0,
+                                      ),
+                                      3,
+                                    )
+                                  : (0, N.ao)(
+                                      Number(
+                                        null == K ? void 0 : K.grossProceeds,
+                                      ) || 0,
+                                      3,
+                                    ),
+                        }),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          }),
+        });
+      }
+    },
+  },
+]);

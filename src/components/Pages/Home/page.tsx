@@ -37,6 +37,37 @@ interface eventSubCategory {
   };
 }
 
+export interface HideFilter {
+  sports: boolean;
+  crypto: boolean;
+  earnings: boolean;
+}
+
+export interface CategoryFilters {
+  frequency: "All" | "Daily" | "Weekly" | "Monthly";
+  status: "Active" | "Resolved";
+  sortBy:
+    | "Newest"
+    | "24h Volume"
+    | "Total Volume"
+    | "Competitive"
+    | "Ending Soon";
+  hideFilter: HideFilter;
+}
+
+export interface CategoryState {
+  category: Record<string, any>;
+  subCategory: any[];
+  eventCategory: any[];
+  selectSubCategory: Record<string, any>;
+  isEvent: boolean;
+  filters: CategoryFilters;
+}
+
+export interface RootStateNewssss {
+  category: CategoryState;
+}
+
 const Home = () => {
   const [loader, setLoader] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -60,20 +91,36 @@ const Home = () => {
   const isEvent = useSelector(
     (state: eventSubCategory) => state?.category?.isEvent,
   );
+  const filtersForCategory = useSelector(
+    (state: RootStateNewssss) => state?.category?.filters,
+  );
+
+  console.log(filtersForCategory, "filtersForCategory");
 
   const userDetails = useSelector((state: RootState) => state?.user);
 
   console.log(isEvent, "isEvent");
 
+  const { search, sortBy, frequency, status, hideFilter } = filtersForCategory;
+  const hiddenCategories = Object.entries(hideFilter)
+    .filter(([_, value]) => value === true)
+    .map(([key]) => key);
+
   const questionAllList = useCallback(async () => {
     setLoader(true);
     try {
       const ids = isEvent ? eventSubCategoryId : selectedSubCategory?.id;
+
       const [response] = await Promise.all([
         commonQuestionFindById(
           categoryDetails?.id || 1,
           userDetails?.user?.id as string,
           ids,
+          sortBy,
+          frequency,
+          status,
+          search,
+          [], // ✅ NOW hideFilter passed
         ),
         delay(1000),
       ]);
@@ -93,6 +140,12 @@ const Home = () => {
     userDetails?.user?.id,
     selectedSubCategory?.id,
     eventSubCategoryId,
+    isEvent,
+    sortBy,
+    frequency,
+    status,
+    search,
+    hiddenCategories.join(","), // ✅ important
   ]);
 
   useEffect(() => {
@@ -137,7 +190,7 @@ const Home = () => {
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-36" : "lg:mt-36"}`}
+        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-64" : "lg:mt-56"}`}
       >
         <div
           className={
@@ -221,9 +274,9 @@ const Home = () => {
                   </span>
                   <span className="cursor-pointer">
                     {" "}
-                    {/* <FaRegBookmark
+                    <FaRegBookmark
                       onClick={() => bookMarkUnBookMark(row?.id)}
-                    /> */}
+                    />
                   </span>
                 </div>
               </div>

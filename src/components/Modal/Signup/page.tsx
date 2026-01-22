@@ -16,7 +16,7 @@ export default function ModalSignup({ isOpen, onClose, children }: ModalProps) {
       backdrop-blur-sm z-50 transition-all duration-300"
     >
       <div
-        className="bg-white dark:bg-[#0f172a] p-6 rounded-xl shadow-lg 
+        className="bg-white dark:bg-[#1D293D] p-6 rounded-xl shadow-lg 
         w-[100%] max-w-[320px] lg:max-w-[450px] relative"
       >
         <button

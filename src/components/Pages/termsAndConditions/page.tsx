@@ -3,7 +3,7 @@ import React from "react";
 export default function TermsAndConditions() {
   localStorage.setItem("isCategory", "0");
   return (
-    <div className="dark:bg-[#0f172a]  bg-white text-gray-800 dark:text-gray-200 min-h-screen">
+    <div className="dark:bg-[#1D293D]  bg-white text-gray-800 dark:text-gray-200 min-h-screen">
       <div className="max-w-[1268px] mx-auto px-4 pb-16 mt-40 lg:mt-48">
         <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">
           Terms & Conditions

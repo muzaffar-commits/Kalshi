@@ -1,6 +1,6 @@
 const MarketSkeleton = () => {
   return (
-    <div className="dark:bg-[#0f172a] bg-white min-h-screen pt-24 lg:pt-36">
+    <div className="dark:bg-[#1D293D] bg-white min-h-screen pt-24 lg:pt-36">
       <div className="max-w-[1268px] mx-auto px-4">
         <div className="flex gap-4 mb-6 animate-pulse">
           <div className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />

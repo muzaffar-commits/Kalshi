@@ -432,7 +432,7 @@ export default function BuySell({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className="bg-white dark:bg-[#0f172a] !border !border-gray-700 p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
+          className="bg-white dark:bg-[#1D293D] !border !border-gray-700 p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
         >
           {/* Close */}
           <button

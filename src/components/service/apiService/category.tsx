@@ -18,14 +18,29 @@ export const commonQuestionFindById = async (
   id: number,
   userId: string,
   subCategoryId: number | null,
+  sortBy: string,
+  frequency: string,
+  status: string,
+  search: string,
+  excludeCategories: [],
 ) => {
   // ?categoryId=
   try {
-    const response = await apiInstance.get(
-      `${API_URLs.commonQuestionFindById}/?categoryId=${id}${
-        userId ? `&userId=${userId}` : ""
-      }${subCategoryId ? `&eventSectionId=${subCategoryId}` : ""}`,
-    );
+    const response = await apiInstance.get(API_URLs.commonQuestionFindById, {
+      params: {
+        categoryId: id,
+        ...(userId && { userId }),
+        ...(subCategoryId && { eventSectionId: subCategoryId }),
+        ...(sortBy && { sortBy }),
+        ...(frequency && { frequency }),
+        ...(status && { status: status == "Active" ? "OPEN" : "RESOLVED" }),
+        ...(search && { search }),
+        ...(excludeCategories?.length > 0 && {
+          excludeCategories: excludeCategories.join(","), // IMPORTANT
+        }),
+      },
+    });
+
     return response?.data;
   } catch (error: unknown) {
     return {

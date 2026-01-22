@@ -37,6 +37,7 @@ export const API_URLs = {
   ordersTpAndSl: "/orders/submit-tpsl",
   subCategory: "/common/get-sub-catagory",
   questionBookMark: "/user/question-bookmark-or-unbookmark",
+  userCommentLikeOrUnlike: "/user/comment-like-or-unlike",
 };
 
 // images

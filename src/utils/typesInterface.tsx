@@ -160,11 +160,33 @@ export interface PostDetails {
   User?: UserPost;
 }
 
+export interface IUser {
+  id: number;
+  username: string;
+  image_url?: string;
+}
+export interface IReply {
+  id: number;
+  length: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  User: IUser;
+}
+export interface IComment {
+  id: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  User: IUser;
+  replies: IReply[];
+}
 export interface CommentInterface {
   id: number;
   content: string;
   updatedAt: string;
   User?: UserPost;
+  replies: IReply[];
 }
 
 export interface TabPanelProps {

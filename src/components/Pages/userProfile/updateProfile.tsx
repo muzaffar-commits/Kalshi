@@ -140,7 +140,7 @@ export default function UpdateProfile({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className=" dark:bg-[#0f172a] w-full max-w-[380px] lg:max-w-[520px] rounded-2xl p-6 lg:p-8 shadow-xl outline-none"
+          className=" dark:bg-[#1D293D] w-full max-w-[380px] lg:max-w-[520px] rounded-2xl p-6 lg:p-8 shadow-xl outline-none"
         >
           {/* HEADER */}
           <div className="flex justify-between items-center mb-6">

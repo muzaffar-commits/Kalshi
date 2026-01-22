@@ -49,7 +49,7 @@ export default function MobileMenu({
         {open ? <FaTimes /> : <FaBars />}
       </button>
       <ul
-        className={`fixed top-0 left-0 h-full w-64 bg-[#0f172a] p-5 z-50
+        className={`fixed top-0 left-0 h-full w-64 bg-[#1D293D] p-5 z-50
         transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full"}
         md:static md:translate-x-0 md:w-auto md:bg-transparent`}

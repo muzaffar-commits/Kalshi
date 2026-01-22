@@ -73,7 +73,7 @@ const Ideas = () => {
   };
   return (
     <>
-      <div className="dark:bg-[#0f172a] mt-40">
+      <div className="dark:bg-[#1D293D] mt-40">
         <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 mt-36 lg:mt-28">
           <div className="lg:flex">
             <div className="md:w-1/4 w-full">

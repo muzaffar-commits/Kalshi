@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-white dark:bg-[#0f172a]">
+    <html lang="en" className="bg-white dark:bg-[#1D293D]">
       <body
         className={`
           bg-gradient-to-b

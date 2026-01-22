@@ -87,7 +87,7 @@ const UserProfile = () => {
 
   return (
     <>
-      <div className="dark:bg-[#0f172a] mt-44">
+      <div className="dark:bg-[#1D293D] mt-44">
         <div className="max-w-[800px] xl:max-w-[65%] mx-auto px-4 mt-24 lg:mt-28">
           <div className="md:flex justify-between">
             <div className="md:w-3/4 gap-3 flex md:mb-0 mb-4">

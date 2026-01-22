@@ -414,7 +414,7 @@ export default function BuySell({
 
   return (
     <>
-      <div className="bg-white dark:bg-[#0f172a] mt-12 border border-gray-200 dark:border-gray-700 p-2 rounded-xl overflow-hidden shadow-lg w-full outline-none">
+      <div className="bg-white dark:bg-[#1D293D] mt-12 border border-gray-200 dark:border-gray-700 p-2 rounded-xl overflow-hidden shadow-lg w-full outline-none">
         <div className="flex flex-row gap-2 w-full justify-between mb-0">
           <Image
             src={BlockImg}

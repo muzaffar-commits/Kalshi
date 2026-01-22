@@ -145,7 +145,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                 return (
                   <div
                     key={i}
-                    className="bg-[#0f172a] border border-gray-800 rounded-xl p-5 
+                    className="bg-[#1D293D] border border-gray-800 rounded-xl p-5 
                  hover:border-gray-700 transition-all duration-200"
                   >
                     <div className="flex relative flex-col sm:flex-row sm:justify-between sm:items-start gap-5">
@@ -249,7 +249,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
               "text-white",
             ],
           ].map(([label, val, color], i) => (
-            <div key={i} className="bg-[#0f172a] p-3 rounded-lg">
+            <div key={i} className="bg-[#1D293D] p-3 rounded-lg">
               <p className="text-xs text-gray-400">{label}</p>
               <p className={`text-lg font-semibold ${color}`}>{val}</p>
             </div>
@@ -258,7 +258,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={2}>
-        <div className="bg-[#0f172a] mt-4 border border-gray-800 rounded-lg p-5">
+        <div className="bg-[#1D293D] mt-4 border border-gray-800 rounded-lg p-5">
           <h3 className="text-base sm:text-lg font-semibold text-white mb-2">
             Create Your Own Prediction Market
           </h3>

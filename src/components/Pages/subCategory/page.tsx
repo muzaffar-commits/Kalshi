@@ -47,7 +47,7 @@ export default function SubCategory({
   };
   return (
     <>
-      <div className="dark:bg-[#0f172a]  bg-white text-gray-800 dark:text-gray-200 min-h-screen">
+      <div className="dark:bg-[#1D293D]  bg-white text-gray-800 dark:text-gray-200 min-h-screen">
         <div className="max-w-[1268px] mx-auto px-4 pb-16  ">
           <div className="md:flex justify-between">
             <div className="md:w-[12%]  md:sticky md:top-28 h-fit">

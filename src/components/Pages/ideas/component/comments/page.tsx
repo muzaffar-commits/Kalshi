@@ -20,6 +20,7 @@ import { MdSend } from "react-icons/md";
 import toast from "react-hot-toast";
 import {
   CommentInterface,
+  IReply,
   PostFeeBack,
   PostMetadata,
 } from "@/utils/typesInterface";
@@ -317,7 +318,6 @@ export default function CommentPage({
                                     "
                   >
                     <LuUpload />
-                    {/* <LuUpload onClick={() => handleShareNow(row)} /> */}
                   </span>
                 </div>
               </div>
@@ -327,7 +327,7 @@ export default function CommentPage({
         <div className="relative  mx-10">
           <div
             className="
-                    relative rounded-xl  border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f172a]
+                    relative rounded-xl  border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D293D]
                     shadow-sm ideasScrollbarHide focus-within:ring-2 focus-within:ring-blue-500/30 transition
                 "
           >
@@ -497,7 +497,7 @@ export default function CommentPage({
                     </div>
                     {row?.id == subCommentData?.id &&
                       subRepliesData == null && (
-                        <div className="mt-2 w-full flex items-center gap-3 bg-[#0f172a] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
+                        <div className="mt-2 w-full flex items-center gap-3 bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
                           <input
                             type="text"
@@ -521,7 +521,7 @@ export default function CommentPage({
                       )}
                     <div className="pb-2">
                       {row?.replies?.length > 0 &&
-                        row?.replies?.map((replies: any, index: any) => (
+                        row?.replies?.map((replies: IReply, index: any) => (
                           <div>
                             <div className="md:flex  pt-4  items-start gap-4 ">
                               <div className="h-11 w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-500">
@@ -571,7 +571,7 @@ export default function CommentPage({
                             </div>
                             {row?.id == subCommentData?.id &&
                               replies?.id == subRepliesData?.id && (
-                                <div className="mt-2 w-full flex items-center gap-3 bg-[#0f172a] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
+                                <div className="mt-2 w-full flex items-center gap-3 bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
                                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
                                   <input
                                     type="text"

@@ -486,7 +486,7 @@ const Details = () => {
       {isLoader ? (
         <MarketSkeleton />
       ) : (
-        <div className="dark:bg-[#0f172a]">
+        <div className="dark:bg-[#1D293D]">
           <div className="max-w-[1268px] mx-auto px-4 mt-40">
             <div className="container mx-auto pb-6">
               <div className="md:flex lg:items-center mb-6">

@@ -4,33 +4,33 @@ import Image from "next/image";
 const Footer = () => {
   return (
     <>
-      <div className="pt-16 lg:pt-30 pb-10 dark:bg-[#0f172a]">
+      <div className="pt-16 lg:pt-30 pb-10 dark:bg-[#1D293D]">
         <div className="max-w-[1268px] mx-auto px-4 mt-4">
           <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
             <div className="col-span-2 md:col-span-1">
               <a href="#">
                 <div className="flex items-center space-x-2 mb-1">
-              <div className="hidden md:block text-xl font-bold">
-  {/* Light mode logo */}
-  <Image
-    src="/img/opinionLogo-light.png"
-    alt="Opinion logo"
-    width={60}
-    height={60}
-    className="h-auto block dark:hidden"
-    priority
-  />
+                  <div className="hidden md:block text-xl font-bold">
+                    {/* Light mode logo */}
+                    <Image
+                      src="/img/opinionLogo-light.png"
+                      alt="Opinion logo"
+                      width={60}
+                      height={60}
+                      className="h-auto block dark:hidden"
+                      priority
+                    />
 
-  {/* Dark mode logo */}
-  <Image
-    src="/img/opinionLogo-light.png"
-    alt="Opinion logo"
-    width={60}
-    height={60}
-    className="h-auto hidden dark:block"
-    priority
-  />
-</div>
+                    {/* Dark mode logo */}
+                    <Image
+                      src="/img/opinionLogo-light.png"
+                      alt="Opinion logo"
+                      width={60}
+                      height={60}
+                      className="h-auto hidden dark:block"
+                      priority
+                    />
+                  </div>
                 </div>
               </a>
               <hr className="my-5 border-b dark:border-gray-600 border-gray-300" />
@@ -292,7 +292,11 @@ const Footer = () => {
           </div>
           <hr className="my-5 border-t-0 border-b dark:border-[#c9ab77]/80 border-gray-300 h-2" />
           <p className="text-center text-[13px] text-[#868e98]">
-            &copy;2025 <span className="font-bold dark:text-[#c7ac77]/80">Opinion Kings</span>. All rights reserved.
+            &copy;2025{" "}
+            <span className="font-bold dark:text-[#c7ac77]/80">
+              Opinion Kings
+            </span>
+            . All rights reserved.
           </p>
         </div>
       </div>
