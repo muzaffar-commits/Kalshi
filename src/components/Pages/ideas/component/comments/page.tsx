@@ -497,14 +497,14 @@ export default function CommentPage({
                     </div>
                     {row?.id == subCommentData?.id &&
                       subRepliesData == null && (
-                        <div className="mt-2 w-full flex items-center gap-3 bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
+                        <div className="mt-2 w-full flex items-center gap-3 dark:bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
                           <input
                             type="text"
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             placeholder={`Reply to ${subCommentData?.User?.username || "--"}`}
-                            className="flex-1 bg-transparent outline-none text-sm text-gray-200 placeholder-gray-500"
+                            className="flex-1 bg-transparent outline-none text-sm placeholder-gray-300 text-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
                           />
                           <button
                             disabled={replyText.trim().length < 2}
@@ -571,7 +571,7 @@ export default function CommentPage({
                             </div>
                             {row?.id == subCommentData?.id &&
                               replies?.id == subRepliesData?.id && (
-                                <div className="mt-2 w-full flex items-center gap-3 bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
+                                <div className="mt-2 w-full flex items-center gap-3 dark:bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
                                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
                                   <input
                                     type="text"
@@ -580,7 +580,7 @@ export default function CommentPage({
                                       setReplyText(e.target.value)
                                     }
                                     placeholder={`Reply to ${subCommentData?.User?.username || "--"}`}
-                                    className="flex-1 bg-transparent outline-none text-sm text-gray-200 placeholder-gray-500"
+                                    className="flex-1 bg-transparent outline-none text-sm placeholder-gray-300 text-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
                                   />
                                   <button
                                     disabled={replyText.trim().length < 2}

@@ -11,6 +11,7 @@ import {
 } from "@/components/service/apiService/category";
 import {
   changeFilter,
+  changeFilterQuestion,
   changeIsEvent,
   changeWatch,
   resetFilters,
@@ -19,16 +20,14 @@ import {
   saveSelectSubCategory,
   saveSubCategory,
 } from "@/components/store/slice/category";
-import ThemeToggle from "@/components/ThemeToggle";
 import { usePathname } from "next/navigation";
-import CustomMenu from "@/components/common/CustomMenu";
 import { userBalance } from "@/components/service/apiService/user";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaBookmark, FaSearch } from "react-icons/fa";
 import { CategorySkeleton } from "@/utils/customSkeleton";
 import { delay } from "@/utils/Content";
 import { headerRootState, isWatchListInterface } from "@/utils/typesInterface";
-import { FiBookmark, FiChevronDown, FiSearch, FiSliders } from "react-icons/fi";
+import { FiBookmark, FiSearch, FiSliders } from "react-icons/fi";
 import { CustomToggle } from "@/components/common/CustomToggle";
 import { SlArrowDown } from "react-icons/sl";
 import ProfileDropdown from "@/components/profileDropdown/page";
@@ -74,14 +73,10 @@ const Header = () => {
   const [isCategory, setIsCategory] = useState(false);
   const [eventCategory, setEventCategory] = useState([]);
   const [subCategoryId, setSubCategoryId] = useState<number | null>(null);
-  const [openFrequency, setOpenFrequency] = useState(false);
   const [frequency, setFrequency] = useState("all");
-  const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState("Active");
-  const [openSort, setOpenSort] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isFilter, setIsFilter] = useState(false);
   const [hideFilter, setHideFilter] = useState({
     sports: false,
     crypto: false,
@@ -92,6 +87,10 @@ const Header = () => {
   const isWatchList = useSelector(
     (state: isWatchListInterface) => state?.category?.isWatchList,
   );
+  const isFilterQuestion = useSelector(
+    (state: isWatchListInterface) => state?.category?.isFilterQuestion,
+  );
+
   const dispatch = useDispatch();
   const handleSignup = () => {
     setIsLogin(false);
@@ -101,6 +100,8 @@ const Header = () => {
     setIsLogin(true);
     setIsOpen(true);
   };
+
+  console.log(user, "user==========");
 
   const categoryAllList = useCallback(async () => {
     setIsCategory(true);
@@ -128,14 +129,14 @@ const Header = () => {
     categoryAllList();
   }, [categoryAllList]);
 
-  const getSubCategory = async () => {
+  const getSubCategory = useCallback(async () => {
     try {
-      const response = await fetchSubCategory(Number(categoryId));
+      const response = await fetchSubCategory(categoryId);
 
       if (response.success && !response?.data?.isMultiple) {
         const subCategoryList = response?.data?.category?.event_section || [];
-        setEventCategory(subCategoryList);
 
+        setEventCategory(subCategoryList);
         dispatch(saveSelectSubCategory(null));
         dispatch(saveEventCategory(subCategoryList));
         dispatch(changeIsEvent(false));
@@ -143,10 +144,10 @@ const Header = () => {
       } else if (response.success && response?.data?.isMultiple) {
         const subCategoryResponse =
           response?.data?.category?.sub_category || [];
+
         setEventCategory([]);
         dispatch(changeIsEvent(true));
         dispatch(saveSelectSubCategory(null));
-
         dispatch(saveSubCategory(subCategoryResponse));
         dispatch(saveEventCategory([]));
       } else {
@@ -158,16 +159,17 @@ const Header = () => {
       }
     } catch {
       dispatch(changeIsEvent(false));
-
       dispatch(saveSelectSubCategory(null));
       setEventCategory([]);
       dispatch(saveSubCategory([]));
       dispatch(saveEventCategory([]));
     }
-  };
+  }, [dispatch, categoryId]);
+
   useEffect(() => {
     getSubCategory();
-  }, [categoryId]);
+  }, [getSubCategory, categoryId]);
+
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const getUserBalance = async () => {
@@ -190,7 +192,7 @@ const Header = () => {
   }, [token]);
 
   const handleFilter = () => {
-    setIsFilter(!isFilter);
+    dispatch(changeFilterQuestion(!isFilterQuestion));
   };
 
   const handleCleanFilter = () => {
@@ -200,9 +202,9 @@ const Header = () => {
       crypto: false,
       earnings: false,
     });
-    setFrequency("All");
-    setStatus("Active");
-    setSortBy("Newest");
+    setFrequency("all");
+    setStatus("OPEN");
+    setSortBy("newest");
   };
   const toggleFilter = (key: keyof typeof hideFilter) => {
     setHideFilter((prev) => {
@@ -261,38 +263,44 @@ const Header = () => {
 
               {/* RIGHT: Actions */}
               <div className="flex items-center gap-5 shrink-0">
-                <div className="text-center">
-                  <div className="dark:text-gray-200 text-gray-950 text-sm">
-                    Portfolio
+                {/* {user?.isAuth && (
+                  <div className="text-center">
+                    <div className="dark:text-gray-200 text-gray-950 text-sm">
+                      Portfolio
+                    </div>
+                    <div className="font-semibold text-green-600">$0.00</div>
                   </div>
-                  <div className="font-semibold text-green-600">$0.00</div>
-                </div>
+                )}
 
-                <div className="text-center">
-                  <div className="dark:text-gray-200 text-gray-950 text-sm">
-                    Cash
+                {user?.isAuth && (
+                  <div className="text-center">
+                    <div className="dark:text-gray-200 text-gray-950 text-sm">
+                      Cash
+                    </div>
+                    <div className="font-semibold text-green-600">$0.00</div>
                   </div>
-                  <div className="font-semibold text-green-600">$0.00</div>
-                </div>
+                )} */}
 
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm">
-                  Deposit
-                </button>
+                {user?.isAuth && (
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm">
+                    Deposit
+                  </button>
+                )}
 
-                <NotificationBell />
-                <ProfileDropdown />
+                {user?.isAuth && <NotificationBell />}
+                {user?.isAuth && <ProfileDropdown />}
 
                 {!user?.isAuth && (
                   <>
                     <button
                       onClick={handleLogin}
-                      className="px-4 py-2 dark:text-white text-black/80 font-semibold hover:bg-blue-500/40 rounded-md"
+                      className="px-4 py-1.5 cursor-pointer border border-sky-500 dark:text-white text-black/80 font-semibold hover:bg-blue-500/40 rounded-md"
                     >
                       Log In
                     </button>
                     <button
                       onClick={handleSignup}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
+                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
                     >
                       Sign Up
                     </button>
@@ -302,7 +310,7 @@ const Header = () => {
             </div>
 
             {pathname === "/" && (
-              <nav className="border-b pb-2 dark:border-gray-800 border-gray-300 w-full hidden lg:block">
+              <nav className="border-b pb-2 dark:border-gray-600 border-gray-300 w-full hidden lg:block">
                 <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
                   {isCategory ? (
                     <CategorySkeleton />
@@ -367,7 +375,12 @@ const Header = () => {
                     </button>
                     <button
                       onClick={() => dispatch(changeWatch(!isWatchList))}
-                      className={`w-10 h-10 flex items-center cursor-pointer justify-center hover:bg-gray-300 rounded-xl dark:bg-gray-700 bg-gray-100 hover:dark:bg-[#273244] transition ${isWatchList ? "bg-sky-100 hover:bg-sky-200 dark:bg-sky-100/10 " : ""}`}
+                      className={`w-10 h-10 flex items-center cursor-pointer justify-center rounded-xl
+                        dark:bg-gray-700 bg-gray-100
+                        hover:bg-gray-300 hover:dark:bg-[#273244]
+                        transition-all duration-300
+                        ${isWatchList ? "bg-sky-100 dark:bg-sky-100/10" : ""}
+                      `}
                     >
                       {isWatchList ? (
                         <FaBookmark className="text-sky-500 text-lg dark:text-gray-200 dark:text-sky-500" />
@@ -378,182 +391,250 @@ const Header = () => {
                   </div>
 
                   {pathname === "/" && eventCategory?.length > 0 && (
-                    <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
-                      <li>
-                        <div
-                          onClick={() => {
-                            dispatch(saveSelectSubCategory(null));
-                            setSubCategoryId(null);
-                          }}
-                          className={` ${
-                            subCategoryId == null
-                              ? "text-black dark:text-[#c7ac77]"
-                              : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
-                          } font-semibold flex items-center`}
-                        >
-                          <span>
-                            <FaArrowTrendUp className="mr-1" />
-                          </span>
-                          All
-                        </div>
-                      </li>
-                      {eventCategory?.map((row: Category, index: number) => (
-                        <li key={index}>
+                    <div
+                      className={`
+                  overflow-hidden
+                  transition-all duration-1000 ease-in-out
+                  ${isWatchList ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}
+                `}
+                    >
+                      <ul
+                        className={`
+                        flex justify-start gap-10 w-full px-4 py-2 text-[15px]
+                        transform transition-all duration-700 ease-in-out
+                        ${isWatchList ? "translate-y-0" : "-translate-y-4"}
+                      `}
+                      >
+                        <li>
                           <div
                             onClick={() => {
-                              dispatch(saveSelectSubCategory(row));
-                              setSubCategoryId(row?.id);
+                              dispatch(saveSelectSubCategory(null));
+                              setSubCategoryId(null);
                             }}
                             className={` ${
-                              row?.id == subCategoryId
+                              subCategoryId == null
                                 ? "text-black dark:text-[#c7ac77]"
                                 : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
                             } font-semibold flex items-center`}
                           >
-                            {row?.name}
+                            <span>
+                              <FaArrowTrendUp className="mr-1" />
+                            </span>
+                            All
                           </div>
                         </li>
-                      ))}
-                    </ul>
+                        {eventCategory?.map((row: Category, index: number) => (
+                          <li key={index}>
+                            <div
+                              onClick={() => {
+                                dispatch(saveSelectSubCategory(row));
+                                setSubCategoryId(row?.id);
+                              }}
+                              className={` ${
+                                row?.id == subCategoryId
+                                  ? "text-black dark:text-[#c7ac77]"
+                                  : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
+                              } font-semibold flex items-center`}
+                            >
+                              {row?.name}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </nav>
 
-                {isFilter && (
+                {isFilterQuestion && (
                   <div className="w-full flex flex-wrap items-center gap-2 bg-transparent rounded-xl">
-                    <div className="relative inline-block">
+                    <div className="relative inline-block group">
                       <button
-                        onClick={() => setOpenSort((prev) => !prev)}
-                        className="flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-gray-700 bg-gray-100 text-xs dark:text-gray-300 text-gray-700 hover:bg-[#273244]/10 transition"
+                        className="
+      flex items-center gap-2 px-4 py-1.5 rounded-full
+      dark:bg-gray-700 bg-gray-100
+      text-xs dark:text-gray-300 text-gray-700
+      transition-colors duration-200 ease-out
+      group-hover:dark:bg-gray-600
+      group-hover:bg-gray-200
+    "
                       >
                         <span className="text-gray-400 text-xs">Sort by:</span>
+
                         <span className="dark:text-white text-black font-medium">
                           {formatLabel(sortBy)}
                         </span>
+
                         <SlArrowDown
                           size={10}
-                          className={`transition-transform ${
-                            openSort ? "rotate-180" : ""
-                          }`}
+                          className={`
+        transition-transform duration-200 ease-out
+        group-hover:rotate-180
+      `}
                         />
                       </button>
 
-                      {openSort && (
-                        <div className="absolute left-0 overflow-hidden mt-2 w-44 rounded-lg bg-gray-100 dark:bg-[#1D293D] border border-gray-200 dark:border-gray-700 shadow-lg z-50">
-                          {sortOptions.map((item) => (
-                            <button
-                              key={item}
-                              onClick={() => {
-                                setSortBy(item);
-                                dispatch(
-                                  changeFilter({
-                                    key: "sortBy",
-                                    value: item,
-                                  }),
-                                );
-                                setOpenSort(false);
-                              }}
-                              className={`w-full overflow-hidden text-left px-4 py-2 text-xs transition
-                            ${
-                              sortBy === item
-                                ? "dark:bg-gray-600 bg-gray-300 text-black dark:text-white"
-                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937] "
-                            }`}
-                            >
-                              {formatLabel(item)}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                      <div
+                        className={`
+      absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
+      bg-gray-100 dark:bg-[#1D293D]
+      border border-gray-200 dark:border-gray-700
+      shadow-lg z-50
+      transform-gpu
+      transition-all duration-200 ease-out "opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0  group-hover:visible
+    `}
+                      >
+                        {sortOptions.map((item) => (
+                          <button
+                            key={item}
+                            onClick={() => {
+                              setSortBy(item);
+                              dispatch(
+                                changeFilter({
+                                  key: "sortBy",
+                                  value: item,
+                                }),
+                              );
+                            }}
+                            className={`
+          w-full text-left px-4 py-2 text-xs
+          transition-colors duration-150 ease-out text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]
+        `}
+                          >
+                            {formatLabel(item)}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
-                    <div className="relative inline-block">
+                    <div className="relative inline-block group">
+                      {/* BUTTON */}
                       <button
-                        onClick={() => setOpenFrequency((prev) => !prev)}
-                        className="flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-gray-700 bg-gray-100 text-xs dark:text-gray-300 text-gray-700 hover:bg-[#273244]/10 transition"
+                        className="
+      flex items-center gap-2 px-4 py-1.5 rounded-full
+      dark:bg-gray-700 bg-gray-100
+      text-xs dark:text-gray-300 text-gray-700
+      transition-colors duration-200 ease-out
+      group-hover:dark:bg-gray-600
+      group-hover:bg-gray-200
+    "
                       >
                         <span className="text-gray-400">Frequency:</span>
+
                         <span className="dark:text-gray-300 text-gray-700 w-10 font-medium">
                           {formatLabel(frequency)}
                         </span>
+
                         <SlArrowDown
                           size={10}
-                          className={`transition ${openFrequency ? "rotate-180" : ""}`}
+                          className={`
+        transition-transform duration-200 ease-out group-hover:rotate-180
+      `}
                         />
                       </button>
-                      {openFrequency && (
-                        <div className="absolute left-0 overflow-hidden mt-2 w-44 rounded-lg bg-gray-100 dark:bg-[#1D293D] border border-gray-200 dark:border-gray-700 shadow-lg z-50">
-                          {frequencies.map((item) => (
-                            <button
-                              key={item}
-                              onClick={() => {
-                                setFrequency(item);
-                                dispatch(
-                                  changeFilter({
-                                    key: "frequency",
-                                    value: item,
-                                  }),
-                                );
-                                setOpenFrequency(false);
-                              }}
-                              className={`w-full text-left px-4 py-2 text-xs transition
-            ${
-              frequency === item
-                ? "dark:bg-gray-600 bg-gray-300 text-black dark:text-white"
-                : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937] "
-            }`}
-                            >
-                              {formatLabel(item)}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+
+                      {/* DROPDOWN */}
+                      <div
+                        className={`
+      absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
+      bg-gray-100 dark:bg-[#1D293D]
+      border border-gray-200 dark:border-gray-700
+      shadow-lg z-50
+      transform-gpu
+      transition-all duration-200 ease-out "opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:visible
+    `}
+                      >
+                        {frequencies.map((item) => (
+                          <button
+                            key={item}
+                            onClick={() => {
+                              setFrequency(item);
+                              dispatch(
+                                changeFilter({
+                                  key: "frequency",
+                                  value: item,
+                                }),
+                              );
+                            }}
+                            className={`
+          w-full text-left px-4 py-2 text-xs
+          transition-colors duration-150 ease-out
+          ${
+            frequency === item
+              ? "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
+              : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]"
+          }
+        `}
+                          >
+                            {formatLabel(item)}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
-                    <div className="relative inline-block">
-                      {/* Status Button */}
+                    <div className="relative inline-block group">
+                      {/* BUTTON */}
                       <button
-                        onClick={() => setOpenStatus((prev) => !prev)}
-                        className="flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-gray-700 bg-gray-100 text-xs dark:text-gray-300 text-gray-700 hover:bg-[#273244]/10 transition"
+                        className="
+      flex items-center gap-2 px-4 py-1.5 rounded-full
+      dark:bg-gray-700 bg-gray-100
+      text-xs dark:text-gray-300 text-gray-700
+      transition-colors duration-200 ease-out
+      group-hover:dark:bg-gray-600
+      group-hover:bg-gray-200
+    "
                       >
                         <span className="text-gray-400">Status:</span>
-                        <span className="dark:text-gray-300 text-gray-700  font-medium">
+
+                        <span className="dark:text-gray-300 text-gray-700 font-medium">
                           {formatLabel(status)}
                         </span>
+
                         <SlArrowDown
                           size={10}
-                          className={`transition ${openStatus ? "rotate-180" : ""}`}
+                          className={` transition-transform duration-200 ease-out group-hover:rotate-180`}
                         />
                       </button>
 
-                      {/* Dropdown */}
-                      {openStatus && (
-                        <div className="absolute left-0 overflow-hidden mt-2 w-44 rounded-lg bg-gray-100 dark:bg-[#1D293D] border border-gray-200 dark:border-gray-700 shadow-lg z-50">
-                          {statusList.map((item) => (
-                            <button
-                              key={item}
-                              onClick={() => {
-                                setStatus(item);
-                                dispatch(
-                                  changeFilter({
-                                    key: "status",
-                                    value: item,
-                                  }),
-                                );
-                                setOpenStatus(false);
-                              }}
-                              className={`w-full text-left px-4 overflow-hidden py-2 text-xs transition
-            ${
-              status === item
-                ? "dark:bg-gray-600 bg-gray-300 text-black dark:text-white"
-                : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937] "
-            }`}
-                            >
-                              {formatLabel(item)}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                      {/* DROPDOWN */}
+                      <div
+                        className={`
+      absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
+      bg-gray-100 dark:bg-[#1D293D]
+      border border-gray-200 dark:border-gray-700
+      shadow-lg z-50
+      transform-gpu
+      transition-all duration-200 ease-out opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100  group-hover:scale-100  group-hover:translate-y-0  group-hover:visible
+      
+    `}
+                      >
+                        {statusList.map((item) => (
+                          <button
+                            key={item}
+                            onClick={() => {
+                              setStatus(item);
+                              dispatch(
+                                changeFilter({
+                                  key: "status",
+                                  value: item,
+                                }),
+                              );
+                            }}
+                            className={`
+          w-full text-left px-4 py-2 text-xs
+          transition-colors duration-150 ease-out
+          ${
+            status === item
+              ? "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
+              : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]"
+          }
+        `}
+                          >
+                            {formatLabel(item)}
+                          </button>
+                        ))}
+                      </div>
                     </div>
+
                     <CustomToggle
                       label="Hide sports?"
                       checked={hideFilter.sports}
@@ -605,8 +686,8 @@ const Header = () => {
 
             {/* Right: Notification + Profile */}
             <div className="flex items-center gap-4">
-              <NotificationBell />
-              <ProfileDropdown />
+              {user?.isAuth && <NotificationBell />}
+              {user?.isAuth && <ProfileDropdown />}
             </div>
           </div>
 

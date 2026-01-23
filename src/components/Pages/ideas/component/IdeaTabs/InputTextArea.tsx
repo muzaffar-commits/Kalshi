@@ -30,17 +30,17 @@ function highlightText(text: string) {
       // URLs first (important) convert and highlight
       .replace(
         urlRegex,
-        `$1<span class="text-blue-500 text-sm dark:text-blue-400 underline font-medium">$2</span>`
+        `$1<span class="text-blue-500 text-sm dark:text-blue-400 underline font-medium">$2</span>`,
       )
       // @mentions convert for mention user to highlight
       .replace(
         mentionRegex,
-        `$1<span class="text-emerald-500 text-sm dark:text-emerald-400 font-medium">$2</span>`
+        `$1<span class="text-emerald-500 text-sm dark:text-emerald-400 font-medium">$2</span>`,
       )
       // #hashtags highlight
       .replace(
         hashRegex,
-        `$1<span class="text-sky-500 text-sm dark:text-sky-400 font-medium">$2</span>`
+        `$1<span class="text-sky-500 text-sm dark:text-sky-400 font-medium">$2</span>`,
       )
   );
 }

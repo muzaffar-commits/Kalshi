@@ -31,7 +31,9 @@ import {
 import { delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
 import StackedAreaChart from "./component/realTimeChart";
-import UserPosts from "./component/userPosts";
+import IdeasActivityTabs from "./component/ideaComment";
+import { ArrowRight } from "lucide-react";
+// import UserPosts from "./component/userPosts";
 
 type OrderSide = "BUY" | "SELL";
 interface OrderFlowItem {
@@ -55,10 +57,10 @@ interface RootState {
   };
 }
 
-type SocketOption = {
+interface SocketOption {
   optionId: number;
   price: number;
-};
+}
 
 const Details = () => {
   const [orderFlow, setOrderFlow] = useState<OrderFlow>({
@@ -88,7 +90,7 @@ const Details = () => {
   const [deleteResponse, setDeleteResponse] = useState(false);
   const [currentVolume, setCurrentVolume] = useState(0);
   const [timeInterval, setTimeInterval] = useState("all");
-  const [orderPage, setOrderPage] = useState<string | null>("1");
+  // const [orderPage, setOrderPage] = useState<string | null>("1");
   const [selectedOrderDetails, setSelectedOrderDetails] =
     useState<CancelOrders | null>(null);
 
@@ -156,7 +158,7 @@ const Details = () => {
         if (!prev.series?.length) return prev;
 
         const updatedSeries = prev.series.map((series: any) => {
-          const livePrice = payload?.options?.find(
+          const livePrice: any = payload?.options?.find(
             (p: SocketOption) => p?.optionId === series?.optionId,
           );
           if (!livePrice) return series;
@@ -354,9 +356,9 @@ const Details = () => {
 
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);
-        setOrderPage(response?.data?.nextOffset);
+        // setOrderPage(response?.data?.nextOffset);
       } else {
-        setOrderPage(null);
+        // setOrderPage(null);
         setOrderData([]);
       }
     } catch {
@@ -421,15 +423,21 @@ const Details = () => {
   const getBgClass = (price: number) => {
     const intensity = getIntensity(price);
 
-    if (intensity > 0.8) return "border !border-green-600/50 ";
+    // 🔥 Very high (strong signal)
+    if (intensity >= 0.85)
+      return "border border-emerald-500/50 bg-emerald-500/10";
 
-    if (intensity > 0.6) return "!bg-emerald-400/15";
+    // 🟢 High
+    if (intensity >= 0.65) return "bg-emerald-400/15";
 
-    if (intensity > 0.4) return "!bg-sky-500/10";
+    // 🔵 Medium
+    if (intensity >= 0.45) return "bg-slate-500/10";
 
-    if (intensity > 0.2) return "!bg-slate-500/10";
+    // ⚫ Low
+    if (intensity >= 0.25) return "bg-slate-500/10";
 
-    return "bg-slate-700/10";
+    // ⚫ Very low (base)
+    return "bg-slate-500/10";
   };
 
   const handleDelete = (row: number) => {
@@ -478,8 +486,6 @@ const Details = () => {
       }
     }
   };
-
-  // console.log(graphData, "graphData");
 
   return (
     <>
@@ -533,11 +539,10 @@ const Details = () => {
                 </div>
               </div>
 
-              <div className="grid  grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-visible">
                 <div className="md:col-span-2 space-y-6">
-                  {/* {Number(graphData?.series?.length) > 0 ? ( */}
-                  <div className="h-64 mb-6  flex">
-                    <span className="text-gray-500 w-full ">
+                  <div className="h-64  mb-14  flex">
+                    <span className="text-gray-500 border-b w-full ">
                       <StackedAreaChart
                         data={graphData?.series}
                         setTimeIntervalValue={setTimeInterval}
@@ -545,11 +550,6 @@ const Details = () => {
                       />
                     </span>
                   </div>
-                  {/* ) : (
-                    <div className="bg-cyan-100/80 rounded-lg h-64 mb-6 flex items-center justify-center">
-                      <span className="text-gray-500">[Chart Placeholder]</span>
-                    </div>
-                  )} */}
 
                   {Number(data?.options?.length) > 0 && (
                     <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0 font-bold dark:text-white text-black/80 md:border-0 lg:bg-transparent">
@@ -586,12 +586,15 @@ const Details = () => {
                           <div
                             className={`${
                               useToken ? "w-64" : "w-[60%]"
-                            } font-medium text-black/80 dark:text-slate-300`}
+                            }  text-black/80 dark:text-slate-300`}
                           >
-                            <span className="dark:text-white text-balck">
-                              {index + 1}.
-                            </span>{" "}
-                            {item?.name || "--"}
+                            <div className="font-medium text-lg dark:text-white">
+                              {item?.name || "--"}
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-200">
+                              ${truncateValue(item?.trading?.totalVolume || 0)}{" "}
+                              VOL.
+                            </div>
                           </div>
 
                           {useToken && (
@@ -654,9 +657,83 @@ const Details = () => {
                       );
                     })}
                   </div>
+
+                  <div className="flex flex-col gap-4">
+                    <MarketLeaderboard data={leaderBoard} />
+
+                    {orderData?.length > 0 && (
+                      <OrderList data={orderData} cancelOrders={handleDelete} />
+                    )}
+                  </div>
+                  <div className="mt-4">
+                    <h1 className="md:text-xl font-semibold tracking-wide text-black/80 dark:text-white md:mb-5 mb-4">
+                      People are also buying
+                    </h1>
+                    <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
+                      <div>
+                        <Image
+                          src="/img/blockimg1.jpg"
+                          alt="NYC Flag"
+                          width={50}
+                          height={50}
+                          className="mr-4 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <p className="dark:text-white text-black/80 text-md font-normal">
+                          Who will be the next Supreme Leader of Iran?
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
+                      <div>
+                        <Image
+                          src="/img/blockimg1.jpg"
+                          alt="NYC Flag"
+                          width={50}
+                          height={50}
+                          className="mr-4 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <p className="dark:text-white text-black/80 text-md font-normal">
+                          Who will be the next Supreme Leader of Iran?
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
+                      <div>
+                        <Image
+                          src="/img/blockimg1.jpg"
+                          alt="NYC Flag"
+                          width={50}
+                          height={50}
+                          className="mr-4 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <p className="dark:text-white text-black/80 text-md font-normal">
+                          Who will be the next Supreme Leader of Iran?
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5">
+                      <button className="cursor-pointer py-2 px-4 text-md border border-gray-500 rounded-lg dark:text-white text-black/80 hover:text-[#bfa16d]">
+                        Show More{" "}
+                        <ArrowRight className="inline-block w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="mt-5 md:mt-10">
+                      <IdeasActivityTabs />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-800 rounded-lg p-3 lg-p-6">
+                <div className="md:col-span-1 h-[440px] border border-gray-200 dark:border-gray-600 rounded-lg p-3 lg-p-6 sticky top-32">
                   <div className="flex justify-between pr-3 items-center">
                     <span className="text-lg font-semibold text-gray-900 dark:text-gray-200">
                       Shares
@@ -666,7 +743,7 @@ const Details = () => {
                     </span>
                   </div>
 
-                  <div className="dark:bg-[#151922]/50  bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden">
+                  <div className="dark:bg-[#2B394D]  bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden">
                     <div className="divide-y h-[160px] hideScrollbar overflow-y-auto dark:divide-[#1c1f26] divide-[#d6d6d6]">
                       {orderFlow?.sells?.length > 0 ? (
                         orderFlow.sells.map((item: OrderFlowItem) => {
@@ -739,14 +816,6 @@ const Details = () => {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-4">
-              <MarketLeaderboard data={leaderBoard} />
-
-              {orderData?.length > 0 && (
-                <OrderList data={orderData} cancelOrders={handleDelete} />
-              )}
-              <UserPosts />
             </div>
           </div>
         </div>

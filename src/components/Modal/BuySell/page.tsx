@@ -123,7 +123,7 @@ export default function BuySell({
 
   const [tpTouched, setTpTouched] = useState(false);
   const [slTouched, setSlTouched] = useState(false);
-  const [btnLoader, setBtnLoader] = useState(false);
+  // const [btnLoader, setBtnLoader] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => {
       if (activeField === "shares") {
@@ -232,7 +232,7 @@ export default function BuySell({
     if (types === "market" && isOpen === true) {
       orderDetailsGet();
     }
-  }, [orderDetailsGet, rowDetailsId, debouncedValue, types]);
+  }, [orderDetailsGet, rowDetailsId, debouncedValue, types, isOpen]);
 
   const handleClose = () => {
     setAmount("");
@@ -344,7 +344,7 @@ export default function BuySell({
   };
   useEffect(() => {
     currentShareDetails();
-  }, [isOpen]);
+  }, [currentShareDetails, isOpen]);
 
   const sharesInput = Number(share);
   const amountInput = Number(amount);
@@ -381,7 +381,7 @@ export default function BuySell({
       timeInForce: "IOC",
       idempotencyKey: orderId,
     };
-    setBtnLoader(true);
+    // setBtnLoader(true);
     try {
       const response: ApiResponse<unknown> = await submitOrdersTpAndSl(payload);
       if (response?.success) {
@@ -394,9 +394,10 @@ export default function BuySell({
       }
     } catch {
       toast.error("internal server error");
-    } finally {
-      setBtnLoader(false);
     }
+    // finally {
+    //   setBtnLoader(false);
+    // }
   };
   const isSharesValid = tpslShare > 0;
   const isTPValid = takeProfit > 0;

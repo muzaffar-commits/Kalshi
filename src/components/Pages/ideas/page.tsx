@@ -70,6 +70,8 @@ const Ideas = () => {
 
   const handleUserDetails = (id: string) => {
     setTargetId(id);
+    setCurrentTabs("Profile");
+    // Profile
   };
   return (
     <>

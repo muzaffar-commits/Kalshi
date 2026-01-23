@@ -221,8 +221,8 @@ export default function UpdateProfile({
                 onChange={(e) => changeUserName(e.target.value)}
                 onBlur={formik.handleBlur}
                 className="w-full mt-1 px-4 py-3 rounded-xl border 
-                border-gray-300 dark:border-gray-600 bg-transparent 
-                dark:text-white border-gray-800 focus:outline-none placeholder:text-gray-200  focus:ring-2 focus:ring-blue-500"
+                border-gray-300 dark:border-gray-600 bg-transparent  text-gray-700
+                dark:text-white border-gray-800 focus:outline-none placeholder:text-gray-400  dark:placeholder:text-gray-200  focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your name"
               />
               {formik.touched.userName && formik.errors.userName && (
@@ -239,13 +239,14 @@ export default function UpdateProfile({
               </label>
               <input
                 type="email"
+                disabled
                 name="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className="w-full mt-1 px-4 py-3 rounded-xl border 
-                border-gray-300 dark:border-gray-600 bg-transparent 
-                dark:text-white focus:outline-none placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500"
+                border-gray-300 dark:border-gray-600 bg-transparent  text-gray-700
+                dark:text-white focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your email"
               />
               {formik.touched.email && formik.errors.email && (

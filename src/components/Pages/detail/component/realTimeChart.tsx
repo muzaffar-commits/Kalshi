@@ -72,7 +72,7 @@ const StackedAreaChart = ({
     },
 
     legend: {
-      show: false,
+      show: true,
       position: "top",
       horizontalAlign: "left",
       floating: true,
@@ -100,7 +100,7 @@ const StackedAreaChart = ({
         show: false,
       },
       axisTicks: {
-        show: false,
+        show: true,
       },
     },
 
@@ -130,8 +130,8 @@ const StackedAreaChart = ({
     },
 
     tooltip: {
-      shared: false, // ❌ sabka data ek sath nahi
-      intersect: true,
+      shared: true, // ❌ sabka data ek sath nahi
+      intersect: false,
       x: {
         format: "dd MMM yyyy HH:mm",
       },
@@ -145,30 +145,7 @@ const StackedAreaChart = ({
 
   return (
     <div className="w-full flex  relative -mx-4 sm:mx-0">
-      <div
-        className="absolute right-0 top-0 flex items-center gap-1
-  bg-[#141b2d]  rounded-lg px-1 py-1
-"
-      >
-        {timeInterval.map((item) => (
-          <button
-            key={item}
-            onClick={() => setTimeIntervalValue(item)}
-            className={`
-        px-3 py-1 text-xs font-medium rounded-md
-        transition-all
-        ${
-          item === timeIntervalValue
-            ? "bg-[#1f2a44] text-white"
-            : "text-gray-400 hover:text-white cursor-pointer hover:bg-white/5"
-        }
-      `}
-          >
-            {item.toUpperCase()}
-          </button>
-        ))}
-      </div>
-      <div className="mt-4 w-full">
+      <div className="mt-4  w-full">
         {Number(data?.length) > 0 ? (
           <ApexChart
             type="area"
@@ -182,6 +159,29 @@ const StackedAreaChart = ({
             <span className="text-gray-500">[Chart Placeholder]</span>
           </div>
         )}
+      </div>
+      <div
+        className="absolute right-0 -bottom-8 flex items-center gap-1
+  dark:bg-[#2B394D] bg-gray-200 rounded-lg px-1 py-1
+"
+      >
+        {timeInterval.map((item) => (
+          <button
+            key={item}
+            onClick={() => setTimeIntervalValue(item)}
+            className={`
+        px-3 py-1 text-xs font-medium rounded-md
+        transition-all
+        ${
+          item === timeIntervalValue
+            ? "dark:bg-[#1D293D] bg-gray-50 dark:text-white text-black"
+            : "dark:text-gray-400 text-gray-600 hover:text-white cursor-pointer hover:bg-white/5"
+        }
+      `}
+          >
+            {item.toUpperCase()}
+          </button>
+        ))}
       </div>
     </div>
   );

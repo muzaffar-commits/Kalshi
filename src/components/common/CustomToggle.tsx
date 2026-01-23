@@ -1,6 +1,12 @@
 import React from "react";
 
-export const CustomToggle = ({ label, checked, onChange }: any) => {
+interface customToggle {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}
+
+export const CustomToggle = ({ label, checked, onChange }: customToggle) => {
   return (
     <label className="flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-gray-700 bg-gray-100 text-xs dark:text-gray-300 text-gray-700 hover:bg-[#273244]/10 transition">
       {/* REAL CHECKBOX */}

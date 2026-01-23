@@ -1,8 +1,8 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 export default function UserPosts() {
-  const [activeTab, setActiveTab] = useState("Comments");
+  // const [activeTab, setActiveTab] = useState("Comments");
   const eventTabs = useMemo(
     () => [
       {
@@ -17,7 +17,7 @@ export default function UserPosts() {
   return (
     <div className="mt-3 flex bg-amber-500 items-center justify-between border-b border-border">
       <ul className="relative flex h-8 gap-8 text-sm font-semibold">
-        {eventTabs.map((tab, index) => (
+        {eventTabs.map((tab) => (
           <li
             key={tab.key}
             // className={`${(
@@ -26,7 +26,7 @@ export default function UserPosts() {
             //     ? "text-foreground"
             //     : "text-muted-foreground hover:text-foreground",
             // )}`}
-            onClick={() => setActiveTab(tab.key)}
+            // onClick={() => setActiveTab(tab.key)}
           >
             {tab.label}
           </li>

@@ -4,9 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, PlusCircle } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slice/auth";
+import { useRouter } from "next/navigation";
+import { ApiResponse, UserProfileData } from "@/utils/typesInterface";
+import { userDetails } from "../service/apiService/user";
+import Image from "next/image";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<UserProfileData[] | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
 
@@ -27,6 +32,43 @@ export default function ProfileDropdown() {
     dispatch(logout());
     window.location.href = "/";
   };
+
+  const router = useRouter();
+  // /termsAndConditions
+
+  const handleNavigateRoute = (id: number) => {
+    if (id === 0) {
+      router.push("/ideas");
+    } else if (id === 1) {
+      router.push("/privacyPolicy");
+    } else {
+      router.push("/termsAndConditions");
+    }
+    setOpen(false);
+  };
+
+  const userDetailsList = async () => {
+    try {
+      const response: ApiResponse<UserProfileData[]> = await userDetails();
+      if (response.success) {
+        setUser(response.data);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    }
+  };
+
+  useEffect(() => {
+    userDetailsList();
+  }, []);
+
+  const userData = user?.[0] || null;
+  const portFolioData = user?.[1] || null;
+
+  console.log(userData, "userData");
+
   return (
     <div className="relative" ref={ref}>
       {/* Profile Icon */}
@@ -48,7 +90,7 @@ export default function ProfileDropdown() {
         className={`
           absolute right-0 mt-3 w-64
           bg-white dark:bg-[#1D293D]
-          rounded-xl shadow-lg border dark:border-gray-800 border-gray-300
+          rounded-xl shadow-lg border dark:border-gray-600  border-gray-300
           transition-all duration-200 ease-out
           z-50
           ${
@@ -59,12 +101,27 @@ export default function ProfileDropdown() {
         `}
       >
         {/* Wallet Section */}
-        <div className="px-4 py-3 border-b dark:border-gray-800 border-gray-300">
+        <div
+          onClick={() => router.push("/userProfile")}
+          className="px-4 py-3 border-b dark:border-gray-600 border-gray-300"
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-400" />
+            {userData?.user?.image_url ? (
+              <div className="bg-gray-100 rounded-full p-2">
+                <Image
+                  src={userData?.user?.image_url}
+                  alt="No"
+                  height={30}
+                  width={30}
+                />
+              </div>
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-blue-400" />
+            )}
+
             <div>
-              <div className="font-semibold text-sm dark:text-white text-gray-700">
-                abcd@gmail.com
+              <div className="font-semibold cursor-pointer text-sm dark:text-white text-gray-700">
+                {userData?.user?.username || "Unknown"}
               </div>
             </div>
           </div>
@@ -72,16 +129,19 @@ export default function ProfileDropdown() {
 
         {/* Menu */}
         <div className="py-2 text-sm">
-          {["Ideas", "Privacy Policy", "Terms and Conditions"].map((item) => (
-            <div
-              key={item}
-              className="px-4 py-2 dark:text-gray-500 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-            >
-              {item}
-            </div>
-          ))}
-          <div className="border-t my-2 dark:border-gray-800 border-gray-300" />
-          <div className="flex items-center gap-3 px-4 py-2">
+          {["Ideas", "Privacy Policy", "Terms and Conditions"].map(
+            (item, index) => (
+              <div
+                key={item}
+                onClick={() => handleNavigateRoute(index)}
+                className="px-4 py-2 dark:text-gray-300 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+              >
+                {item}
+              </div>
+            ),
+          )}
+          <div className="border-t my-2 dark:border-gray-500 border-gray-300" />
+          <div className="flex items-center justify-center mx-auto  px-4 py-2">
             <div>
               <ThemeToggle />
             </div>
@@ -91,7 +151,7 @@ export default function ProfileDropdown() {
             </div> */}
           </div>
 
-          <div className="border-t my-2 dark:border-gray-800" />
+          <div className="border-t my-2 dark:border-gray-500  border-gray-300" />
 
           <div
             onClick={handleLogout}

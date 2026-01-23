@@ -157,9 +157,7 @@ export const replyComments = async (reqBody: unknown) => {
 export const getUsersAllDetails = async (id: string, userId: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getProfileListAllUser}${id ? `?targetId=${id}` : ""}${
-        userId ? `?userId=${userId}` : ""
-      }`,
+      `${API_URLs.getProfileListAllUser}${userId ? `?userId=${userId}` : ""}${id ? `&targetId=${id}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {
@@ -199,4 +197,25 @@ export const fetchWatchList = async (offset = 0, limit = 30) => {
   }
 };
 
-//
+export const postFollowUser = async (reqBody: unknown) => {
+  try {
+    const response = await apiInstance.post(API_URLs.followUser, reqBody);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+export const postUnFollowUser = async (reqBody: unknown) => {
+  try {
+    const response = await apiInstance.post(API_URLs.unFollowUser, reqBody);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};

@@ -45,9 +45,9 @@ export default function NotificationBell() {
       {/* Bell */}
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="text-gray-500 hover:text-black dark:hover:text-white cursor-pointer"
+        className=" dark:hover:text-white cursor-pointer"
       >
-        <Bell size={18} className="dark:text-white text-black" />
+        <Bell size={30} className="dark:text-white text-sky-500" />
       </button>
 
       {/* Dropdown */}

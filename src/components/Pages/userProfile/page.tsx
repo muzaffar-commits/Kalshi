@@ -82,7 +82,6 @@ const UserProfile = () => {
   useEffect(() => {
     getUserBalance();
     userDetailsList();
-    localStorage.setItem("isCategory", "0");
   }, []);
 
   return (

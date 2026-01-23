@@ -302,5 +302,5 @@ export interface headerRootState {
 }
 
 export interface isWatchListInterface {
-  category: { isWatchList: boolean };
+  category: { isWatchList: boolean; isFilterQuestion: boolean };
 }

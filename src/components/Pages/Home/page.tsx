@@ -104,7 +104,9 @@ const Home = () => {
     (state: isWatchListInterface) => state?.category?.isWatchList,
   );
   const userDetails = useSelector((state: RootState) => state?.user);
-
+  const isFilterQuestion = useSelector(
+    (state: isWatchListInterface) => state?.category?.isFilterQuestion,
+  );
   const { search, sortBy, frequency, status, hideFilter } = filtersForCategory;
   const CATEGORY_MAP: Record<string, number> = {
     earnings: 18,
@@ -236,122 +238,133 @@ const Home = () => {
 
   const questionListFilter = isWatchList ? questionBookMark : questionData;
 
+  console.log(
+    selectedSubCategory == null,
+    isWatchList,
+    "selectedSubCategory111",
+  );
+
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10 mt-20 lg:mt-48 ${selectedSubCategory == null ? "lg:mt-64" : "lg:mt-56"}`}
+        className={`max-w-[1268px]  mx-auto px-4 pb-10   ${selectedSubCategory == null && isFilterQuestion ? "mt-64" : "lg:mt-52"}`}
       >
         <div
           className={
-            isEvent
-              ? ""
-              : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0"
+            // isEvent
+            //   ? ""
+            //   :
+            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0"
           }
         >
-          {isEvent ? (
-            <SubCategory
-              eventSubCategoryId={eventSubCategoryId}
-              setEventSubCategoryId={setEventSubCategoryId}
-              questionData={questionListFilter}
-            />
-          ) : loader ? (
-            [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
-          ) : questionListFilter && questionListFilter.length > 0 ? (
-            questionListFilter?.map((row: QuestionItem, index) => (
-              <div
-                key={index}
-                className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#2B394D] 
+          {
+            // isEvent ? (
+            //   <SubCategory
+            //     eventSubCategoryId={eventSubCategoryId}
+            //     setEventSubCategoryId={setEventSubCategoryId}
+            //     questionData={questionListFilter}
+            //   />
+            // ) :
+
+            loader ? (
+              [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
+            ) : questionListFilter && questionListFilter.length > 0 ? (
+              questionListFilter?.map((row: QuestionItem, index) => (
+                <div
+                  key={index}
+                  className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#2B394D] 
                   relative min-h-48 rounded-xl p-4 
                   transition-transform duration-300 ease-in-out 
                   transform hover:scale-105 hover:shadow-md "
-              >
-                <div className="flex items-center mb-3">
-                  <Image
-                    src="/img/blockimg1.jpg"
-                    width={40}
-                    height={40}
-                    alt="trending"
-                    className="mr-2 rounded"
-                  />
-                  <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-black/80">
-                    <div onClick={() => goToDetails(row.id)}>
-                      <div className="block">
-                        <div
-                          className="line-clamp-2"
-                          title={row?.question || "--"}
-                        >
-                          {row?.question || "--"}
+                >
+                  <div className="flex items-center mb-3">
+                    <Image
+                      src="/img/blockimg1.jpg"
+                      width={40}
+                      height={40}
+                      alt="trending"
+                      className="mr-2 rounded"
+                    />
+                    <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-black/80">
+                      <div onClick={() => goToDetails(row.id)}>
+                        <div className="block">
+                          <div
+                            className="line-clamp-2"
+                            title={row?.question || "--"}
+                          >
+                            {row?.question || "--"}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </h2>
-                </div>
+                    </h2>
+                  </div>
 
-                <div className="text-xs mt-4 mb-5 h-24 hideScrollbar overflow-y-auto space-y-2">
-                  {row?.options?.map((item: OptionItem, idx: number) => (
-                    <div
-                      key={idx}
-                      className="flex gap-2 justify-between items-center dark:text-white text-gray-700"
-                    >
-                      <span className="block max-w-full truncate">
-                        {item?.name || "--"}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <span className="text-[16px] font-semibold">
-                          {(item?.price * 100).toFixed(1)}%
+                  <div className="text-xs mt-4 mb-5 h-24 hideScrollbar overflow-y-auto space-y-2">
+                    {row?.options?.map((item: OptionItem, idx: number) => (
+                      <div
+                        key={idx}
+                        className="flex gap-2 justify-between items-center dark:text-white text-gray-700"
+                      >
+                        <span className="block max-w-full truncate">
+                          {item?.name || "--"}
                         </span>
-                        <button
-                          onClick={() => handleBuyNow(row, item, "sell", idx)}
-                          className="p-2 bg-red-500/40 cursor-pointer text-red-700 dark:text-red-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-red-500 hover:text-white  transition-all duration-200 ease-in-out"
-                        >
-                          Sell
-                        </button>
-                        <button
-                          onClick={() => handleBuyNow(row, item, "buy", idx)}
-                          className="p-2 bg-green-600/40 cursor-pointer text-green-700 dark:text-green-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-green-600 hover:text-white transition-all duration-200 ease-in-out"
-                        >
-                          Buy
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[16px] font-semibold">
+                            {(item?.price * 100).toFixed(1)}%
+                          </span>
+                          <button
+                            onClick={() => handleBuyNow(row, item, "sell", idx)}
+                            className="p-2 bg-red-500/40 cursor-pointer text-red-700 dark:text-red-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-red-500 hover:text-white  transition-all duration-200 ease-in-out"
+                          >
+                            Sell
+                          </button>
+                          <button
+                            onClick={() => handleBuyNow(row, item, "buy", idx)}
+                            className="p-2 bg-green-600/40 cursor-pointer text-green-700 dark:text-green-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-green-600 hover:text-white transition-all duration-200 ease-in-out"
+                          >
+                            Buy
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
 
-                <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
-                  <span>
-                    $ {Number(row?.stats?.totalVolume || 0)?.toFixed(2) || 0}
-                  </span>
-                  <span className="cursor-pointer">
-                    {" "}
-                    {!row?.isBookmark ? (
-                      <FaRegBookmark
-                        onClick={() =>
-                          bookMarkUnBookMark(row?.id, row?.isBookmark)
-                        }
-                      />
-                    ) : (
-                      <FaBookmark
-                        onClick={() =>
-                          bookMarkUnBookMark(row?.id, row?.isBookmark)
-                        }
-                        className="text-sky-500"
-                      />
-                    )}
-                  </span>
+                  <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
+                    <span>
+                      $ {Number(row?.stats?.totalVolume || 0)?.toFixed(2) || 0}
+                    </span>
+                    <span className="cursor-pointer">
+                      {" "}
+                      {!row?.isBookmark ? (
+                        <FaRegBookmark
+                          onClick={() =>
+                            bookMarkUnBookMark(row?.id, row?.isBookmark)
+                          }
+                        />
+                      ) : (
+                        <FaBookmark
+                          onClick={() =>
+                            bookMarkUnBookMark(row?.id, row?.isBookmark)
+                          }
+                          className="text-sky-500"
+                        />
+                      )}
+                    </span>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                <h3 className="mt-4 text-lg font-semibold text-gray-800 dark:text-white">
+                  No questions found
+                </h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-md">
+                  There are no active premium questions available right now.
+                  Please check back later or explore other markets.
+                </p>
               </div>
-            ))
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-              <h3 className="mt-4 text-lg font-semibold text-gray-800 dark:text-white">
-                No questions found
-              </h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-md">
-                There are no active premium questions available right now.
-                Please check back later or explore other markets.
-              </p>
-            </div>
-          )}
+            )
+          }
         </div>
       </div>
       <Authentication

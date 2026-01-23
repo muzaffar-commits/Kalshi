@@ -98,7 +98,7 @@ export default function IdeaTabsTwo({
             };
           }
           return item;
-        })
+        }),
       );
 
       const payload = {
@@ -119,7 +119,7 @@ export default function IdeaTabsTwo({
 
   const handleBookMarkOrUnBookMark = async (
     id: number,
-    isBookmarked: number
+    isBookmarked: number,
   ) => {
     try {
       setAllPosts((prev) => {
@@ -209,6 +209,7 @@ export default function IdeaTabsTwo({
                 >
                   <div>
                     <Image
+                      onClick={() => handleUserDetails(`${row?.User?.id}`)}
                       src={
                         row?.User?.image_url ||
                         "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
@@ -224,7 +225,7 @@ export default function IdeaTabsTwo({
                       <h4>
                         <span
                           onClick={() => handleUserDetails(`${row?.User?.id}`)}
-                          className="dark:text-gray-300 hover:underline font-semibold text-gray-700"
+                          className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
                         >
                           {row?.User?.username || "Unknown"}
                         </span>{" "}
@@ -330,7 +331,7 @@ export default function IdeaTabsTwo({
                             onClick={() =>
                               handleBookMarkOrUnBookMark(
                                 row?.id,
-                                row?.isBookmarked
+                                row?.isBookmarked,
                               )
                             }
                           >

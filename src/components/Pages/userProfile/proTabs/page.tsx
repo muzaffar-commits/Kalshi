@@ -145,14 +145,14 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                 return (
                   <div
                     key={i}
-                    className="bg-[#1D293D] border border-gray-800 rounded-xl p-5 
+                    className="dark:bg-[#1D293D] border border-gray-800 dark:border-gray-500 rounded-xl p-5 
                  hover:border-gray-700 transition-all duration-200"
                   >
                     <div className="flex relative flex-col sm:flex-row sm:justify-between sm:items-start gap-5">
                       {/* Left: Details */}
                       <div className="flex-1 space-y-1">
                         {/* Question */}
-                        <div className="text-white font-medium text-base leading-snug pr-4">
+                        <div className="dark:text-white text-black/80  font-bold text-base leading-snug pr-4">
                           {position.question}
                         </div>
 
@@ -163,7 +163,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                             <div className="flex items-start  gap-2">
                               <span className="text-gray-500 w-14">Option</span>{" "}
                               :
-                              <span className="text-white font-semibold  flex-1 break-words">
+                              <span className="dark:text-white text-gray-500  font-semibold  flex-1 break-words">
                                 {myOption.name}
                               </span>
                             </div>
@@ -171,7 +171,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                             <div className="flex items-center  gap-2">
                               <span className="text-gray-500  w-14">Price</span>{" "}
                               :
-                              <span className="text-white font-semibold">
+                              <span className="dark:text-white text-gray-500 font-semibold">
                                 $ {(myOption.currentPrice || 0).toFixed(2)}
                               </span>
                             </div>
@@ -224,12 +224,12 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
 
       {/* Top Categories */}
       <CustomTabPanel value={value} index={1}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 mt-4 gap-3 border-b border-gray-800 pb-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 mt-4 gap-3  border-gray-800 pb-3">
           {[
             [
               "Invested",
               `$ ${Number(data?.portfolio?.investedAmount || 0).toFixed(2)}`,
-              "text-white",
+              "dark:text-white text-yellow-600",
             ],
             [
               "Current Value",
@@ -246,10 +246,13 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
             [
               "Active Bets",
               Number(data?.stats?.activeMarkets || 0),
-              "text-white",
+              "dark:text-white text-black",
             ],
           ].map(([label, val, color], i) => (
-            <div key={i} className="bg-[#1D293D] p-3 rounded-lg">
+            <div
+              key={i}
+              className="dark:bg-[#1D293D] border border-gray-400 p-3 rounded-lg"
+            >
               <p className="text-xs text-gray-400">{label}</p>
               <p className={`text-lg font-semibold ${color}`}>{val}</p>
             </div>
@@ -258,8 +261,8 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={2}>
-        <div className="bg-[#1D293D] mt-4 border border-gray-800 rounded-lg p-5">
-          <h3 className="text-base sm:text-lg font-semibold text-white mb-2">
+        <div className="dark:bg-[#1D293D] border-gray-400 dark:border-gray-500 mt-4 border  rounded-lg p-5">
+          <h3 className="text-base sm:text-lg font-semibold dark:text-white text-gray-700 mb-2">
             Create Your Own Prediction Market
           </h3>
           <p className="text-sm text-gray-400">

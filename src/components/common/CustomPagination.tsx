@@ -9,9 +9,8 @@ const PageButton = styled(IconButton)(() => ({
   borderRadius: 10,
   width: 44,
   height: 36,
-  backgroundColor: "#324370",
-  color: "#10192D",
-  boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+  backgroundColor: "#a5a5a5",
+  color: "#ffffff",
   transition: "all 0.25s ease",
 
   "&:hover": {
@@ -31,9 +30,9 @@ const PageNumber = styled(Typography)(() => ({
   borderRadius: 10,
   fontWeight: 700,
   fontSize: 14,
-  background: "linear-gradient(135deg, #3B82F6, #2563EB)",
-  color: "#ffffff",
-  boxShadow: "0 8px 22px rgba(59,130,246,0.6)",
+  background: "#d8ba86",
+  color: "#000",
+  // boxShadow: "0 8px 22px rgba(59,130,246,0.6)",
 }));
 
 type Props = {

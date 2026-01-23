@@ -1,5 +1,9 @@
 import React from "react";
 
 export default function Supports() {
-  return <div className="flex items-center justify-center">Supports</div>;
+  return (
+    <div className="flex items-center justify-center text-black dark:text-white">
+      Supports
+    </div>
+  );
 }

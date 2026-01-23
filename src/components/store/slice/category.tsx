@@ -17,6 +17,7 @@ const categorySlice = createSlice({
     selectSubCategory: {},
     isEvent: false,
     isWatchList: false,
+    isFilterQuestion: false,
     filters: {
       search: "",
       frequency: "all",
@@ -65,7 +66,7 @@ const categorySlice = createSlice({
       state.filters = {
         frequency: "all",
         search: "",
-        status: "active",
+        status: "Active",
         sortBy: "newest",
         hideFilter: {
           sports: false,
@@ -76,6 +77,9 @@ const categorySlice = createSlice({
     },
     changeWatch: (state, action) => {
       state.isWatchList = action.payload;
+    },
+    changeFilterQuestion: (state, action) => {
+      state.isFilterQuestion = action.payload;
     },
   },
 });
@@ -89,5 +93,6 @@ export const {
   changeFilter,
   resetFilters,
   changeWatch,
+  changeFilterQuestion,
 } = categorySlice.actions;
 export default categorySlice.reducer;
