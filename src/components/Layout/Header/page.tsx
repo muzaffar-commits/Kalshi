@@ -264,13 +264,13 @@ const Header = () => {
                   <>
                     <button
                       onClick={handleLogin}
-                      className="px-4 py-2 text-[#c7ac77] font-semibold hover:bg-[#c7ac77]/40 rounded-md"
+                      className="px-4 py-2 dark:text-white text-black/80 font-semibold hover:bg-blue-500/40 rounded-md"
                     >
                       Log In
                     </button>
                     <button
                       onClick={handleSignup}
-                      className="px-4 py-2 bg-[#c7ac77] text-white rounded-md font-semibold"
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
                     >
                       Sign Up
                     </button>
