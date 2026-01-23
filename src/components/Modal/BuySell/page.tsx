@@ -432,7 +432,7 @@ export default function BuySell({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className="bg-white dark:bg-[#1D293D] !border !border-gray-700 p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
+          className="bg-white dark:bg-[#1D293D] border dark:border-gray-800 border-gray-200 p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
         >
           {/* Close */}
           <button
@@ -465,8 +465,8 @@ export default function BuySell({
             </div>
           </div>
 
-          <div className="flex  text-wrap ml-14 mb-3 text-sm   gap-3">
-            <span className="text-[#0099FF] text-nowrap font-semibold">
+          <div className="flex  text-wrap ml-14 mb-3 text-sm gap-3">
+            <span className="dark:text-gray-200 text-gray-700 text-nowrap font-semibold">
               {orderType === "buy" ? "Buy" : "Sell"} Now
             </span>
             <span className="text-gray-500 dark:text-gray-400">
@@ -475,7 +475,7 @@ export default function BuySell({
           </div>
 
           {/* Tabs */}
-          <div className="border-b border-gray-300 mb-4 relative">
+          <div className="border-b dark:border-gray-700 border-gray-200 mb-4 relative">
             <div className="absolute right-0 top-0">
               <Dropdown
                 onSelect={(v: string) => {
@@ -501,7 +501,7 @@ export default function BuySell({
                 }}
                 className={`py-2 mr-6 font-medium ${
                   orderType === "buy"
-                    ? "border-b-2 border-[#0099FF] text-[#0099FF]"
+                    ? "border-b-2 dark:border-gray-200 border-gray-800 dark:text-white text-black"
                     : "text-gray-600 dark:text-gray-300 cursor-pointer"
                 }`}
               >
@@ -520,7 +520,7 @@ export default function BuySell({
               }}
               className={`py-2 font-medium ${
                 orderType === "sell"
-                  ? "border-b-2 border-[#0099FF] text-[#0099FF]"
+                  ? "border-b-2 dark:border-gray-200 border-gray-800 dark:text-white text-black"
                   : "text-gray-600 dark:text-gray-300 cursor-pointer"
               }`}
             >
@@ -540,13 +540,15 @@ export default function BuySell({
                       {truncateValue(Number(totalCurrentShare || 0))}
                     </span>
                   </div>
-                  <div className="border border-gray-800 rounded ">
-                    <div className="border-b border-gray-800 px-3 pt-2">
+                  <div className="border dark:border-gray-800 border-gray-300 rounded ">
+                    <div className="border-b dark:border-gray-800 border-gray-300 px-3 pt-2">
                       <label className="w-full flex flex-col gap-1">
-                        <span className="text-xs flex justify-between items-center dark:text-gray-200 text-gray-700 font-medium">
-                          <span>Take Profit</span>{" "}
+                        <span className="text-xs md:flex justify-between items-center dark:text-gray-200 text-gray-700 font-medium">
+                          <span className="md:inline-block block">
+                            Take Profit
+                          </span>{" "}
                           {tpTouched && takeProfit < currentPrice && (
-                            <span className="text-xs text-yellow-300">
+                            <span className="text-xs text-red-500">
                               ⚠ Up to current market price (
                               {truncateValue(currentPrice)})
                             </span>
@@ -566,15 +568,15 @@ export default function BuySell({
                           }}
                           onWheel={(e) => e.currentTarget.blur()}
                           className={`
-                          w-full no-arrow px-3 py-2 text-2xl font-semibold text-right
-                          bg-transparent border rounded-md outline-none
+                          w-full no-arrow px-3 py-2 text-2xl text-right
+                          bg-transparent border dark:border-gray-700 border-gray-300 rounded-md outline-none
                           text-gray-900 dark:text-gray-100
                           ${
                             tpTouched && takeProfit < currentPrice
-                              ? "border-yellow-400 ring-1 focus:ring-yellow-400"
-                              : "border-gray-300 dark:border-gray-700 focus:border-[#0099FF] focus:ring-[#0099FF]"
+                              ? "border-red-500 "
+                              : "border-gray-300 dark:border-gray-700"
                           }
-                          focus:ring-1
+                          focus:ring-none
                         `}
                         />
                       </label>
@@ -599,7 +601,7 @@ export default function BuySell({
 
                     <label className="w-full p-3 flex flex-col gap-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-200 font-medium">
+                        <span className="text-sm dark:text-gray-200 text-gray-700 font-medium">
                           Shares
                         </span>
                         <div className="text-xs flex gap-3">
@@ -625,7 +627,7 @@ export default function BuySell({
                             )
                           }
                           onWheel={(e) => e.currentTarget.blur()}
-                          className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-start bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "
+                          className="w-full no-arrow px-3 py-2 text-2xl text-start bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:ring-gray-400  outline-none  "
                         />
                         <span className="absolute top-3 bg-gray-700/50 font-serif text-gray-300 rounded px-1.5 right-2 ">
                           Max
@@ -633,9 +635,9 @@ export default function BuySell({
                       </div>
                     </label>
 
-                    <div className="p-3 border-t border-gray-800">
+                    <div className="p-3 border-t dark:border-gray-800 border-gray-300 px-3 pt-2">
                       <label className="w-full flex flex-col gap-1">
-                        <span className="text-xs flex justify-between text-gray-200 font-medium">
+                        <span className="text-sm dark:text-gray-200 text-gray-700 font-medium">
                           <span>Stop Loss</span>{" "}
                           {slTouched && stopLoss > currentPrice && (
                             <span className="text-xs text-yellow-300">
@@ -665,7 +667,7 @@ export default function BuySell({
                           ${
                             slTouched && stopLoss > currentPrice
                               ? "border-yellow-400 ring-1 focus:ring-yellow-400"
-                              : "border-gray-300 dark:border-gray-700 focus:border-[#0099FF] focus:ring-[#0099FF]"
+                              : "border-gray-300 dark:border-gray-700 focus:ring-gray-400"
                           }
                           focus:ring-1
                         `}
@@ -707,7 +709,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:border-[#0099FF] focus:ring-1 focus:ring-[#0099FF]  outline-none  "
+                      className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-200 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:ring-1 focus:ring-gray-400 outline-none  "
                     />
                   </label>
 
@@ -716,7 +718,7 @@ export default function BuySell({
                       <span className="text-xs text-gray-400 font-medium">
                         Quantity of Shares
                       </span>
-                      <span className="text-xs text-[#0099FF] font-medium">
+                      <span className="text-xs dark:text-gray-200 text-gray-700  font-medium">
                         USD
                       </span>
                     </div>
@@ -725,7 +727,7 @@ export default function BuySell({
                       type="number"
                       placeholder="0.00"
                       onFocus={() => setActiveField("shares")}
-                      value={share}
+                      value={share || ""}
                       onChange={(e) =>
                         setShare(
                           e.target.value === "" ? 0 : Number(e.target.value),
@@ -738,12 +740,12 @@ export default function BuySell({
                 </>
               ) : orderType === "buy" ? (
                 <>
-                  <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
+                  <label className="w-full p-3 border dark:border-gray-700 border-gray-200 rounded-md md:flex justify-between items-center">
                     <span>
                       <span className="block text-sm text-gray-400">
                         Shares
                       </span>
-                      <span className="block text-sm text-[#0099FF]">
+                      <span className="block text-sm text-gray-950 dark:text-gray-200">
                         No Interest
                       </span>
                     </span>
@@ -759,18 +761,18 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none no-arrow text-gray-800 dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
+                      className="border-none outline-none no-arrow text-gray-800 dark:text-gray-300 text-3xl text-right w-full md:w-56 bg-transparent"
                     />
                   </label>
-                  <div className="flex items-center justify-center text-gray-400">
+                  <div className="md:flex items-center justify-center text-gray-400">
                     <TfiExchangeVertical size={25} />
                   </div>
-                  <label className="w-full p-3 border border-gray-200 rounded-md flex justify-between items-center">
+                  <label className="w-full p-3 border dark:border-gray-700 border-gray-200 rounded-md md:flex justify-between items-center">
                     <span>
                       <span className="block text-sm text-gray-400">
                         Amount
                       </span>
-                      <span className="block text-sm text-[#0099FF]">
+                      <span className="block text-sm text-gray-950 dark:text-gray-200">
                         No Interest
                       </span>
                     </span>
@@ -786,7 +788,7 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none text-gray-800 no-arrow dark:text-gray-300 text-3xl text-right w-56 bg-transparent"
+                      className="border-none outline-none text-gray-800 no-arrow dark:text-gray-300 md:text-3xl text-xl text-right md:w-56 bg-transparent"
                     />
                   </label>
                 </>
@@ -804,7 +806,7 @@ export default function BuySell({
                       <span className="block text-sm text-gray-400">
                         Shares
                       </span>
-                      <span className="block text-sm text-[#0099FF]">
+                      <span className="block text-sm dark:text-gray-200 text-gray-700">
                         No Interest
                       </span>
                     </span>
@@ -835,7 +837,7 @@ export default function BuySell({
             {types !== "tpsl" && (
               <div className="flex flex-row justify-between gap-2 mt-2">
                 {" "}
-                <div className="bg-[#0099FF] font-semibold text-white px-2 py-1 rounded">
+                <div className="dark:bg-white bg-black font-semibold dark:text-black text-white px-2 py-1 rounded">
                   {" "}
                   IOC{" "}
                 </div>
@@ -849,7 +851,7 @@ export default function BuySell({
 
             {types !== "tpsl" && (
               <div className="flex text-black py-3 text-sm flex-col gap-2">
-                <div className="text-[#0099FF] font-semibold text-lg">
+                <div className="dark:text-gray-200 text-gray-950 font-semibold text-lg">
                   Share Details :
                 </div>
                 {types === "limit" && orderType == "buy" ? (
@@ -978,7 +980,7 @@ export default function BuySell({
                 onClick={handleTpspSubmit}
                 className={`mt-4 py-3 text-lg text-white font-bold ${
                   disabledTpslBtn
-                    ? "bg-[#62bdfa]"
+                    ? "bg-green-500"
                     : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
                 }  rounded-xl w-full`}
               >
@@ -990,13 +992,13 @@ export default function BuySell({
                 onClick={handleSubmit}
                 className={`mt-4 py-3 text-lg text-white font-bold ${
                   buttonDisable
-                    ? "bg-[#62bdfa]"
-                    : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
+                    ? `${orderType == "sell" ? "bg-red-300 text-white" : "bg-green-300 text-black"} cursor-not-allowed shadow-none`
+                    : `${orderType === "Sell" ? "bg-red-500 text-white" : "bg-green-500 text-black"}  hover:from-[#2cc0ff] hover:to-[#008ae6] active:scale-[0.98]   cursor-pointer`
                 }  rounded-xl w-full`}
               >
                 <span className="capitalize">{orderType || "--"}</span>{" "}
-                <span className="text-gray-200">$</span>{" "}
-                <span className="text-gray-200">
+                <span className="text-white">$</span>{" "}
+                <span className="text-white">
                   {types === "limit" && orderType === "buy"
                     ? truncateValue(Number(totalSharesBuy || 0), 3)
                     : types === "limit" && orderType === "sell"

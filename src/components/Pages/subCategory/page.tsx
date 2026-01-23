@@ -73,7 +73,7 @@ export default function SubCategory({
                 questionData?.map((row) => {
                   const isActiveButton = row?.id === selectedQuestion?.id;
                   return (
-                    <div className="border border-gray-200 dark:border-gray-700 dark:hover:border-[#c9ae79]/50 hover:border-gray-400 p-3 rounded-lg mb-3">
+                    <div className="border border-gray-200 dark:border-gray-700 dark:hover:border-[#c9ae79]/50 hover:border-gray-300 p-3 rounded-lg mb-3">
                       <p
                         className="text-gray-400 cursor-pointer hover:text-gray-200 text-sm mb-4"
                         onClick={() => goToDetails(row?.id)}
@@ -104,8 +104,8 @@ export default function SubCategory({
                                     onClick={() =>
                                       handleSelectedQuestion(row, item, idx)
                                     }
-                                    className={`py-1.5 px-4 border dark:border-[#c7ac77]/80  cursor-pointer
-                                ${isActiveButton && isOptionActive ? "bg-[#c7ac77] text-white" : "dark:text-[#c7ac77]"}
+                                    className={`py-1.5 bg-green-600/40 text-green-700 dark:text-green-400 font-semibold rounded-xs px-4 cursor-pointer
+                                ${isActiveButton && isOptionActive ? "bg-[#c7ac77] " : "dark:text-[#c7ac77] bg-red-500/40 text-red-700 dark:text-red-400"}
                                  border-gray-600  text-gray-700 font-semibold rounded-md text-md`}
                                   >
                                     {truncateValue(item?.price * 100)}%
