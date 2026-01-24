@@ -204,7 +204,8 @@ export default function IdeaTabsTwo({
                 <div
                   key={row.id}
                   className={`md:flex ${
-                    index > 0 && "pt-4 border-t border-gray-800"
+                    index > 0 &&
+                    "pt-4 border-t border-gray-200 dark:border-gray-700"
                   }  border-gray-300 pb-2 items-start gap-4 w-full md:px-4 px-0`}
                 >
                   <div>

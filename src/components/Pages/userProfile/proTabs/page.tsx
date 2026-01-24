@@ -195,8 +195,13 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                         </p>
                       </div>
                       <div className="flex  items-center gap-2 -right-1.5 -bottom-3 absolute">
-                        <span className="text-gray-500">Resolves</span> :
-                        <span className="text-gray-400">
+                        <span className="text-gray-500 font-serif">
+                          Resolves
+                        </span>{" "}
+                        <span className="text-gray-400   dark:text-gray-200">
+                          :
+                        </span>
+                        <span className="text-gray-600 dark:text-gray-400">
                           {moment(position?.endDate).format("DD MMM YYYY")}
                         </span>
                       </div>

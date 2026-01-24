@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poppins, Roboto } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Layout/Header/page";
 import Footer from "@/components/Layout/Footer/page";
@@ -11,6 +11,20 @@ import SocketProvider from "@/components/socket/SocketProvider"; // 👈 new
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+// const poppins = Poppins({
+//   subsets: ["latin"],
+//   weight: ["300", "400", "500", "600", "700"],
+//   variable: "--font-poppins",
+//   display: "swap",
+// });
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700", "900"],
+  variable: "--font-roboto",
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -29,7 +43,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-white dark:bg-[#1D293D]">
+    <html
+      lang="en"
+      className={`bg-white light dark:bg-[#1D293D] ${roboto.variable}`}
+    >
       <body
         className={`
           bg-gradient-to-b
@@ -42,7 +59,11 @@ export default function RootLayout({
         `}
       >
         <ReduxProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem={false}
+          >
             <Toaster position="top-right" />
             <SocketProvider />
             <Header />

@@ -1,4 +1,4 @@
-import { Skeleton } from "@mui/material";
+import { Skeleton, useTheme } from "@mui/material";
 
 export const PostSkeleton = ({ count = 3 }) => {
   return Array.from({ length: count }).map((_, index) => (
@@ -89,5 +89,108 @@ export const CategorySkeleton = ({ count = 5 }) => {
         </li>
       ))}
     </>
+  );
+};
+
+export const UserProfileSkeleton = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
+  return (
+    <div className="flex justify-center w-full px-5">
+      <div
+        className="
+          w-full rounded-2xl p-5
+          bg-white/80 dark:bg-[#1D293D]
+          backdrop-blur-xl
+          border border-gray-200/60 dark:border-white/10
+        "
+      >
+        {/* HEADER */}
+        <div className="flex items-start justify-between">
+          <div className="flex gap-4">
+            {/* Avatar */}
+            <div className="relative">
+              <div className="absolute inset-0 rounded-xl  blur-md opacity-30" />
+              <Skeleton
+                variant="rounded"
+                width={80}
+                height={80}
+                sx={{
+                  bgcolor: isDark
+                    ? "rgba(255,255,255,0.12)"
+                    : "rgba(0,0,0,0.08)",
+                  borderRadius: "12px",
+                }}
+              />
+            </div>
+
+            {/* User Info */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Skeleton
+                  width={120}
+                  height={16}
+                  sx={{
+                    bgcolor: isDark
+                      ? "rgba(255,255,255,0.15)"
+                      : "rgba(0,0,0,0.1)",
+                  }}
+                />
+                <Skeleton
+                  width={40}
+                  height={14}
+                  sx={{
+                    bgcolor: isDark
+                      ? "rgba(255,255,255,0.15)"
+                      : "rgba(0,0,0,0.1)",
+                    borderRadius: "999px",
+                  }}
+                />
+              </div>
+
+              <Skeleton
+                width={90}
+                height={14}
+                sx={{
+                  bgcolor: isDark
+                    ? "rgba(255,255,255,0.12)"
+                    : "rgba(0,0,0,0.08)",
+                }}
+              />
+
+              <div className="flex gap-5 mt-1">
+                <Skeleton width={80} height={14} />
+                <Skeleton width={100} height={14} />
+              </div>
+            </div>
+          </div>
+
+          {/* Follow Button */}
+          <Skeleton
+            variant="rounded"
+            width={96}
+            height={36}
+            sx={{
+              bgcolor: isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)",
+              borderRadius: "999px",
+            }}
+          />
+        </div>
+
+        {/* BIO / CONTENT */}
+        <div className="mt-4 space-y-2">
+          <Skeleton height={20} width="100%" />
+          <Skeleton height={20} width="92%" />
+          <Skeleton height={20} width="75%" />
+        </div>
+
+        {/* FOOTER */}
+        <div className="mt-4 flex justify-between items-center">
+          <Skeleton width={40} height={16} />
+          <Skeleton width={50} height={16} />
+        </div>
+      </div>
+    </div>
   );
 };

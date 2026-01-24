@@ -219,3 +219,17 @@ export const postUnFollowUser = async (reqBody: unknown) => {
     };
   }
 };
+export const postUserCommentLikeOrUnlike = async (reqBody: unknown) => {
+  try {
+    const response = await apiInstance.post(
+      API_URLs.userCommentLikeOrUnlike,
+      reqBody,
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};

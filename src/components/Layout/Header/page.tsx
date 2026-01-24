@@ -82,7 +82,7 @@ const Header = () => {
     crypto: false,
     earnings: false,
   });
-
+  const getToken = localStorage.getItem("token");
   const user = useSelector((state: headerRootState) => state?.user);
   const isWatchList = useSelector(
     (state: isWatchListInterface) => state?.category?.isWatchList,
@@ -374,7 +374,11 @@ const Header = () => {
                       <FiSliders className="text-gray-500 text-lg dark:text-gray-200" />
                     </button>
                     <button
-                      onClick={() => dispatch(changeWatch(!isWatchList))}
+                      onClick={() =>
+                        !getToken
+                          ? setIsOpen(true)
+                          : dispatch(changeWatch(!isWatchList))
+                      }
                       className={`w-10 h-10 flex items-center cursor-pointer justify-center rounded-xl
                         dark:bg-gray-700 bg-gray-100
                         hover:bg-gray-300 hover:dark:bg-[#273244]

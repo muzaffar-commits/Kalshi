@@ -134,6 +134,7 @@ export interface PostFeeBack {
   commentCount: number;
   isLiked: number; // 0 | 1
   isBookmarked: number; // 0 | 1
+  isUserLike: number; // 0 | 1
   User: UserDetails;
 }
 
@@ -169,6 +170,7 @@ export interface IUser {
 export interface IReply {
   id: number;
   length: number;
+  isUserLike: number;
   content: string;
   createdAt: string;
   updatedAt: string;
@@ -184,6 +186,7 @@ export interface IComment {
 }
 export interface CommentInterface {
   id: number;
+  isUserLike: number;
   content: string;
   updatedAt: string;
   User?: UserPost;

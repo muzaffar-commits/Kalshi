@@ -23,6 +23,7 @@ import {
   postQuestionBookUnBookMark,
 } from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
+import { useTheme } from "next-themes";
 
 interface selectedSubCategory {
   category: {
@@ -243,6 +244,9 @@ const Home = () => {
     isWatchList,
     "selectedSubCategory111",
   );
+  const theme = useTheme();
+
+  console.log(theme, "theme");
 
   return (
     <>
@@ -338,13 +342,17 @@ const Home = () => {
                       {!row?.isBookmark ? (
                         <FaRegBookmark
                           onClick={() =>
-                            bookMarkUnBookMark(row?.id, row?.isBookmark)
+                            !getToken
+                              ? setIsOpen(true)
+                              : bookMarkUnBookMark(row?.id, row?.isBookmark)
                           }
                         />
                       ) : (
                         <FaBookmark
                           onClick={() =>
-                            bookMarkUnBookMark(row?.id, row?.isBookmark)
+                            !getToken
+                              ? setIsOpen(true)
+                              : bookMarkUnBookMark(row?.id, row?.isBookmark)
                           }
                           className="text-sky-500"
                         />
