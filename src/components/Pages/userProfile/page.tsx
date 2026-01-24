@@ -140,7 +140,7 @@ const UserProfile = () => {
             <div className="md:w-1/4">
               <button
                 onClick={() => setOpen(true)}
-                className="float-end dark:bg-gray-700 bg-gray-600 text-white py-2 px-6 rounded-2xl text-sm font-semibold hover:bg-[#0099FF] transition"
+                className="float-end cursor-pointer dark:bg-gray-700 bg-gray-400 text-white py-2 px-6 rounded-2xl text-sm font-semibold hover:bg-[#0099FF] transition"
               >
                 Edit Profile
               </button>
@@ -148,7 +148,7 @@ const UserProfile = () => {
           </div>
 
           {/* Total Balance */}
-          <div className="md:mt-3 pt-3 border-t dark:border-gray-800 border-gray-300">
+          <div className="md:mt-3 pt-3 border-t dark:border-gray-700 border-gray-300">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="me-2">
@@ -175,7 +175,7 @@ const UserProfile = () => {
           </div>
 
           {/* Total Investment */}
-          <div className="md:mt-3 pt-3 border-t dark:border-gray-800 border-gray-300">
+          <div className="md:mt-3 pt-3 border-t dark:border-gray-700 border-gray-300">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="me-2">
