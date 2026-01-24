@@ -50,9 +50,9 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
                 px-4 py-1.5
                 rounded-xl
                 bg-gray-200
-                dark:bg-[#111a2e]
+                dark:bg-[#2B394D]
                 border border-white/5
-                dark:hover:bg-[#16203a]
+                dark:hover:bg-[#27364b]
                 transition
               "
             >

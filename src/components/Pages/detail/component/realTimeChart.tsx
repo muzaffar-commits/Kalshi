@@ -14,7 +14,6 @@ interface StackedAreaChartProps {
   timeIntervalValue: string;
   setTimeIntervalValue: (value: string) => void;
 }
-
 const BASE_COLORS = [
   "#008FFB",
   "#00E396",
@@ -72,7 +71,7 @@ const StackedAreaChart = ({
     },
 
     legend: {
-      show: true,
+      show: false,
       position: "top",
       horizontalAlign: "left",
       floating: true,
@@ -145,23 +144,8 @@ const StackedAreaChart = ({
 
   return (
     <div className="w-full flex  relative -mx-4 sm:mx-0">
-      <div className="mt-4  w-full">
-        {Number(data?.length) > 0 ? (
-          <ApexChart
-            type="area"
-            height={230}
-            // width={800}
-            series={series}
-            options={options}
-          />
-        ) : (
-          <div className="bg-cyan-100/80 rounded-lg h-56 mt-6 flex items-center justify-center">
-            <span className="text-gray-500">[Chart Placeholder]</span>
-          </div>
-        )}
-      </div>
       <div
-        className="absolute right-0 -bottom-8 flex items-center gap-1
+        className="absolute right-0 -top-1 flex items-center gap-1
   dark:bg-[#2B394D] bg-gray-200 rounded-lg px-1 py-1
 "
       >
@@ -182,6 +166,21 @@ const StackedAreaChart = ({
             {item.toUpperCase()}
           </button>
         ))}
+      </div>
+      <div className="mt-4  w-full">
+        {Number(data?.length) > 0 ? (
+          <ApexChart
+            type="area"
+            height={230}
+            // width={800}
+            series={series}
+            options={options}
+          />
+        ) : (
+          <div className="bg-cyan-100/80 rounded-lg h-56 mt-6 flex items-center justify-center">
+            <span className="text-gray-500">[Chart Placeholder]</span>
+          </div>
+        )}
       </div>
     </div>
   );

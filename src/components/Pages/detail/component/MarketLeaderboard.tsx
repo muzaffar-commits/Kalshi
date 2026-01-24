@@ -10,7 +10,7 @@ interface MarketLeaderboardProps {
 }
 export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
   return (
-    <div className="w-full  rounded-2xl border dark:border-gray-800 border-gray-200 p-5 ">
+    <div className="w-full  rounded-2xl border dark:border-[#2B394D] border-gray-200 p-5 ">
       <div className="flex items-center justify-between mb-4">
         <h2 className="md:text-xl font-semibold tracking-wide text-black/80 dark:text-white">
           Market Leaderboard
@@ -30,7 +30,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
           <div
             key={index}
             className={`grid grid-cols-4 items-center px-3 py-3 rounded-md
-              border dark:border-gray-800 border-gray-200
+              border dark:border-[#2B394D] border-gray-200
               ${item.rank === 1 ? "" : "bg-white/2 hover:bg-white/10"}
               transition`}
           >

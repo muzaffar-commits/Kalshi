@@ -92,11 +92,11 @@ const UserProfile = () => {
             <div className="md:w-3/4 gap-3 flex md:mb-0 mb-4">
               <div className="h-24 w-24 flex items-center justify-center rounded bg-gray-300/20">
                 <Image
-                  src={userData?.user?.image_url || "/img/nick.jpg"}
+                  src={userData?.user?.image_url || "/img/user.png"}
                   alt="Profile"
                   width={80}
                   height={80}
-                  className="mr-4 rounded-lg object-cover"
+                  className="rounded-lg object-cover"
                 />
               </div>
               <div className="flex-1">

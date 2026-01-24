@@ -511,7 +511,7 @@ const Details = () => {
                   <p className="text-sm text-[#7F90A7] dark:text-gray-300">
                     $ {truncateValue(Number(currentVolume || 0)) || 0} Vol.
                   </p>
-                  <div className="lg:flex space-x-4 mt-1 text-sm">
+                  <div className="lg:flex flex-wrap space-x-4 mt-1 text-sm">
                     {data?.options?.map((item: OptionItem, index: number) => (
                       <div key={index} className=" text-wrap items-center">
                         <span
@@ -543,7 +543,7 @@ const Details = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-visible">
                 <div className="md:col-span-2 space-y-6">
                   <div className="h-64  mb-14  flex">
-                    <span className="text-gray-500 border-b w-full ">
+                    <span className="text-gray-500  w-full ">
                       <StackedAreaChart
                         data={graphData?.series}
                         setTimeIntervalValue={setTimeInterval}
@@ -552,145 +552,11 @@ const Details = () => {
                     </span>
                   </div>
 
-                  {Number(data?.options?.length) > 0 && (
-                    <div className="md:flex items-center justify-between text-center px-2 md:px-0 pt-3 md:py-0 font-bold dark:text-white text-black/80 md:border-0 lg:bg-transparent">
-                      <div className="w-64 text-start text-xl">Options</div>
-                      {useToken && (
-                        <>
-                          <div className="!w-20">Invested</div>
-                          <div className="!w-16">PnL</div>
-                          <div className="!w-24">Buy Shares</div>{" "}
-                        </>
-                      )}
-                      <div className="!w-40"></div>
-                    </div>
-                  )}
-                  <div className="flex flex-col gap-2">
-                    {data?.options?.map((item: OptionItem, index: number) => {
-                      const pnl = Number(item?.userPosition?.pnl || 0);
-                      const bgClass = getBgClass(Number(item?.price));
-
-                      return (
-                        <div
-                          key={index}
-                          className={`
-                            lg:flex flex-col lg:flex-row items-center justify-between
-                            px-3 py-3 rounded-lg
-                            border dark:border-[#c3a66e]/60
-                            border-gray-300
-                            backdrop-blur-md 
-                            transition-all duration-300
-                            ${bgClass}
-                          `}
-                        >
-                          {/* OPTION NAME */}
-                          <div
-                            className={`${
-                              useToken ? "w-64" : "w-[60%]"
-                            }  text-black/80 dark:text-slate-300`}
-                          >
-                            <div className="font-medium text-lg dark:text-white">
-                              {item?.name || "--"}
-                            </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-200">
-                              ${truncateValue(item?.trading?.totalVolume || 0)}{" "}
-                              VOL.
-                            </div>
-                          </div>
-
-                          {useToken && (
-                            <>
-                              <div className="w-20 text-sm text-black/80 dark:text-slate-300  text-center ">
-                                {(item.userPosition?.invested ?? 0) > 0
-                                  ? truncateValue(
-                                      Number(item.userPosition?.invested),
-                                      1,
-                                    )
-                                  : "--"}
-                              </div>
-
-                              <div
-                                className={`w-22 text-sm font-semibold text-center ${
-                                  pnl < 0 ? "text-red-400" : "text-emerald-400"
-                                }`}
-                              >
-                                {pnl !== 0 ? `$${truncateValue(pnl, 1)}` : "--"}
-                              </div>
-
-                              <div className="w-24 text-sm text-gray-700 dark:text-slate-300 text-center">
-                                {(item.userPosition?.shares ?? 0) > 0
-                                  ? truncateValue(
-                                      Number(item.userPosition?.shares),
-                                      1,
-                                    )
-                                  : "--"}
-                              </div>
-                            </>
-                          )}
-
-                          {/* ACTIONS */}
-                          <div className="flex items-center gap-2  mt-2 md:mt-0">
-                            <div className="lg:text-lg text-md text-black/80 dark:text-white/80 font-semibold w-10 text-center mr-2">
-                              {truncateValue(Number(item?.price) * 100, 1)}%
-                            </div>
-
-                            <button
-                              onClick={() => handleBuyNow(item, "sell", index)}
-                              className="px-2 md:py-2 py-1 rounded-md text-md font-medium
-                              bg-red-500/20 text-red-400 border border-red-500/30
-                              hover:bg-red-500/30 transition cursor-pointer"
-                            >
-                              Sell
-                              {/* {item?.price} */} $
-                              {truncateValue(Number(item?.price), 2)}
-                            </button>
-
-                            <button
-                              onClick={() => handleBuyNow(item, "buy", index)}
-                              className="px-2 md:py-2 py-1  rounded-md text-md font-medium
-                              bg-emerald-500/20 text-emerald-400 border border-emerald-500/30
-                              hover:bg-emerald-500/30 transition cursor-pointer"
-                            >
-                              Buy ${truncateValue(Number(item?.price || 0), 2)}
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
                   <div>
-                    <h3 className="w-64 text-start dark:text-white text-black font-bold text-xl mb-3">
-                      Options
-                    </h3>
-                    <div>
-                      <MarketAccordion />
-                    </div>
-                    {/* <div className="border dark:border-gray-700 border-gray-200 rounded-lg md:flex justify-between p-3 items-center">
-                      <div>
-                        <p className="font-bold dark:text-white text-black text-lg mb-0">
-                          Yes
-                        </p>
-                        <span className="dark:text-gray-300 text-gray-500 text-sm">
-                          $0.00 VOL.
-                        </span>
-                      </div>
-                      <div>
-                        <h4 className="text-2xl font-semibold  dark:text-white text-black">
-                          33.3%
-                        </h4>
-                      </div>
-                      <div>
-                        <div className="flex gap-2">
-                          <button className="px-2 md:py-2 py-1 rounded-md text-md font-semibold   bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition cursor-pointer">
-                            Sell $0.33
-                          </button>
-                          <button className="px-2 md:py-2 py-1  rounded-md text-md font-semibold   bg-emerald-500/20 text-emerald-400 border border-emerald-500/30   hover:bg-emerald-500/30 transition cursor-pointer">
-                            Buy $0.33
-                          </button>
-                        </div>
-                      </div>
-                    </div> */}
+                    <MarketAccordion
+                      data={data?.options}
+                      handleBuySell={handleBuyNow}
+                    />
                   </div>
 
                   <div className="flex flex-col gap-4">

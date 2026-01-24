@@ -236,7 +236,7 @@ const Header = () => {
               className={`flex items-center justify-between px-4 ${
                 pathname === "/"
                   ? ""
-                  : "border-b dark:border-gray-800 border-gray-300"
+                  : "border-b dark:border-[#2B394D] border-gray-300"
               }`}
             >
               {/* LEFT: Logo */}

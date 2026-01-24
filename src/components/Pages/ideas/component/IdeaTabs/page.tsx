@@ -267,16 +267,37 @@ export default function IdeaTabs({
                     onChange={handleFileChange}
                   />
                   <button
-                    disabled={!canPost || !(String(message).trim().length > 3)}
+                    disabled={
+                      !selectedImage?.name && String(message).trim().length <= 3
+                    }
                     onClick={postUserMessage}
-                    className={`py-2 px-4 w-16 flex items-center justify-center rounded-md ${
-                      selectedImage?.name || String(message).trim().length > 3
-                        ? "bg-[#c8aa76] text-black cursor-pointer"
-                        : "bg-gray-700 text-gray-400 cursor-not-allowed"
-                    }`}
+                    className={`
+                        py-1 px-4 w-16 flex items-center justify-center rounded-md
+                        text-sm font-semibold
+                        transition-all duration-200
+                        ${
+                          selectedImage?.name ||
+                          String(message).trim().length > 3
+                            ? `
+                              bg-emerald-500
+                              text-black
+                              hover:bg-emerald-600
+                              active:scale-95
+                              cursor-pointer
+                              shadow-[0_4px_14px_rgba(34,197,94,0.45)]
+                            `
+                            : `
+                              bg-gray-300
+                              text-gray-500
+                              border border-gray-400 dark:bg-gray-600 dark:border-gray-700
+                              cursor-not-allowed
+                              shadow-none
+                            `
+                        }
+                      `}
                   >
                     {isPostLoader ? (
-                      <CircularProgress size={20} className="!text-white" />
+                      <CircularProgress size={18} className="!text-black" />
                     ) : (
                       "Post"
                     )}
@@ -310,7 +331,7 @@ export default function IdeaTabs({
                   <div>
                     {" "}
                     <Image
-                      src={row?.imageUrl || "/img/nick.jpg"}
+                      src={row?.imageUrl || "/img/user.png"}
                       alt="user"
                       width={70}
                       height={70}

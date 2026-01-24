@@ -244,9 +244,6 @@ const Home = () => {
     isWatchList,
     "selectedSubCategory111",
   );
-  const theme = useTheme();
-
-  console.log(theme, "theme");
 
   return (
     <>
