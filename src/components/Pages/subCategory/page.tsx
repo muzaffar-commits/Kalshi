@@ -73,7 +73,10 @@ export default function SubCategory({
                 questionData?.map((row) => {
                   const isActiveButton = row?.id === selectedQuestion?.id;
                   return (
-                    <div className="border border-gray-200 dark:border-gray-700 dark:hover:border-[#c9ae79]/50 hover:border-gray-300 p-3 rounded-lg mb-3">
+                    <div
+                      key={row?.id}
+                      className="border border-gray-200 dark:border-gray-700 dark:hover:border-[#c9ae79]/50 hover:border-gray-300 p-3 rounded-lg mb-3"
+                    >
                       <p
                         className="text-gray-400 cursor-pointer hover:text-gray-200 text-sm mb-4"
                         onClick={() => goToDetails(row?.id)}
@@ -86,7 +89,10 @@ export default function SubCategory({
                           row?.options?.map((item, idx) => {
                             const isOptionActive = item?.id == options?.id;
                             return (
-                              <div className="flex justify-between  items-center mb-2">
+                              <div
+                                key={item?.id}
+                                className="flex justify-between  items-center mb-2"
+                              >
                                 <div className="text-[16px] dark:text-gray-300 text-gray-800 flex items-center gap-1 min-w-0">
                                   <Image
                                     src={play}

@@ -4,8 +4,6 @@ import Image from "next/image";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import Link from "next/link";
-import { FaCentSign } from "react-icons/fa6";
 import { LuUpload } from "react-icons/lu";
 import {
   FaRegCommentAlt,

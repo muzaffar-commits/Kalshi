@@ -46,7 +46,7 @@ const categorySlice = createSlice({
     changeIsEvent: (state, action) => {
       state.isEvent = action.payload;
     },
-    changeFilter: (state: any, action) => {
+    changeFilter: (state, action) => {
       const { key, subKey, value } = action.payload;
 
       // hideFilter (nested toggle / set)
@@ -62,7 +62,7 @@ const categorySlice = createSlice({
       state.filters[key] = value;
     },
 
-    resetFilters: (state: any) => {
+    resetFilters: (state) => {
       state.filters = {
         frequency: "all",
         search: "",

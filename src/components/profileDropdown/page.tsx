@@ -1,7 +1,7 @@
 "use client";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, PlusCircle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slice/auth";
 import { useRouter } from "next/navigation";
@@ -65,7 +65,7 @@ export default function ProfileDropdown() {
   }, []);
 
   const userData = user?.[0] || null;
-  const portFolioData = user?.[1] || null;
+  // const portFolioData = user?.[1] || null;
 
   console.log(userData, "userData");
 

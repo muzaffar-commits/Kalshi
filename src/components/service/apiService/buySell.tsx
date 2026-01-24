@@ -105,7 +105,7 @@ export const getOrdersList = async (
   questionId: string | null,
   status: string = "NEW",
   type: string = "LIMIT",
-  page: string | null = "0",
+  // page: string | null = "0",
 ) => {
   try {
     const response = await apiInstance.get(

@@ -521,8 +521,8 @@ export default function CommentPage({
                       )}
                     <div className="pb-2">
                       {row?.replies?.length > 0 &&
-                        row?.replies?.map((replies: IReply, index: any) => (
-                          <div>
+                        row?.replies?.map((replies: IReply) => (
+                          <div key={replies?.id}>
                             <div className="md:flex  pt-4  items-start gap-4 ">
                               <div className="h-11 w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-500">
                                 <Image

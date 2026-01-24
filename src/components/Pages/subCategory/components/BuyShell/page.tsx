@@ -15,7 +15,7 @@ import {
 } from "@/components/service/apiService/buySell";
 import { TfiExchangeVertical } from "react-icons/tfi";
 import toast from "react-hot-toast";
-import { useTheme } from "next-themes";
+// import { useTheme } from "next-themes";
 import { truncateValue } from "@/utils/Content";
 
 interface UserPosition {
@@ -90,7 +90,7 @@ export default function BuySell({
   const [amount, setAmount] = useState<number | "">("");
   const [types, setTypes] = useState<string>("market");
   const token = localStorage.getItem("token");
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
   const [activeField, setActiveField] = useState<"shares" | "amount" | null>(
     null,
   );
@@ -326,7 +326,7 @@ export default function BuySell({
   };
   useEffect(() => {
     currentShareDetails();
-  }, [rowDetailsId, option?.id]);
+  }, [currentShareDetails, rowDetailsId, option?.id]);
 
   const sharesInput = Number(share);
   const amountInput = Number(amount);
@@ -381,14 +381,14 @@ export default function BuySell({
       setBtnLoader(false);
     }
   };
-  const isSharesValid = tpslShare > 0;
-  const isTPValid = takeProfit > 0;
-  const isSLValid = stopLoss > 0;
+  // const isSharesValid = tpslShare > 0;
+  // const isTPValid = takeProfit > 0;
+  // const isSLValid = stopLoss > 0;
 
-  const isTouched = tpTouched && slTouched;
+  // const isTouched = tpTouched && slTouched;
 
-  const disabledTpslBtn =
-    !isTouched || !isSharesValid || !isTPValid || !isSLValid;
+  // const disabledTpslBtn =
+  //   !isTouched || !isSharesValid || !isTPValid || !isSLValid;
 
   const STEP = 0.01;
   const MIN = 0;

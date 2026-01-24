@@ -17,7 +17,7 @@ export default function Profile({
   userId: string;
 }) {
   // const [userDetails, setUserDetails] = useState({});
-  const [isLoader, setIsLoader] = useState(false);
+  // const [isLoader, setIsLoader] = useState(false);
   const [followingData, setFollowingData] = useState([]);
   const usersOwn = useSelector((state: any) => state?.user?.user);
   const userDetails = followingData?.[0];
@@ -26,7 +26,7 @@ export default function Profile({
 
   const targetIds = targetId ? targetId : userId;
   const getListOfPost = useCallback(async () => {
-    setIsLoader(true);
+    // setIsLoader(true);
     try {
       const [response] = await Promise.all([
         getUsersAllDetails(targetIds, userId),
@@ -41,7 +41,7 @@ export default function Profile({
     } catch {
       setFollowingData([]);
     } finally {
-      setIsLoader(false);
+      // setIsLoader(false);
     }
   }, [targetIds, userId]);
 

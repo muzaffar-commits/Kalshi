@@ -1,31 +1,10 @@
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   // output: "export",
-//   basePath: "",
-//   assetPrefix: "",
-//   images: {
-//     unoptimized: true,
-//   },
-// };
-
-// export default nextConfig;
-
-// import type { NextConfig } from "next";
-
-// const nextConfig = {
-//   images: {
-//     unoptimized: true,
-//   },
-// } satisfies NextConfig;
-
-// export default nextConfig;
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  output: "export", // ✅ REQUIRED for out/
+  trailingSlash: true, // ✅ folder-based routing
   images: {
-    unoptimized: true,
+    unoptimized: true, // ✅ required for export
   },
   eslint: {
     ignoreDuringBuilds: true,

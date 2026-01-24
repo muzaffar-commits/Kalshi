@@ -18,7 +18,6 @@ import {
   RootState,
 } from "@/utils/typesInterface";
 import { delay } from "@/utils/Content";
-import SubCategory from "../subCategory/page";
 import {
   fetchWatchList,
   postQuestionBookUnBookMark,
@@ -83,9 +82,10 @@ const Home = () => {
   const [options, setOptions] = useState<OptionItem | null>(null);
   const [rowDetails, setRowDetails] = useState<QuestionItemSecond | null>(null);
   const [optionIndex, setOptionIndex] = useState<number | null>(null);
-  const [eventSubCategoryId, setEventSubCategoryId] = useState<number | null>(
-    null,
-  );
+  // const [eventSubCategoryId, setEventSubCategoryId] = useState<number | null>(
+  //   null,
+  // );
+  const eventSubCategoryId = null;
   const getToken = localStorage.getItem("token");
   const router = useRouter();
   const categoryDetails = useSelector(

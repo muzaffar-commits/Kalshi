@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { FaBolt, FaBullseye } from "react-icons/fa";
-import { MdSwapVert } from "react-icons/md";
 
 interface Props {
   label?: string;
