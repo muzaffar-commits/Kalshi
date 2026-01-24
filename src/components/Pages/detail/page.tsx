@@ -33,6 +33,7 @@ import OrderList from "./component/OrderList";
 import StackedAreaChart from "./component/realTimeChart";
 import IdeasActivityTabs from "./component/ideaComment";
 import { ArrowRight } from "lucide-react";
+import MarketAccordion from "./component/optionsDropdown/page";
 // import UserPosts from "./component/userPosts";
 
 type OrderSide = "BUY" | "SELL";
@@ -656,6 +657,40 @@ const Details = () => {
                         </div>
                       );
                     })}
+                  </div>
+
+                  <div>
+                    <h3 className="w-64 text-start dark:text-white text-black font-bold text-xl mb-3">
+                      Options
+                    </h3>
+                    <div>
+                      <MarketAccordion />
+                    </div>
+                    {/* <div className="border dark:border-gray-700 border-gray-200 rounded-lg md:flex justify-between p-3 items-center">
+                      <div>
+                        <p className="font-bold dark:text-white text-black text-lg mb-0">
+                          Yes
+                        </p>
+                        <span className="dark:text-gray-300 text-gray-500 text-sm">
+                          $0.00 VOL.
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="text-2xl font-semibold  dark:text-white text-black">
+                          33.3%
+                        </h4>
+                      </div>
+                      <div>
+                        <div className="flex gap-2">
+                          <button className="px-2 md:py-2 py-1 rounded-md text-md font-semibold   bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition cursor-pointer">
+                            Sell $0.33
+                          </button>
+                          <button className="px-2 md:py-2 py-1  rounded-md text-md font-semibold   bg-emerald-500/20 text-emerald-400 border border-emerald-500/30   hover:bg-emerald-500/30 transition cursor-pointer">
+                            Buy $0.33
+                          </button>
+                        </div>
+                      </div>
+                    </div> */}
                   </div>
 
                   <div className="flex flex-col gap-4">
