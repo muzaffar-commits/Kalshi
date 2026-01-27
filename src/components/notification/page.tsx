@@ -91,7 +91,7 @@ export default function NotificationBell() {
                 />
 
                 <div className="flex-1">
-                  <div className="text-sm font-medium dark:text-white">
+                  <div className="text-sm font-medium dark:text-white text-gray-800">
                     {n.title}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">

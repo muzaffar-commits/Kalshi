@@ -554,7 +554,7 @@ export default function CommentPage({
                       <div className="flex items-center gap-2">
                         <h4>
                           <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
-                            {row?.User?.username || "Unknown"} dd
+                            {row?.User?.username || "Unknown"}
                           </span>{" "}
                           <span className="text-xs dark:text-gray-500 text-gray-500">
                             {timeAgoCompact(row?.updatedAt)}
