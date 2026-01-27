@@ -145,7 +145,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                 return (
                   <div
                     key={i}
-                    className="dark:bg-[#1D293D] border border-gray-800 dark:border-gray-500 rounded-xl p-5 
+                    className="dark:bg-[#1D293D] border border-gray-300 dark:border-gray-500 rounded-xl p-5 
                  hover:border-gray-700 transition-all duration-200"
                   >
                     <div className="flex relative flex-col sm:flex-row sm:justify-between sm:items-start gap-5">

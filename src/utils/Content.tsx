@@ -37,41 +37,6 @@ export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
   });
 };
 
-// export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
-//   if (!data || data.length === 0) return [];
-
-//   // collect all timestamps
-//   const allTimestamps = Array.from(
-//     new Set(data.flatMap((item) => item.data.map((d) => d.timestamp)))
-//   ).sort((a, b) => a - b);
-
-//   return data.map((item) => {
-//     const priceMap = new Map<number, number>();
-
-//     item.data.forEach((d) => {
-//       priceMap.set(d.timestamp, d.price);
-//     });
-
-//     let lastPrice = item.data[0]?.price ?? 0;
-
-//     const normalizedData = allTimestamps.map((timestamp) => {
-//       if (priceMap.has(timestamp)) {
-//         lastPrice = priceMap.get(timestamp)!;
-//       }
-
-//       return {
-//         x: timestamp,
-//         y: lastPrice, // ❗ no toFixed here
-//       };
-//     });
-
-//     return {
-//       name: item.optionName,
-//       data: normalizedData,
-//     };
-//   });
-// };
-
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof AxiosError) {
     if (error.response?.data?.errors?.length > 0) {

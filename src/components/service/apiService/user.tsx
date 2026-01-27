@@ -245,3 +245,53 @@ export const fetchNotification = async () => {
     };
   }
 };
+export const fetchUnReadCountNotification = async () => {
+  try {
+    const response = await apiInstance.get(API_URLs.getUnReadCountNotification);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const postReadNotification = async (reqBody: unknown) => {
+  try {
+    const response = await apiInstance.post(API_URLs.readNotification, reqBody);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const postAllReadNotification = async () => {
+  try {
+    const response = await apiInstance.post(API_URLs.allReadNotification);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const getMyAllPost = async (userId: string, id: string) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.myAllPost}${userId ? `?userId=${userId}` : ""}${id ? `&targetId=${id}` : ""}`,
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+//

@@ -40,7 +40,11 @@ export const API_URLs = {
   userCommentLikeOrUnlike: "/user/comment-like-or-unlike",
   getWatchList: "/user/get-question-bookmarks",
   getNotification: "/user/notifications",
+  getUnReadCountNotification: "/user/notifications/unread-count",
+  readNotification: "/user/notifications/read",
+  allReadNotification: "/user/notifications/all-read",
+  myAllPost: "/user/feed",
 };
 
 // images
-// images
+// feed

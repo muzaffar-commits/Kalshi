@@ -355,6 +355,7 @@ export default function CommentPage({
               <div className="flex justify-between">
                 <div className="flex gap-3 items-center">
                   <span
+                    onClick={() => handleLikeUnlike(postDetails?.id, isLike)}
                     className="
                                         p-2
                                         rounded
@@ -370,16 +371,12 @@ export default function CommentPage({
                     {/* FcLike  */}
 
                     {isLike == 1 ? (
-                      <FcLike
-                        onClick={() =>
-                          handleLikeUnlike(postDetails?.id, isLike)
-                        }
-                      />
+                      <FcLike />
                     ) : (
                       <FaRegHeart
-                        onClick={() =>
-                          handleLikeUnlike(postDetails?.id, isLike)
-                        }
+                      // onClick={() =>
+                      //   handleLikeUnlike(postDetails?.id, isLike)
+                      // }
                       />
                     )}
                   </span>
@@ -387,25 +384,18 @@ export default function CommentPage({
                     {postDetails?.likeCount || 0}
                   </span>
                   <span
-                    className="
-                                      p-2
-                                      rounded
+                    onClick={handleBookMarkOrUnBookMark}
+                    className="  p-2  rounded
                                       inline-block
                                       text-gray-500
                                       dark:text-gray-400
-                                      hover:bg-gray-400/30
-                                      transition-all
-                                      duration-200
-                                      ease-in-out text-lg cursor-pointer
+                                      hover:bg-gray-400/30 transition-all   duration-200  ease-in-out text-lg cursor-pointer
                                     "
                   >
                     {isBookmarked == 1 ? (
-                      <FaBookmark
-                        onClick={handleBookMarkOrUnBookMark}
-                        className="text-[#156bf7]"
-                      />
+                      <FaBookmark className="text-[#156bf7]" />
                     ) : (
-                      <FaRegBookmark onClick={handleBookMarkOrUnBookMark} />
+                      <FaRegBookmark />
                     )}
                   </span>
                   <span className="inline-block relative -left-3 font-light text-gray-400"></span>
@@ -591,20 +581,26 @@ export default function CommentPage({
                   <div className=" pl-10 py-2">
                     <div className="flex text-gray-400 flex-row items-center gap-4">
                       <span className="flex items-center gap-2">
-                        {row?.isUserLike == 1 ? (
-                          <FcLike
-                            onClick={() =>
-                              handleCommentLikeUnlike(row?.id, row?.isUserLike)
-                            }
-                          />
-                        ) : (
-                          <Heart
-                            onClick={() =>
-                              handleCommentLikeUnlike(row?.id, row?.isUserLike)
-                            }
-                            size={18}
-                          />
-                        )}{" "}
+                        <span
+                          onClick={() =>
+                            handleCommentLikeUnlike(row?.id, row?.isUserLike)
+                          }
+                          className="p-2  rounded
+                                      inline-block
+                                      text-gray-500
+                                      dark:text-gray-400
+                                      hover:bg-gray-400/30 transition-all   duration-200  ease-in-out text-lg cursor-pointer"
+                        >
+                          {row?.isUserLike == 1 ? (
+                            <FcLike
+                            // onClick={() =>
+                            //   handleCommentLikeUnlike(row?.id, row?.isUserLike)
+                            // }
+                            />
+                          ) : (
+                            <Heart size={18} />
+                          )}{" "}
+                        </span>
                         {row?.likeCount || 0}
                       </span>
                       <div

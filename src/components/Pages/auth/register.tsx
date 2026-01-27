@@ -21,7 +21,7 @@ const RegisterSchema = Yup.object().shape({
     .min(6, "Password must be at least 8 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/,
-      "Password must contain uppercase, lowercase, number & special character"
+      "Password must contain uppercase, lowercase, number & special character",
     ),
 });
 
@@ -70,11 +70,11 @@ export default function Register({
               login({
                 user: response?.data?.user,
                 token: response?.data?.token,
-              })
+              }),
             );
             toast.success(response?.message);
             action.resetForm();
-            window.location.reload();
+
             handleClose();
           } else {
             toast.error(response?.message);
@@ -87,6 +87,7 @@ export default function Register({
           }
         } finally {
           setIsLoader(false);
+          window.location.reload();
         }
       } else {
         try {

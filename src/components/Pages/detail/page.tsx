@@ -448,10 +448,17 @@ const Details = () => {
     setDeleteOpen(true);
 
     const ordersFilter = orderData?.find((item) => item.id == row);
+    console.log(ordersFilter, "ordersFilter");
+
     setSelectedOrderDetails(
       ordersFilter
         ? {
-            maxCost: ordersFilter.maxCost,
+            maxCost:
+              ordersFilter?.tpslLeg == "TP_OR_SL"
+                ? ordersFilter?.triggerPrice
+                : ordersFilter?.side == "SELL"
+                  ? ordersFilter.minProceeds
+                  : ordersFilter.maxCost,
             shares: ordersFilter.shares,
           }
         : null,

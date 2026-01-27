@@ -1,34 +1,18 @@
 "use client";
-import { Bell } from "lucide-react";
+import { timeAgoCompact } from "@/utils/Content";
+import { Bell, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import {
+  postAllReadNotification,
+  postReadNotification,
+} from "../service/apiService/user";
+import toast from "react-hot-toast";
 
-export default function NotificationBell() {
+export default function NotificationBell({ data, setData, count, setCount }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const notifications = [
-    {
-      id: 1,
-      title: "Order Filled",
-      message: "You sold YES · Before April 1, 2026",
-      time: "2m ago",
-      type: "sell",
-    },
-    {
-      id: 2,
-      title: "Order Filled",
-      message: "You bought NO · Before February 1, 2026",
-      time: "10m ago",
-      type: "buy",
-    },
-    {
-      id: 3,
-      title: "Price Alert",
-      message: "YES price moved to 45¢ on Maduro exile market",
-      time: "1h ago",
-      type: "info",
-    },
-  ];
+  console.log(data, "data");
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -41,14 +25,55 @@ export default function NotificationBell() {
   }, []);
 
   // fetchNotification
+
+  const markAsRead = async (row: any) => {
+    try {
+      const payload = {
+        notificationId: row?.id,
+      };
+      setData((prev: any) =>
+        prev.map((item: any) =>
+          item.id === row?.id ? { ...item, isRead: true } : item,
+        ),
+      );
+      setCount((prev) => prev - 1);
+      const response = await postReadNotification(payload);
+      if (response.success) {
+        toast.success("Notification Read Successfully");
+      }
+      console.log(response, "read message");
+    } catch {
+      toast.error("Something went wrongs");
+    }
+  };
+
+  const markAsReadAll = async (row: any) => {
+    try {
+      setData([]);
+      setCount(0);
+      const response = await postAllReadNotification();
+      if (response.success) {
+        toast.success("All notifications marked as read");
+      }
+      console.log(response, "read message");
+    } catch {
+      toast.error("Something went wrongs");
+    }
+  };
+
+  //
+
   return (
     <div className="relative" ref={ref}>
       {/* Bell */}
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className=" dark:hover:text-white cursor-pointer"
+        className=" dark:hover:text-white cursor-pointer relative"
       >
         <Bell size={30} className="dark:text-white text-sky-500" />
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs px-1">
+          {count || 0}
+        </span>
       </button>
 
       {/* Dropdown */}
@@ -67,41 +92,68 @@ export default function NotificationBell() {
         `}
       >
         {/* Header */}
-        <div className="px-4 py-3 border-b dark:border-gray-800 border-gray-300 text-gray-800 font-semibold text-sm">
-          Notifications
+        <div className="flex px-4 flex-row border-b border-gray-300 dark:border-gray-500 items-center justify-between">
+          <div className=" py-3  text-gray-800 dark:text-gray-200 font-semibold text-sm">
+            Notifications ({count})
+          </div>
+          <button
+            // disabled
+            onClick={markAsReadAll}
+            className="
+              flex items-center gap-1
+              px-2 py-1.5
+              text-xs
+              rounded-full
+              bg-gray-100 dark:bg-gray-800
+              text-gray-500 hover:bg-gray-300 cursor-pointer "
+          >
+            <Check size={14} />
+            Read All
+          </button>
         </div>
 
         {/* List */}
         <div className="max-h-72 overflow-y-auto">
-          {notifications.map((n) => (
-            <div
-              key={n.id}
-              className="px-4 py-3 border-b last:border-b-0 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-            >
-              <div className="flex items-start gap-3">
-                {/* Indicator */}
-                <span
-                  className={`mt-1 h-2 w-2 rounded-full ${
-                    n.type === "sell"
-                      ? "bg-red-500"
-                      : n.type === "buy"
-                        ? "bg-green-500"
-                        : "bg-blue-500"
-                  }`}
-                />
-
-                <div className="flex-1">
-                  <div className="text-sm font-medium dark:text-white text-gray-800">
-                    {n.title}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {n.message}
-                  </div>
-                  <div className="text-[11px] text-gray-400 mt-1">{n.time}</div>
-                </div>
-              </div>
+          {data?.length > 0 ? (
+            <div className="px-4 py-3 border-b last:border-b-0 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+              Not fountdsdf
             </div>
-          ))}
+          ) : (
+            data
+              .filter((item) => item?.isRead === false)
+              .map((row) => (
+                <div
+                  key={row?.id}
+                  onClick={() => markAsRead(row)}
+                  className="px-4 py-3 border-b last:border-b-0 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Indicator */}
+                    <span
+                      className={`mt-1 h-2 w-2 rounded-full ${
+                        row?.type === "sell"
+                          ? "bg-red-500"
+                          : row?.type === "buy"
+                            ? "bg-green-500"
+                            : "bg-blue-500"
+                      }`}
+                    />
+
+                    <div className="flex-1">
+                      <div className="text-sm font-medium dark:text-white text-gray-800">
+                        {row?.type}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {row?.message}
+                      </div>
+                      <div className="text-[11px] text-gray-400 mt-1">
+                        {timeAgoCompact(row?.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+          )}
         </div>
 
         {/* Footer */}

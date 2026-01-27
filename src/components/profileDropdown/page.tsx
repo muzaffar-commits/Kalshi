@@ -106,7 +106,7 @@ export default function ProfileDropdown() {
             setOpen(false);
             router.push("/userProfile");
           }}
-          className="px-4 py-3 border-b dark:border-gray-600 hover:bg-[#fffcf5] overflow-hidden rounded-t-xl border-gray-300"
+          className="px-4 py-3 border-b dark:border-gray-600  overflow-hidden rounded-t-xl border-gray-300"
         >
           <div className="flex items-center gap-3">
             {userData?.user?.image_url ? (

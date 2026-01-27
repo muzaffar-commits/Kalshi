@@ -21,7 +21,11 @@ import {
   saveSubCategory,
 } from "@/components/store/slice/category";
 import { usePathname } from "next/navigation";
-import { userBalance } from "@/components/service/apiService/user";
+import {
+  fetchNotification,
+  fetchUnReadCountNotification,
+  userBalance,
+} from "@/components/service/apiService/user";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FaBookmark, FaSearch } from "react-icons/fa";
 import { CategorySkeleton } from "@/utils/customSkeleton";
@@ -32,6 +36,7 @@ import { CustomToggle } from "@/components/common/CustomToggle";
 import { SlArrowDown } from "react-icons/sl";
 import ProfileDropdown from "@/components/profileDropdown/page";
 import NotificationBell from "@/components/notification/page";
+import MainSearch from "./MainSearch";
 
 interface Category {
   id: number;
@@ -82,6 +87,8 @@ const Header = () => {
     crypto: false,
     earnings: false,
   });
+  const [notificationData, setNotificationData] = useState([]);
+  const [countNotification, setCountNotification] = useState(0);
   const getToken = localStorage.getItem("token");
   const user = useSelector((state: headerRootState) => state?.user);
   const isWatchList = useSelector(
@@ -225,8 +232,39 @@ const Header = () => {
     });
   };
 
-  console.log(isWatchList, "isWatchList");
-
+  // fetchNotification
+  const getNotificationList = async () => {
+    try {
+      const response = await fetchNotification();
+      if (response?.success) {
+        setNotificationData(response?.data ?? []);
+      } else {
+        setNotificationData([]);
+      }
+    } catch {
+      setNotificationData([]);
+    }
+  };
+  useEffect(() => {
+    getNotificationList();
+  }, []);
+  const getUnReadCountNotification = async () => {
+    try {
+      const response = await fetchUnReadCountNotification();
+      console.log(response, "response====>");
+      if (response?.success) {
+        setCountNotification(response?.count ?? 0);
+      } else {
+        setCountNotification(0);
+      }
+    } catch {
+      setCountNotification(0);
+    }
+  };
+  useEffect(() => {
+    getUnReadCountNotification();
+  }, []);
+  //
   return (
     <>
       <div className="hidden lg:block">
@@ -251,14 +289,7 @@ const Header = () => {
 
               {/* CENTER: Search */}
               <div className="w-full max-w-xl mx-6">
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 dark:text-gray-200 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search opinion kings"
-                    className="w-full pl-10 pr-4 py-2 dark:text-gray-300 text-gray-700 rounded-full bg-gray-100 dark:bg-gray-700 text-md focus:outline-none"
-                  />
-                </div>
+                <MainSearch />
               </div>
 
               {/* RIGHT: Actions */}
@@ -287,7 +318,14 @@ const Header = () => {
                   </button>
                 )}
 
-                {user?.isAuth && <NotificationBell />}
+                {user?.isAuth && (
+                  <NotificationBell
+                    data={notificationData}
+                    count={countNotification}
+                    setData={setNotificationData}
+                    setCount={setCountNotification}
+                  />
+                )}
                 {user?.isAuth && <ProfileDropdown />}
 
                 {!user?.isAuth && (
@@ -690,7 +728,14 @@ const Header = () => {
 
             {/* Right: Notification + Profile */}
             <div className="flex items-center gap-4">
-              {user?.isAuth && <NotificationBell />}
+              {user?.isAuth && (
+                <NotificationBell
+                  data={notificationData}
+                  count={countNotification}
+                  setData={setNotificationData}
+                  setCount={setCountNotification}
+                />
+              )}
               {user?.isAuth && <ProfileDropdown />}
             </div>
           </div>

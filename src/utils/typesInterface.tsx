@@ -273,11 +273,14 @@ export interface MarketData {
 export interface OrderItem {
   id: number;
   optionId: number;
+  minProceeds: number;
   shares: number;
   price: number;
   side: OrderSide;
   status: string;
   createdAt: string;
+  tpslLeg: string;
+  triggerPrice: number;
   maxCost: number;
 }
 

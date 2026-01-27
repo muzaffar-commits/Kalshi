@@ -33,6 +33,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   const maxCost = selectedOrderDetails?.maxCost ?? 0;
   const totalPrice = maxCost * shares;
 
+  console.log(selectedOrderDetails, "totalPrice");
+
   return (
     <Dialog
       open={open}
