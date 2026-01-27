@@ -233,3 +233,15 @@ export const postUserCommentLikeOrUnlike = async (reqBody: unknown) => {
     };
   }
 };
+
+export const fetchNotification = async () => {
+  try {
+    const response = await apiInstance.get(API_URLs.getNotification);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};

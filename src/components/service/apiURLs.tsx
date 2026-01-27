@@ -39,6 +39,7 @@ export const API_URLs = {
   questionBookMark: "/user/question-bookmark-or-unbookmark",
   userCommentLikeOrUnlike: "/user/comment-like-or-unlike",
   getWatchList: "/user/get-question-bookmarks",
+  getNotification: "/user/notifications",
 };
 
 // images

@@ -40,6 +40,7 @@ export default function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // fetchNotification
   return (
     <div className="relative" ref={ref}>
       {/* Bell */}
