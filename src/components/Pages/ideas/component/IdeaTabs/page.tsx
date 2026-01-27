@@ -28,6 +28,7 @@ import socket from "@/components/socket";
 import { timeAgoCompact, truncateValue } from "@/utils/Content";
 import { Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
+import CircularWithValueLabel from "./CircularProgressWithLabel";
 
 type HandleComment = (post: PostFeeBack) => void;
 
@@ -236,7 +237,7 @@ export default function IdeaTabs({
 
               <div className=" flex flex-row pl-7 justify-between items-center">
                 {selectedImage?.name ? (
-                  <div className="text-xs gap-4 items-center flex flex-row">
+                  <div className="text-xs gap-4 dark:text-gray-200 text-gray-700 items-center flex flex-row">
                     {selectedImage?.name || ""}
                     {String(selectedImage?.name)?.length > 0 && (
                       <div
@@ -248,7 +249,7 @@ export default function IdeaTabs({
                     )}
                   </div>
                 ) : (
-                  <div></div>
+                  <div>{/* <CircularWithValueLabel /> */}</div>
                 )}
 
                 <div className="flex justify-end gap-4 mr-7">

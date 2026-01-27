@@ -78,17 +78,19 @@ const Ideas = () => {
       <div className="dark:bg-[#1D293D] mt-40">
         <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 mt-36 lg:mt-28">
           <div className="lg:flex">
-            <div className="md:w-1/4 w-full">
-              <h1 className="dark:text-white text-gray-800 lg:text-3xl text-xl mb-0 mt-3">
-                Ideas
-              </h1>
-              <span className="text-gray-500 text-xs">
-                Serving public conversation
-              </span>
-              <MobileMenu
-                currentTabs={currentTabs}
-                handleTabs={changeForTabs}
-              />
+            <div className="md:!w-1/4">
+              <div className=" w-full ">
+                <h1 className="dark:text-white text-gray-800 lg:text-3xl text-xl mb-0 mt-3">
+                  Ideas
+                </h1>
+                <span className="text-gray-500 text-xs">
+                  Serving public conversation
+                </span>
+                <MobileMenu
+                  currentTabs={currentTabs}
+                  handleTabs={changeForTabs}
+                />
+              </div>
             </div>
             <div className="md:w-3/4 w-full lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
               <div className="lg:border-r dark:border-gray-700 border-gray-200">
@@ -98,6 +100,7 @@ const Ideas = () => {
                       <CommentPage
                         postDetails={postDetails}
                         handleCloseComment={handleCloseComment}
+                        handleUserDetails={handleUserDetails}
                       />
                     )
                   ) : (
@@ -118,6 +121,7 @@ const Ideas = () => {
                       <CommentPage
                         postDetails={postDetails}
                         handleCloseComment={handleCloseComment}
+                        handleUserDetails={handleUserDetails}
                       />
                     )
                   ) : (

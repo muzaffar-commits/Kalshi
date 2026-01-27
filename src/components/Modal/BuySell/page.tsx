@@ -237,7 +237,9 @@ export default function BuySell({
   const handleClose = () => {
     setAmount("");
     setShare("");
+    setTypes("market");
     setLimitShare("");
+    handleChangeOrderType("buy");
     setTpslShare(0);
     setTakeProfit(0);
     setStopLoss(0);
@@ -343,7 +345,7 @@ export default function BuySell({
     }
   };
   useEffect(() => {
-    currentShareDetails();
+    isOpen && currentShareDetails();
   }, [currentShareDetails, isOpen]);
 
   const sharesInput = Number(share);
@@ -399,14 +401,40 @@ export default function BuySell({
     //   setBtnLoader(false);
     // }
   };
-  const isSharesValid = tpslShare > 0;
-  const isTPValid = takeProfit > 0;
-  const isSLValid = stopLoss > 0;
+  // const isSharesValid = tpslShare > 0;
+  // const isTPValid = takeProfit > 0;
+  // const isSLValid = stopLoss > 0;
 
-  const isTouched = tpTouched && slTouched;
+  // const isTouched = tpTouched && slTouched;
+
+  // const disabledTpslBtn =
+  //   !isSharesValid || !isTouched || !isTPValid || !isSLValid;
+
+  // console.log(
+  //   disabledTpslBtn,
+  //   isTouched,
+  //   isTPValid,
+  //   isSLValid,
+  //   "disabledTpslBtn",
+  // );
+
+  const hasShares = totalCurrentShare > 0;
+
+  const isTakeProfitValid = takeProfit > 0 && takeProfit > currentPrice;
+
+  const isStopLossValid = stopLoss > 0 && stopLoss < currentPrice;
+
+  const tpslPriceIs = hasShares && isTakeProfitValid && isStopLossValid;
 
   const disabledTpslBtn =
-    !isTouched || !isSharesValid || !isTPValid || !isSLValid;
+    // btnLoader ||
+    tpslShare <= 0 ||
+    tpslShare > totalCurrentShare ||
+    !tpTouched ||
+    !slTouched ||
+    !tpslPriceIs;
+
+  console.log(totalCurrentShare, "totalCurrentShare");
 
   return (
     <Modal
@@ -630,7 +658,10 @@ export default function BuySell({
                           onWheel={(e) => e.currentTarget.blur()}
                           className="w-full no-arrow px-3 py-2 text-2xl text-start bg-transparent border border-gray-300 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:ring-gray-400  outline-none  "
                         />
-                        <span className="absolute top-3 bg-gray-700/50 font-serif text-gray-300 rounded px-1.5 right-2 ">
+                        <span
+                          onClick={() => setTpslShare(totalCurrentShare)}
+                          className="absolute top-3 bg-gray-700/50 font-serif hover:bg-gray-500 hover:text-gray-100 text-gray-200 cursor-pointer rounded px-1.5 right-2 "
+                        >
                           Max
                         </span>
                       </div>
@@ -981,8 +1012,8 @@ export default function BuySell({
                 onClick={handleTpspSubmit}
                 className={`mt-4 py-3 text-lg text-white font-bold ${
                   disabledTpslBtn
-                    ? "bg-green-500"
-                    : "bg-[#0099FF] hover:bg-[#0099FF]/90 cursor-pointer"
+                    ? "bg-red-300"
+                    : "bg-red-500 hover:bg-red-600 cursor-pointer"
                 }  rounded-xl w-full`}
               >
                 Sell

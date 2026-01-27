@@ -8,6 +8,7 @@ import LoadingCard from "@/components/common/LoadingCard";
 import BuySell from "@/components/Modal/BuySell/page";
 import { commonQuestionFindById } from "@/components/service/apiService/category";
 import { useRouter } from "next/navigation";
+import { GiNinjaStar } from "react-icons/gi";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 
 import {
@@ -151,6 +152,7 @@ const Home = () => {
       setLoader(false);
     }
   }, [
+    isWatchList,
     categoryDetails?.id,
     userDetails?.user?.id,
     selectedSubCategory?.id,
@@ -332,7 +334,15 @@ const Home = () => {
 
                   <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
                     <span>
-                      $ {Number(row?.stats?.totalVolume || 0)?.toFixed(2) || 0}
+                      {row?.stats?.totalVolume > 0 ? " $ " : ""}
+                      {row?.stats?.totalVolume > 0 ? (
+                        Number(row?.stats?.totalVolume || 0)?.toFixed(2)
+                      ) : (
+                        <span className="text-yellow-500 flex items-center gap-1">
+                          <GiNinjaStar size={12} className="rotate-45" />
+                          New
+                        </span>
+                      )}
                     </span>
                     <span className="cursor-pointer">
                       {" "}

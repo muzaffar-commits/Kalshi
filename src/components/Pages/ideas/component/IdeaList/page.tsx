@@ -114,7 +114,7 @@ export default function MobileMenu({
         />
 
         {/* CTA Button */}
-        <li className="mt-6">
+        <li className="mt-6 w-56">
           <Link
             href="#"
             onClick={() => setOpen(false)}

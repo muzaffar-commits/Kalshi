@@ -208,7 +208,7 @@ export default function IdeaTabsTwo({
                     "pt-4 border-t border-gray-200 dark:border-gray-700"
                   }  border-gray-300 pb-2 items-start gap-4 w-full md:px-4 px-0`}
                 >
-                  <div>
+                  <div className="bg-gray-100 dark:bg-gray-600 rounded p-1.5">
                     <Image
                       onClick={() => handleUserDetails(`${row?.User?.id}`)}
                       src={
@@ -216,9 +216,9 @@ export default function IdeaTabsTwo({
                         "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
                       }
                       alt="user"
-                      width={70}
-                      height={70}
-                      className="rounded-md mt-1"
+                      width={50}
+                      height={50}
+                      className="rounded-md cursor-pointer"
                     />
                   </div>
                   <div>
@@ -245,12 +245,14 @@ export default function IdeaTabsTwo({
                       <br />
                       <br />
                       {contentForPost?.images?.length > 0 && (
-                        <Image
-                          src={contentForPost?.images?.[0]}
-                          height={500}
-                          alt="post image"
-                          width={500}
-                        />
+                        <div className="bg-green-400 p-2 rounded shadow">
+                          <Image
+                            src={contentForPost?.images?.[0]}
+                            height={500}
+                            alt="post image"
+                            width={500}
+                          />
+                        </div>
                       )}
                     </p>
                     {/* <p className="mt-3 cursor-pointer hover:underline text-[#caac75] font-semibold">

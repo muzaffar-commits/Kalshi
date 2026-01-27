@@ -170,6 +170,7 @@ export interface IUser {
 export interface IReply {
   id: number;
   length: number;
+  likeCount: number;
   isUserLike: number;
   content: string;
   createdAt: string;
@@ -186,6 +187,7 @@ export interface IComment {
 }
 export interface CommentInterface {
   id: number;
+  likeCount: number;
   isUserLike: number;
   content: string;
   updatedAt: string;

@@ -50,7 +50,7 @@ export default function Profile({
     getListOfPost();
   }, [getListOfPost]);
 
-  console.log(usersOwn, "usersOwn");
+  console.log(followingData, "followingData");
 
   console.log(userDetails, "userDetails");
   const joinedDate = userDetails?.user?.createdAt
@@ -59,6 +59,19 @@ export default function Profile({
 
   const handleFollowing = async (status: boolean) => {
     try {
+      setFollowingData((prev) =>
+        prev.map((item, index) =>
+          index === 0
+            ? {
+                ...item,
+                isFollowing: !item.isFollowing,
+                following: item.isFollowing
+                  ? Number(item.following) - 1
+                  : item.following + 1,
+              }
+            : item,
+        ),
+      );
       const payload = { targetUserId: targetId };
       let response;
       if (!status) {
@@ -70,7 +83,7 @@ export default function Profile({
         toast.success(
           status ? "user Unfollow successfully" : "User Follow successfully",
         );
-        getListOfPost();
+        // getListOfPost();
       } else {
         toast.error(response.message);
       }

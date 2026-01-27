@@ -54,9 +54,11 @@ const PROFESSIONAL_EMOJIS = [
 export default function CommentPage({
   postDetails,
   handleCloseComment,
+  handleUserDetails,
 }: {
   postDetails: PostFeeBack;
   handleCloseComment: () => void;
+  handleUserDetails: (id: string) => void;
 }) {
   const [commentList, setCommentList] = useState<CommentInterface[]>([]);
   const [value, setValue] = useState("");
@@ -70,8 +72,19 @@ export default function CommentPage({
   const [isBookmarked, setIsBookmarked] = useState(
     postDetails?.isBookmarked || 0,
   );
-  const commentLists = useCallback(async () => {
+
+  useEffect(() => {
     setIsLoader(true);
+
+    const timer = setTimeout(() => {
+      setIsLoader(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const commentLists = useCallback(async () => {
+    // setIsLoader(true);
     try {
       const [response] = await Promise.all([
         getCommentsList(postDetails?.id || null),
@@ -86,7 +99,7 @@ export default function CommentPage({
     } catch {
       setCommentList([]);
     } finally {
-      setIsLoader(false);
+      // setIsLoader(false);
     }
   }, [postDetails?.id]);
 
@@ -168,11 +181,13 @@ export default function CommentPage({
     console.log(row, replies, "jjjjjjjjjjj");
   };
 
-  const handleSubmitForSubComment = async () => {
+  const handleSubmitForSubComment = async (row: any) => {
+    console.log(row, "Vijay=====>");
+
     try {
       const payload = {
         postId: postDetails?.id,
-        comment: replyText,
+        comment: `@${row?.User?.username} ${replyText}`,
         replyCommentId: subCommentData?.id,
       };
       const response = await replyComments(payload);
@@ -261,6 +276,7 @@ export default function CommentPage({
       };
 
       const response = await postUserCommentLikeOrUnlike(payload);
+      commentLists();
       if (!response.success) {
         toast.success(response?.message);
       }
@@ -288,12 +304,13 @@ export default function CommentPage({
       </div>
       <div className="flex flex-col gap-2">
         <div
-          className={`md:flex 
+          className={`flex 
              pt-4 
           pb-2 items-start gap-4 w-full md:px-4 px-0`}
         >
-          <div className="bg-gray-200 p-1.5 rounded-full dark:bg-gray-500">
+          <div className="bg-gray-200 w-fit p-1.5 rounded-full dark:bg-gray-500">
             <Image
+              onClick={() => handleUserDetails(`${postDetails?.User?.id}`)}
               src={
                 postDetails?.User?.image_url ||
                 "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
@@ -308,7 +325,7 @@ export default function CommentPage({
             <div className="flex items-center gap-2">
               <h4>
                 <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
-                  {postDetails?.User?.username || "Unknown"} dd
+                  {postDetails?.User?.username || "Unknown"}
                 </span>{" "}
                 <span className="text-xs dark:text-gray-500 text-gray-500">
                   {timeAgoCompact(postDetails?.updatedAt)}
@@ -321,13 +338,16 @@ export default function CommentPage({
               )}
               <br />
               <br />
+
               {Number(contentForPost?.images?.length) > 0 && (
-                <Image
-                  src={contentForPost?.images?.[0] || ""}
-                  height={500}
-                  alt="post image"
-                  width={500}
-                />
+                <div className="bg-green-400 p-2 rounded">
+                  <Image
+                    src={contentForPost?.images?.[0] || ""}
+                    height={500}
+                    alt="post image"
+                    width={500}
+                  />
+                </div>
               )}
             </p>
 
@@ -571,13 +591,21 @@ export default function CommentPage({
                   <div className=" pl-10 py-2">
                     <div className="flex text-gray-400 flex-row items-center gap-4">
                       <span className="flex items-center gap-2">
-                        <Heart
-                          onClick={() =>
-                            handleCommentLikeUnlike(row?.id, row?.isUserLike)
-                          }
-                          size={18}
-                        />{" "}
-                        {row?.isUserLike || 0}
+                        {row?.isUserLike == 1 ? (
+                          <FcLike
+                            onClick={() =>
+                              handleCommentLikeUnlike(row?.id, row?.isUserLike)
+                            }
+                          />
+                        ) : (
+                          <Heart
+                            onClick={() =>
+                              handleCommentLikeUnlike(row?.id, row?.isUserLike)
+                            }
+                            size={18}
+                          />
+                        )}{" "}
+                        {row?.likeCount || 0}
                       </span>
                       <div
                         className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
@@ -604,7 +632,7 @@ export default function CommentPage({
                                 ? "text-sky-400 hover:text-sky-300 cursor-pointer"
                                 : "text-gray-500 cursor-not-allowed"
                             }`}
-                            onClick={() => handleSubmitForSubComment()}
+                            onClick={() => handleSubmitForSubComment(row)}
                           >
                             Reply
                           </button>
@@ -615,7 +643,7 @@ export default function CommentPage({
                         row?.replies?.map((replies: IReply) => (
                           <div key={replies?.id}>
                             <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                              <div className="h-11 w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500">
+                              <div className="!h-11 !w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500">
                                 <Image
                                   src={
                                     replies?.User?.image_url ||
@@ -631,7 +659,7 @@ export default function CommentPage({
                                 <div className="flex items-center gap-2">
                                   <h4>
                                     <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
-                                      {row?.User?.username || "Unknown"} dd
+                                      {replies?.User?.username || "Unknown"}
                                     </span>{" "}
                                     <span className="text-xs dark:text-gray-500 text-gray-500">
                                       {timeAgoCompact(row?.updatedAt)}
@@ -646,16 +674,27 @@ export default function CommentPage({
                                 <div className=" py-2">
                                   <div className="flex text-gray-400 flex-row items-center gap-4">
                                     <span className="flex items-center gap-2">
-                                      <Heart
-                                        onClick={() =>
-                                          handleCommentLikeUnlike(
-                                            replies?.id,
-                                            replies?.isUserLike,
-                                          )
-                                        }
-                                        size={18}
-                                      />{" "}
-                                      {replies?.isUserLike || 0}
+                                      {replies?.isUserLike == 1 ? (
+                                        <FcLike
+                                          onClick={() =>
+                                            handleCommentLikeUnlike(
+                                              replies?.id,
+                                              replies?.isUserLike,
+                                            )
+                                          }
+                                        />
+                                      ) : (
+                                        <Heart
+                                          onClick={() =>
+                                            handleCommentLikeUnlike(
+                                              replies?.id,
+                                              replies?.isUserLike,
+                                            )
+                                          }
+                                          size={18}
+                                        />
+                                      )}{" "}
+                                      {replies?.likeCount || 0}
                                     </span>
                                     <div
                                       className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
@@ -689,7 +728,9 @@ export default function CommentPage({
                                         ? "text-sky-400 hover:text-sky-300 cursor-pointer"
                                         : "text-gray-500 cursor-not-allowed"
                                     }`}
-                                    onClick={() => handleSubmitForSubComment()}
+                                    onClick={() =>
+                                      handleSubmitForSubComment(replies)
+                                    }
                                   >
                                     Reply
                                   </button>
