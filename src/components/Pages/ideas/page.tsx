@@ -77,9 +77,9 @@ const Ideas = () => {
     <>
       <div className="dark:bg-[#1D293D] mt-40">
         <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 mt-36 lg:mt-28">
-          <div className="lg:flex">
-            <div className="md:!w-1/4">
-              <div className=" w-full ">
+          <div className="grid grid-cols-1 lg:grid-cols-4">
+            <div className="lg:col-span-1">
+              <div className="sticky top-32 bg-white dark:bg-black border-t dark:border-gray-700">
                 <h1 className="dark:text-white text-gray-800 lg:text-3xl text-xl mb-0 mt-3">
                   Ideas
                 </h1>
@@ -92,7 +92,7 @@ const Ideas = () => {
                 />
               </div>
             </div>
-            <div className="md:w-3/4 w-full lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
+            <div className="lg:col-span-3 lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
               <div className="lg:border-r dark:border-gray-700 border-gray-200">
                 {currentTabs == "Home" ? (
                   isComment ? (
