@@ -1,4 +1,5 @@
 import {
+  getMyAllPost,
   getUsersAllDetails,
   postFollowUser,
   postUnFollowUser,
@@ -22,6 +23,7 @@ export default function Profile({
   const [followingData, setFollowingData] = useState([]);
   const usersOwn = useSelector((state: any) => state?.user?.user);
   const userDetails = followingData?.[0];
+  const [myPost, setMyPost] = useState([]);
 
   console.log(targetId, "targetId====>");
 
@@ -90,6 +92,16 @@ export default function Profile({
     } catch {
       toast.error("Inter Server Error");
     }
+  };
+
+  const fetchMyAllPost = async () => {
+    try {
+      const response = await getMyAllPost(userId, "");
+      if (response.success) {
+        setMyPost(response?.data);
+      }
+    } catch {}
+    // getMyAllPost
   };
 
   return (

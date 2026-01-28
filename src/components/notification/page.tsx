@@ -3,16 +3,19 @@ import { timeAgoCompact } from "@/utils/Content";
 import { Bell, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
+  fetchNotification,
+  fetchUnReadCountNotification,
   postAllReadNotification,
   postReadNotification,
 } from "../service/apiService/user";
 import toast from "react-hot-toast";
-
-export default function NotificationBell({ data, setData, count, setCount }) {
+import { IoMdNotificationsOutline } from "react-icons/io";
+import socket from "../socket";
+export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
-
-  console.log(data, "data");
+  const [notificationData, setNotificationData] = useState([]);
+  const [countNotification, setCountNotification] = useState(0);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -24,24 +27,52 @@ export default function NotificationBell({ data, setData, count, setCount }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // fetchNotification
+  const getNotificationList = async () => {
+    try {
+      const response = await fetchNotification();
+      if (response?.success) {
+        setNotificationData(response?.data || []);
+      } else {
+        setNotificationData([]);
+      }
+    } catch {
+      setNotificationData([]);
+    }
+  };
+  useEffect(() => {
+    open && getNotificationList();
+  }, [open]);
+  const getUnReadCountNotification = async () => {
+    try {
+      const response = await fetchUnReadCountNotification();
+      if (response?.success) {
+        setCountNotification(response?.count ?? 0);
+      } else {
+        setCountNotification(0);
+      }
+    } catch {
+      setCountNotification(0);
+    }
+  };
+  useEffect(() => {
+    open && getUnReadCountNotification();
+  }, [open]);
 
   const markAsRead = async (row: any) => {
     try {
       const payload = {
         notificationId: row?.id,
       };
-      setData((prev: any) =>
+      setNotificationData((prev: any) =>
         prev.map((item: any) =>
           item.id === row?.id ? { ...item, isRead: true } : item,
         ),
       );
-      setCount((prev) => prev - 1);
+      setCountNotification((prev) => prev - 1);
       const response = await postReadNotification(payload);
       if (response.success) {
         toast.success("Notification Read Successfully");
       }
-      console.log(response, "read message");
     } catch {
       toast.error("Something went wrongs");
     }
@@ -49,8 +80,8 @@ export default function NotificationBell({ data, setData, count, setCount }) {
 
   const markAsReadAll = async (row: any) => {
     try {
-      setData([]);
-      setCount(0);
+      setNotificationData([]);
+      setCountNotification(0);
       const response = await postAllReadNotification();
       if (response.success) {
         toast.success("All notifications marked as read");
@@ -61,8 +92,21 @@ export default function NotificationBell({ data, setData, count, setCount }) {
     }
   };
 
-  //
+  useEffect(() => {
+    // socket.emit("subscribeLiveTrade");
 
+    const handleTradeLive = (payload: any) => {
+      // setLiveTrades((prev: any[]) => [payload, ...prev]);
+      console.log(payload, "payload====>");
+    };
+
+    // socket.on("tradeLive", handleTradeLive);
+
+    return () => {
+      // socket.emit("unsubscribeLiveTrade");
+      // socket.off("tradeLive", handleTradeLive);
+    };
+  }, []);
   return (
     <div className="relative" ref={ref}>
       {/* Bell */}
@@ -72,14 +116,14 @@ export default function NotificationBell({ data, setData, count, setCount }) {
       >
         <Bell size={30} className="dark:text-white text-sky-500" />
         <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs px-1">
-          {count || 0}
+          {countNotification || 0}
         </span>
       </button>
 
       {/* Dropdown */}
       <div
         className={`
-          absolute right-0 mt-3 w-60
+          absolute right-0 mt-3 w-72
           bg-white dark:bg-[#1D293D]
           rounded-xl shadow-lg border dark:border-gray-800 border-gray-300
           transition-all duration-200 ease-out
@@ -94,7 +138,7 @@ export default function NotificationBell({ data, setData, count, setCount }) {
         {/* Header */}
         <div className="flex px-4 flex-row border-b border-gray-300 dark:border-gray-500 items-center justify-between">
           <div className=" py-3  text-gray-800 dark:text-gray-200 font-semibold text-sm">
-            Notifications ({count})
+            Notifications ({countNotification})
           </div>
           <button
             // disabled
@@ -104,8 +148,8 @@ export default function NotificationBell({ data, setData, count, setCount }) {
               px-2 py-1.5
               text-xs
               rounded-full
-              bg-gray-100 dark:bg-gray-800
-              text-gray-500 hover:bg-gray-300 cursor-pointer "
+              bg-gray-100 dark:bg-gray-600
+              text-gray-500 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-gray-700 cursor-pointer "
           >
             <Check size={14} />
             Read All
@@ -114,12 +158,17 @@ export default function NotificationBell({ data, setData, count, setCount }) {
 
         {/* List */}
         <div className="max-h-72 overflow-y-auto">
-          {data?.length > 0 ? (
-            <div className="px-4 py-3 border-b last:border-b-0 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
-              Not fountdsdf
+          {notificationData?.filter((item) => item?.isRead === false)
+            ?.length === 0 ? (
+            <div className="px-4 py-3 flex flex-col items-center justify-center text-xs border-b text-gray-500 dark:text-gray-300 last:border-b-0 dark:border-gray-700  cursor-pointer">
+              <IoMdNotificationsOutline
+                size={30}
+                className="text-gray-300 dark:text-gray-500"
+              />
+              <span>Not Found Notification</span>
             </div>
           ) : (
-            data
+            notificationData
               .filter((item) => item?.isRead === false)
               .map((row) => (
                 <div

@@ -233,37 +233,7 @@ const Header = () => {
   };
 
   // fetchNotification
-  const getNotificationList = async () => {
-    try {
-      const response = await fetchNotification();
-      if (response?.success) {
-        setNotificationData(response?.data ?? []);
-      } else {
-        setNotificationData([]);
-      }
-    } catch {
-      setNotificationData([]);
-    }
-  };
-  useEffect(() => {
-    getNotificationList();
-  }, []);
-  const getUnReadCountNotification = async () => {
-    try {
-      const response = await fetchUnReadCountNotification();
-      console.log(response, "response====>");
-      if (response?.success) {
-        setCountNotification(response?.count ?? 0);
-      } else {
-        setCountNotification(0);
-      }
-    } catch {
-      setCountNotification(0);
-    }
-  };
-  useEffect(() => {
-    getUnReadCountNotification();
-  }, []);
+
   //
   return (
     <>
@@ -318,14 +288,7 @@ const Header = () => {
                   </button>
                 )}
 
-                {user?.isAuth && (
-                  <NotificationBell
-                    data={notificationData}
-                    count={countNotification}
-                    setData={setNotificationData}
-                    setCount={setCountNotification}
-                  />
-                )}
+                {user?.isAuth && <NotificationBell />}
                 {user?.isAuth && <ProfileDropdown />}
 
                 {!user?.isAuth && (
@@ -728,14 +691,7 @@ const Header = () => {
 
             {/* Right: Notification + Profile */}
             <div className="flex items-center gap-4">
-              {user?.isAuth && (
-                <NotificationBell
-                  data={notificationData}
-                  count={countNotification}
-                  setData={setNotificationData}
-                  setCount={setCountNotification}
-                />
-              )}
+              {user?.isAuth && <NotificationBell />}
               {user?.isAuth && <ProfileDropdown />}
             </div>
           </div>

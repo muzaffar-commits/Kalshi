@@ -294,4 +294,19 @@ export const getMyAllPost = async (userId: string, id: string) => {
     };
   }
 };
+
+export const getUserSearch = async (search = "", limit = 10, offset = 0) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.userSearch}${search ? `?search=${search}` : ""}${limit ? `&limit=${limit}` : ""}${offset ? `&offset=${offset}` : ""}`,
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
 //

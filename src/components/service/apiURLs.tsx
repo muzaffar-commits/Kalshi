@@ -44,6 +44,7 @@ export const API_URLs = {
   readNotification: "/user/notifications/read",
   allReadNotification: "/user/notifications/all-read",
   myAllPost: "/user/feed",
+  userSearch: "/user/search-users",
 };
 
 // images
