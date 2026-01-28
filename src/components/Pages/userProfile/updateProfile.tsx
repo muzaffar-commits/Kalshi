@@ -140,7 +140,7 @@ export default function UpdateProfile({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className=" dark:bg-[#1D293D] w-full max-w-[380px] lg:max-w-[520px] rounded-2xl p-6 lg:p-8 shadow-xl outline-none"
+          className=" dark:bg-[#1D293D] w-full max-w-[320px] lg:max-w-[520px] rounded-2xl p-6 lg:p-8 shadow-xl outline-none dark:border-gray-600 border border-gray-300"
         >
           {/* HEADER */}
           <div className="flex justify-between items-center mb-6">
@@ -149,7 +149,7 @@ export default function UpdateProfile({
             </h2>
             <button
               onClick={handleCloseModal}
-              className="text-[#c7ac77] text-xl cursor-pointer hover:text-[#c7ac77] dark:hover:text-[#c7ac77]"
+              className="dark:text-gray-300 text-gray-600 text-xl cursor-pointer hover:text-[#c7ac77] dark:hover:text-[#c7ac77]"
             >
               ✕
             </button>
@@ -222,7 +222,7 @@ export default function UpdateProfile({
                 onBlur={formik.handleBlur}
                 className="w-full mt-1 px-4 py-3 rounded-xl border 
                 border-gray-300 dark:border-gray-600 bg-transparent  text-gray-700
-                dark:text-white border-gray-800 focus:outline-none placeholder:text-gray-400  dark:placeholder:text-gray-200  focus:ring-2 focus:ring-blue-500"
+                dark:text-white dark:border-gray-300 border-gray-300 focus:outline-none placeholder:text-gray-400  dark:placeholder:text-gray-200  focus:ring-1"
                 placeholder="Enter your name"
               />
               {formik.touched.userName && formik.errors.userName && (
@@ -244,9 +244,22 @@ export default function UpdateProfile({
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className="w-full mt-1 px-4 py-3 rounded-xl border 
-                border-gray-300 dark:border-gray-600 bg-transparent  text-gray-700
-                dark:text-white focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500"
+                className="
+  w-full mt-1 px-4 py-3 rounded-xl border
+  border-gray-300 dark:border-gray-600
+  bg-transparent text-gray-700/40 dark:text-white/40
+
+  focus:outline-none
+  focus:ring-2 focus:ring-blue-500
+
+  placeholder:text-gray-400
+  dark:placeholder:text-gray-600
+
+  placeholder:blur-[1.5px]
+  focus:placeholder:blur-0
+
+  transition-all duration-200 
+"
                 placeholder="Enter your email"
               />
               {formik.touched.email && formik.errors.email && (

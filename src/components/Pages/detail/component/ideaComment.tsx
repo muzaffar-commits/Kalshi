@@ -54,10 +54,39 @@ export default function IdeasActivityTabs() {
           <div>
             {activeTab === "ideas" && (
               <div className="flex items-center gap-2">
-                <button className="px-4 py-1.5 rounded-full bg-black text-white text-sm">
+                {/* Active */}
+                <button
+                  className=" cursor-pointer
+      relative
+      px-4 pt-2 pb-1 rounded-full
+      bg-black text-white text-sm font-medium
+
+      shadow-[0_4px_0_rgb(0,0,0)]
+      transition-all duration-150 ease-in-out
+
+      hover:bg-gray-900
+      active:translate-y-[3px]
+      active:shadow-[0_1px_0_rgb(0,0,0)]
+    "
+                >
                   This event
                 </button>
-                <button className="px-4 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm">
+
+                {/* Inactive */}
+                <button
+                  className="
+      relative cursor-pointer
+      px-4 pt-2 pb-1 rounded-full
+      bg-gray-100 text-gray-700 text-sm font-medium
+
+      shadow-[0_4px_0_rgb(209,213,219)]
+      transition-all duration-150 ease-in-out
+
+      hover:bg-gray-200
+      active:translate-y-[3px]
+      active:shadow-[0_1px_0_rgb(209,213,219)]
+    "
+                >
                   All
                 </button>
               </div>

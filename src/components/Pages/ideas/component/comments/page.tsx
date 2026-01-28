@@ -527,10 +527,8 @@ export default function CommentPage() {
         "
                         >
                           🙂
-                          {/* <span className="hidden sm:inline">Emoji</span> */}
                         </button>
 
-                        {/* Reply Button */}
                         <button
                           type="button"
                           onClick={handleSend}
@@ -605,7 +603,10 @@ export default function CommentPage() {
                             className={` w-full border-b border-gray-200 dark:border-gray-700 md:px-4 px-0`}
                           >
                             <div className="md:flex  pt-4  items-start gap-4 ">
-                              <div className="h-11 w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500">
+                              <div
+                                onClick={() => handleUserDetails(row?.User?.id)}
+                                className="h-11 w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
+                              >
                                 <Image
                                   src={
                                     row?.User?.image_url ||
@@ -620,10 +621,10 @@ export default function CommentPage() {
                               <div>
                                 <div className="flex items-center gap-2">
                                   <h4>
-                                    <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
+                                    <span className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700">
                                       {row?.User?.username || "Unknown"}
                                     </span>{" "}
-                                    <span className="text-xs dark:text-gray-500 text-gray-500">
+                                    <span className="text-xs dark:text-gray-500 text-gray-500 ">
                                       {timeAgoCompact(row?.updatedAt)}
                                     </span>
                                   </h4>
@@ -703,7 +704,12 @@ export default function CommentPage() {
                                   row?.replies?.map((replies: IReply) => (
                                     <div key={replies?.id}>
                                       <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                                        <div className="!h-11 !w-11 flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500">
+                                        <div
+                                          onClick={() =>
+                                            handleUserDetails(replies?.User?.id)
+                                          }
+                                          className="!h-11 !w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500"
+                                        >
                                           <Image
                                             src={
                                               replies?.User?.image_url ||
@@ -718,7 +724,14 @@ export default function CommentPage() {
                                         <div>
                                           <div className="flex items-center gap-2">
                                             <h4>
-                                              <span className="dark:text-gray-300 hover:underline font-semibold text-gray-700">
+                                              <span
+                                                onClick={() =>
+                                                  handleUserDetails(
+                                                    replies?.User?.id,
+                                                  )
+                                                }
+                                                className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
+                                              >
                                                 {replies?.User?.username ||
                                                   "Unknown"}
                                               </span>{" "}

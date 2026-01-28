@@ -630,10 +630,34 @@ const Details = ({ marketId }) => {
                       </div>
                     </div>
 
-                    <div className="mt-5">
+                    {/* <div className="mt-5">
                       <button className="cursor-pointer py-2 px-4 text-md border border-gray-500 rounded-lg dark:text-white text-black/80 hover:text-[#bfa16d]">
                         Show More{" "}
                         <ArrowRight className="inline-block w-4 h-4" />
+                      </button>
+                    </div> */}
+                    <div className="mt-5">
+                      <button
+                        className="
+      group cursor-pointer
+      px-4 py-2 text-md font-medium rounded-lg
+      border border-gray-500
+      dark:text-white text-black/80
+      bg-white dark:bg-black
+
+      shadow-[0_6px_0_rgba(0,0,0,0.25)]
+      dark:shadow-[0_6px_0_rgba(0,0,0,0.6)]
+
+      transition-all duration-150 ease-in-out
+      hover:text-[#bfa16d]
+
+      active:translate-y-[4px]
+      active:shadow-[0_2px_0_rgba(0,0,0,0.25)]
+      dark:active:shadow-[0_2px_0_rgba(0,0,0,0.6)]
+    "
+                      >
+                        Show More{" "}
+                        <ArrowRight className="inline-block w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                       </button>
                     </div>
 

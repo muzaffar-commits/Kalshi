@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import socket from ".";
 
-export default function SocketProvider() {
+export default function SocketProvider({ children }) {
   useEffect(() => {
     if (!socket.connected) {
       socket.connect();
@@ -14,5 +14,5 @@ export default function SocketProvider() {
     };
   }, []);
 
-  return null; // UI kuch render nahi karta
+  return children; // UI kuch render nahi karta
 }

@@ -11,7 +11,8 @@ import {
 import toast from "react-hot-toast";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import socket from "../socket";
-export default function NotificationBell() {
+
+export default function NotificationBell({ userId }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const [notificationData, setNotificationData] = useState([]);
@@ -93,20 +94,21 @@ export default function NotificationBell() {
   };
 
   useEffect(() => {
-    // socket.emit("subscribeLiveTrade");
-
-    const handleTradeLive = (payload: any) => {
-      // setLiveTrades((prev: any[]) => [payload, ...prev]);
-      console.log(payload, "payload====>");
+    toast.error("Something went wrongs");
+    socket.emit(`subscribe:userNotification`, userId);
+    const handleNotification = (payload: any) => {
+      toast.success(payload?.message || "");
+      setCountNotification((prev: number) => prev + 1);
     };
 
-    // socket.on("tradeLive", handleTradeLive);
+    socket.on("notification", handleNotification);
 
     return () => {
       // socket.emit("unsubscribeLiveTrade");
-      // socket.off("tradeLive", handleTradeLive);
+      socket.off("notification", handleNotification);
     };
-  }, []);
+  }, [socket.connected]);
+
   return (
     <div className="relative" ref={ref}>
       {/* Bell */}
@@ -114,8 +116,8 @@ export default function NotificationBell() {
         onClick={() => setOpen((prev) => !prev)}
         className=" dark:hover:text-white cursor-pointer relative"
       >
-        <Bell size={30} className="dark:text-white text-sky-500" />
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs px-1">
+        <Bell size={20} className="dark:text-white/60 text-sky-500 mt-4" />
+        <span className="absolute top-2 -right-2 bg-red-500 text-white rounded-full text-xs px-1">
           {countNotification || 0}
         </span>
       </button>
@@ -203,11 +205,6 @@ export default function NotificationBell() {
                 </div>
               ))
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-4 py-2 text-center text-sm text-blue-500 hover:underline cursor-pointer">
-          View all notifications
         </div>
       </div>
     </div>

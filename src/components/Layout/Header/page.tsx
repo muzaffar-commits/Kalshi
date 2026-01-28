@@ -37,6 +37,7 @@ import { SlArrowDown } from "react-icons/sl";
 import ProfileDropdown from "@/components/profileDropdown/page";
 import NotificationBell from "@/components/notification/page";
 import MainSearch from "./MainSearch";
+import socket from "@/components/socket";
 
 interface Category {
   id: number;
@@ -283,12 +284,25 @@ const Header = () => {
                 )} */}
 
                 {user?.isAuth && (
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm">
+                  <button
+                    className="
+    group relative
+    bg-blue-500 hover:bg-blue-600
+    text-white text-sm font-medium
+    px-4 py-2 rounded-md
+
+    shadow-[0_6px_0_rgb(29,78,216)]
+    transition-all duration-150 ease-in-out
+
+    active:translate-y-[4px]
+    active:shadow-[0_2px_0_rgb(29,78,216)]
+  "
+                  >
                     Deposit
                   </button>
                 )}
 
-                {user?.isAuth && <NotificationBell />}
+                {user?.isAuth && <NotificationBell userId={user?.user?.id} />}
                 {user?.isAuth && <ProfileDropdown />}
 
                 {!user?.isAuth && (
@@ -691,19 +705,20 @@ const Header = () => {
 
             {/* Right: Notification + Profile */}
             <div className="flex items-center gap-4">
-              {user?.isAuth && <NotificationBell />}
+              {user?.isAuth && <NotificationBell userId={user?.user?.id} />}
               {user?.isAuth && <ProfileDropdown />}
             </div>
           </div>
 
           {/* Search Row */}
           <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <MainSearch />
+            {/* <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search opinion kings"
-              className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-[#1e293b] focus:outline-none text-sm dark:placeholder-gray-600 placeholder-gray-400"
-            />
+              className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-[#1e293b] focus:outline-none text-sm dark:placeholder-gray-600 placeholder-gray-400 dark:text-gray-300 text-gray-700"
+            /> */}
           </div>
         </div>
       </div>

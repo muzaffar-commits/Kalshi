@@ -63,6 +63,7 @@ export interface QuestionItem {
   options: OptionItem[];
   stats?: QuestionStats;
   isBookmark: boolean;
+  metadata: any;
 }
 
 export interface QuestionItemSecond {

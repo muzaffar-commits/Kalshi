@@ -59,28 +59,46 @@ export default function MarketCard({ data = [], handleBuySell }) {
 
                   <div
                     className="flex gap-2"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()} // keep row click safe
                   >
+                    {/* SELL */}
                     <button
                       onClick={() => handleBuySell(row, "sell", index)}
                       className="
-                      px-3 py-1.5 rounded-md text-sm font-medium
-                      bg-red-500/15 text-red-500
-                      border border-red-500/30
-                      hover:bg-red-500/25 transition
-                    "
+      relative
+      px-3 py-1.5 rounded-md text-sm font-medium
+
+      bg-red-500/15 text-red-400
+      border border-red-500/30
+
+      shadow-[0_3px_0_rgba(239,68,68,0.4)]
+      transition-all duration-150 ease-in-out
+
+      hover:bg-red-500/25
+      active:translate-y-[2px]
+      active:shadow-[0_1px_0_rgba(239,68,68,0.4)]
+    "
                     >
                       Sell ${truncateValue(row?.price)}
                     </button>
 
+                    {/* BUY */}
                     <button
                       onClick={() => handleBuySell(row, "buy", index)}
                       className="
-                      px-3 py-1.5 rounded-md text-sm font-medium
-                      bg-emerald-500/15 text-emerald-500
-                      border border-emerald-500/30
-                      hover:bg-emerald-500/25 transition
-                    "
+      relative
+      px-3 py-1.5 rounded-md text-sm font-medium
+
+      bg-emerald-500/15 text-emerald-400
+      border border-emerald-500/30
+
+      shadow-[0_3px_0_rgba(16,185,129,0.4)]
+      transition-all duration-150 ease-in-out
+
+      hover:bg-emerald-500/25
+      active:translate-y-[2px]
+      active:shadow-[0_1px_0_rgba(16,185,129,0.4)]
+    "
                     >
                       Buy ${truncateValue(row?.price)}
                     </button>

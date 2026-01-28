@@ -56,20 +56,21 @@ export default function RootLayout({
           ${geistMono.variable}
           antialiased
           min-h-screen
-        `}
+          `}
       >
         <ReduxProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem={false}
-          >
-            <Toaster position="top-right" />
-            <SocketProvider />
-            <Header />
-            {children}
-            <Footer />
-          </ThemeProvider>
+          <SocketProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem={false}
+            >
+              <Toaster position="top-right" />
+              <Header />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </SocketProvider>
         </ReduxProvider>
       </body>
     </html>

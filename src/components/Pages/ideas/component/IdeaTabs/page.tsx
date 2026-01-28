@@ -28,7 +28,6 @@ import socket from "@/components/socket";
 import { timeAgoCompact, truncateValue } from "@/utils/Content";
 import { Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
-import CircularWithValueLabel from "./CircularProgressWithLabel";
 
 type HandleComment = (post: PostFeeBack) => void;
 
@@ -121,21 +120,15 @@ export default function IdeaTabs({
   };
 
   const postUserMessage = async () => {
-    console.log(message, "message========");
-
     setIsPostLoader(true);
     try {
       const metadata = {
         content: message,
         images: uploadedImage == null ? [] : [uploadedImage?.[0]?.url],
       };
-      console.log(metadata, "metadata");
-
       const response = await userPost({ metadata });
-      console.log(response, "response---------");
 
       if (response?.reponse?.status) {
-        toast.success("Message post successfully!");
         removeImage();
         setMessage("");
         fetchPostList();
@@ -156,30 +149,22 @@ export default function IdeaTabs({
     }
   };
 
-  const canPost =
-    Boolean(selectedImage?.name) || String(message).trim().length > 3;
-
-  console.log(!canPost, String(message).trim().length > 3, "rplll");
-
-  console.log(socket.connected, "socket.connected");
   useEffect(() => {
-    socket.emit("subscribeLiveTrade");
+    console.log(socket.connected, "isConnnnnnnnn");
 
+    socket.emit("subscribeLiveTrade");
     const handleTradeLive = (payload: any) => {
       setLiveTrades((prev: any[]) => [payload, ...prev]);
-      console.log(payload, "payload====>");
     };
-
     socket.on("tradeLive", handleTradeLive);
-
     return () => {
       socket.emit("unsubscribeLiveTrade");
       socket.off("tradeLive", handleTradeLive);
     };
   }, []);
 
-  const goToQuestionDetails = (userId: string) => {
-    router.push(`/Detail?id=${userId}`);
+  const goToQuestionDetails = (id: string) => {
+    router.push(`/market/${id}`);
   };
 
   return (

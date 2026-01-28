@@ -25,24 +25,41 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
         <span className="text-right">ROI</span>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {data.map((item: LeaderboardItem, index: number) => (
           <div
             key={index}
-            className={`grid grid-cols-4 items-center px-3 py-3 rounded-md
-              border dark:border-[#2B394D] border-gray-200
-              ${item.rank === 1 ? "" : "bg-white/2 hover:bg-white/10"}
-              transition`}
+            className={`
+        relative
+        grid grid-cols-4 items-center
+        px-3 py-3 rounded-md
+        border dark:border-[#2B394D] border-gray-200
+
+        bg-white/5 dark:bg-black/30
+        shadow-[0_4px_0_rgba(0,0,0,0.25)]
+        transition-all duration-150 ease-in-out
+
+        hover:bg-white/10
+        active:translate-y-[3px]
+        active:shadow-[0_1px_0_rgba(0,0,0,0.25)]
+
+        ${item.rank === 1 ? "ring-1 ring-[#c3a66e]/40" : ""}
+      `}
           >
             {/* Rank */}
             <div className="flex items-center gap-2">
               <span
-                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold
-                  ${
-                    item.rank === 1
-                      ? "bg-[#c3a66e] text-white"
-                      : "bg-slate-700 text-white"
-                  }`}
+                className={`
+            flex h-7 w-7 items-center justify-center
+            rounded-full text-xs font-bold
+            shadow-inner
+
+            ${
+              item.rank === 1
+                ? "bg-[#c3a66e] text-white"
+                : "bg-slate-700 text-white"
+            }
+          `}
               >
                 {item.rank}
               </span>
@@ -55,7 +72,7 @@ export default function MarketLeaderboard({ data }: MarketLeaderboardProps) {
 
             {/* Profit */}
             <div className="text-sm font-semibold text-emerald-400">
-              $ {item.profit.toFixed(2)}
+              ${item.profit.toFixed(2)}
             </div>
 
             {/* ROI */}

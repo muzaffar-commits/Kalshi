@@ -1022,11 +1022,43 @@ export default function BuySell({
               <button
                 disabled={buttonDisable}
                 onClick={handleSubmit}
-                className={`mt-4 py-3 text-lg text-white font-bold ${
-                  buttonDisable
-                    ? `${orderType == "sell" ? "bg-red-300 text-white" : "bg-green-300 text-black"} cursor-not-allowed shadow-none`
-                    : `${orderType === "Sell" ? "bg-red-500 text-white" : "bg-green-500 text-black"}  hover:from-[#2cc0ff] hover:to-[#008ae6] active:scale-[0.98]   cursor-pointer`
-                }  rounded-xl w-full`}
+                className={`
+    mt-4 w-full rounded-xl py-3 text-lg font-bold
+    transition-all duration-150 ease-in-out
+
+    ${
+      buttonDisable
+        ? `
+        ${
+          orderType === "sell"
+            ? "bg-red-300 text-white"
+            : "bg-green-300 text-black"
+        }
+        cursor-not-allowed
+        shadow-none
+      `
+        : `
+        ${
+          orderType === "Sell"
+            ? `
+            bg-red-500 text-white
+            shadow-[0_6px_0_rgba(239,68,68,0.5)]
+            hover:bg-red-600
+            active:translate-y-[4px]
+            active:shadow-[0_2px_0_rgba(239,68,68,0.5)]
+          `
+            : `
+            bg-green-500 text-black
+            shadow-[0_6px_0_rgba(34,197,94,0.5)]
+            hover:bg-green-600
+            active:translate-y-[4px]
+            active:shadow-[0_2px_0_rgba(34,197,94,0.5)]
+          `
+        }
+        cursor-pointer
+      `
+    }
+  `}
               >
                 <span className="capitalize">{orderType || "--"}</span>{" "}
                 <span className="text-white">$</span>{" "}
@@ -1035,7 +1067,7 @@ export default function BuySell({
                     ? truncateValue(Number(totalSharesBuy || 0), 3)
                     : types === "limit" && orderType === "sell"
                       ? truncateValue(Number(totalSharesSell || 0), 3)
-                      : orderType == "buy"
+                      : orderType === "buy"
                         ? truncateValue(
                             Number(shareDetailAmount?.grossCost || 0),
                             3,
