@@ -13,6 +13,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 type TabName =
   | "Home"
@@ -23,19 +24,14 @@ type TabName =
   | "Support"
   | "FAQs";
 
-interface MobileMenuProps {
-  currentTabs: string;
-  handleTabs: (tab: TabName) => void;
-}
-
-export default function MobileMenu({
-  currentTabs,
-  handleTabs,
-}: MobileMenuProps) {
+export default function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const location = window.location.pathname;
+  console.log(location, "location");
 
-  const handleMenuClick = (tab: TabName) => {
-    handleTabs(tab);
+  const handleMenuClick = (tab: string) => {
+    router.push(tab);
     setOpen(false);
   };
 
@@ -67,50 +63,50 @@ export default function MobileMenu({
         <MenuItem
           label="Home"
           icon={<FaHome />}
-          active={currentTabs === "Home"}
-          onClick={() => handleMenuClick("Home")}
+          active={location === "/ideas/"}
+          onClick={() => handleMenuClick("/ideas")}
         />
 
         <MenuItem
           label="Replies"
           icon={<FaCommentAlt />}
-          active={currentTabs === "Replies"}
-          onClick={() => handleMenuClick("Replies")}
+          active={location === "/ideas/replies/"}
+          onClick={() => handleMenuClick("/ideas/replies")}
         />
 
         <MenuItem
           label="Bookmarks"
           icon={<FaBookmark />}
-          active={currentTabs === "Bookmarks"}
-          onClick={() => handleMenuClick("Bookmarks")}
+          active={location === "/ideas/bookmark/"}
+          onClick={() => handleMenuClick("/ideas/bookmark")}
         />
 
         <MenuItem
           label="Profile"
           icon={<FaUser />}
-          active={currentTabs === "Profile"}
-          onClick={() => handleMenuClick("Profile")}
+          active={location === "/ideas/profile/2/"}
+          onClick={() => handleMenuClick("/ideas/profile/2")}
         />
 
         <MenuItem
           label="Community Guidelines"
           icon={<FaUsers />}
-          active={currentTabs === "Community Guidelines"}
-          onClick={() => handleMenuClick("Community Guidelines")}
+          active={location === "/ideas/community-guidelines/"}
+          onClick={() => handleMenuClick("/ideas/community-guidelines")}
         />
 
         <MenuItem
           label="Support"
           icon={<FaHeadset />}
-          active={currentTabs === "Support"}
-          onClick={() => handleMenuClick("Support")}
+          active={location === "/ideas/support/"}
+          onClick={() => handleMenuClick("/ideas/support")}
         />
 
         <MenuItem
           label="FAQs"
           icon={<FaQuestionCircle />}
-          active={currentTabs === "FAQs"}
-          onClick={() => handleMenuClick("FAQs")}
+          active={location === "/ideas/faq/"}
+          onClick={() => handleMenuClick("/ideas/faq")}
         />
 
         {/* CTA Button */}

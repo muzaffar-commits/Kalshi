@@ -131,7 +131,7 @@ export const getBookMarkList = async (id: string) => {
   }
 };
 
-export const getCommentsList = async (id: number | null) => {
+export const getCommentsList = async (id: number) => {
   try {
     const response = await apiInstance.get(`${API_URLs.getComments}/${id}`);
     return response?.data;
@@ -299,6 +299,20 @@ export const getUserSearch = async (search = "", limit = 10, offset = 0) => {
   try {
     const response = await apiInstance.get(
       `${API_URLs.userSearch}${search ? `?search=${search}` : ""}${limit ? `&limit=${limit}` : ""}${offset ? `&offset=${offset}` : ""}`,
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const getFeedDetailsById = async (id = 1) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.feedDetailsById}${id ? `?postId=${id}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {

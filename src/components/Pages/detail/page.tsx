@@ -63,7 +63,7 @@ interface SocketOption {
   price: number;
 }
 
-const Details = () => {
+const Details = ({ marketId }) => {
   const [orderFlow, setOrderFlow] = useState<OrderFlow>({
     buys: [],
     sells: [],
@@ -95,11 +95,13 @@ const Details = () => {
   const [selectedOrderDetails, setSelectedOrderDetails] =
     useState<CancelOrders | null>(null);
 
+  console.log(marketId, "marketId");
+
   const questionDetailsList = useCallback(async () => {
     setIsLoader(true);
     try {
       const [response] = await Promise.all([
-        questionDetails(slug as string, userDetails?.user?.id as number),
+        questionDetails(marketId as string, userDetails?.user?.id as number),
         delay(2000),
       ]);
       if (response?.success) {
@@ -116,28 +118,28 @@ const Details = () => {
     } finally {
       setIsLoader(false);
     }
-  }, [slug, userDetails?.user?.id]);
+  }, [marketId, userDetails?.user?.id]);
 
   console.log(currentVolume, "currentVolume====>");
 
   useEffect(() => {
     questionDetailsList();
-  }, [questionDetailsList, slug]);
+  }, [questionDetailsList, marketId]);
 
   const getGraphDetails = useCallback(async () => {
-    const response = await getGraphData(slug, timeInterval);
+    const response = await getGraphData(marketId, timeInterval);
     if (response?.success) {
       setGraphData(response.data);
     } else {
       setGraphData({ series: [] });
     }
-  }, [slug, timeInterval]);
+  }, [marketId, timeInterval]);
 
   useEffect(() => {
     getGraphDetails();
-  }, [questionDetailsList, getGraphDetails, slug]);
+  }, [questionDetailsList, getGraphDetails, marketId]);
 
-  const questionId = slug;
+  const questionId = marketId;
   console.log(socket.connected, "socket.connected");
 
   console.log(graphData, "graphData");
@@ -331,7 +333,7 @@ const Details = () => {
 
   const getLeaderBoardMarketList = useCallback(async () => {
     try {
-      const response = await getLeaderBoardMarket(slug);
+      const response = await getLeaderBoardMarket(marketId);
 
       if (response?.success) {
         setLeaderBoard(response.data.leaderboard as LeaderboardItem[]);
@@ -341,7 +343,7 @@ const Details = () => {
     } catch {
       setLeaderBoard([]);
     }
-  }, [slug]);
+  }, [marketId]);
 
   useEffect(() => {
     getLeaderBoardMarketList();
@@ -351,7 +353,7 @@ const Details = () => {
     try {
       const response = await getOrdersList(
         userDetails?.user?.id || null,
-        slug,
+        marketId,
         "NEW",
       );
 
@@ -365,7 +367,7 @@ const Details = () => {
     } catch {
       setOrderData([]);
     }
-  }, [slug]);
+  }, [marketId]);
 
   useEffect(() => {
     ordersList();

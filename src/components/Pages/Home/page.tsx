@@ -186,8 +186,8 @@ const Home = () => {
     setIsModalOpen(true);
   };
 
-  const goToDetails = (userId: string) => {
-    router.push(`/Detail?id=${userId}`);
+  const goToDetails = (questionId: string) => {
+    router.push(`/market/${questionId}`);
   };
 
   const bookMarkUnBookMark = async (id: string, status: boolean) => {

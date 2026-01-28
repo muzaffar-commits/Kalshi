@@ -53,7 +53,7 @@ export default function MainSearch() {
   const handleRedirectUserProfile = (id) => {
     setQuery("");
     setOpen(false);
-    router.push(`/ideas/profile/${id}`);
+    router.push(`/users/${id}`);
   };
   return (
     <div className="relative w-full" ref={ref}>

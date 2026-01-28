@@ -3,9 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // output: "export", // ✅ REQUIRED for out/
   trailingSlash: true, // ✅ folder-based routing
-  // images: {
-  //   unoptimized: true, // ✅ required for export
-  // },
+  images: {
+    unoptimized: true, //  server side pe comment karna haio
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
