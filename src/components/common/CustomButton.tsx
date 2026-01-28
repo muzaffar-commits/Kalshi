@@ -25,20 +25,24 @@ export default function PrimaryButton({
       disabled={disabled || loading}
       className={clsx(
         `
-        w-full py-3 rounded-xl text-lg font-semibold
-        text-white
+    relative w-full py-3 rounded-xl text-lg font-semibold text-black
+    flex items-center justify-center gap-2 select-none
 
-        bg-gradient-to-r
-        from-[#c7ac77] to-[#b89b63]
+    bg-gradient-to-r from-green-500 to-emerald-500
+    shadow-[0_6px_0_rgba(34,197,94,0.45)]
 
-        hover:from-[#d6bc87] hover:to-[#c0a46f]
+    hover:from-green-400 hover:to-emerald-400
+    transition-all duration-150 ease-in-out
 
-        transition-all duration-200
-        flex items-center justify-center gap-2
+    active:translate-y-[4px]
+    active:shadow-[0_2px_0_rgba(34,197,94,0.45)]
 
-        disabled:opacity-60 disabled:cursor-not-allowed
-        `,
-        className
+    disabled:opacity-60
+    disabled:cursor-not-allowed
+    disabled:shadow-none
+    disabled:translate-y-0
+    `,
+        className,
       )}
     >
       {loading ? <CircularProgress size={26} sx={{ color: "#fff" }} /> : label}

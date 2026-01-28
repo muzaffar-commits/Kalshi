@@ -87,9 +87,9 @@ const UserProfile = () => {
   return (
     <>
       <div className="dark:bg-[#1D293D]">
-        <div className="max-w-[800px] xl:max-w-[65%] mx-auto px-4 mt-24 lg:mt-44">
-          <div className="md:flex justify-between">
-            <div className="md:w-3/4 gap-3 flex md:mb-0 mb-4">
+        <div className="max-w-[800px] xl:max-w-[65%] mx-auto px-4 mt-24 lg:mt-30">
+          <div className="md:flex justify-between pt-16">
+            <div className="md:w-3/4 gap-3 md:flex md:mb-0 mb-4">
               <div className="h-24 w-24 flex items-center justify-center rounded bg-gray-300/20">
                 <Image
                   src={userData?.user?.image_url || "/img/user.png"}
@@ -140,7 +140,20 @@ const UserProfile = () => {
             <div className="md:w-1/4">
               <button
                 onClick={() => setOpen(true)}
-                className="float-end cursor-pointer dark:bg-gray-700 bg-gray-400 text-white py-2 px-6 rounded-2xl text-sm font-semibold hover:bg-[#0099FF] transition"
+                className="
+    md:float-end mb-3
+    relative select-none cursor-pointer
+
+    bg-[#0099FF] text-white
+    py-2 px-6 rounded-2xl text-sm font-semibold
+
+    shadow-[0_5px_0_#0077cc]
+    transition-all duration-150 ease-in-out
+
+    hover:brightness-110
+    active:translate-y-[4px]
+    active:shadow-[0_2px_0_#0077cc]
+  "
               >
                 Edit Profile
               </button>
@@ -166,8 +179,8 @@ const UserProfile = () => {
                   Total Balance
                 </span>
               </div>
-              <div>
-                <span className="bg-green-700 text-white py-1 px-4 text-sm rounded">
+              <div className="md:mb-0 mb-3">
+                <span className="bg-green-700 text-white py-1 px-4 text-sm font-semibold rounded-full">
                   ${(Number(balance?.balance) || 0).toFixed(3)}
                 </span>
               </div>
@@ -192,7 +205,7 @@ const UserProfile = () => {
                       width="3"
                       height="7"
                       rx="1"
-                      fill="#008236"
+                      fill="#f5c94d"
                     />
                     <rect
                       x="8"
@@ -200,7 +213,7 @@ const UserProfile = () => {
                       width="3"
                       height="10"
                       rx="1"
-                      fill="#008236"
+                      fill="#f5c94d"
                     />
                     <rect
                       x="13"
@@ -208,7 +221,7 @@ const UserProfile = () => {
                       width="3"
                       height="14"
                       rx="1"
-                      fill="#008236"
+                      fill="#f5c94d"
                     />
                     <rect
                       x="18"
@@ -216,7 +229,7 @@ const UserProfile = () => {
                       width="3"
                       height="18"
                       rx="1"
-                      fill="#008236"
+                      fill="#f5c94d"
                     />
                   </svg>
                 </span>
@@ -226,7 +239,7 @@ const UserProfile = () => {
               </div>
 
               <div>
-                <span className="bg-green-700 text-white py-1 px-4 text-sm rounded">
+                <span className="bg-yellow-500/70 text-white py-1 px-4 text-sm rounded-full font-semibold">
                   $
                   {Number(profileStats.portfolio.investedAmount).toFixed(
                     3,

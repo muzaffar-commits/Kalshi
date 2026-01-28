@@ -39,7 +39,7 @@ const Footer = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 1200 1227"
-                    className="w-5 h-5 fill-gray-600 dark:fill-[#c7ac77]/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
+                    className="w-5 h-5 fill-gray-600 dark:fill-white/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
                   >
                     <path
                       d="M714.163 519.284L1160.89 0H1051.61L670.79 442.357 368.573 0H0L468.769 681.821 0 1226.37h109.285l403.16-471.205 317.712 471.205H1200L714.163 519.284ZM568.89 691.351l-46.55-67.251L148.727 
@@ -52,7 +52,7 @@ const Footer = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 320 512"
-                    className="w-6 h-6 fill-gray-600 dark:fill-[#c7ac77]/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
+                    className="w-6 h-6 fill-gray-600 dark:fill-white/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
                   >
                     <path
                       d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35
@@ -66,7 +66,7 @@ const Footer = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 448 512"
-                    className="w-6 h-6 fill-gray-600 dark:fill-[#c7ac77]/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
+                    className="w-6 h-6 fill-gray-600 dark:fill-white/80 hover:fill-[#c7ac77] transition-colors duration-300 dark:hover:fill-gray-300"
                   >
                     <path
                       d="M224.1 141c-63.6 0-114.9 51.3-114.9
@@ -101,7 +101,7 @@ const Footer = () => {
               <div className="text-end"></div>
             </div>
             <div className="inline-block mr-0 md:ml-10">
-              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-white/80">
                 Links
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
@@ -134,7 +134,7 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-white/80">
                 News
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
@@ -172,7 +172,7 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-white/80">
                 Sports
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
@@ -215,7 +215,7 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-white/80">
                 Crypto
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
@@ -253,7 +253,7 @@ const Footer = () => {
             </div>
             <div className="mr-0 md:ml-10">
               {" "}
-              <h4 className="font-bold mb-3 text-black/80 dark:text-[#c7ac77]/80">
+              <h4 className="font-bold mb-3 text-black/80 dark:text-white/80">
                 Trending
               </h4>
               <ul className="text-sm leading-7 text-gray-600 dark:text-gray-400">
@@ -290,7 +290,7 @@ const Footer = () => {
               </ul>
             </div>
           </div>
-          <hr className="my-5 border-t-0 border-b dark:border-[#c9ab77]/80 border-gray-300 h-2" />
+          <hr className="my-5 border-t-0 border-b dark:border-gray-600 border-gray-300 h-2" />
           <p className="text-center text-[13px] text-[#868e98]">
             &copy;2025{" "}
             <span className="font-bold dark:text-[#c7ac77]/80">

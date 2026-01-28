@@ -1,6 +1,7 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { Clock } from "lucide-react";
 import Box from "@mui/material/Box";
 import { TabPanelProps } from "@/utils/typesInterface";
 import moment from "moment";
@@ -145,66 +146,83 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                 return (
                   <div
                     key={i}
-                    className="dark:bg-[#1D293D] border border-gray-300 dark:border-gray-500 rounded-xl p-5 
-                 hover:border-gray-700 transition-all duration-200"
+                    className="
+    relative
+    rounded-2xl p-5
+    bg-gradient-to-br from-white to-gray-50
+    dark:from-[#1D293D] dark:to-[#111827]
+    border border-gray-200 dark:border-[#2B394D]
+    hover:border-gray-300 dark:hover:border-gray-500
+    shadow-sm hover:shadow-md
+    transition-all duration-200
+  "
                   >
-                    <div className="flex relative flex-col sm:flex-row sm:justify-between sm:items-start gap-5">
-                      {/* Left: Details */}
-                      <div className="flex-1 space-y-1">
+                    <div className="flex flex-col sm:flex-row gap-6">
+                      {/* LEFT SIDE */}
+                      <div className="flex-1 space-y-3">
                         {/* Question */}
-                        <div className="dark:text-white text-black/80  font-bold text-base leading-snug pr-4">
+                        <h3 className="font-bold text-base leading-snug text-black/80 dark:text-white">
                           {position.question}
-                        </div>
+                        </h3>
 
-                        {/* Info Rows */}
-                        <div className="space-y-1 flex relative  text-sm">
-                          {/* Your Option - Normal Text (No Badge) */}
-                          <div>
-                            <div className="flex items-start  gap-2">
-                              <span className="text-gray-500 w-14">Option</span>{" "}
-                              :
-                              <span className="dark:text-white text-gray-500  font-semibold  flex-1 break-words">
-                                {myOption.name}
-                              </span>
-                            </div>
+                        {/* Info rows */}
+                        <div className="space-y-1 text-sm">
+                          {/* Option */}
+                          <div className="flex items-start gap-3">
+                            <span className="w-16 text-gray-500 shrink-0">
+                              Option
+                            </span>
+                            <span className="text-gray-400">:</span>
+                            <span className="font-semibold text-gray-700 dark:text-gray-200 break-words">
+                              {myOption.name}
+                            </span>
+                          </div>
 
-                            <div className="flex items-center  gap-2">
-                              <span className="text-gray-500  w-14">Price</span>{" "}
-                              :
-                              <span className="dark:text-white text-gray-500 font-semibold">
-                                $ {(myOption.currentPrice || 0).toFixed(2)}
-                              </span>
-                            </div>
+                          {/* Price */}
+                          <div className="flex items-center gap-3">
+                            <span className="w-16 text-gray-500 shrink-0">
+                              Price
+                            </span>
+                            <span className="text-gray-400">:</span>
+                            <span className="font-semibold text-gray-700 dark:text-gray-200">
+                              ${(myOption.currentPrice || 0).toFixed(2)}
+                            </span>
+                          </div>
 
-                            <div className="flex items-center gap-2 ">
-                              <span className="text-gray-500  w-14">
-                                Shares
-                              </span>
-                              :
-                              <span className="text-gray-500 font-semibold">
-                                {Number(myOption.shares || 0).toFixed(2)}
-                              </span>
-                            </div>
+                          {/* Shares */}
+                          <div className="flex items-center gap-3">
+                            <span className="w-16 text-gray-500 shrink-0">
+                              Shares
+                            </span>
+                            <span className="text-gray-400">:</span>
+                            <span className="font-semibold text-gray-700 dark:text-gray-200">
+                              {Number(myOption.shares || 0).toFixed(2)}
+                            </span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col  items-end">
-                        <p className="text-xs text-gray-500">Position</p>
-                        <p className="text-3xl font-bold text-green-400">
-                          {currentValue.toFixed(2)}
-                        </p>
+
+                      {/* RIGHT SIDE – POSITION */}
+                      <div className="flex flex-col items-start sm:items-end justify-between">
+                        <div className="text-right">
+                          <p className="text-xs uppercase tracking-wide text-gray-500">
+                            Position
+                          </p>
+                          <p className="text-3xl font-bold text-emerald-400">
+                            {currentValue.toFixed(2)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex  items-center gap-2 -right-1.5 -bottom-3 absolute">
-                        <span className="text-gray-500 font-serif">
-                          Resolves
-                        </span>{" "}
-                        <span className="text-gray-400   dark:text-gray-200">
-                          :
-                        </span>
-                        <span className="text-gray-600 dark:text-gray-400">
-                          {moment(position?.endDate).format("DD MMM YYYY")}
-                        </span>
-                      </div>
+                    </div>
+
+                    {/* FOOTER – RESOLVES */}
+                    <div className="mt-4 pt-3 border-t border-gray-200 dark:border-[#2B394D] flex items-center gap-2 text-xs">
+                      <span className="text-gray-500">Resolves</span>
+                      <span className="text-gray-400">:</span>
+                      <span className="font-semibold text-gray-600 dark:text-gray-300">
+                        <Clock className="w-3 h-3 text-gray-400 inline-block" />{" "}
+                        {moment(position?.endDate).format("DD MMM YYYY")}
+                      </span>
                     </div>
                   </div>
                 );

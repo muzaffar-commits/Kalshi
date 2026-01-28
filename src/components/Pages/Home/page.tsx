@@ -250,14 +250,14 @@ const Home = () => {
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10   ${selectedSubCategory == null && isFilterQuestion ? "mt-64" : "lg:mt-52"}`}
+        className={`max-w-[1268px]  mx-auto px-4 pb-10 lg:mt-56 mt-28  ${selectedSubCategory == null && isFilterQuestion ? "mt-64" : "lg:mt-54"}`}
       >
         <div
           className={
             // isEvent
             //   ? ""
             //   :
-            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-10 lg:pt-0"
+            "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-10 lg:pt-0"
           }
         >
           {
