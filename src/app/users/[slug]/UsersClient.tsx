@@ -2,12 +2,6 @@
 
 import Users from "@/components/Pages/users/page";
 
-export default function UsersClient({
-  userId,
-  targetId,
-}: {
-  userId: string;
-  targetId: string;
-}) {
-  return <Users userId={userId} targetId={targetId} />;
+export default function UsersClient({ targetId }: { targetId: string }) {
+  return <Users targetId={targetId} />;
 }
