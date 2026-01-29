@@ -250,7 +250,11 @@ const Home = () => {
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10 lg:mt-56 mt-28  ${selectedSubCategory == null && isFilterQuestion ? "mt-64" : "lg:mt-54"}`}
+        className={`max-w-[1268px] mx-auto px-4 pb-10 ${
+          selectedSubCategory == null && isFilterQuestion
+            ? "mt-62 lg:mt-48"
+            : "mt-26 lg:mt-38"
+        }`}
       >
         <div
           className={

@@ -208,7 +208,7 @@ export default function IdeaTabsTwo({
                     "pt-4 border-t border-gray-200 dark:border-gray-700"
                   }  border-gray-300 pb-2 items-start gap-4 w-full md:px-4 px-0`}
                 >
-                  <div className="bg-gray-100 dark:bg-gray-600 rounded p-1.5">
+                  <div className="bg-gray-100 dark:bg-gray-600 rounded p-1.5 w-fit">
                     <Image
                       onClick={() => handleUserDetails(`${row?.User?.id}`)}
                       src={

@@ -67,7 +67,7 @@ export default function RootLayout({
             >
               <Toaster position="top-right" />
               <Header />
-              {children}
+              <main className="pt-16">{children}</main>
               <Footer />
             </ThemeProvider>
           </SocketProvider>

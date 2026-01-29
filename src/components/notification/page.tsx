@@ -124,7 +124,7 @@ export default function NotificationBell({ userId }) {
       {/* Dropdown */}
       <div
         className={`
-          absolute right-0 mt-3 w-72
+          absolute lg:right-0 -right-16 mt-3 w-72
           bg-white dark:bg-[#1D293D]
           rounded-xl shadow-lg border dark:border-gray-800 border-gray-300
           transition-all duration-200 ease-out

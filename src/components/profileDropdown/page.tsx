@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { ApiResponse, UserProfileData } from "@/utils/typesInterface";
 import { userDetails } from "../service/apiService/user";
 import Image from "next/image";
+import { FiLogOut } from "react-icons/fi";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
@@ -144,23 +145,36 @@ export default function ProfileDropdown() {
             ),
           )}
           <div className="border-t my-2 dark:border-gray-500 border-gray-300" />
-          <div className="flex items-center justify-center mx-auto  px-4 py-2">
+          <div className="flex items-center justify-between mx-auto  px-4 py-2">
             <div>
               <ThemeToggle />
             </div>
-            {/* <div>
-              <PlusCircle className="text-green-700" />{" "}
-              <span className="dark:text-white text-gray-600">Add Cash</span>
-            </div> */}
-          </div>
+            <div>
+              {" "}
+              <button
+                className=" inline-block md:hidden
+    group relative
+    bg-blue-500 hover:bg-blue-600
+    text-white text-sm font-medium
+    px-4 py-1 rounded-md
 
-          <div className="border-t my-2 dark:border-gray-500  border-gray-300" />
+    shadow-[0_4px_0_rgb(29,78,216)]
+    transition-all duration-150 ease-in-out
 
-          <div
-            onClick={handleLogout}
-            className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer text-center font-semibold"
-          >
-            Logout
+    active:translate-y-[4px]
+    active:shadow-[0_2px_0_rgb(29,78,216)]
+  "
+              >
+                Deposit
+              </button>
+            </div>
+            <div>
+              {" "}
+              <FiLogOut
+                onClick={handleLogout}
+                className="text-red-500 text-lg cursor-pointer"
+              />
+            </div>
           </div>
         </div>
       </div>
