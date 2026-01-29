@@ -73,10 +73,6 @@ export default function IdeaTabsTwo({
 
   console.log(postedList, "postedList");
 
-  // const handleShareNow = (postDetails: any) => {
-  //   console.log(postDetails, "share===>");
-  // };
-
   const handleLikeUnlike = async (id: number, isLike: number) => {
     try {
       if (isLike == 1) {
@@ -114,8 +110,6 @@ export default function IdeaTabsTwo({
       }
     }
   };
-
-  console.log(isBookMark, "isBookMark");
 
   const handleBookMarkOrUnBookMark = async (
     id: number,

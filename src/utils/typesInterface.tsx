@@ -263,6 +263,7 @@ export interface SocketPricePayload {
 export interface MarketData {
   question?: {
     question: string;
+    metadata: string;
   };
   market?: {
     totalMarketVolume: number;
@@ -312,4 +313,12 @@ export interface headerRootState {
 
 export interface isWatchListInterface {
   category: { isWatchList: boolean; isFilterQuestion: boolean };
+}
+
+export interface userIdInterFace {
+  user: {
+    user: {
+      id: string;
+    };
+  };
 }

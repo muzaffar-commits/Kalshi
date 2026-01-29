@@ -439,15 +439,15 @@ export default function BuySell({
   return (
     <Modal
       open={isOpen}
-      // onClose={onClose}
+      onClose={onClose}
       closeAfterTransition
       BackdropComponent={Backdrop}
       BackdropProps={{
-        timeout: 300,
+        timeout: 500, // ✅ backdrop open/close duration
         sx: {
           backdropFilter: "blur(10px)",
           backgroundColor:
-            theme == "dark"
+            theme === "dark"
               ? "rgba(15, 23, 42, 0.7)"
               : "rgba(255, 255, 255, 0.7)",
         },

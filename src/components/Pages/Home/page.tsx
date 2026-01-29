@@ -284,13 +284,17 @@ const Home = () => {
                   transform hover:scale-105 hover:shadow-md "
                   >
                     <div className="flex items-center mb-3">
-                      <Image
-                        src={metaData?.imageUrl || "/img/blockimg1.jpg"}
-                        width={40}
-                        height={40}
-                        alt="trending"
-                        className="mr-2 rounded"
-                      />
+                      <div className="p-1.5 mr-2 rounded-lg w-fit bg-gray-100 dark:bg-gray-700">
+                        <Image
+                          src={
+                            metaData?.imageUrl || "/img/opinionLogo-light.png"
+                          }
+                          width={40}
+                          height={40}
+                          alt="trending"
+                          className=" object-cover opacity-80 rounded "
+                        />
+                      </div>
                       <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-black/80">
                         <div onClick={() => goToDetails(row.id)}>
                           <div className="block">

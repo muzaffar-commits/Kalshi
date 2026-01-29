@@ -74,8 +74,6 @@ const Details = ({ marketId }) => {
   const [graphData, setGraphData] = useState<GraphData>({
     series: [],
   });
-  const searchParams = useSearchParams();
-  const slug = searchParams.get("id");
   const [isOpenBuySell, setIsOpenBuySell] = useState(false);
   const [buyType, setBuyType] = useState<OrderSide | unknown>();
   const [options, setOptions] = useState<OptionItem | null>(null);
@@ -94,8 +92,6 @@ const Details = ({ marketId }) => {
   // const [orderPage, setOrderPage] = useState<string | null>("1");
   const [selectedOrderDetails, setSelectedOrderDetails] =
     useState<CancelOrders | null>(null);
-
-  console.log(marketId, "marketId");
 
   const questionDetailsList = useCallback(async () => {
     setIsLoader(true);
@@ -497,6 +493,12 @@ const Details = ({ marketId }) => {
     }
   };
 
+  const metaData = data?.question?.metadata
+    ? JSON.parse(data?.question?.metadata)
+    : "";
+
+  console.log(metaData, "metaData");
+
   return (
     <>
       {isLoader ? (
@@ -506,13 +508,15 @@ const Details = ({ marketId }) => {
           <div className="max-w-[1268px] mx-auto px-4 mt-40">
             <div className="container mx-auto pb-6">
               <div className="md:flex lg:items-center mb-6">
-                <Image
-                  src="/img/blockimg1.jpg"
-                  alt="NYC Flag"
-                  width={80}
-                  height={80}
-                  className="mr-4 rounded-lg"
-                />
+                <div className="p-1.5 rounded-lg w-fit bg-gray-100 dark:bg-gray-700 mr-4">
+                  <Image
+                    src={metaData?.imageUrl || "/img/opinionLogo-light.png"}
+                    alt="NYC Flag"
+                    width={80}
+                    height={80}
+                    className={`rounded-lg ${metaData ? "" : "opacity-45"} `}
+                  />
+                </div>
                 <div>
                   <h1 className="text-xl lg:text-2xl font-bold text-black dark:text-white">
                     {data?.question?.question}
@@ -662,7 +666,7 @@ const Details = ({ marketId }) => {
                     </div>
 
                     <div className="mt-5 md:mt-10">
-                      <IdeasActivityTabs />
+                      <IdeasActivityTabs marketId={marketId} />
                     </div>
                   </div>
                 </div>

@@ -37,10 +37,10 @@ export const userPositions = async () => {
     };
   }
 };
-export const getFeed = async (id: string) => {
+export const getFeed = async (id: string, questionId: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getFeed}${id ? `?userId=${id}` : ""}`,
+      `${API_URLs.getFeed}${id ? `?userId=${id}` : ""}${questionId ? `&questionId=${questionId}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {
@@ -284,7 +284,7 @@ export const postAllReadNotification = async () => {
 export const getMyAllPost = async (userId: string, id: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.myAllPost}${userId ? `?userId=${userId}` : ""}${id ? `&targetId=${id}` : ""}`,
+      `${API_URLs.myAllPost}${userId ? `?userId=${userId}` : ""}${id ? `&questionId=${id}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {

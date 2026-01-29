@@ -19,14 +19,16 @@ interface userDetails {
 const Ideas = () => {
   const [allPosts, setAllPosts] = useState<PostFeeBack[]>([]);
   const [isLoader, setIsLoader] = useState(false);
-  const [currentTabs, setCurrentTabs] = useState("Home");
   const users = useSelector((state: userDetails) => state?.user?.user);
   const router = useRouter();
 
   const getListOfPost = useCallback(async () => {
     setIsLoader(true);
     try {
-      const [response] = await Promise.all([getFeed(users?.id), delay(1000)]);
+      const [response] = await Promise.all([
+        getFeed(users?.id, null),
+        delay(1000),
+      ]);
       if (response?.success) {
         setAllPosts(response.data ?? []);
       } else {
@@ -37,7 +39,7 @@ const Ideas = () => {
     } finally {
       setIsLoader(false);
     }
-  }, [users?.id, currentTabs]);
+  }, [users?.id]);
 
   useEffect(() => {
     getListOfPost();
