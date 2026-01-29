@@ -86,7 +86,7 @@ export default function InputTextArea({ message, setMessage }: Props) {
         value={message || ""}
         onChange={(e) => setMessage(e.target.value)}
         onScroll={syncScroll}
-        placeholder="What is your prediction? &"
+        placeholder="What is your prediction?"
         className="
           relative
           pt-4

@@ -56,8 +56,8 @@ export default function NotificationBell({ userId }) {
     }
   };
   useEffect(() => {
-    open && getUnReadCountNotification();
-  }, [open]);
+    getUnReadCountNotification();
+  }, []);
 
   const markAsRead = async (row: any) => {
     try {
@@ -94,7 +94,6 @@ export default function NotificationBell({ userId }) {
   };
 
   useEffect(() => {
-    toast.error("Something went wrongs");
     socket.emit(`subscribe:userNotification`, userId);
     const handleNotification = (payload: any) => {
       toast.success(payload?.message || "");

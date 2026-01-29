@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function PredictionBox() {
-  const MAX_CHARS = 800;
+  const MAX_CHARS = 500;
   const [text, setText] = useState("");
 
   return (

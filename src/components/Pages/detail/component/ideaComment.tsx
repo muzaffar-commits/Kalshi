@@ -1,13 +1,27 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { MessageCircle, Heart, Bookmark, Share2 } from "lucide-react";
 import Image from "next/image";
 import PredictionBox from "./commentBox";
+import { UploadedImage } from "@/utils/typesInterface";
+import { imageUpload, userPost } from "@/components/service/apiService/user";
+import toast from "react-hot-toast";
+import InputTextArea from "../../ideas/component/IdeaTabs/InputTextArea";
+import { CircularProgress } from "@mui/material";
+import { IoImageOutline } from "react-icons/io5";
 
 export default function IdeasActivityTabs() {
   const [activeTab, setActiveTab] = useState("ideas");
   const [filter, setFilter] = useState("None");
   const [open, setOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [message, setMessage] = React.useState<string | null>("");
+  const [isPostLoader, setIsPostLoader] = React.useState<boolean>(false);
+
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const [uploadedImage, setUploadedImage] = React.useState<
+    UploadedImage[] | null
+  >(null);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -19,6 +33,68 @@ export default function IdeasActivityTabs() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const chooseImages = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("images", file);
+      const response = await imageUpload(formData);
+      if (response?.success) {
+        setUploadedImage(response?.data);
+      } else {
+        setUploadedImage(null);
+        toast.error(response?.message);
+      }
+    } catch (error: unknown) {
+      setUploadedImage(null);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedImage(file);
+    chooseImages(file);
+  };
+  const removeImage = () => {
+    setUploadedImage(null);
+    setSelectedImage(null);
+  };
+
+  const postUserMessage = async () => {
+    setIsPostLoader(true);
+    try {
+      const metadata = {
+        content: message,
+        images: uploadedImage == null ? [] : [uploadedImage?.[0]?.url],
+      };
+      const response = await userPost({ metadata });
+
+      if (response?.reponse?.status) {
+        removeImage();
+        setMessage("");
+        // fetchPostList();
+        setIsPostLoader(false);
+      } else {
+        toast.error(response?.reponse?.status);
+        removeImage();
+        setMessage("");
+        setIsPostLoader(false);
+      }
+    } catch (error: unknown) {
+      setIsPostLoader(false);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
 
   return (
     <div className="w-full">
@@ -143,7 +219,95 @@ export default function IdeasActivityTabs() {
       <div className="mt-4">
         {activeTab === "ideas" && (
           <>
-            <PredictionBox />
+            <div className="border rounded-2xl pb-3">
+              <div className="flex items-start gap-4 w-full px-4 mt-1">
+                {/* <Image
+                  src="/img/user.png"
+                  alt="user"
+                  width={60}
+                  height={60}
+                  className="rounded-full mt-1"
+                /> */}
+
+                <InputTextArea
+                  message={message || ""}
+                  setMessage={setMessage}
+                />
+              </div>
+
+              <div className=" flex flex-row pl-7 justify-between items-center">
+                {selectedImage?.name ? (
+                  <div className="text-xs gap-4 dark:text-gray-200 text-gray-700 items-center flex flex-row">
+                    {selectedImage?.name || ""}
+                    {String(selectedImage?.name)?.length > 0 && (
+                      <div
+                        onClick={removeImage}
+                        className="text-black text-sm cursor-pointer bg-white px-1.5 rounded"
+                      >
+                        x
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>{/* <CircularWithValueLabel /> */}</div>
+                )}
+
+                <div className="flex justify-between w-full items-center  gap-4 mr-7">
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="py-2 px-4 cursor-pointer dark:text-gray-300 text-gray-800"
+                    >
+                      <IoImageOutline size={25} className="!text-sky-600" />
+                    </button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      accept="image/gif,image/png,image/jpeg,image/webp"
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                  <button
+                    disabled={
+                      !selectedImage?.name && String(message).trim().length <= 3
+                    }
+                    onClick={postUserMessage}
+                    className={`
+                                    py-1 px-4 w-16 flex items-center justify-center rounded-md
+                                    text-sm font-semibold
+                                    transition-all duration-200
+                                    ${
+                                      selectedImage?.name ||
+                                      String(message).trim().length > 3
+                                        ? `
+                                          bg-emerald-500
+                                          text-black
+                                          hover:bg-emerald-600
+                                          active:scale-95
+                                          cursor-pointer
+                                          shadow-[0_4px_14px_rgba(34,197,94,0.45)]
+                                        `
+                                        : `
+                                          bg-gray-300
+                                          text-gray-500
+                                          border border-gray-400 dark:bg-gray-600 dark:border-gray-700
+                                          cursor-not-allowed
+                                          shadow-none
+                                        `
+                                    }
+                                  `}
+                  >
+                    {false ? (
+                      <CircularProgress size={18} className="!text-black" />
+                    ) : (
+                      "Post"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
 
             {/* Extra content after PredictionBox */}
             <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
