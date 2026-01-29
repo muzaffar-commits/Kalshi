@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
 // import Drawer from "@/components/Drawer/page";
 import Authentication from "@/components/Pages/auth";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,6 +39,8 @@ import ProfileDropdown from "@/components/profileDropdown/page";
 import NotificationBell from "@/components/notification/page";
 import MainSearch from "./MainSearch";
 import socket from "@/components/socket";
+import MobileSearch from "./MainMobileSearch";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
 interface Category {
   id: number;
@@ -233,13 +236,22 @@ const Header = () => {
     });
   };
 
+  const scrollRef = useRef<HTMLUListElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const amount = direction === "left" ? -200 : 200;
+    scrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
+  };
   // fetchNotification
 
   //
   return (
     <>
-      <div className="hidden lg:block">
-        <header className="w-full bg-white dark:bg-[#1D293D] fixed top-0 z-30 ">
+      {/* <div className="hidden lg:block"> */}
+      <div>
+        <header className="fixed top-0 left-0 w-full bg-white dark:bg-[#1D293D] z-[1000]">
+          {/* <header className="w-full bg-white dark:bg-[#1D293D] fixed top-0 z-30 "> */}
           <div className="max-w-[1268px] mx-auto px-4 py-3 h-auto dark:bg-[#1D293D] bg-white">
             <div
               className={`flex items-center justify-between px-4 ${
@@ -259,8 +271,14 @@ const Header = () => {
               </Link>
 
               {/* CENTER: Search */}
-              <div className="w-full max-w-xl mx-6">
+              <div className="w-full lg:inline-block hidden max-w-xl mx-6">
                 <MainSearch />
+              </div>
+              <div className="lg:hidden inline-block text-center">
+                <MobileSearch />
+                {/* <span className="w-8 h-8 inline-block bg-gray-200 rounded-full">
+                  <FaSearch className="text-blue-400 dark:text-gray-200 relative top-2 left-2" />
+                </span> */}
               </div>
 
               {/* RIGHT: Actions */}
@@ -285,7 +303,7 @@ const Header = () => {
 
                 {user?.isAuth && (
                   <button
-                    className="
+                    className=" md:inline-block hidden
     group relative
     bg-blue-500 hover:bg-blue-600
     text-white text-sm font-medium
@@ -304,7 +322,6 @@ const Header = () => {
 
                 {user?.isAuth && <NotificationBell userId={user?.user?.id} />}
                 {user?.isAuth && <ProfileDropdown />}
-
                 {!user?.isAuth && (
                   <>
                     <button
@@ -325,13 +342,65 @@ const Header = () => {
             </div>
 
             {pathname === "/" && (
-              <nav className="border-b pb-2 dark:border-gray-600 border-gray-300 w-full hidden lg:block">
-                <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
+              // <nav className="border-b pb-2 dark:border-gray-600 border-gray-300 w-full hidden lg:block">
+              //   <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
+              //     {isCategory ? (
+              //       <CategorySkeleton />
+              //     ) : (
+              //       category?.map((row: Category, index: number) => (
+              //         <li key={index}>
+              //           <div
+              //             onClick={() => {
+              //               dispatch(saveCategory(row));
+              //               dispatch(saveSelectSubCategory(null));
+              //               setCategoryId(row?.id);
+              //               dispatch(changeIsEvent(false));
+              //             }}
+              //             className={` ${
+              //               row?.id == categoryId
+              //                 ? "text-black dark:text-[#c7ac77]"
+              //                 : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
+              //             } font-semibold flex items-center`}
+              //           >
+              //             {index == 0 && (
+              //               <span>
+              //                 <FaArrowTrendUp className="mr-1" />
+              //               </span>
+              //             )}
+              //             {row?.name}
+              //           </div>
+              //         </li>
+              //       ))
+              //     )}
+              //   </ul>
+              // </nav>
+              <nav className="relative border-b pb-2 dark:border-gray-600 border-gray-300 w-full">
+                {/* LEFT ARROW */}
+                <button
+                  onClick={() => scroll("left")}
+                  className="absolute -left-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                >
+                  <FaChevronLeft />
+                </button>
+
+                {/* RIGHT ARROW */}
+                <button
+                  onClick={() => scroll("right")}
+                  className="absolute -right-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                >
+                  <FaChevronRight />
+                </button>
+
+                {/* SCROLLABLE TABS */}
+                <ul
+                  ref={scrollRef}
+                  className="flex gap-10 px-10 py-2 text-[15px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
+                >
                   {isCategory ? (
-                    <CategorySkeleton />
+                    <li>Loading...</li>
                   ) : (
                     category?.map((row: Category, index: number) => (
-                      <li key={index}>
+                      <li key={row.id} className="flex-shrink-0">
                         <div
                           onClick={() => {
                             dispatch(saveCategory(row));
@@ -339,16 +408,14 @@ const Header = () => {
                             setCategoryId(row?.id);
                             dispatch(changeIsEvent(false));
                           }}
-                          className={` ${
-                            row?.id == categoryId
+                          className={`${
+                            row?.id === categoryId
                               ? "text-black dark:text-[#c7ac77]"
-                              : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
-                          } font-semibold flex items-center`}
+                              : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]"
+                          } font-semibold flex items-center cursor-pointer`}
                         >
-                          {index == 0 && (
-                            <span>
-                              <FaArrowTrendUp className="mr-1" />
-                            </span>
+                          {index === 0 && (
+                            <FaArrowTrendUp className="mr-1 text-sm" />
                           )}
                           {row?.name}
                         </div>
@@ -361,7 +428,7 @@ const Header = () => {
 
             {pathname === "/" && (
               <div className="">
-                <nav className=" pb-2 flex flex-row pt-1.5  border-gray-300 w-full ">
+                <nav className="pb-2 md:flex flex-row pt-1.5  border-gray-300 w-full">
                   <div className="border-r border-gray-400 dark:border-gray-700 pr-6 flex items-center gap-2">
                     <div className="flex items-center w-56 gap-2 dark:bg-gray-700 bg-gray-100 rounded-xl px-4 py-2">
                       <FiSearch className="text-gray-400 text-base" />
@@ -408,52 +475,80 @@ const Header = () => {
                       )}
                     </button>
                   </div>
-
-                  {pathname === "/" && eventCategory?.length > 0 && (
+                  {eventCategory?.length > 0 && (
                     <div
                       className={`
-                  overflow-hidden
-                  transition-all duration-1000 ease-in-out
-                  ${isWatchList ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}
-                `}
+      relative
+      overflow-hidden
+      transition-all duration-1000 ease-in-out
+      ${isWatchList ? "max-h-40 opacity-100" : "max-h-40"}
+    `}
                     >
-                      <ul
-                        className={`
-                        flex justify-start gap-10 w-full px-4 py-2 text-[15px]
-                        transform transition-all duration-700 ease-in-out
-                        ${isWatchList ? "translate-y-0" : "-translate-y-4"}
-                      `}
+                      {/* LEFT ARROW (MOBILE ONLY) */}
+                      <button
+                        onClick={() =>
+                          scrollRef.current?.scrollBy({
+                            left: -200,
+                            behavior: "smooth",
+                          })
+                        }
+                        className="absolute -left-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow rounded-full p-1 md:hidden"
                       >
-                        <li>
+                        <FaChevronLeft />
+                      </button>
+
+                      {/* RIGHT ARROW (MOBILE ONLY) */}
+                      <button
+                        onClick={() =>
+                          scrollRef.current?.scrollBy({
+                            left: 200,
+                            behavior: "smooth",
+                          })
+                        }
+                        className="absolute -right-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow rounded-full p-1 md:hidden"
+                      >
+                        <FaChevronRight />
+                      </button>
+
+                      {/* SCROLLABLE TABS */}
+                      <ul
+                        ref={scrollRef}
+                        className={`
+        flex gap-10 px-8 pt-6 text-[15px]
+        overflow-x-auto whitespace-nowrap scrollbar-hide
+        transform transition-all duration-700 ease-in-out
+        ${isWatchList ? "translate-y-0" : "-translate-y-4"}
+      `}
+                      >
+                        <li className="flex-shrink-0">
                           <div
                             onClick={() => {
                               dispatch(saveSelectSubCategory(null));
                               setSubCategoryId(null);
                             }}
-                            className={` ${
+                            className={`${
                               subCategoryId == null
                                 ? "text-black dark:text-[#c7ac77]"
-                                : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
-                            } font-semibold flex items-center`}
+                                : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]"
+                            } font-semibold flex items-center cursor-pointer`}
                           >
-                            <span>
-                              <FaArrowTrendUp className="mr-1" />
-                            </span>
+                            <FaArrowTrendUp className="mr-1" />
                             All
                           </div>
                         </li>
-                        {eventCategory?.map((row: Category, index: number) => (
-                          <li key={index}>
+
+                        {eventCategory?.map((row: Category) => (
+                          <li key={row.id} className="flex-shrink-0">
                             <div
                               onClick={() => {
                                 dispatch(saveSelectSubCategory(row));
                                 setSubCategoryId(row?.id);
                               }}
-                              className={` ${
-                                row?.id == subCategoryId
+                              className={`${
+                                row?.id === subCategoryId
                                   ? "text-black dark:text-[#c7ac77]"
-                                  : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
-                              } font-semibold flex items-center`}
+                                  : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]"
+                              } font-semibold flex items-center cursor-pointer`}
                             >
                               {row?.name}
                             </div>
@@ -622,7 +717,7 @@ const Header = () => {
       border border-gray-200 dark:border-gray-700
       shadow-lg z-50
       transform-gpu
-      transition-all duration-200 ease-out opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100  group-hover:scale-100  group-hover:translate-y-0  group-hover:visible
+      transition-all duration-200 ease-out opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100  group-hover:scale-100  group-hover:translate-y-0 group-hover:visible
       
     `}
                       >
@@ -686,42 +781,6 @@ const Header = () => {
         </header>
       </div>
 
-      {/* MOBILE & TABLET HEADER */}
-      <div className="flex lg:hidden flex-col gap-2">
-        {/* Top Row */}
-        <div className="fixed top-0 z-30 border-b dark:border-gray-800 right-0 w-full bg-white dark:bg-[#1D293D] px-4 py-3">
-          <div className="flex items-center justify-between mb-3">
-            {/* Left: Menu + Logo */}
-            <div className="flex items-center gap-3">
-              <Link href="/">
-                <Image
-                  src="/img/opinionLogo-light.png"
-                  alt="Logo"
-                  width={50}
-                  height={50}
-                />
-              </Link>
-            </div>
-
-            {/* Right: Notification + Profile */}
-            <div className="flex items-center gap-4">
-              {user?.isAuth && <NotificationBell userId={user?.user?.id} />}
-              {user?.isAuth && <ProfileDropdown />}
-            </div>
-          </div>
-
-          {/* Search Row */}
-          <div className="relative">
-            <MainSearch />
-            {/* <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search opinion kings"
-              className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-[#1e293b] focus:outline-none text-sm dark:placeholder-gray-600 placeholder-gray-400 dark:text-gray-300 text-gray-700"
-            /> */}
-          </div>
-        </div>
-      </div>
       <Authentication
         isLogin={isLogin}
         isOpen={isOpen}

@@ -99,6 +99,8 @@ const Home = () => {
   const isEvent = useSelector(
     (state: eventSubCategory) => state?.category?.isEvent,
   );
+
+  //
   const filtersForCategory = useSelector(
     (state: RootStateNewssss) => state?.category?.filters,
   );
@@ -116,11 +118,15 @@ const Home = () => {
     crypto: 14,
   };
 
+  const eventCategory = useSelector(
+    (state: any) => state?.category?.eventCategory,
+  );
+
   const hiddenCategories = Object.entries(hideFilter)
     .filter(([_, value]) => value === true)
     .map(([key]) => CATEGORY_MAP[key]);
 
-  console.log(frequency, "frequency");
+  console.log(eventCategory, "eventCategory");
 
   const questionAllList = useCallback(async () => {
     setLoader(true);
@@ -242,15 +248,23 @@ const Home = () => {
   const questionListFilter = isWatchList ? questionBookMark : questionData;
 
   console.log(
-    selectedSubCategory == null,
-    isWatchList,
+    eventCategory?.length > 0,
+    isFilterQuestion,
     "selectedSubCategory111",
   );
 
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10 lg:mt-56 mt-28  ${selectedSubCategory == null && isFilterQuestion ? "mt-64" : "lg:mt-54"}`}
+        className={`max-w-[1268px] mx-auto px-4 pb-10 ${
+          eventCategory?.length > 0 && isFilterQuestion
+            ? "pt-72 lg:pt-48"
+            : eventCategory?.length > 0
+              ? "pt-42 lg:pt-48"
+              : selectedSubCategory == null && isFilterQuestion
+                ? "pt-62 lg:pt-48"
+                : "pt-26 lg:pt-38"
+        }`}
       >
         <div
           className={
