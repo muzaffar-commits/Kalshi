@@ -308,6 +308,9 @@ export interface headerRootState {
   user?: {
     id?: number;
     isAuth: boolean;
+    user: {
+      id?: number;
+    };
   };
 }
 

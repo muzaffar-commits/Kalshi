@@ -311,7 +311,7 @@ const Home = () => {
                       </div>
                       <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-black/80">
                         <div onClick={() => goToDetails(row.id)}>
-                          <div className="block">
+                          <div className="block text-primary">
                             <div
                               className="line-clamp-2"
                               title={row?.question || "--"}

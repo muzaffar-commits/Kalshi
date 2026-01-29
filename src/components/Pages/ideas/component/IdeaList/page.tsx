@@ -48,7 +48,7 @@ export default function MobileMenu() {
       {/* ===== Sidebar / Drawer ===== */}
       <aside
         className={`
-          fixed top-0 left-0 h-full dark:bg-gray-700 bg-white md:pt-5 pt-12 z-50 w-64 p-5 z-50
+          fixed top-0 left-0 h-full dark:bg-[#1D293D] bg-white md:pt-5 pt-12 z-50 w-64 p-5 z-50
           transform transition-transform duration-300
           ${open ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0 md:static md:block
