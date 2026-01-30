@@ -1,16 +1,18 @@
 import {
   getCommentsList,
   postUserCommentLikeOrUnlike,
+  replyComments,
 } from "@/components/service/apiService/user";
 import { delay, HighlightTexts, timeAgoCompact } from "@/utils/Content";
 import { CommentListSkeleton } from "@/utils/customSkeleton";
 import { CommentInterface, IReply } from "@/utils/typesInterface";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaBookmark } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
+import ReplyInput from "./ReplyInput";
 
 interface PostListProps {
   isIdea?: boolean;
@@ -19,51 +21,10 @@ interface PostListProps {
   handleBookMarkOrUnBookMark?: any;
 }
 
-const dummyData = [
-  {
-    id: 201,
-    content: "hello",
-    createdAt: "2026-01-25T10:02:00Z",
-    User: {
-      id: 1,
-      username: "unknown",
-      image_url: "https://i.pravatar.cc/30?img=12",
-    },
-  },
-  {
-    id: 202,
-    content: "@unknown hi hello",
-    createdAt: "2026-01-25T10:05:00Z",
-    User: {
-      id: 1,
-      username: "unknown",
-      image_url: "https://i.pravatar.cc/30?img=12",
-    },
-  },
-  {
-    id: 203,
-    content: "best platform for to predict the opinion",
-    createdAt: "2026-01-25T10:10:00Z",
-    User: {
-      id: 1,
-      username: "unknown",
-      image_url: "https://i.pravatar.cc/30?img=12",
-    },
-  },
-  {
-    id: 204,
-    content: "the cafeteria best opinion option",
-    createdAt: "2026-01-25T10:15:00Z",
-    User: {
-      id: 1,
-      username: "unknown",
-      image_url: "https://i.pravatar.cc/30?img=12",
-    },
-  },
-];
 interface CommentState {
   open: boolean;
   loading: boolean;
+  isReply: boolean;
   comments: CommentInterface[];
 }
 
@@ -76,8 +37,11 @@ export default function PostList({
   const [commentMap, setCommentMap] = useState<Record<number, CommentState>>(
     {},
   );
+  const [replyText, setReplyText] = useState("");
+  const [mixText, setMixText] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const toggleComments = async (postId: number) => {
-    setCommentMap((prev) => {
+    setCommentMap((prev: any) => {
       const isOpen = prev[postId]?.open ?? false;
 
       return {
@@ -99,7 +63,7 @@ export default function PostList({
         delay(1000),
       ]);
 
-      setCommentMap((prev) => ({
+      setCommentMap((prev: any) => ({
         ...prev,
         [postId]: {
           open: true,
@@ -108,7 +72,7 @@ export default function PostList({
         },
       }));
     } catch {
-      setCommentMap((prev) => ({
+      setCommentMap((prev: any) => ({
         ...prev,
         [postId]: {
           open: true,
@@ -119,20 +83,56 @@ export default function PostList({
     }
   };
 
-  const handleCommentLikeUnlike = async (id: number, isLike: number) => {
+  const handleCommentLikeUnlike = async (
+    id: number,
+    isLike: number,
+    postId: number,
+  ) => {
+    setCommentMap((prev) => ({
+      ...prev,
+      [postId]: {
+        ...prev[postId],
+        comments: prev[postId].comments.map((comment) => {
+          if (comment.id === id) {
+            return {
+              ...comment,
+              isUserLike: isLike === 1 ? 0 : 1,
+              likeCount:
+                isLike === 1 ? comment.likeCount - 1 : comment.likeCount + 1,
+            };
+          }
+
+          if (comment.replies?.length) {
+            return {
+              ...comment,
+              replies: comment.replies.map((reply) =>
+                reply.id === id
+                  ? {
+                      ...reply,
+                      isUserLike: isLike === 1 ? 0 : 1,
+                      likeCount:
+                        isLike === 1
+                          ? reply.likeCount - 1
+                          : reply.likeCount + 1,
+                    }
+                  : reply,
+              ),
+            };
+          }
+
+          return comment;
+        }),
+      },
+    }));
     try {
       if (isLike == 1) {
         toast.success("Unlike");
-        // setIsLike(0);
       } else {
         toast.success("like");
-        // setIsLike(1);
       }
-
       const payload = {
         commentId: id,
       };
-
       const response = await postUserCommentLikeOrUnlike(payload);
       if (!response.success) {
         toast.success(response?.message);
@@ -146,7 +146,151 @@ export default function PostList({
     }
   };
 
-  console.log(commentMap, "commentMap=====>");
+  const handleCommentToCommentLikeUnlike = async (
+    postId: number,
+    commentId: number,
+    replyId: number,
+    isLike: number,
+  ) => {
+    setCommentMap((prev) => ({
+      ...prev,
+      [postId]: {
+        ...prev[postId],
+        comments: prev[postId].comments.map((comment) => {
+          // ✅ Sirf parent comment match karo
+          if (comment.id !== commentId) return comment;
+
+          return {
+            ...comment,
+            replies: comment.replies.map((reply) =>
+              reply.id === replyId
+                ? {
+                    ...reply,
+                    isUserLike: isLike === 1 ? 0 : 1,
+                    likeCount:
+                      isLike === 1 ? reply.likeCount - 1 : reply.likeCount + 1,
+                  }
+                : reply,
+            ),
+          };
+        }),
+      },
+    }));
+    try {
+      if (isLike == 1) {
+        toast.success("Unlike");
+      } else {
+        toast.success("like");
+      }
+      const payload = {
+        commentId: replyId,
+      };
+      const response = await postUserCommentLikeOrUnlike(payload);
+      if (!response.success) {
+        toast.success(response?.message);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  console.log(commentMap, "commentMap=========>");
+
+  const commentMainPost = (postId: number) => {
+    setCommentMap((prev) => {
+      const updated: any = {};
+      const isCurrentlyOpen = prev[postId]?.isReply === true;
+      Object.keys(prev).forEach((key) => {
+        const id = Number(key);
+        updated[id] = {
+          ...(prev[id] || {}),
+          isReply: id === postId ? !isCurrentlyOpen : false,
+        };
+      });
+      if (!updated[postId]) {
+        updated[postId] = {
+          isReply: true,
+        };
+      }
+      return updated;
+    });
+  };
+
+  const handleSend = async (row) => {
+    if (!mixText.trim()) return;
+
+    console.log(mixText, "mixText====>");
+
+    try {
+      const payload = {
+        postId: row?.id,
+        comment: mixText,
+      };
+      const response = await replyComments(payload);
+      if (response.success) {
+        toast.success("Message send successfully!");
+        // commentLists();
+        setMixText("");
+        // setOpen(false);
+      } else {
+        toast.error(response?.message || "something went wrong");
+        setMixText("");
+        // setOpen(false);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  const insertEmoji = (emoji: string) => {
+    const textarea = textareaRef.current;
+    console.log(textarea, "textarea");
+
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = mixText.substring(0, start) + emoji + mixText.substring(end);
+    console.log(text, "emoji");
+    setMixText(text);
+    setTimeout(() => {
+      textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+      textarea.focus();
+    }, 0);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>, row) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend(row);
+    }
+  };
+
+  const handleSubComment = (postId: number, commentDetails: any) => {
+    setCommentMap((prev: any) => {
+      const currentOpen = prev?.[postId]?.comments?.find(
+        (c) => c.id === commentDetails.id,
+      )?.isReply;
+
+      return {
+        ...prev,
+        [postId]: {
+          ...prev[postId],
+          comments: prev[postId].comments.map((comment: any) => ({
+            ...comment,
+            isReply: comment.id === commentDetails.id ? !currentOpen : false,
+          })),
+        },
+      };
+    });
+  };
 
   return (
     <div>
@@ -158,9 +302,8 @@ export default function PostList({
         return (
           <div
             key={row?.id}
-            className="flex gap-3 py-4 border-b border-gray-200 dark:border-gray-800"
+            className="flex gap-3  py-4 border-b border-gray-200 dark:border-gray-800"
           >
-            {/* Avatar */}
             <Image
               src={row?.User?.image_url || "https://i.pravatar.cc/40"}
               alt="user"
@@ -168,11 +311,8 @@ export default function PostList({
               width={20}
               className="w-10 h-10 rounded-full object-cover"
             />
-
-            {/* Content */}
             <div className="flex-1">
-              {/* Header */}
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center  gap-2 text-sm">
                 <span className="font-semibold text-gray-900 dark:text-white">
                   {row?.User?.username || "--"}
                 </span>
@@ -185,8 +325,13 @@ export default function PostList({
                 {contentForPost?.content && (
                   <HighlightTexts key={index} text={contentForPost?.content} />
                 )}
-                <br />
-                <br />
+                {contentForPost?.images?.length > 0 && (
+                  <>
+                    {" "}
+                    <br />
+                    <br />
+                  </>
+                )}
                 {contentForPost?.images?.length > 0 && (
                   <div className="bg-green-400 p-2 w-fit rounded shadow">
                     <Image
@@ -199,7 +344,7 @@ export default function PostList({
                 )}
               </p>
 
-              <div className="flex items-center gap-5 mt-3 text-gray-400">
+              <div className="flex items-center  gap-5 mt-3 text-gray-400">
                 <span className="hover:text-gray-600 flex gap-1 items-center">
                   <button
                     onClick={() => toggleComments(row.id)}
@@ -235,35 +380,72 @@ export default function PostList({
                       isIdea,
                     )
                   }
-                  className="hover:text-gray-600"
+                  className="hover:text-gray-600 cursor-pointer"
                 >
                   {row?.isBookmarked == 1 ? (
-                    <FaBookmark className="text-[#156bf7]" />
+                    <FaBookmark className="text-sky-500" />
                   ) : (
-                    <Bookmark size={16} />
+                    <Bookmark size={16} className="text-sky-300" />
                   )}
                 </button>
-
-                {/* <button className="hover:text-gray-600">
-                            <Share2 size={16} />
-                          </button> */}
+                <button
+                  className="hover:text-gray-600 cursor-pointer"
+                  onClick={() => commentMainPost(row?.id)}
+                >
+                  Reply
+                </button>
               </div>
 
               <div
                 className={`
-          grid transition-all duration-300 ease-in-out origin-top
-          ${
-            commentMap[row.id]?.open
-              ? "grid-rows-[1fr] opacity-100 mt-3"
-              : "grid-rows-[0fr] opacity-0"
-          }
-        `}
+                  transition-all duration-500 ease-in-out
+                  ${
+                    commentMap[row.id]?.isReply
+                      ? "max-h-[200px] opacity-100 mt-2"
+                      : "max-h-0 opacity-0"
+                  }
+                  overflow-visible
+                `}
               >
-                <div className="overflow-hidden">
-                  <div className="pl-2 pr-2 py-3 bg-gray-50 dark:bg-[#2B394D] rounded-lg border border-gray-200 dark:border-gray-800">
-                    {commentMap[row.id]?.loading && <CommentListSkeleton />}
-                    {commentMap[row.id]?.comments?.length > 0 ? (
-                      commentMap[row.id].comments.map((comment) => {
+                <ReplyInput
+                  textareaRef={textareaRef}
+                  rows={row}
+                  replyText={mixText}
+                  setReplyText={setMixText}
+                  handleComment={handleSend}
+                  insertEmoji={insertEmoji}
+                  handleKeyDown={handleKeyDown}
+                />
+              </div>
+
+              <div
+                className={`
+                      grid transition-all duration-300  ease-in-out origin-top
+                      ${
+                        commentMap[row.id]?.open
+                          ? "grid-rows-[1fr] opacity-100 mt-3"
+                          : "grid-rows-[0fr] opacity-0"
+                      }
+                    `}
+              >
+                <div className="overflow-hidden ">
+                  {commentMap[row.id]?.loading && (
+                    <div
+                      className={
+                        "pl-2 pr-2 py-3 bg-gray-50 dark:bg-[#2B394D] rounded-lg "
+                      }
+                    >
+                      <CommentListSkeleton />
+                    </div>
+                  )}
+
+                  {commentMap[row.id]?.comments?.length > 0 && (
+                    <div
+                      className={
+                        "pl-2 pr-2 py-3 bg-gray-50 dark:bg-[#2B394D] rounded-lg border border-gray-200 dark:border-gray-800"
+                      }
+                    >
+                      {commentMap[row.id].comments.map((comment) => {
                         return (
                           <div
                             key={comment.id}
@@ -295,7 +477,7 @@ export default function PostList({
                               </div>
                             </div>
                             <div className="flex items-center gap-5 pl-10 mt-3 text-gray-400">
-                              <span className="hover:text-gray-600 flex gap-1 items-center">
+                              {/* <span className="hover:text-gray-600 flex gap-1 items-center">
                                 <button
                                   onClick={() => toggleComments(comment.id)}
                                   className="cursor-pointer"
@@ -306,7 +488,7 @@ export default function PostList({
                                   {" "}
                                   {comment?.commentCount || 0}
                                 </span>
-                              </span>
+                              </span> */}
 
                               <div className="flex items-center gap-1 hover:text-red-500">
                                 <button
@@ -314,6 +496,7 @@ export default function PostList({
                                     handleCommentLikeUnlike(
                                       comment?.id,
                                       comment?.isUserLike,
+                                      row.id,
                                     )
                                   }
                                 >
@@ -328,21 +511,42 @@ export default function PostList({
                                 </span>
                               </div>
 
-                              <button className="text-gray-400 hover:text-gray-500 cursor-pointer ">
+                              <button
+                                onClick={() =>
+                                  handleSubComment(row?.id, comment)
+                                }
+                                className="text-gray-400 hover:text-gray-500 cursor-pointer "
+                              >
                                 Reply
                               </button>
+                            </div>
+                            <div
+                              className={`
+                                  transition-all md:pl-10 duration-500 ease-in-out
+                                  ${
+                                    comment?.isReply
+                                      ? "max-h-[200px] opacity-100 mt-2"
+                                      : "max-h-0 opacity-0"
+                                  }
+                                  overflow-visible
+                                `}
+                            >
+                              <ReplyInput
+                                textareaRef={textareaRef}
+                                rows={row}
+                                replyText={mixText}
+                                setReplyText={setMixText}
+                                handleComment={handleSend}
+                                insertEmoji={insertEmoji}
+                                handleKeyDown={handleKeyDown}
+                              />
                             </div>
                             <div className="pb-2 pl-10">
                               {comment?.replies?.length > 0 &&
                                 comment?.replies?.map((replies: IReply) => (
                                   <div key={replies?.id}>
                                     <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                                      <div
-                                        // onClick={() =>
-                                        //   handleUserDetails(replies?.User?.id)
-                                        // }
-                                        className="!h-11 !w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500"
-                                      >
+                                      <div className="!h-11 !w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500">
                                         <Image
                                           src={
                                             replies?.User?.image_url ||
@@ -382,24 +586,29 @@ export default function PostList({
                                         </p>
                                         <div className=" py-2">
                                           <div className="flex text-gray-400 flex-row items-center gap-4">
+                                            <span></span>
                                             <span className="flex items-center gap-2">
                                               {replies?.isUserLike == 1 ? (
                                                 <FcLike
-                                                // onClick={() =>
-                                                //   handleCommentLikeUnlike(
-                                                //     replies?.id,
-                                                //     replies?.isUserLike,
-                                                //   )
-                                                // }
+                                                  onClick={() =>
+                                                    handleCommentToCommentLikeUnlike(
+                                                      row.id,
+                                                      comment?.id,
+                                                      replies?.id,
+                                                      replies?.isUserLike,
+                                                    )
+                                                  }
                                                 />
                                               ) : (
                                                 <Heart
-                                                  // onClick={() =>
-                                                  //   handleCommentLikeUnlike(
-                                                  //     replies?.id,
-                                                  //     replies?.isUserLike,
-                                                  //   )
-                                                  // }
+                                                  onClick={() =>
+                                                    handleCommentToCommentLikeUnlike(
+                                                      row.id,
+                                                      comment?.id,
+                                                      replies?.id,
+                                                      replies?.isUserLike,
+                                                    )
+                                                  }
                                                   size={18}
                                                 />
                                               )}{" "}
@@ -454,13 +663,9 @@ export default function PostList({
                             </div>
                           </div>
                         );
-                      })
-                    ) : (
-                      <div className="text-sm text-gray-400">
-                        No comments yet
-                      </div>
-                    )}
-                  </div>
+                      })}{" "}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

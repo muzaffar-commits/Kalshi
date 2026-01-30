@@ -196,6 +196,7 @@ export interface CommentInterface {
   createdAt: string;
   User?: UserPost;
   replies: IReply[];
+  isReply: boolean;
 }
 
 export interface TabPanelProps {

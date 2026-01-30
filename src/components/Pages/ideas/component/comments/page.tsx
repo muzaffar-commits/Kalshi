@@ -32,27 +32,7 @@ import { CircularProgress } from "@mui/material";
 import { Heart } from "lucide-react";
 import MobileMenu from "../IdeaList/page";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-const PROFESSIONAL_EMOJIS = [
-  "🙂",
-  "😊",
-  "😄",
-  "👍",
-  "👏",
-  "🙏",
-  "✅",
-  "✔️",
-  "❌",
-  "💼",
-  "📊",
-  "📈",
-  "📉",
-  "💡",
-  "🚀",
-  "🔔",
-  "📌",
-  "⭐",
-  "🏆",
-];
+import { PROFESSIONAL_EMOJIS } from "@/components/content";
 
 export default function CommentPage() {
   const [postDetails, setPostDetails] = useState<PostFeeBack | null>(null);
@@ -427,15 +407,7 @@ export default function CommentPage() {
                             >
                               {/* FcLike  */}
 
-                              {isLike == 1 ? (
-                                <FcLike />
-                              ) : (
-                                <FaRegHeart
-                                // onClick={() =>
-                                //   handleLikeUnlike(postDetails?.id, isLike)
-                                // }
-                                />
-                              )}
+                              {isLike == 1 ? <FcLike /> : <FaRegHeart />}
                             </span>
                             <span className="inline-block relative -left-3 font-light text-gray-400">
                               {postDetails?.likeCount || 0}
@@ -653,11 +625,7 @@ export default function CommentPage() {
                                       hover:bg-gray-400/30 transition-all   duration-200  ease-in-out text-lg cursor-pointer"
                                   >
                                     {row?.isUserLike == 1 ? (
-                                      <FcLike
-                                      // onClick={() =>
-                                      //   handleCommentLikeUnlike(row?.id, row?.isUserLike)
-                                      // }
-                                      />
+                                      <FcLike />
                                     ) : (
                                       <Heart size={18} />
                                     )}{" "}

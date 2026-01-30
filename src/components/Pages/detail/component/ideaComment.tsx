@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
-import { MessageCircle, Heart, Bookmark, Share2 } from "lucide-react";
-import Image from "next/image";
 import {
   CommentInterface,
   PostFeeBack,
@@ -18,12 +16,12 @@ import {
   userPost,
 } from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
+import GifPicker from "gif-picker-react";
 import InputTextArea from "../../ideas/component/IdeaTabs/InputTextArea";
 import { CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
-import { delay, HighlightTexts, timeAgoCompact } from "@/utils/Content";
-import { FcLike } from "react-icons/fc";
-import { FaBookmark, FaRegCommentAlt } from "react-icons/fa";
+import { delay } from "@/utils/Content";
+import { FaRegCommentAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import PostList from "./postList";
 
@@ -401,7 +399,7 @@ export default function IdeasActivityTabs({ marketId }) {
           </div>
         </div>
       </div>
-
+      {/* <GifPicker tenorApiKey={"AIzaSyCTW7MKQHlK4qVplVnymchPmhhpQ51K0TI"} /> */}
       <div className="mt-4">
         {activeTab === "ideas" && (
           <>
@@ -426,7 +424,7 @@ export default function IdeasActivityTabs({ marketId }) {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="text-sm font-medium text-gray-500 hover:text-black"
+                      className="text-sm cursor-pointer font-medium text-gray-500 hover:text-black"
                     >
                       GIF
                     </button>
