@@ -1,4 +1,4 @@
-import { Skeleton, useTheme } from "@mui/material";
+import { Box, Skeleton, useTheme } from "@mui/material";
 
 export const PostSkeleton = ({ count = 3 }) => {
   return Array.from({ length: count }).map((_, index) => (
@@ -194,3 +194,42 @@ export const UserProfileSkeleton = () => {
     </div>
   );
 };
+
+export function CommentListSkeleton({ count = 3 }: { count?: number }) {
+  return (
+    <Box>
+      {Array.from({ length: count }).map((_, index) => (
+        <Box
+          key={index}
+          sx={{
+            display: "flex",
+            gap: 2,
+            py: 2,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Skeleton
+            variant="circular"
+            width={40}
+            height={40}
+            animation="wave"
+          />
+
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              <Skeleton width={80} height={14} />
+              <Skeleton width={50} height={12} />
+            </Box>
+            <Skeleton variant="text" height={14} sx={{ mt: 1, width: "90%" }} />
+            <Skeleton variant="text" height={14} sx={{ width: "75%" }} />
+            <Box sx={{ display: "flex", gap: 3, mt: 1 }}>
+              <Skeleton width={30} height={12} />
+              <Skeleton width={40} height={12} />
+            </Box>
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+}

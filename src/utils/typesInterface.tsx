@@ -192,6 +192,8 @@ export interface CommentInterface {
   isUserLike: number;
   content: string;
   updatedAt: string;
+  commentCount: string;
+  createdAt: string;
   User?: UserPost;
   replies: IReply[];
 }
