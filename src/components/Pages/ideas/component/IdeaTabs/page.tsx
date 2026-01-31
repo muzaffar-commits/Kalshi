@@ -172,7 +172,7 @@ export default function IdeaTabs({
       <Box
         sx={{
           borderBottom: 1,
-          borderColor: "var(--border-color)",
+          borderColor: "var(--color-borderdark)",
         }}
       >
         <Tabs
@@ -181,15 +181,15 @@ export default function IdeaTabs({
           aria-label="time filter tabs"
           sx={{
             "& .MuiTab-root": {
-              color: "#6b7280",
+              color: "#80899b",
               textTransform: "none",
               fontWeight: 500,
             },
             "& .Mui-selected": {
-              color: "#caac75",
+              color: "#beaff0",
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "#caac75",
+              backgroundColor: "#6f59b6",
             },
           }}
         >
@@ -409,7 +409,7 @@ export default function IdeaTabs({
         </div> */}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <div className="border-b dark:border-gray-700 border-gray-200 pb-3">
+        <div className="border-b border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] pb-3">
           <div className="flex items-start gap-4 w-full px-4 mt-4">
             <Image
               src="/img/user.png"
@@ -450,7 +450,7 @@ export default function IdeaTabs({
             </button>
           </div>
         </div>
-        <div className="p-3 border-b dark:border-gray-700 border-gray-200">
+        <div className="p-3 border-b border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)]">
           <div className="md:flex items-start gap-4 w-full md:px-4 px-0">
             <div>
               <Image

@@ -9,7 +9,8 @@
   /* Backgrounds */
   --color-bglight: #ffffff;
   --color-background: #ffffff;
-  --color-boxbg: #ffffff;
+  --boxbg2: #ffffff;
+  --boxbg1: #1b2234;
 
   /* Text */
   --color-text: #111827;
@@ -32,7 +33,7 @@
   /* Backgrounds */
   --color-bgdark: #0f172a;
   --color-background: #0f172a;
-  --color-boxbg: #161618;
+  --color-boxbg1: #161618;
 
   /* Text */
   --color-text: #e4e4e4;
