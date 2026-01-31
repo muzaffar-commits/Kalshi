@@ -461,7 +461,9 @@ export default function BuySell({
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
-          className="bg-white dark:bg-[#1D293D] border dark:border-gray-800 border-gray-200 p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
+          className="border border-[var(--color-borderlight)]
+           dark:border-[var(--color-borderdark)]
+           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)] p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
         >
           {/* Close */}
           <button
@@ -1031,8 +1033,8 @@ export default function BuySell({
         ? `
         ${
           orderType === "sell"
-            ? "bg-red-300 text-white"
-            : "bg-green-300 text-black"
+            ? "bg-red-600/40 text-white"
+            : "bg-green-600/40 text-black"
         }
         cursor-not-allowed
         shadow-none

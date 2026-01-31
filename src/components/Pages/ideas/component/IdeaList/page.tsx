@@ -48,14 +48,14 @@ export default function MobileMenu() {
       {/* ===== Sidebar / Drawer ===== */}
       <aside
         className={`
-          fixed top-0 left-0 h-full dark:bg-[#1D293D] bg-white md:pt-5 pt-12 z-50 w-64 p-5 z-50
+          fixed top-0 left-0 h-full dark:bg-[var(--color-bgdark)] bg-[var(--color-bglight)] md:pt-5 pt-12 z-50 w-64 p-5 z-50
           transform transition-transform duration-300
           ${open ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0 md:static md:block
         `}
       >
         {/* Close (mobile only) */}
-        <div className="md:hidden flex justify-end mb-6 mt-22 relative">
+        <div className="md:hidden flex justify-end mb-6 mt-12 relative">
           <button
             aria-label="Close Menu"
             onClick={() => setOpen(false)}
@@ -117,14 +117,23 @@ export default function MobileMenu() {
 
           {/* CTA */}
           <li className="mt-6">
-            <Link
+            {/* <Link
               href="#"
               onClick={() => setOpen(false)}
               className="block text-center bg-blue-500 hover:bg-blue-500/80
               py-2 px-4 text-white rounded font-semibold"
             >
               Post
-            </Link>
+            </Link> */}
+            <button
+              onClick={() => setOpen(false)}
+              className="block w-full text-center bg-blue-500 
+             hover:bg-blue-500/80 active:bg-blue-600 
+             py-2 px-4 text-white rounded font-semibold 
+             transition duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg cursor-pointer"
+            >
+              Post
+            </button>
           </li>
         </ul>
       </aside>

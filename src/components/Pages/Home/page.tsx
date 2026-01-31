@@ -293,7 +293,9 @@ const Home = () => {
                 return (
                   <div
                     key={index}
-                    className="z-10 border border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] dark:bg-boxbg bg-boxbg
+                    className="z-10 border border-[var(--color-borderlight)]
+           dark:border-[var(--color-borderdark)]
+           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
            relative min-h-48 rounded-xl p-4
            transition-all duration-300 ease-in-out
            hover:-translate-y-[8px] hover:shadow-md"

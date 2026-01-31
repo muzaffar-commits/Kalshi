@@ -263,8 +263,8 @@ const Header = () => {
               {/* LEFT: Logo */}
               <Link href="/" className="shrink-0">
                 <p className="text-text md:text-[22px] text-[15px] font-bold">
-                  <Crown className="w-6 h-6 relative -top-1 inline-block" />{" "}
-                  OPINION KINGS
+                  <Crown className="w-6 h-6 relative -top-1 inline-block font-bold" />{" "}
+                  <span className="font-normal">OPINION</span> KINGS
                 </p>
                 {/* <Image
                   src="/img/opinionLogo-light.png"
@@ -401,7 +401,7 @@ const Header = () => {
                 {/* SCROLLABLE TABS */}
                 <ul
                   ref={scrollRef}
-                  className="flex gap-10 px-10 py-2 text-[15px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
+                  className="flex gap-6 px-10 py-2 text-[15px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
                 >
                   {isCategory ? (
                     <li>Loading...</li>
@@ -415,11 +415,13 @@ const Header = () => {
                             setCategoryId(row?.id);
                             dispatch(changeIsEvent(false));
                           }}
-                          className={`${
-                            row?.id === categoryId
-                              ? "dark:text-text text-text"
-                              : "dark:text-text text-text hover:text-hovertext cursor-pointer"
-                          } font-semibold flex items-center cursor-pointer`}
+                          className={`px-3 py-1 rounded-full font-semibold flex items-center cursor-pointer
+      transition-all duration-200 ease-in-out
+      ${
+        row?.id === categoryId
+          ? "bg-[#8160ee]   text-white"
+          : "bg-transparent dark:text-[#fff] text-text hover:bg-[#8160ee] hover:text-white"
+      }`}
                         >
                           {index === 0 && (
                             <FaArrowTrendUp className="mr-1 text-sm" />

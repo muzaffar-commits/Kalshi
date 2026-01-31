@@ -155,7 +155,7 @@ export default function IdeaTabsTwo({
       <Box
         sx={{
           borderBottom: 1,
-          borderColor: "var(--border-color)",
+          borderColor: "var(--color-borderdark)",
         }}
       >
         <Tabs
@@ -164,15 +164,15 @@ export default function IdeaTabsTwo({
           aria-label="time filter tabs"
           sx={{
             "& .MuiTab-root": {
-              color: "#6b7280",
+              color: "#80899b",
               textTransform: "none",
               fontWeight: 500,
             },
             "& .Mui-selected": {
-              color: "#caac75",
+              color: "#beaff0",
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "#caac75",
+              backgroundColor: "#6f59b6",
             },
           }}
         >

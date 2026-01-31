@@ -287,7 +287,7 @@ const Footer = () => {
           </div>
           <hr className="my-5 border-t-0 border-b dark:border-gray-600 border-gray-300 h-2" />
           <p className="text-center text-[13px] text-[#868e98]">
-            &copy;2025{" "}
+            &copy;2026{" "}
             <span className="font-bold dark:text-muted text-muted">
               Opinion Kings
             </span>
