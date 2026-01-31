@@ -133,7 +133,7 @@ export default function ProfileDropdown() {
 
         {/* Menu */}
         <div className="py-2 text-md font-semibold">
-          {["Ideas", "Privacy Policy", "Terms and Conditions"].map(
+          {["Ideas", "Bookmarks", "Privacy Policy", "Terms and Conditions"].map(
             (item, index) => (
               <div
                 key={item}
@@ -145,24 +145,14 @@ export default function ProfileDropdown() {
             ),
           )}
           <div className="border-t my-2 dark:border-gray-500 border-gray-300" />
-          <div className="flex items-center justify-center gap-2 mx-auto  px-4 py-2">
+          <div className="flex items-center md:justify-center justify-between gap-2 mx-auto  px-4 py-2">
             <div>
               <ThemeToggle />
             </div>
             <div>
               {" "}
               <button
-                className=" inline-block md:hidden
-    group relative
-    bg-blue-500 hover:bg-blue-600
-    text-white text-sm font-medium
-    px-4 py-1 rounded-md
-
-    shadow-[0_4px_0_rgb(29,78,216)]
-    transition-all duration-150 ease-in-out
-
-    active:translate-y-[4px]
-    active:shadow-[0_2px_0_rgb(29,78,216)]
+                className="inline-block md:hidden group relative hover:bg-btnbg bg-[#8160ee]   text-white text-sm font-medium   px-4 py-1 rounded-md   cursor-pointer   transition-all duration-300 ease-in-out   hover:-translate-y-[3px]   active:translate-y-[3px]   active:shadow-[0_2px_0_rgb(29,78,216)]   
   "
               >
                 Deposit

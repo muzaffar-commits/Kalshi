@@ -504,11 +504,11 @@ const Details = ({ marketId }) => {
       {isLoader ? (
         <MarketSkeleton />
       ) : (
-        <div className="dark:bg-[#1D293D]">
-          <div className="max-w-[1268px] mx-auto px-4 mt-40">
+        <div>
+          <div className="max-w-[1268px] mx-auto px-4 md:mt-18 mt-6">
             <div className="container mx-auto pb-6">
               <div className="md:flex lg:items-center mb-6">
-                <div className="p-1.5 rounded-lg w-fit bg-gray-100 dark:bg-gray-700 mr-4">
+                <div className="p-1.5 rounded-lg w-fit mr-4">
                   <Image
                     src={metaData?.imageUrl || "/img/opinionLogo-light.png"}
                     alt="NYC Flag"
@@ -634,30 +634,10 @@ const Details = ({ marketId }) => {
                       </div>
                     </div>
 
-                    {/* <div className="mt-5">
-                      <button className="cursor-pointer py-2 px-4 text-md border border-gray-500 rounded-lg dark:text-white text-black/80 hover:text-[#bfa16d]">
-                        Show More{" "}
-                        <ArrowRight className="inline-block w-4 h-4" />
-                      </button>
-                    </div> */}
                     <div className="mt-5">
                       <button
                         className="
-      group cursor-pointer
-      px-4 py-2 text-md font-medium rounded-lg
-      border border-gray-500
-      dark:text-white text-black/80
-      bg-white dark:bg-black
-
-      shadow-[0_6px_0_rgba(0,0,0,0.25)]
-      dark:shadow-[0_6px_0_rgba(0,0,0,0.6)]
-
-      transition-all duration-150 ease-in-out
-      hover:text-[#bfa16d]
-
-      active:translate-y-[4px]
-      active:shadow-[0_2px_0_rgba(0,0,0,0.25)]
-      dark:active:shadow-[0_2px_0_rgba(0,0,0,0.6)]
+       group relative hover:bg-btnbg bg-[#8160ee]   text-white text-sm font-medium   px-4 py-2 rounded-md   cursor-pointer   transition-all duration-300 ease-in-out   hover:-translate-y-[3px]   active:translate-y-[3px]   active:shadow-[0_2px_0_rgb(29,78,216)] 
     "
                       >
                         Show More{" "}

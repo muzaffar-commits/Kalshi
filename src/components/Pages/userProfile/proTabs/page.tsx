@@ -1,7 +1,7 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { Clock } from "lucide-react";
+import { Clock, DollarSign, HelpCircle, ShareIcon } from "lucide-react";
 import Box from "@mui/material/Box";
 import { TabPanelProps } from "@/utils/typesInterface";
 import moment from "moment";
@@ -112,7 +112,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
             "& .MuiTab-root": {
               color: "#838383",
               textTransform: "none",
-              fontSize: { xs: "12px", sm: "14px" },
+              fontSize: { xs: "1px", sm: "14px" },
               minWidth: "auto",
               px: 2,
             },
@@ -166,10 +166,14 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                         </h3>
 
                         {/* Info rows */}
-                        <div className="space-y-1 text-sm">
+                        <div className="md:flex gap-2 items-center space-y-1 text-sm">
                           {/* Option */}
                           <div className="flex items-start gap-3">
-                            <span className="w-16 text-gray-500 shrink-0">
+                            <span className="w-16 dark:text-gray-400 text-gray-700 shrink-0 md:text-end">
+                              <HelpCircle
+                                size={14}
+                                className="inline-block text-yellow-600 relative -top-[1px]"
+                              />{" "}
                               Option
                             </span>
                             <span className="text-gray-400">:</span>
@@ -180,7 +184,11 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
 
                           {/* Price */}
                           <div className="flex items-center gap-3">
-                            <span className="w-16 text-gray-500 shrink-0">
+                            <span className="w-16 dark:text-gray-400 text-gray-700 shrink-0 md:text-end">
+                              <DollarSign
+                                size={14}
+                                className="inline-block relative -top-[1px] text-green-600"
+                              />{" "}
                               Price
                             </span>
                             <span className="text-gray-400">:</span>
@@ -191,7 +199,8 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
 
                           {/* Shares */}
                           <div className="flex items-center gap-3">
-                            <span className="w-16 text-gray-500 shrink-0">
+                            <span className="w-16 dark:text-gray-400 text-gray-700 shrink-0 md:text-end">
+                              <ShareIcon className="w-4 h-4 inline-block relative -top-[1px] text-blue-400" />{" "}
                               Shares
                             </span>
                             <span className="text-gray-400">:</span>
@@ -205,7 +214,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
                       {/* RIGHT SIDE – POSITION */}
                       <div className="flex flex-col items-start sm:items-end justify-between">
                         <div className="text-right">
-                          <p className="text-xs uppercase tracking-wide text-gray-500">
+                          <p className="text-xs uppercase tracking-wide dark:text-gray-400 text-gray-700">
                             Position
                           </p>
                           <p className="text-3xl font-bold text-emerald-400">
@@ -217,7 +226,9 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
 
                     {/* FOOTER – RESOLVES */}
                     <div className="mt-4 pt-3 border-t border-gray-200 dark:border-[#2B394D] flex items-center gap-2 text-xs">
-                      <span className="text-gray-500">Resolves</span>
+                      <span className="dark:text-gray-400 text-gray-700">
+                        Resolves
+                      </span>
                       <span className="text-gray-400">:</span>
                       <span className="font-semibold text-gray-600 dark:text-gray-300">
                         <Clock className="w-3 h-3 text-gray-400 inline-block" />{" "}

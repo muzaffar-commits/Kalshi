@@ -144,48 +144,65 @@ export default function UpdateProfile({
         >
           {/* HEADER */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold dark:text-white text-gray-900">
+            <h2 className="text-xl font-semibold dark:text-white text-center text-gray-900">
               Update Profile
             </h2>
             <button
               onClick={handleCloseModal}
               className="dark:text-gray-300 text-gray-600 text-xl cursor-pointer hover:text-[#c7ac77] dark:hover:text-[#c7ac77]"
             >
-              ✕
+              <MdClose size={18} />
             </button>
           </div>
 
           <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5">
             {/* IMAGE PICKER */}
             <div>
-              <label className="text-sm font-medium dark:text-gray-300 text-gray-800">
-                Profile Image
-              </label>
-
               <div className="mt-2">
                 <label
                   htmlFor="image"
-                  className="relative flex items-center justify-center w-full h-36 border-2 border-dashed rounded-xl cursor-pointer 
-                  border-gray-300 dark:border-gray-600 hover:border-blue-500 transition"
+                  className="
+        relative
+        flex items-center justify-center
+        w-32 h-32
+        rounded-full
+        border-2 border-dashed
+        cursor-pointer
+        border-gray-300 dark:border-gray-600
+        hover:border-blue-500
+        transition
+        mx-auto
+       
+      "
                 >
                   {formik.values.image ? (
-                    <span className="relative h-full">
+                    <>
+                      {/* IMAGE */}
                       <Image
                         src={formik.values.image}
                         alt="Preview"
-                        height={100}
-                        width={100}
-                        className="h-full w-32 object-cover rounded-xl"
+                        fill
+                        className="object-cover rounded-full"
                       />
-                      <div
+
+                      {/* REMOVE ICON */}
+                      <button
+                        type="button"
                         onClick={removeImage}
-                        className="absolute top-0 z-50 text-gray-200 right-0 text-xl bg-red-500/80 rounded-xl "
+                        className="
+              relative -bottom-10 -right-14 z-50
+              w-5 h-5
+              flex items-center justify-center
+              rounded-full
+              bg-gray-200 text-red-500
+              hover:bg-black cursor-pointer
+            "
                       >
-                        <MdClose />
-                      </div>
-                    </span>
+                        <MdClose size={14} />
+                      </button>
+                    </>
                   ) : (
-                    <div className="flex flex-col items-center gap-2 text-gray-400  ">
+                    <div className="flex flex-col items-center gap-2 text-gray-400">
                       <span className="text-2xl">📷</span>
                       <span className="text-sm">Click to upload</span>
                     </div>
