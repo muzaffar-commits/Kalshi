@@ -3,9 +3,18 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Clock, DollarSign, HelpCircle, ShareIcon } from "lucide-react";
 import Box from "@mui/material/Box";
-import { TabPanelProps } from "@/utils/typesInterface";
+import { PostFeeBack, TabPanelProps } from "@/utils/typesInterface";
 import moment from "moment";
-import { userPositions } from "@/components/service/apiService/user";
+import {
+  getMyAllPost,
+  postBookmarkOrUnBookMark,
+  postLikeOrUnlike,
+  userPositions,
+} from "@/components/service/apiService/user";
+import { FaRegCommentAlt } from "react-icons/fa";
+import PostList from "../../detail/component/postList";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -76,7 +85,8 @@ export interface ProfileTabsProps {
 export default function ProfileTabs({ data }: ProfileTabsProps) {
   const [value, setValue] = React.useState(0);
   const [positions, setPositions] = React.useState<Position[]>([]);
-
+  const [myPost, setMyPost] = React.useState<PostFeeBack[]>([]);
+  const userId = useSelector((state: any) => state?.user?.user?.id);
   const fetchPositions = async () => {
     try {
       const response = await userPositions();
@@ -96,7 +106,99 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
     fetchPositions();
   }, []);
 
-  console.log(data, "data");
+  const fetchMyAllPost = async () => {
+    try {
+      const response = await getMyAllPost(userId, "");
+      console.log(response, "mypost=====================");
+
+      if (response.feed?.length > 0) {
+        setMyPost(response?.feed);
+      } else {
+        setMyPost([]);
+      }
+    } catch {
+      setMyPost([]);
+    }
+    // getMyAllPost
+  };
+  React.useEffect(() => {
+    fetchMyAllPost();
+  }, []);
+
+  const handleBookMarkOrUnBookMark = async (
+    id: number,
+    isBookmarked: number,
+  ) => {
+    try {
+      setMyPost((prev) => {
+        return prev.map((item) => {
+          if (item.id === id) {
+            const booked = item.isBookmarked === 1 ? 0 : 1;
+            return {
+              ...item,
+              isBookmarked: booked,
+            };
+          }
+          return item;
+        });
+      });
+
+      if (isBookmarked == 1) {
+        toast.success("Remove for bookmarks");
+      } else {
+        toast.success("Bookmark successfully");
+      }
+      const payload = {
+        postId: id,
+      };
+      await postBookmarkOrUnBookMark(payload);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  const handleLikeUnlike = async (id: number, isLike: number) => {
+    try {
+      if (isLike == 1) {
+        toast.success("Unlike");
+      } else {
+        toast.success("like");
+      }
+
+      setMyPost((prev) =>
+        prev.map((item) => {
+          if (item.id == id) {
+            const isLiked = item.isLiked === 1 ? 0 : 1;
+
+            return {
+              ...item,
+              isLiked,
+              likeCount: isLiked
+                ? item.likeCount + 1
+                : Math.max(item.likeCount - 1, 0),
+            };
+          }
+          return item;
+        }),
+      );
+
+      const payload = {
+        postId: id,
+      };
+
+      await postLikeOrUnlike(payload);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -112,9 +214,20 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
             "& .MuiTab-root": {
               color: "#838383",
               textTransform: "none",
-              fontSize: { xs: "1px", sm: "14px" },
-              minWidth: "auto",
-              px: 2,
+
+              // ✅ FIXED: readable font on all screens
+              fontSize: {
+                xs: "12px",
+                sm: "14px",
+              },
+
+              // ✅ FIXED: reduce padding instead of font
+              px: {
+                xs: 1,
+                sm: 2,
+              },
+
+              minHeight: "40px",
             },
             "& .Mui-selected": {
               color: "#0099ff",
@@ -126,7 +239,6 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
         >
           <Tab label="Positions" {...a11yProps(0)} />
           <Tab label="Portfolio" {...a11yProps(1)} />
-
           <Tab label="Posts" {...a11yProps(2)} />
         </Tabs>
       </Box>
@@ -295,26 +407,28 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={2}>
-        <div className="dark:bg-[#1D293D] border-gray-400 dark:border-gray-500 mt-4 border  rounded-lg p-5">
-          <h3 className="text-base sm:text-lg font-semibold dark:text-white text-gray-700 mb-2">
-            Create Your Own Prediction Market
-          </h3>
-          <p className="text-sm text-gray-400">
-            Turn real-world events into tradable markets. Define outcomes and
-            let the community decide.
-          </p>
+        {myPost?.length > 0 ? (
+          <PostList
+            isIdea={true}
+            allPosts={myPost}
+            handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
+            handleLikeUnlike={handleLikeUnlike}
+          />
+        ) : (
+          <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
+            <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800">
+              <FaRegCommentAlt className="text-2xl text-gray-500 dark:text-gray-400" />
+            </div>
 
-          <div className="mt-4 flex flex-wrap gap-2 text-xs">
-            {["Create Markets", "Earn Fees", "Community Driven"].map((t) => (
-              <span
-                key={t}
-                className="px-3 py-1 rounded-full bg-[#0099ff]/10 text-[#0099ff]"
-              >
-                {t}
-              </span>
-            ))}
+            <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200">
+              Activity content here
+            </h3>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+              Be the first to share your thoughts and spark a conversation.
+            </p>
           </div>
-        </div>
+        )}
       </CustomTabPanel>
     </Box>
   );

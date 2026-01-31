@@ -46,7 +46,8 @@ export const API_URLs = {
   myAllPost: "/user/feed",
   userSearch: "/user/search-users",
   feedDetailsById: "/user/feed-by-id",
+  follow: "/user",
 };
 
 // images
-// feed
+// user/2/followers/

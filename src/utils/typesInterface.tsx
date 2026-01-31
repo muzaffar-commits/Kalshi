@@ -9,6 +9,7 @@ export interface UserCore {
   email: string;
   createdAt: string;
   image_url?: string;
+  id: number;
 }
 
 export interface UserProfileData {

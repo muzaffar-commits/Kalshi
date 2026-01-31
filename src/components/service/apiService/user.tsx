@@ -323,4 +323,32 @@ export const getFeedDetailsById = async (id = 1) => {
   }
 };
 
+export const getFollowers = async (userId = 1) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.follow}/${userId}/followers`,
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
+export const getFollowing = async (userId = 1) => {
+  try {
+    const response = await apiInstance.get(
+      `${API_URLs.follow}/${userId}/following?limit=10&offset=0`,
+    );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
 //

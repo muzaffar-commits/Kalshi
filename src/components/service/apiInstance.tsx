@@ -1,7 +1,6 @@
-// src/services/apiInstance.ts
-
 import axios from "axios";
-//
+import toast from "react-hot-toast";
+
 export const basedURLs = "http://192.168.29.218:3000";
 // export const basedURLs = "https://api.opinionkings.com";
 export const developmentBaseURL = `${basedURLs}/api`;
@@ -27,6 +26,20 @@ if (typeof window !== "undefined") {
       return config;
     },
     (error) => Promise.reject(error),
+  );
+
+  apiInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      const status = error?.response?.status;
+      if (status === 401) {
+        toast.success("Token expired 🚫 Logging out...");
+        localStorage.clear();
+        // window.location.href = "/";
+      }
+
+      return Promise.reject(error);
+    },
   );
 }
 

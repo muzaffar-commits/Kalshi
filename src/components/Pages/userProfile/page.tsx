@@ -11,6 +11,7 @@ import {
   UserProfileData,
 } from "@/utils/typesInterface";
 import ProfileTabs from "./proTabs/page";
+import FollowingFollowerList from "@/components/Modal/FollowingFollowerList/page";
 
 // Define the shape expected by ProfileTabs
 interface ProfileStats {
@@ -29,6 +30,7 @@ const UserProfile = () => {
   const [user, setUser] = useState<UserProfileData[] | null>(null);
   const [balance, setBalance] = useState<UserBalanceData | null>(null);
   const [open, setOpen] = useState(false);
+  const [isFollow, setIsFollow] = useState(false);
 
   // Derived safe data
   const userData = user?.[0] || null;
@@ -113,14 +115,20 @@ const UserProfile = () => {
                     : "--"}
                 </p>
                 <p className="text-gray-200 mt-3 text-sm flex flex-wrap gap-4">
-                  <span className="dark:text-gray-400 text-gray-700">
+                  <span
+                    onClick={() => setIsFollow(true)}
+                    className="dark:text-gray-400 cursor-pointer text-gray-700"
+                  >
                     <span className="dark:text-white text-gray-800 font-semibold">
                       {userData?.following || "0"}
                     </span>{" "}
                     Following
                   </span>
 
-                  <span className="dark:text-gray-400 text-gray-700">
+                  <span
+                    onClick={() => setIsFollow(true)}
+                    className="dark:text-gray-400 cursor-pointer text-gray-700"
+                  >
                     <span className="dark:text-white text-gray-800 font-semibold">
                       {userData?.follower || "0"}
                     </span>{" "}
@@ -260,6 +268,12 @@ const UserProfile = () => {
           handleClose={handleClose}
           userDetails={userData}
           fetchUserDetails={userDetailsList}
+        />
+        <FollowingFollowerList
+          handleClose={() => setIsFollow(false)}
+          isOpen={isFollow}
+          onClose={() => setIsFollow(false)}
+          userId={userData?.user?.id}
         />
       </div>
     </>

@@ -18,6 +18,7 @@ import { FaRegCommentAlt } from "react-icons/fa";
 import { PostFeeBack } from "@/utils/typesInterface";
 import { SiGooglemessages } from "react-icons/si";
 import { LuMessageSquareShare } from "react-icons/lu";
+import FollowingFollowerList from "@/components/Modal/FollowingFollowerList/page";
 
 interface userDetailProps {
   user: {
@@ -35,7 +36,9 @@ export default function Profile({ targetId }: { targetId: string }) {
   const userDetails = followingData?.[0];
   const userId = useSelector((state: userDetailProps) => state?.user?.user?.id);
   const targetIds = targetId ? targetId : userId;
+  const [isFollow, setIsFollow] = useState(false);
   const [myPost, setMyPost] = useState<PostFeeBack[]>([]);
+  const isUsers = targetId == userId ? true : false;
   const getListOfPost = useCallback(async () => {
     setIsLoader(true);
     try {
@@ -59,7 +62,7 @@ export default function Profile({ targetId }: { targetId: string }) {
     getListOfPost();
   }, [getListOfPost]);
 
-  console.log(followingData, "followingData");
+  console.log(targetIds, "followingData====");
 
   console.log(userDetails, "userDetails");
   const joinedDate = userDetails?.user?.createdAt
@@ -194,6 +197,8 @@ export default function Profile({ targetId }: { targetId: string }) {
     }
   };
 
+  console.log(isUsers, "isUsers");
+
   return (
     <div className="dark:bg-[#1D293D] mt-40">
       <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 mt-36 lg:mt-28">
@@ -255,13 +260,19 @@ export default function Profile({ targetId }: { targetId: string }) {
                             {joinedDate || "0"}
                           </span>
                           <div className="flex gap-5 mt-2 text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">
+                            <span
+                              onClick={() => isUsers && setIsFollow(true)}
+                              className="text-gray-500 cursor-pointer dark:text-gray-400"
+                            >
                               <strong className="text-gray-900 dark:text-white">
                                 {userDetails?.follower || "0"}
                               </strong>{" "}
                               Followers
                             </span>
-                            <span className="text-gray-500 dark:text-gray-400">
+                            <span
+                              onClick={() => isUsers && setIsFollow(true)}
+                              className="text-gray-500 cursor-pointer dark:text-gray-400"
+                            >
                               <strong className="text-gray-900 dark:text-white">
                                 {userDetails?.following || "0"}
                               </strong>{" "}
@@ -360,6 +371,13 @@ export default function Profile({ targetId }: { targetId: string }) {
           </div>
         </div>
       </div>
+
+      <FollowingFollowerList
+        handleClose={() => setIsFollow(false)}
+        isOpen={isFollow}
+        onClose={() => setIsFollow(false)}
+        userId={userId}
+      />
     </div>
   );
 }

@@ -184,24 +184,24 @@ const Header = () => {
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  const getUserBalance = async () => {
-    try {
-      const response: UserBalanceResponse = await userBalance();
+  // const getUserBalance = async () => {
+  //   try {
+  //     const response: UserBalanceResponse = await userBalance();
 
-      if (response.success && response.data?.balance !== undefined) {
-        localStorage.setItem("balance", String(response.data.balance));
-      } else {
-        localStorage.removeItem("balance");
-      }
-    } catch {
-      localStorage.removeItem("balance");
-    }
-  };
-  useEffect(() => {
-    if (token) {
-      getUserBalance();
-    }
-  }, [token]);
+  //     if (response.success && response.data?.balance !== undefined) {
+  //       localStorage.setItem("balance", String(response.data.balance));
+  //     } else {
+  //       localStorage.removeItem("balance");
+  //     }
+  //   } catch {
+  //     localStorage.removeItem("balance");
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (token) {
+  //     getUserBalance();
+  //   }
+  // }, [token]);
 
   const handleFilter = () => {
     dispatch(changeFilterQuestion(!isFilterQuestion));
