@@ -186,10 +186,10 @@ export default function IdeaTabs({
               fontWeight: 500,
             },
             "& .Mui-selected": {
-              color: "#beaff0",
+              color: "#8160ee",
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "#6f59b6",
+              backgroundColor: "#8160ee",
             },
           }}
         >

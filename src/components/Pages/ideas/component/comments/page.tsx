@@ -302,11 +302,11 @@ export default function CommentPage() {
     router.push(`/ideas/profile/${id}`);
   };
   return (
-    <div className="dark:bg-[#1D293D] mt-40">
-      <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 mt-36 lg:mt-28">
+    <div>
+      <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-9 lg:pt-10">
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-1">
-            <div className="sticky top-32 bg-white dark:bg-black border-t dark:border-gray-700">
+            <div className="sticky top-32 dark:border-gray-700">
               <h1 className="dark:text-white text-gray-800 lg:text-3xl text-xl mb-0 mt-3">
                 Ideas
               </h1>
