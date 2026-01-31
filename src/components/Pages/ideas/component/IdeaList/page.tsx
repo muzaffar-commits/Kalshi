@@ -40,7 +40,7 @@ export default function MobileMenu() {
       {/* ===== Overlay ===== */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0  z-40 md:hidden"
           onClick={() => setOpen(false)}
         />
       )}
@@ -48,9 +48,12 @@ export default function MobileMenu() {
       {/* ===== Sidebar / Drawer ===== */}
       <aside
         className={`
-          fixed top-0 left-0 h-full dark:bg-[var(--color-bgdark)] bg-[var(--color-bglight)] md:pt-5 pt-12 z-50 w-64 p-5 z-50
-          transform transition-transform duration-300
-          ${open ? "translate-x-0" : "-translate-x-full"}
+          fixed top-0 left-0 h-full  md:pt-5 pt-12 z-50 w-64 p-5 z-40
+          transform transition-transform duration-300 md:border-r-0 border-r border-[var(--color-borderlight)]
+           dark:border-[var(--color-borderdark)]
+           bg:transparent md:dark:bg-transparent
+           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
+          ${open ? "translate-x-0" : "-translate-x-full z-50"}
           md:translate-x-0 md:static md:block
         `}
       >
@@ -69,49 +72,49 @@ export default function MobileMenu() {
           <MenuItem
             label="Home"
             icon={<FaHome />}
-            active={pathname === "/ideas"}
+            active={pathname === "/ideas/"}
             onClick={() => handleMenuClick("/ideas")}
           />
 
           <MenuItem
             label="Replies"
             icon={<FaCommentAlt />}
-            active={pathname === "/ideas/replies"}
+            active={pathname === "/ideas/replies/"}
             onClick={() => handleMenuClick("/ideas/replies")}
           />
 
           <MenuItem
             label="Bookmarks"
             icon={<FaBookmark />}
-            active={pathname === "/ideas/bookmark"}
+            active={pathname === "/ideas/bookmark/"}
             onClick={() => handleMenuClick("/ideas/bookmark")}
           />
 
           <MenuItem
             label="Profile"
             icon={<FaUser />}
-            active={pathname.startsWith("/ideas/profile")}
+            active={pathname.startsWith("/ideas/profile/")}
             onClick={() => handleMenuClick("/ideas/profile/2")}
           />
 
           <MenuItem
             label="Community Guidelines"
             icon={<FaUsers />}
-            active={pathname === "/ideas/community-guidelines"}
+            active={pathname === "/ideas/community-guidelines/"}
             onClick={() => handleMenuClick("/ideas/community-guidelines")}
           />
 
           <MenuItem
             label="Support"
             icon={<FaHeadset />}
-            active={pathname === "/ideas/support"}
+            active={pathname === "/ideas/support/"}
             onClick={() => handleMenuClick("/ideas/support")}
           />
 
           <MenuItem
             label="FAQs"
             icon={<FaQuestionCircle />}
-            active={pathname === "/ideas/faq"}
+            active={pathname === "/ideas/faq/"}
             onClick={() => handleMenuClick("/ideas/faq")}
           />
 
@@ -157,7 +160,7 @@ function MenuItem({ icon, label, active, onClick }: MenuItemProps) {
         className={`flex items-center gap-3 transition-colors
           ${
             active
-              ? "text-white font-semibold"
+              ? "font-semibold text-[#8160ee] font-bold"
               : "dark:text-gray-300 text-gray-600 dark:hover:text-white hover:text-gray-900"
           }
         `}
