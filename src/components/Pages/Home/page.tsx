@@ -9,6 +9,7 @@ import BuySell from "@/components/Modal/BuySell/page";
 import { commonQuestionFindById } from "@/components/service/apiService/category";
 import { useRouter } from "next/navigation";
 import { GiNinjaStar } from "react-icons/gi";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 
 import {
@@ -256,14 +257,14 @@ const Home = () => {
   return (
     <>
       <div
-        className={`max-w-[1268px] mx-auto px-4 pb-10 ${
+        className={`max-w-[1368px] mx-auto px-4 pb-10 ${
           eventCategory?.length > 0 && isFilterQuestion
             ? "pt-72 lg:pt-48"
             : eventCategory?.length > 0
               ? "pt-42 lg:pt-48"
               : selectedSubCategory == null && isFilterQuestion
                 ? "pt-62 lg:pt-48"
-                : "pt-26 lg:pt-38"
+                : "pt-26 lg:pt-22"
         }`}
       >
         <div
@@ -292,13 +293,17 @@ const Home = () => {
                 return (
                   <div
                     key={index}
-                    className="z-10 border border-gray-200 dark:border-gray-700 dark:bg-[#2B394D] 
-                  relative min-h-48 rounded-xl p-4 
-                  transition-transform duration-300 ease-in-out 
-                  transform hover:scale-105 hover:shadow-md "
+                    className="z-10 border border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] dark:bg-boxbg bg-boxbg
+           relative min-h-48 rounded-xl p-4
+           transition-all duration-300 ease-in-out
+           hover:-translate-y-[8px] hover:shadow-md"
                   >
-                    <div className="flex items-center mb-3">
-                      <div className="p-1.5 mr-2 rounded-lg w-fit bg-gray-100 dark:bg-gray-700">
+                    <div className="flex mb-3">
+                      {/* IMAGE */}
+                      <div
+                        className="p-1.5 mr-2 rounded-md bg-gray-100 dark:bg-gray-700
+             w-[44px] h-[44px] flex items-center justify-center shrink-0 border border-[#8160ee]/60"
+                      >
                         <Image
                           src={
                             metaData?.imageUrl || "/img/opinionLogo-light.png"
@@ -306,10 +311,12 @@ const Home = () => {
                           width={40}
                           height={40}
                           alt="trending"
-                          className=" object-cover opacity-80 rounded "
+                          className="w-full h-full object-contain opacity-80 rounded"
                         />
                       </div>
-                      <h2 className="font-semibold text-sm cursor-pointer dark:text-white text-black/80">
+
+                      {/* TEXT */}
+                      <h2 className="font-semibold text-sm cursor-pointer dark:text-[var(--color-text)] text-[var(--color-text)] flex-1">
                         <div onClick={() => goToDetails(row.id)}>
                           <div className="block text-primary">
                             <div
@@ -327,9 +334,9 @@ const Home = () => {
                       {row?.options?.map((item: OptionItem, idx: number) => (
                         <div
                           key={idx}
-                          className="flex gap-2 justify-between items-center dark:text-white text-gray-700"
+                          className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)]"
                         >
-                          <span className="block max-w-full truncate">
+                          <span className="block max-w-28 truncate">
                             {item?.name || "--"}
                           </span>
                           <div className="flex items-center gap-1">
@@ -340,16 +347,41 @@ const Home = () => {
                               onClick={() =>
                                 handleBuyNow(row, item, "sell", idx)
                               }
-                              className="p-2 bg-red-500/40 cursor-pointer text-red-700 dark:text-red-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-red-500 hover:text-white  transition-all duration-200 ease-in-out"
+                              className="group
+    p-2 bg-red-400/20 cursor-pointer
+    text-red-700 dark:text-red-400
+    font-semibold rounded-xs text-[11px] uppercase
+    hover:bg-red-500 hover:text-white
+    transition-all duration-200 ease-in-out
+  "
                             >
+                              <ArrowDownRight
+                                className="w-3 h-3 inline-block mr-1
+      text-current
+      transition-transform duration-200 ease-in-out
+      group-hover:scale-175"
+                              />
                               Sell
                             </button>
+
                             <button
                               onClick={() =>
                                 handleBuyNow(row, item, "buy", idx)
                               }
-                              className="p-2 bg-green-600/40 cursor-pointer text-green-700 dark:text-green-400 font-semibold rounded-xs text-[10px] uppercase hover:bg-green-600 hover:text-white transition-all duration-200 ease-in-out"
+                              className="group
+    p-2 bg-green-400/20 cursor-pointer
+    text-green-700 dark:text-green-400
+    font-semibold rounded-xs text-[11px] uppercase
+    hover:bg-green-600 hover:text-white
+    transition-all duration-200 ease-in-out
+  "
                             >
+                              <ArrowUpRight
+                                className="w-3 h-3 inline-block mr-1
+      text-current
+      transition-transform duration-200 ease-in-out
+      group-hover:scale-175"
+                              />
                               Buy
                             </button>
                           </div>
@@ -357,11 +389,17 @@ const Home = () => {
                       ))}
                     </div>
 
-                    <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs text-gray-400">
-                      <span>
-                        {row?.stats?.totalVolume > 0 ? " $ " : ""}
+                    <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs font-semibold text-muted">
+                      <span className="flex items-center gap-1">
                         {row?.stats?.totalVolume > 0 ? (
-                          Number(row?.stats?.totalVolume || 0)?.toFixed(2)
+                          <>
+                            <span className="text-yellow-500 font-semibold">
+                              $
+                            </span>
+                            <span>
+                              {Number(row?.stats?.totalVolume || 0).toFixed(2)}
+                            </span>
+                          </>
                         ) : (
                           <span className="text-yellow-500 flex items-center gap-1">
                             <GiNinjaStar size={12} className="rotate-45" />
@@ -369,8 +407,12 @@ const Home = () => {
                           </span>
                         )}
                       </span>
-                      <span className="cursor-pointer">
-                        {" "}
+
+                      <span
+                        className="cursor-pointer inline-flex
+             transition-transform duration-200 ease-in-out
+             hover:scale-125"
+                      >
                         {!row?.isBookmark ? (
                           <FaRegBookmark
                             onClick={() =>
@@ -378,6 +420,7 @@ const Home = () => {
                                 ? setIsOpen(true)
                                 : bookMarkUnBookMark(row?.id, row?.isBookmark)
                             }
+                            className="text-sky-400"
                           />
                         ) : (
                           <FaBookmark
@@ -386,7 +429,7 @@ const Home = () => {
                                 ? setIsOpen(true)
                                 : bookMarkUnBookMark(row?.id, row?.isBookmark)
                             }
-                            className="text-sky-500"
+                            className="text-sky-400"
                           />
                         )}
                       </span>

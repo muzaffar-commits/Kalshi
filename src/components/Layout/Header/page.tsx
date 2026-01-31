@@ -41,6 +41,7 @@ import MainSearch from "./MainSearch";
 import socket from "@/components/socket";
 import MobileSearch from "./MainMobileSearch";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { Crown } from "lucide-react";
 
 interface Category {
   id: number;
@@ -250,11 +251,10 @@ const Header = () => {
     <>
       {/* <div className="hidden lg:block"> */}
       <div>
-        <header className="fixed top-0 left-0 w-full bg-white dark:bg-[#1D293D] z-[1000]">
-          {/* <header className="w-full bg-white dark:bg-[#1D293D] fixed top-0 z-30 "> */}
-          <div className="max-w-[1268px] mx-auto px-4 py-3 h-auto dark:bg-[#1D293D] bg-white">
+        <header className="fixed top-0 left-0 w-full z-[1000] bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)]">
+          <div className="max-w-[1368px] mx-auto px-4 py-1 h-auto ">
             <div
-              className={`flex items-center justify-between px-4 ${
+              className={`flex items-center justify-between py-2 px-4  ${
                 pathname === "/"
                   ? ""
                   : "border-b dark:border-[#2B394D] border-gray-300"
@@ -262,12 +262,16 @@ const Header = () => {
             >
               {/* LEFT: Logo */}
               <Link href="/" className="shrink-0">
-                <Image
+                <p className="text-text text-[22px] font-bold">
+                  <Crown className="w-6 h-6 relative -top-1 inline-block" />{" "}
+                  OPINION KINGS
+                </p>
+                {/* <Image
                   src="/img/opinionLogo-light.png"
                   alt="Logo"
                   width={80}
                   height={80}
-                />
+                /> */}
               </Link>
 
               {/* CENTER: Search */}
@@ -303,16 +307,15 @@ const Header = () => {
 
                 {user?.isAuth && (
                   <button
-                    className=" md:inline-block hidden
+                    className="md:inline-block hidden
     group relative
-    bg-blue-500 hover:bg-blue-600
+    hover:bg-btnbg bg-[#8160ee]
     text-white text-sm font-medium
     px-4 py-2 rounded-md
-
-    shadow-[0_6px_0_rgb(29,78,216)]
-    transition-all duration-150 ease-in-out
-
-    active:translate-y-[4px]
+    cursor-pointer
+    transition-all duration-300 ease-in-out
+    hover:-translate-y-[3px]
+    active:translate-y-[3px]
     active:shadow-[0_2px_0_rgb(29,78,216)]
   "
                   >
@@ -374,7 +377,11 @@ const Header = () => {
               //     )}
               //   </ul>
               // </nav>
-              <nav className="relative border-b pb-2 dark:border-gray-600 border-gray-300 w-full">
+              <nav
+                className="relative border-b pb-2 w-full
+                border-[var(--color-borderlight)]
+                dark:border-[var(--color-borderdark)]"
+              >
                 {/* LEFT ARROW */}
                 <button
                   onClick={() => scroll("left")}
@@ -410,8 +417,8 @@ const Header = () => {
                           }}
                           className={`${
                             row?.id === categoryId
-                              ? "text-black dark:text-[#c7ac77]"
-                              : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]"
+                              ? "dark:text-text text-text"
+                              : "dark:text-text text-text hover:text-hovertext cursor-pointer"
                           } font-semibold flex items-center cursor-pointer`}
                         >
                           {index === 0 && (
@@ -426,7 +433,7 @@ const Header = () => {
               </nav>
             )}
 
-            {pathname === "/" && (
+            {/* {pathname === "/" && (
               <div className="">
                 <nav className="pb-2 md:flex flex-row pt-1.5  border-gray-300 w-full">
                   <div className="border-r border-gray-400 dark:border-gray-700 pr-6 flex items-center gap-2">
@@ -484,7 +491,7 @@ const Header = () => {
       ${isWatchList ? "max-h-40 opacity-100" : "max-h-40"}
     `}
                     >
-                      {/* LEFT ARROW (MOBILE ONLY) */}
+                     
                       <button
                         onClick={() =>
                           scrollRef.current?.scrollBy({
@@ -497,7 +504,7 @@ const Header = () => {
                         <FaChevronLeft />
                       </button>
 
-                      {/* RIGHT ARROW (MOBILE ONLY) */}
+                 
                       <button
                         onClick={() =>
                           scrollRef.current?.scrollBy({
@@ -510,7 +517,7 @@ const Header = () => {
                         <FaChevronRight />
                       </button>
 
-                      {/* SCROLLABLE TABS */}
+                  
                       <ul
                         ref={scrollRef}
                         className={`
@@ -621,7 +628,6 @@ const Header = () => {
                     </div>
 
                     <div className="relative inline-block group">
-                      {/* BUTTON */}
                       <button
                         className="
       flex items-center gap-2 px-4 py-1.5 rounded-full
@@ -646,7 +652,6 @@ const Header = () => {
                         />
                       </button>
 
-                      {/* DROPDOWN */}
                       <div
                         className={`
       absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
@@ -686,7 +691,6 @@ const Header = () => {
                     </div>
 
                     <div className="relative inline-block group">
-                      {/* BUTTON */}
                       <button
                         className="
       flex items-center gap-2 px-4 py-1.5 rounded-full
@@ -709,7 +713,6 @@ const Header = () => {
                         />
                       </button>
 
-                      {/* DROPDOWN */}
                       <div
                         className={`
       absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
@@ -776,7 +779,7 @@ const Header = () => {
                   </div>
                 )}
               </div>
-            )}
+            )} */}
           </div>
         </header>
       </div>
