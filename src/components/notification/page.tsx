@@ -116,7 +116,7 @@ export default function NotificationBell({ userId }) {
         className=" dark:hover:text-white cursor-pointer relative"
       >
         <Bell size={20} className="dark:text-white/60 text-sky-500 mt-4" />
-        <span className="absolute top-2 -right-2 bg-red-500 text-white rounded-full text-xs px-1">
+        <span className="absolute top-2 -right-2 bg-red-500 text-white w-4.5 h-4.5 leading-5 text-center rounded-full text-xs">
           {countNotification || 0}
         </span>
       </button>

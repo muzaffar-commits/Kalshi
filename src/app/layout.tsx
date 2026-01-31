@@ -45,12 +45,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-white light dark:bg-[#1D293D] ${roboto.variable}`}
+      className={` light dark:bg-bgdark bg-bglight ${roboto.variable}`}
     >
       <body
         className={`
-          bg-gradient-to-b
-          from-white to-[#F8FBFF]
+          bg-bglight dark:bg-bgdark
           text-black dark:text-white 
           ${geistSans.variable}
           ${geistMono.variable}

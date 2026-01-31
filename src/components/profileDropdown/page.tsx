@@ -90,8 +90,8 @@ export default function ProfileDropdown() {
       <div
         className={`
           absolute right-0 mt-3 w-64
-          bg-white dark:bg-[#1D293D]
-          rounded-xl shadow-lg border dark:border-gray-600  border-gray-300
+          bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)]
+          rounded-xl shadow-lg border border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)]
           transition-all duration-200 ease-out
           z-50
           ${
@@ -132,7 +132,7 @@ export default function ProfileDropdown() {
         </div>
 
         {/* Menu */}
-        <div className="py-2 text-sm">
+        <div className="py-2 text-md font-semibold">
           {["Ideas", "Privacy Policy", "Terms and Conditions"].map(
             (item, index) => (
               <div
@@ -145,7 +145,7 @@ export default function ProfileDropdown() {
             ),
           )}
           <div className="border-t my-2 dark:border-gray-500 border-gray-300" />
-          <div className="flex items-center justify-between mx-auto  px-4 py-2">
+          <div className="flex items-center justify-center gap-2 mx-auto  px-4 py-2">
             <div>
               <ThemeToggle />
             </div>
