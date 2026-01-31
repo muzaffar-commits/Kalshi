@@ -177,6 +177,7 @@ export interface IReply {
   createdAt: string;
   updatedAt: string;
   User: IUser;
+  isReply: boolean;
 }
 export interface IComment {
   id: number;

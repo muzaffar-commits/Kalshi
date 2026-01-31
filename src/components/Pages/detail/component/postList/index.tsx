@@ -12,7 +12,8 @@ import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { FaBookmark } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
-import ReplyInput from "./ReplyInput";
+import { useRouter } from "next/navigation";
+import { ReplyInput, ReplySubCommentInput } from "./ReplyInput";
 
 interface PostListProps {
   isIdea?: boolean;
@@ -198,8 +199,6 @@ export default function PostList({
     }
   };
 
-  console.log(commentMap, "commentMap=========>");
-
   const commentMainPost = (postId: number) => {
     setCommentMap((prev) => {
       const updated: any = {};
@@ -292,6 +291,94 @@ export default function PostList({
     });
   };
 
+  const handleSubCommentToComment = (
+    postId: number,
+    commentId: number, // parent comment id
+    replyDetails: any, // clicked reply
+  ) => {
+    setCommentMap((prev: any) => {
+      const parent = prev?.[postId]?.comments?.find(
+        (c: any) => c.id === commentId,
+      );
+
+      const currentOpen = parent?.replies?.find(
+        (r: any) => r.id === replyDetails.id,
+      )?.isReply;
+
+      return {
+        ...prev,
+        [postId]: {
+          ...prev[postId],
+          comments: prev[postId].comments.map((comment: any) => {
+            // ❌ Not this parent comment
+            if (comment.id !== commentId) {
+              return {
+                ...comment,
+                replies: comment.replies?.map((r: any) => ({
+                  ...r,
+                  isReply: false,
+                })),
+              };
+            }
+
+            // ✅ This parent comment
+            return {
+              ...comment,
+              replies: comment.replies.map((reply: any) => ({
+                ...reply,
+                // toggle only clicked reply
+                isReply: reply.id === replyDetails.id ? !currentOpen : false,
+              })),
+            };
+          }),
+        },
+      };
+    });
+  };
+
+  const router = useRouter();
+  const handleRedirectUserDetails = (id) => {
+    router.push(`/ideas/profile/${id}`);
+  };
+
+  const handleSubmitForSubComment = async (postId: any, row: any) => {
+    console.log(postId, row, "sdlkfjslkdjflksjf");
+
+    try {
+      const payload = {
+        postId: postId,
+        comment: `@${row?.User?.username} ${mixText}`,
+        replyCommentId: row?.id,
+      };
+      const response = await replyComments(payload);
+      if (response.success) {
+        toast.success("Message send successfully!");
+        setMixText("");
+      } else {
+        toast.error(response?.message || "something went wrong");
+        setMixText("");
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  const handleKeyDownComment = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+    postIdDetails,
+    row,
+  ) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmitForSubComment(postIdDetails, row);
+    }
+  };
+
+  console.log(commentMap, "commentMap=========>");
   return (
     <div>
       {allPosts?.map((row, index) => {
@@ -309,13 +396,17 @@ export default function PostList({
               alt="user"
               height={20}
               width={20}
-              className="w-10 h-10 rounded-full object-cover"
+              className="w-10 h-10 rounded-full cursor-pointer object-cover"
+              onClick={() => handleRedirectUserDetails(row?.User?.id)}
             />
             <div className="flex-1">
               <div className="flex items-center  gap-2 text-sm">
-                <span className="font-semibold text-gray-900 dark:text-white">
+                <div
+                  onClick={() => handleRedirectUserDetails(row?.User?.id)}
+                  className="font-semibold cursor-pointer relative text-gray-900 dark:text-white"
+                >
                   {row?.User?.username || "--"}
-                </span>
+                </div>
                 <span className="text-gray-400">
                   {timeAgoCompact(row?.createdAt)}
                 </span>
@@ -345,32 +436,34 @@ export default function PostList({
               </p>
 
               <div className="flex items-center  gap-5 mt-3 text-gray-400">
-                <span className="hover:text-gray-600 flex gap-1 items-center">
+                <span className=" flex gap-1 items-center">
                   <button
                     onClick={() => toggleComments(row.id)}
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:text-gray-600"
                   >
                     <MessageCircle size={16} />
                   </button>
-                  <span className="mt-1 text-xs">
+                  <span className="mt-1 text-xs ">
                     {" "}
                     {row?.commentCount || 0}
                   </span>
                 </span>
 
-                <button
-                  onClick={() =>
-                    handleLikeUnlike(row?.id, row?.isLiked, isIdea)
-                  }
-                  className="flex items-center gap-1 hover:text-red-500"
-                >
-                  {row?.isLiked == 1 ? (
-                    <FcLike size={16} />
-                  ) : (
-                    <Heart size={16} />
-                  )}
+                <span className="flex items-center gap-1">
+                  <button
+                    onClick={() =>
+                      handleLikeUnlike(row?.id, row?.isLiked, isIdea)
+                    }
+                    className=" hover:text-red-500 cursor-pointer"
+                  >
+                    {row?.isLiked == 1 ? (
+                      <FcLike size={16} />
+                    ) : (
+                      <Heart size={16} />
+                    )}
+                  </button>
                   <span className="text-xs mt-1">{row?.likeCount || 0}</span>
-                </button>
+                </span>
 
                 <button
                   onClick={() =>
@@ -428,7 +521,7 @@ export default function PostList({
                       }
                     `}
               >
-                <div className="overflow-hidden ">
+                <div className="overflow-hidden z-30 ">
                   {commentMap[row.id]?.loading && (
                     <div
                       className={
@@ -456,16 +549,24 @@ export default function PostList({
                                 src={comment?.User?.image_url}
                                 width={30}
                                 height={30}
-                                className="w-8 h-8 rounded-full"
+                                className="w-8 h-8 rounded-full cursor-pointer"
                                 alt="user"
+                                onClick={() =>
+                                  handleRedirectUserDetails(row?.User?.id)
+                                }
                               />
 
                               <div>
                                 <div className="text-xs font-semibold">
-                                  <span className="text-gray-900 font-semibold text-sm dark:text-white">
+                                  <div
+                                    onClick={() =>
+                                      handleRedirectUserDetails(row?.User?.id)
+                                    }
+                                    className="text-gray-900 cursor-pointer relative  font-semibold text-sm dark:text-white"
+                                  >
                                     {" "}
                                     {comment?.User?.username}
-                                  </span>
+                                  </div>
                                   <span className="ml-2 text-[13px] text-gray-400">
                                     {timeAgoCompact(comment?.createdAt)}
                                   </span>
@@ -531,14 +632,15 @@ export default function PostList({
                                   overflow-visible
                                 `}
                             >
-                              <ReplyInput
+                              <ReplySubCommentInput
+                                PostId={row?.id}
                                 textareaRef={textareaRef}
-                                rows={row}
+                                rows={comment}
                                 replyText={mixText}
                                 setReplyText={setMixText}
-                                handleComment={handleSend}
+                                handleComment={handleSubmitForSubComment}
                                 insertEmoji={insertEmoji}
-                                handleKeyDown={handleKeyDown}
+                                handleKeyDown={handleKeyDownComment}
                               />
                             </div>
                             <div className="pb-2 pl-10">
@@ -555,19 +657,24 @@ export default function PostList({
                                           alt="user"
                                           width={30}
                                           height={30}
-                                          className="rounded-full h-8 w-8"
+                                          onClick={() =>
+                                            handleRedirectUserDetails(
+                                              row?.User?.id,
+                                            )
+                                          }
+                                          className="rounded-full h-8 w-8 cursor-pointer"
                                         />
                                       </div>
                                       <div>
                                         <div className="flex items-center gap-2">
                                           <h4>
                                             <span
-                                              // onClick={() =>
-                                              //   handleUserDetails(
-                                              //     replies?.User?.id,
-                                              //   )
-                                              // }
-                                              className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
+                                              onClick={() =>
+                                                handleRedirectUserDetails(
+                                                  row?.User?.id,
+                                                )
+                                              }
+                                              className="dark:text-gray-300 cursor-pointer relative hover:underline font-semibold text-gray-700"
                                             >
                                               {replies?.User?.username ||
                                                 "Unknown"}
@@ -587,7 +694,7 @@ export default function PostList({
                                         <div className=" py-2">
                                           <div className="flex text-gray-400 flex-row items-center gap-4">
                                             <span></span>
-                                            <span className="flex items-center gap-2">
+                                            <span className="flex items-center cursor-pointer gap-2">
                                               {replies?.isUserLike == 1 ? (
                                                 <FcLike
                                                   onClick={() =>
@@ -616,9 +723,13 @@ export default function PostList({
                                             </span>
                                             <div
                                               className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
-                                              // onClick={() =>
-                                              //   handleSubComment(row, replies)
-                                              // }
+                                              onClick={() =>
+                                                handleSubCommentToComment(
+                                                  row?.id,
+                                                  comment?.id,
+                                                  replies,
+                                                )
+                                              }
                                             >
                                               Reply
                                             </div>
@@ -626,38 +737,30 @@ export default function PostList({
                                         </div>
                                       </div>
                                     </div>
-                                    {/* {row?.id == subCommentData?.id &&
-                                                                    replies?.id == subRepliesData?.id && (
-                                                                      <div className="mt-2 w-full flex items-center gap-3 dark:bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
-                                                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
-                                                                        <input
-                                                                          type="text"
-                                                                          value={replyText}
-                                                                          onChange={(e) =>
-                                                                            setReplyText(e.target.value)
-                                                                          }
-                                                                          placeholder={`Reply to ${subCommentData?.User?.username || "--"}`}
-                                                                          className="flex-1 bg-transparent outline-none text-sm placeholder-gray-300 text-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
-                                                                        />
-                                                                        <button
-                                                                          disabled={
-                                                                            replyText.trim().length < 2
-                                                                          }
-                                                                          className={`text-sm font-medium transition ${
-                                                                            replyText.trim().length >= 2
-                                                                              ? "text-sky-400 hover:text-sky-300 cursor-pointer"
-                                                                              : "text-gray-500 cursor-not-allowed"
-                                                                          }`}
-                                                                          onClick={() =>
-                                                                            handleSubmitForSubComment(
-                                                                              replies,
-                                                                            )
-                                                                          }
-                                                                        >
-                                                                          Reply
-                                                                        </button>
-                                                                      </div>
-                                                                    )} */}
+                                    <div
+                                      className={`
+                                  transition-all md:pl-10 w-full duration-500 ease-in-out
+                                  ${
+                                    replies?.isReply
+                                      ? "max-h-[200px] opacity-100 mt-2"
+                                      : "max-h-0 opacity-0"
+                                  }
+                                  overflow-visible
+                                `}
+                                    >
+                                      <ReplySubCommentInput
+                                        PostId={row?.id}
+                                        textareaRef={textareaRef}
+                                        rows={comment}
+                                        replyText={mixText}
+                                        setReplyText={setMixText}
+                                        handleComment={
+                                          handleSubmitForSubComment
+                                        }
+                                        insertEmoji={insertEmoji}
+                                        handleKeyDown={handleKeyDownComment}
+                                      />
+                                    </div>
                                   </div>
                                 ))}
                             </div>

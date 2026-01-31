@@ -1,7 +1,9 @@
 import {
   getMyAllPost,
   getUsersAllDetails,
+  postBookmarkOrUnBookMark,
   postFollowUser,
+  postLikeOrUnlike,
   postUnFollowUser,
 } from "@/components/service/apiService/user";
 import { delay } from "@/utils/Content";
@@ -11,6 +13,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import MobileMenu from "../IdeaList/page";
+import PostList from "@/components/Pages/detail/component/postList";
+import { FaRegCommentAlt } from "react-icons/fa";
+import { PostFeeBack } from "@/utils/typesInterface";
+import { SiGooglemessages } from "react-icons/si";
+import { LuMessageSquareShare } from "react-icons/lu";
 
 interface userDetailProps {
   user: {
@@ -26,9 +33,9 @@ export default function Profile({ targetId }: { targetId: string }) {
   const [followingData, setFollowingData] = useState([]);
   const usersOwn = useSelector((state: any) => state?.user?.user);
   const userDetails = followingData?.[0];
-  const [myPost, setMyPost] = useState([]);
   const userId = useSelector((state: userDetailProps) => state?.user?.user?.id);
   const targetIds = targetId ? targetId : userId;
+  const [myPost, setMyPost] = useState<PostFeeBack[]>([]);
   const getListOfPost = useCallback(async () => {
     setIsLoader(true);
     try {
@@ -93,15 +100,98 @@ export default function Profile({ targetId }: { targetId: string }) {
       toast.error("Inter Server Error");
     }
   };
-
   const fetchMyAllPost = async () => {
     try {
-      const response = await getMyAllPost(userId, "");
-      if (response.success) {
-        setMyPost(response?.data);
+      const response = await getMyAllPost(targetIds, "");
+      console.log(response, "mypost=====================");
+
+      if (response.feed?.length > 0) {
+        setMyPost(response?.feed);
+      } else {
+        setMyPost([]);
       }
-    } catch {}
+    } catch {
+      setMyPost([]);
+    }
     // getMyAllPost
+  };
+  useEffect(() => {
+    fetchMyAllPost();
+  }, []);
+
+  const handleBookMarkOrUnBookMark = async (
+    id: number,
+    isBookmarked: number,
+  ) => {
+    try {
+      setMyPost((prev) => {
+        return prev.map((item) => {
+          if (item.id === id) {
+            const booked = item.isBookmarked === 1 ? 0 : 1;
+            return {
+              ...item,
+              isBookmarked: booked,
+            };
+          }
+          return item;
+        });
+      });
+
+      if (isBookmarked == 1) {
+        toast.success("Remove for bookmarks");
+      } else {
+        toast.success("Bookmark successfully");
+      }
+      const payload = {
+        postId: id,
+      };
+      await postBookmarkOrUnBookMark(payload);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+
+  const handleLikeUnlike = async (id: number, isLike: number) => {
+    try {
+      if (isLike == 1) {
+        toast.success("Unlike");
+      } else {
+        toast.success("like");
+      }
+
+      setMyPost((prev) =>
+        prev.map((item) => {
+          if (item.id == id) {
+            const isLiked = item.isLiked === 1 ? 0 : 1;
+
+            return {
+              ...item,
+              isLiked,
+              likeCount: isLiked
+                ? item.likeCount + 1
+                : Math.max(item.likeCount - 1, 0),
+            };
+          }
+          return item;
+        }),
+      );
+
+      const payload = {
+        postId: id,
+      };
+
+      await postLikeOrUnlike(payload);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
   };
 
   return (
@@ -119,8 +209,8 @@ export default function Profile({ targetId }: { targetId: string }) {
               <MobileMenu />
             </div>
           </div>
-          <div className="lg:col-span-3 lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
-            <div className="lg:border-r dark:border-gray-700 border-gray-200">
+          <div className="lg:col-span-3 lg:border-r lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
+            <div className=" ">
               {isLoader ? (
                 <UserProfileSkeleton />
               ) : (
@@ -232,6 +322,38 @@ export default function Profile({ targetId }: { targetId: string }) {
                       </button>
                     </div>
                   </div>
+                </div>
+              )}
+            </div>
+
+            <div className="text-gray-500 text-sm p-4 mt-5">
+              <div className="border-b mb-5 border-gray-200  dark:border-gray-600 ">
+                <span className="text-xl flex items-center gap-2 font-medium dark:text-gray-200 text-gray-500">
+                  <LuMessageSquareShare className="text-gray-400 dark:text-cyan-500" />{" "}
+                  Post
+                </span>
+              </div>
+              {myPost?.length > 0 ? (
+                <PostList
+                  isIdea={true}
+                  allPosts={myPost}
+                  handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
+                  handleLikeUnlike={handleLikeUnlike}
+                />
+              ) : (
+                <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800">
+                    <FaRegCommentAlt className="text-2xl text-gray-500 dark:text-gray-400" />
+                  </div>
+
+                  <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200">
+                    Activity content here
+                  </h3>
+
+                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                    Be the first to share your thoughts and spark a
+                    conversation.
+                  </p>
                 </div>
               )}
             </div>
