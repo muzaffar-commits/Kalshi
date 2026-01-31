@@ -259,12 +259,12 @@ const Home = () => {
       <div
         className={`max-w-[1368px] mx-auto px-4 pb-10 ${
           eventCategory?.length > 0 && isFilterQuestion
-            ? "pt-72 lg:pt-48"
+            ? "pt-8 lg:pt-22"
             : eventCategory?.length > 0
-              ? "pt-42 lg:pt-48"
+              ? "pt-8 lg:pt-22"
               : selectedSubCategory == null && isFilterQuestion
-                ? "pt-62 lg:pt-48"
-                : "pt-26 lg:pt-22"
+                ? "pt-8 lg:pt-22"
+                : "pt-8 lg:pt-22"
         }`}
       >
         <div

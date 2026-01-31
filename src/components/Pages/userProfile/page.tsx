@@ -86,9 +86,9 @@ const UserProfile = () => {
 
   return (
     <>
-      <div className="dark:bg-[#1D293D]">
-        <div className="max-w-[800px] xl:max-w-[65%] mx-auto px-4 mt-24 lg:mt-30">
-          <div className="md:flex justify-between pt-16">
+      <div>
+        <div className="max-w-[800px] xl:max-w-[65%] mx-auto px-4 mt-2 lg:mt-6">
+          <div className="md:flex justify-between md:pt-16 pt-8">
             <div className="md:w-3/4 gap-3 md:flex md:mb-0 mb-4">
               <div className="h-24 w-24 flex items-center justify-center rounded bg-gray-300/20">
                 <Image
@@ -103,31 +103,31 @@ const UserProfile = () => {
                 <h2 className="dark:text-white text-black font-bold text-xl">
                   {userData?.user?.username || "Unknown User"}
                 </h2>
-                <p className="dark:text-gray-500 text-gray-400 text-sm">
+                <p className="dark:text-gray-400 text-gray-700 text-sm">
                   {userData?.user?.email || "--"}
                 </p>
-                <p className="dark:text-gray-500 text-gray-400 text-sm">
+                <p className="dark:text-gray-400 text-gray-700 text-sm">
                   Joined{" "}
                   {userData?.user?.createdAt
                     ? moment(userData.user.createdAt).format("DD MMM YYYY")
                     : "--"}
                 </p>
                 <p className="text-gray-200 mt-3 text-sm flex flex-wrap gap-4">
-                  <span className="text-gray-500">
+                  <span className="dark:text-gray-400 text-gray-700">
                     <span className="dark:text-white text-gray-800 font-semibold">
                       {userData?.following || "0"}
                     </span>{" "}
                     Following
                   </span>
 
-                  <span className="text-gray-500">
+                  <span className="dark:text-gray-400 text-gray-700">
                     <span className="dark:text-white text-gray-800 font-semibold">
                       {userData?.follower || "0"}
                     </span>{" "}
                     Followers
                   </span>
 
-                  <span className="text-gray-500">
+                  <span className="dark:text-gray-400 text-gray-700">
                     <span className="dark:text-white text-gray-800 font-semibold">
                       {profileStats.stats.totalTrades}
                     </span>{" "}
@@ -147,7 +147,7 @@ const UserProfile = () => {
     bg-[#0099FF] text-white
     py-2 px-6 rounded-2xl text-sm font-semibold
 
-    shadow-[0_5px_0_#0077cc]
+    
     transition-all duration-150 ease-in-out
 
     hover:brightness-110

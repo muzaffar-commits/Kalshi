@@ -309,7 +309,7 @@ export default function IdeasActivityTabs({ marketId }) {
   return (
     <div className="w-full">
       {/* HEADER */}
-      <div className="border-b dark:border-gray-600 border-gray-200">
+      <div className="border-b border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)]">
         <div className="flex items-center justify-between py-3">
           {/* Tabs */}
           <div className="flex items-center gap-6 text-lg font-medium">
@@ -405,7 +405,7 @@ export default function IdeasActivityTabs({ marketId }) {
       <div className="mt-4">
         {activeTab === "ideas" && (
           <>
-            <div className="border rounded-2xl pb-3">
+            <div className="border border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] rounded-2xl pb-3">
               <div className="flex items-start gap-4 w-full px-4 mt-1">
                 <InputTextArea
                   message={message || ""}
@@ -426,7 +426,7 @@ export default function IdeasActivityTabs({ marketId }) {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="text-sm font-medium text-gray-500 hover:text-black"
+                      className="text-sm font-medium text-gray-500 hover:text-[#e4d4fc] cursor-pointer"
                     >
                       GIF
                     </button>

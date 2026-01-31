@@ -19,7 +19,7 @@ export default function MobileFullSearch() {
       <div className="lg:hidden inline-block">
         <button
           onClick={() => setOpen(true)}
-          className="w-8 h-8 flex items-center relative -right-8 justify-center bg-gray-200 dark:bg-gray-700 rounded-full"
+          className="w-8 h-8 flex items-center relative  justify-center bg-gray-200 dark:bg-gray-700 rounded-full"
         >
           <FaSearch className="text-blue-400 dark:text-gray-200" />
         </button>

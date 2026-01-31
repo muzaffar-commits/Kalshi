@@ -104,6 +104,7 @@ export default function InputTextArea({ message, setMessage }: Props) {
           caret-gray-900 dark:caret-gray-200
           placeholder:text-gray-400
           overflow-auto
+          
         "
       />
     </div>

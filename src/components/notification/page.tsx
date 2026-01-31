@@ -137,7 +137,7 @@ export default function NotificationBell({ userId }) {
         `}
       >
         {/* Header */}
-        <div className="flex px-4 flex-row border-b border-gray-300 dark:border-gray-500 items-center justify-between">
+        <div className="flex px-4 flex-row border-b border border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] items-center justify-between">
           <div className=" py-3  text-gray-800 dark:text-gray-200 font-semibold text-sm">
             Notifications ({countNotification})
           </div>
@@ -175,7 +175,7 @@ export default function NotificationBell({ userId }) {
                 <div
                   key={row?.id}
                   onClick={() => markAsRead(row)}
-                  className="px-4 py-3 border-b last:border-b-0 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                  className="px-4 py-3 border-b last:border-b-0 border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
                 >
                   <div className="flex items-start gap-3">
                     {/* Indicator */}

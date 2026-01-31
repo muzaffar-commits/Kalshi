@@ -262,7 +262,7 @@ const Header = () => {
             >
               {/* LEFT: Logo */}
               <Link href="/" className="shrink-0">
-                <p className="text-text text-[22px] font-bold">
+                <p className="text-text md:text-[22px] text-[15px] font-bold">
                   <Crown className="w-6 h-6 relative -top-1 inline-block" />{" "}
                   OPINION KINGS
                 </p>
