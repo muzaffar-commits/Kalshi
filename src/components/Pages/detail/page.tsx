@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { questionDetails } from "@/components/service/apiService/category";
-import { useSearchParams } from "next/navigation";
 import socket from "@/components/socket";
 import BuySell from "@/components/Modal/BuySell/page";
 import {
@@ -23,10 +22,15 @@ import {
   LeaderboardItem,
   MarketData,
   OptionItem,
+  OrderFlow,
+  OrderFlowItem,
   OrderItem,
+  SellOrder,
+  SocketOption,
   SocketOrderUpdatePayload,
   SocketPricePayload,
   SocketTradePayload,
+  UserDetailsRootState,
 } from "@/utils/typesInterface";
 import { delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
@@ -34,34 +38,8 @@ import StackedAreaChart from "./component/realTimeChart";
 import IdeasActivityTabs from "./component/ideaComment";
 import { ArrowRight } from "lucide-react";
 import MarketAccordion from "./component/optionsDropdown/page";
-// import UserPosts from "./component/userPosts";
 
 type OrderSide = "BUY" | "SELL";
-interface OrderFlowItem {
-  id: number;
-  optionId: number;
-  shares: number;
-  saleAtPrice: number;
-  createdAt: string;
-}
-interface SellOrder {
-  saleAtPrice?: number | string;
-}
-interface OrderFlow {
-  buys: OrderFlowItem[];
-  sells: OrderFlowItem[];
-}
-
-interface RootState {
-  user?: {
-    user?: { id?: number };
-  };
-}
-
-interface SocketOption {
-  optionId: number;
-  price: number;
-}
 
 const Details = ({ marketId }) => {
   const [orderFlow, setOrderFlow] = useState<OrderFlow>({
@@ -77,8 +55,7 @@ const Details = ({ marketId }) => {
   const [isOpenBuySell, setIsOpenBuySell] = useState(false);
   const [buyType, setBuyType] = useState<OrderSide | unknown>();
   const [options, setOptions] = useState<OptionItem | null>(null);
-  const userDetails = useSelector((state: RootState) => state?.user);
-  const useToken = localStorage.getItem("token");
+  const userDetails = useSelector((state: UserDetailsRootState) => state?.user);
   const processedOrderIdsRef = useRef<Set<number>>(new Set());
   const OrderHistoryIdsRef = useRef<Set<number>>(new Set());
   const [isOpen, setIsOpen] = useState(false);
@@ -89,9 +66,10 @@ const Details = ({ marketId }) => {
   const [deleteResponse, setDeleteResponse] = useState(false);
   const [currentVolume, setCurrentVolume] = useState(0);
   const [timeInterval, setTimeInterval] = useState("all");
-  // const [orderPage, setOrderPage] = useState<string | null>("1");
   const [selectedOrderDetails, setSelectedOrderDetails] =
     useState<CancelOrders | null>(null);
+  const [orderPage, setOrderPage] = useState(0);
+  const [orderCurrentPage, setOrderCurrentPage] = useState(0);
 
   const questionDetailsList = useCallback(async () => {
     setIsLoader(true);
@@ -116,8 +94,6 @@ const Details = ({ marketId }) => {
     }
   }, [marketId, userDetails?.user?.id]);
 
-  console.log(currentVolume, "currentVolume====>");
-
   useEffect(() => {
     questionDetailsList();
   }, [questionDetailsList, marketId]);
@@ -136,21 +112,15 @@ const Details = ({ marketId }) => {
   }, [questionDetailsList, getGraphDetails, marketId]);
 
   const questionId = marketId;
-  console.log(socket.connected, "socket.connected");
 
-  console.log(graphData, "graphData");
   useEffect(() => {
-    console.log(socket.connected, "socket.connected=====>");
     socket.on("connect", () => {
-      console.log("Socket connected! ID:====", socket.id);
       socket.emit("subscribe:market", questionId);
       if (userDetails?.user?.id) {
         socket.emit("subscribe:user", userDetails?.user?.id);
       }
     });
     socket.on("market:prices", (payload: SocketPricePayload) => {
-      console.log(payload, "market:price=======");
-
       if (!payload?.questionId || !payload?.timestamp) return;
 
       setGraphData((prev: any) => {
@@ -345,17 +315,19 @@ const Details = ({ marketId }) => {
     getLeaderBoardMarketList();
   }, [getLeaderBoardMarketList]);
 
-  const ordersList = useCallback(async () => {
+  const ordersList = async () => {
     try {
       const response = await getOrdersList(
         userDetails?.user?.id || null,
         marketId,
+        orderCurrentPage,
         "NEW",
       );
 
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);
-        // setOrderPage(response?.data?.nextOffset);
+        setOrderPage(response?.data?.nextOffset || 0);
+        console.log(response?.data?.nextOffset, "setOrderData====>");
       } else {
         // setOrderPage(null);
         setOrderData([]);
@@ -363,11 +335,11 @@ const Details = ({ marketId }) => {
     } catch {
       setOrderData([]);
     }
-  }, [marketId]);
-
+  };
   useEffect(() => {
     ordersList();
-  }, [ordersList]);
+  }, [orderCurrentPage]);
+  console.log(orderPage, "orderPAgesss");
 
   const sellPrices =
     orderFlow?.sells?.map((i: SellOrder) => Number(i?.saleAtPrice) || 0) || [];
@@ -395,8 +367,6 @@ const Details = ({ marketId }) => {
   const getBuyBarWidth = (price: number) => {
     const minWidth = 10;
     const maxWidth = 80;
-
-    // Edge case: sab prices same ho
     if (maxBuyPrice === minBuyPrice) return "45%";
 
     const width =
@@ -417,26 +387,6 @@ const Details = ({ marketId }) => {
   const getIntensity = (price: number) => {
     if (!prices.length || maxPrice === minPrice) return 0.5;
     return (price - minPrice) / (maxPrice - minPrice);
-  };
-
-  const getBgClass = (price: number) => {
-    const intensity = getIntensity(price);
-
-    // 🔥 Very high (strong signal)
-    if (intensity >= 0.85)
-      return "border border-emerald-500/50 bg-emerald-500/10";
-
-    // 🟢 High
-    if (intensity >= 0.65) return "bg-emerald-400/15";
-
-    // 🔵 Medium
-    if (intensity >= 0.45) return "bg-slate-500/10";
-
-    // ⚫ Low
-    if (intensity >= 0.25) return "bg-slate-500/10";
-
-    // ⚫ Very low (base)
-    return "bg-slate-500/10";
   };
 
   const handleDelete = (row: number) => {
@@ -507,8 +457,8 @@ const Details = ({ marketId }) => {
         <div>
           <div className="max-w-[1268px] mx-auto px-4 md:mt-18 mt-6">
             <div className="container mx-auto pb-6">
-              <div className="md:flex lg:items-center mb-6">
-                <div className="p-1.5 rounded-lg w-fit mr-4">
+              <div className="flex mb-6">
+                <div className="p-1.5 dark:bg-gray-600 rounded-lg w-fit mr-4">
                   <Image
                     src={metaData?.imageUrl || "/img/opinionLogo-light.png"}
                     alt="NYC Flag"
@@ -518,7 +468,7 @@ const Details = ({ marketId }) => {
                   />
                 </div>
                 <div>
-                  <h1 className="text-xl lg:text-2xl font-bold text-black dark:text-white">
+                  <h1 className=" text-lg sm:text-xl lg:text-2xl font-bold text-black dark:text-white">
                     {data?.question?.question}
                   </h1>
                   <p className="text-sm text-[#7F90A7] dark:text-gray-300">
@@ -576,7 +526,12 @@ const Details = ({ marketId }) => {
                     <MarketLeaderboard data={leaderBoard} />
 
                     {orderData?.length > 0 && (
-                      <OrderList data={orderData} cancelOrders={handleDelete} />
+                      <OrderList
+                        data={orderData}
+                        cancelOrders={handleDelete}
+                        page={orderPage}
+                        setOrderPage={setOrderCurrentPage}
+                      />
                     )}
                   </div>
                   <div className="mt-4">
@@ -661,8 +616,8 @@ const Details = ({ marketId }) => {
                     </span>
                   </div>
 
-                  <div className="dark:bg-[#2B394D]  bg-gray-100/50 mt-2 w-full rounded-md overflow-hidden">
-                    <div className="divide-y h-[160px] hideScrollbar overflow-y-auto dark:divide-[#1c1f26] divide-[#d6d6d6]">
+                  <div className=" mt-2 w-full rounded-md overflow-hidden">
+                    <div className="divide-y dark:bg-[#2B394D]  bg-gray-100/50 h-[160px] hideScrollbar overflow-y-auto dark:divide-[#1c1f26] divide-[#d6d6d6]">
                       {orderFlow?.sells?.length > 0 ? (
                         orderFlow.sells.map((item: OrderFlowItem) => {
                           const price = Number(item?.saleAtPrice) || 0;
@@ -702,7 +657,7 @@ const Details = ({ marketId }) => {
                       </span>
                     </div>
 
-                    <div className="divide-y h-[160px] hideScrollbar overflow-y-auto dark:divide-[#2e3139] divide-[#d6d6d6]">
+                    <div className="divide-y dark:bg-[#2B394D]  bg-gray-100/50 h-[160px] hideScrollbar overflow-y-auto dark:divide-[#2e3139] divide-[#d6d6d6]">
                       {orderFlow?.buys?.length > 0 ? (
                         orderFlow.buys.map((item: OrderFlowItem) => {
                           const price = Number(item?.saleAtPrice) || 0;

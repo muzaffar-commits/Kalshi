@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import {
-  CommentInterface,
   PostFeeBack,
   UploadedImage,
   userIdInterFace,
 } from "@/utils/typesInterface";
 import {
-  getCommentsList,
   getFeed,
   getMyAllPost,
   imageUpload,
@@ -31,15 +29,12 @@ export default function IdeasActivityTabs({ marketId }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [message, setMessage] = React.useState<string | null>("");
   const [isPostLoader, setIsPostLoader] = React.useState<boolean>(false);
-  const [isLoader, setIsLoader] = React.useState<boolean>(false);
   const [allPosts, setAllPosts] = useState<PostFeeBack[]>([]);
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = React.useState<
     UploadedImage[] | null
   >(null);
   const [myPost, setMyPost] = useState<PostFeeBack[]>([]);
-  const [postId, setPostId] = useState<number | null>(null);
-  const [commentList, setCommentList] = useState<CommentInterface[]>([]);
   const dropdownRef = useRef(null);
   const router = useRouter();
   const userId = useSelector((state: userIdInterFace) => state.user.user?.id);
@@ -55,7 +50,6 @@ export default function IdeasActivityTabs({ marketId }) {
   }, []);
 
   const getListOfPost = useCallback(async () => {
-    setIsLoader(true);
     try {
       const [response] = await Promise.all([
         getFeed(userId, marketId),
@@ -68,8 +62,6 @@ export default function IdeasActivityTabs({ marketId }) {
       }
     } catch {
       setAllPosts([]);
-    } finally {
-      setIsLoader(false);
     }
   }, [userId]);
 
@@ -119,7 +111,7 @@ export default function IdeasActivityTabs({ marketId }) {
           images: uploadedImage == null ? [] : [uploadedImage?.[0]?.url],
         },
       };
-      const response = await userPost(payload);
+      const [response] = await Promise.all([userPost(payload), delay(1000)]);
 
       getListOfPost();
       if (response?.reponse?.status) {
@@ -259,8 +251,6 @@ export default function IdeasActivityTabs({ marketId }) {
   const fetchMyAllPost = async () => {
     try {
       const response = await getMyAllPost(userId, marketId);
-      console.log(response, "mypost=====================");
-
       if (response.feed?.length > 0) {
         setMyPost(response?.feed);
       } else {
@@ -281,29 +271,6 @@ export default function IdeasActivityTabs({ marketId }) {
     router.push("/ideas");
   };
 
-  const commentLists = useCallback(async () => {
-    // setIsLoader(true);
-    try {
-      const [response] = await Promise.all([
-        getCommentsList(Number(postId)),
-        delay(1000),
-      ]);
-
-      if (response?.success) {
-        setCommentList(response.data ?? []);
-      } else {
-        setCommentList([]);
-      }
-    } catch {
-      setCommentList([]);
-    } finally {
-      // setIsLoader(false);
-    }
-  }, [postId]);
-
-  useEffect(() => {
-    commentLists();
-  }, [commentLists]);
   return (
     <div className="w-full">
       {/* HEADER */}
@@ -482,7 +449,7 @@ export default function IdeasActivityTabs({ marketId }) {
                                   `}
                   >
                     {isPostLoader ? (
-                      <CircularProgress size={18} className="!text-black" />
+                      <CircularProgress size={30} className="!text-white " />
                     ) : (
                       "Post"
                     )}

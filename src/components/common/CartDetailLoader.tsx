@@ -1,17 +1,17 @@
 const MarketSkeleton = () => {
   return (
-    <div className="dark:bg-[#1D293D] bg-white min-h-screen pt-24 lg:pt-36">
+    <div className=" min-h-screen pt-10 lg:pt-10">
       <div className="max-w-[1268px] mx-auto px-4">
-        <div className="flex gap-4 mb-6 animate-pulse">
+        <div className="flex flex-row items-center gap-4 mb-6 animate-pulse">
           <div className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />
-          <div className="flex-1">
-            <div className="h-6 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+          <div className="w-full">
+            <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
             <div className="h-4 w-1/4 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
             <div className="flex gap-3">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded"
+                  className="h-4 w-16 md:w-20 bg-gray-200 dark:bg-gray-700 rounded"
                 />
               ))}
             </div>
@@ -73,47 +73,39 @@ const MarketSkeleton = () => {
           </div>
         </div>
 
-        <div className="w-full rounded-2xl mt-6 border border-white/10 p-5 animate-pulse">
-          {/* Header Skeleton */}
+        <div className="w-full rounded-2xl mt-6 border border-gray-200 dark:border-white/10 p-5 animate-pulse">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-4 w-40 rounded bg-white/10"></div>
-            <div className="h-3 w-20 rounded bg-white/5"></div>
+            <div className="h-4 w-40 rounded  bg-gray-200 dark:bg-white/10"></div>
+            <div className="h-3 w-20 rounded  bg-gray-200 dark:bg-white/10"></div>
           </div>
 
-          {/* Table Head Skeleton */}
           <div className="grid grid-cols-4 px-3 py-2 gap-2">
-            <div className="h-3 w-10 bg-white/5 rounded"></div>
-            <div className="h-3 w-16 bg-white/5 rounded"></div>
-            <div className="h-3 w-12 bg-white/5 rounded ml-auto"></div>
-            <div className="h-3 w-10 bg-white/5 rounded ml-auto"></div>
+            <div className="h-3 w-10 dark:bg-white/10 rounded  bg-gray-200"></div>
+            <div className="h-3 w-16 dark:bg-white/10 rounded  bg-gray-200"></div>
+            <div className="h-3 w-12 dark:bg-white/10 rounded  bg-gray-200 ml-auto"></div>
+            <div className="h-3 w-10 dark:bg-white/10 rounded  bg-gray-200 ml-auto"></div>
           </div>
 
-          {/* Rows Skeleton */}
           <div className="space-y-2 mt-2">
             {[1, 2, 3].map((_, i) => (
               <div
                 key={i}
                 className="grid grid-cols-4 items-center px-3 py-3 rounded-xl
-            border border-white/5 bg-white/5"
+            border  border-gray-200 dar:border-white/5  bg-gray-200 dark:bg-white/10"
               >
-                {/* Rank */}
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-full bg-white/10"></div>
+                  <div className="h-7 w-7 rounded-full bg-white/10  bg-gray-200"></div>
                 </div>
 
-                {/* Username */}
-                <div className="h-4 w-24 rounded bg-white/10"></div>
+                <div className="h-4 w-24 rounded bg-white/10  bg-gray-200"></div>
 
-                {/* Profit */}
-                <div className="h-4 w-20 rounded bg-white/10 ml-auto"></div>
+                <div className="h-4 w-20 rounded bg-white/10  bg-gray-200 ml-auto"></div>
 
-                {/* ROI */}
-                <div className="h-4 w-12 rounded bg-white/10 ml-auto"></div>
+                <div className="h-4 w-12 rounded bg-white/10  bg-gray-200 ml-auto"></div>
               </div>
             ))}
           </div>
 
-          {/* Footer Skeleton */}
           <div className="mt-4 flex justify-center">
             <div className="h-3 w-40 bg-white/5 rounded"></div>
           </div>

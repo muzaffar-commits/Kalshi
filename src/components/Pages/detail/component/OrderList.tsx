@@ -18,9 +18,24 @@ type OrderItem = {
 interface OrderListProps {
   data: OrderItem[];
   cancelOrders: (orderId: number) => void;
+
+  page: number;
+  setOrderPage: (orderId: number) => void;
 }
 
-export default function OrderList({ data, cancelOrders }: OrderListProps) {
+export default function OrderList({
+  data,
+  cancelOrders,
+  page,
+  setOrderPage,
+}: OrderListProps) {
+  console.log(page, "pageCount");
+  const changePageInc = () => {
+    setOrderPage(page - 5);
+  };
+  const changePageDsc = () => {
+    setOrderPage(page);
+  };
   return (
     <div className="w-full rounded-2xl bg-transparent border border-gray-300 dark:border-white/10 p-6">
       <div className="flex items-center justify-between mb-4">
@@ -49,8 +64,8 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
                 grid grid-cols-5 items-center
                 px-4 py-1.5
                 rounded-xl
-                bg-gray-200
-                dark:bg-[#2B394D]
+                bg-gray-100
+                dark:bg-[#233247]
                 border border-white/5
                 dark:hover:bg-[#27364b]
                 transition
@@ -102,13 +117,12 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
                 <button
                   onClick={() => cancelOrders(item.id)}
                   className="
-                    text-xs font-semibold
-                    px-4 py-1.5
-                    rounded-md
-                    bg-[#ff5b5b]
-                    text-white
-                    hover:bg-[#ff3b3b]
-                    transition
+                    px-3 cursor-pointer rounded-xl py-1 text-xs font-bold
+    transition-all duration-150 ease-in-out  bg-red-500 text-white
+            shadow-[0_3px_0_rgba(239,68,68,0.5)]
+            hover:bg-red-600
+            active:translate-y-[2px]
+            active:shadow-[0_2px_0_rgba(239,68,68,0.5)]
                   "
                 >
                   Cancel
@@ -118,7 +132,12 @@ export default function OrderList({ data, cancelOrders }: OrderListProps) {
           );
         })}
       </div>
-      <CustomPagination count={100} onChange={() => null} page={10} />
+      <CustomPagination
+        count={5}
+        onChangeDecrement={changePageDsc}
+        onChangeIncrement={changePageInc}
+        page={page}
+      />
     </div>
   );
 }

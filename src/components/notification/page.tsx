@@ -1,5 +1,5 @@
 "use client";
-import { timeAgoCompact } from "@/utils/Content";
+import { delay, timeAgoCompact } from "@/utils/Content";
 import { Bell, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -11,12 +11,14 @@ import {
 import toast from "react-hot-toast";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import socket from "../socket";
+import { NotificationSkeleton } from "@/utils/customSkeleton";
 
 export default function NotificationBell({ userId }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const [notificationData, setNotificationData] = useState([]);
   const [countNotification, setCountNotification] = useState(0);
+  const [isLoader, setIsLoader] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -29,8 +31,9 @@ export default function NotificationBell({ userId }) {
   }, []);
 
   const getNotificationList = async () => {
+    setIsLoader(true);
     try {
-      const response = await fetchNotification();
+      const [response] = await Promise.all([fetchNotification(), delay(1000)]);
       if (response?.success) {
         setNotificationData(response?.data || []);
       } else {
@@ -38,6 +41,8 @@ export default function NotificationBell({ userId }) {
       }
     } catch {
       setNotificationData([]);
+    } finally {
+      setIsLoader(false);
     }
   };
   useEffect(() => {
@@ -110,7 +115,6 @@ export default function NotificationBell({ userId }) {
 
   return (
     <div className="relative" ref={ref}>
-      {/* Bell */}
       <button
         onClick={() => setOpen((prev) => !prev)}
         className=" dark:hover:text-white cursor-pointer relative"
@@ -120,8 +124,6 @@ export default function NotificationBell({ userId }) {
           {countNotification || 0}
         </span>
       </button>
-
-      {/* Dropdown */}
       <div
         className={`
           absolute lg:right-0 -right-16 mt-3 w-72
@@ -136,7 +138,6 @@ export default function NotificationBell({ userId }) {
           }
         `}
       >
-        {/* Header */}
         <div className="flex px-4 flex-row border-b border border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] items-center justify-between">
           <div className=" py-3  text-gray-800 dark:text-gray-200 font-semibold text-sm">
             Notifications ({countNotification})
@@ -159,8 +160,12 @@ export default function NotificationBell({ userId }) {
 
         {/* List */}
         <div className="max-h-72 overflow-y-auto">
-          {notificationData?.filter((item) => item?.isRead === false)
-            ?.length === 0 ? (
+          {isLoader ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <NotificationSkeleton key={i} />
+            ))
+          ) : notificationData?.filter((item) => item?.isRead === false)
+              ?.length === 0 ? (
             <div className="px-4 py-3 flex flex-col items-center justify-center text-xs border-b text-gray-500 dark:text-gray-300 last:border-b-0 dark:border-gray-700  cursor-pointer">
               <IoMdNotificationsOutline
                 size={30}

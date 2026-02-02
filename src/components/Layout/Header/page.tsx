@@ -345,100 +345,67 @@ const Header = () => {
             </div>
 
             {pathname === "/" && (
-              // <nav className="border-b pb-2 dark:border-gray-600 border-gray-300 w-full hidden lg:block">
-              //   <ul className="flex justify-start gap-10 w-full px-4 py-2 text-[15px]">
-              //     {isCategory ? (
-              //       <CategorySkeleton />
-              //     ) : (
-              //       category?.map((row: Category, index: number) => (
-              //         <li key={index}>
-              //           <div
-              //             onClick={() => {
-              //               dispatch(saveCategory(row));
-              //               dispatch(saveSelectSubCategory(null));
-              //               setCategoryId(row?.id);
-              //               dispatch(changeIsEvent(false));
-              //             }}
-              //             className={` ${
-              //               row?.id == categoryId
-              //                 ? "text-black dark:text-[#c7ac77]"
-              //                 : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
-              //             } font-semibold flex items-center`}
-              //           >
-              //             {index == 0 && (
-              //               <span>
-              //                 <FaArrowTrendUp className="mr-1" />
-              //               </span>
-              //             )}
-              //             {row?.name}
-              //           </div>
-              //         </li>
-              //       ))
-              //     )}
-              //   </ul>
-              // </nav>
-              <nav
-                className="relative border-b pb-2 w-full
+              <>
+                <nav
+                  className={`relative border-b ${isCategory ? "" : "pb-0"}  w-full
                 border-[var(--color-borderlight)]
-                dark:border-[var(--color-borderdark)]"
-              >
-                {/* LEFT ARROW */}
-                <button
-                  onClick={() => scroll("left")}
-                  className="absolute -left-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                dark:border-[var(--color-borderdark)]`}
                 >
-                  <FaChevronLeft />
-                </button>
+                  <button
+                    onClick={() => scroll("left")}
+                    className="absolute -left-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                  >
+                    <FaChevronLeft />
+                  </button>
+                  <button
+                    onClick={() => scroll("right")}
+                    className="absolute -right-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                  >
+                    <FaChevronRight />
+                  </button>
 
-                {/* RIGHT ARROW */}
-                <button
-                  onClick={() => scroll("right")}
-                  className="absolute -right-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
-                >
-                  <FaChevronRight />
-                </button>
-
-                {/* SCROLLABLE TABS */}
-                <ul
-                  ref={scrollRef}
-                  className="flex gap-6 px-10 py-2 text-[15px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
-                >
-                  {isCategory ? (
-                    <li>Loading...</li>
-                  ) : (
-                    category?.map((row: Category, index: number) => (
-                      <li key={row.id} className="flex-shrink-0">
-                        <div
-                          onClick={() => {
-                            dispatch(saveCategory(row));
-                            dispatch(saveSelectSubCategory(null));
-                            setCategoryId(row?.id);
-                            dispatch(changeIsEvent(false));
-                          }}
-                          className={`px-3 py-1 rounded-full font-semibold flex items-center cursor-pointer
+                  {/* SCROLLABLE TABS */}
+                  <ul
+                    ref={scrollRef}
+                    className="flex gap-6 px-10 py-2 text-[15px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
+                  >
+                    {isCategory ? (
+                      <CategorySkeleton />
+                    ) : (
+                      category?.map((row: Category, index: number) => (
+                        <li key={row.id} className="flex-shrink-0">
+                          <div
+                            onClick={() => {
+                              dispatch(saveCategory(row));
+                              dispatch(saveSelectSubCategory(null));
+                              setCategoryId(row?.id);
+                              dispatch(changeIsEvent(false));
+                            }}
+                            className={`px-3 py-1 rounded-full font-semibold flex items-center cursor-pointer
       transition-all duration-200 ease-in-out
       ${
         row?.id === categoryId
           ? "bg-[#8160ee]   text-white"
           : "bg-transparent dark:text-[#fff] text-text hover:bg-[#8160ee] hover:text-white"
       }`}
-                        >
-                          {index === 0 && (
-                            <FaArrowTrendUp className="mr-1 text-sm" />
-                          )}
-                          {row?.name}
-                        </div>
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </nav>
+                          >
+                            {index === 0 && (
+                              <FaArrowTrendUp className="mr-1 text-sm" />
+                            )}
+                            {row?.name}
+                          </div>
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                </nav>
+              </>
             )}
 
-            {/* {pathname === "/" && (
+            {pathname === "/" && !isCategory && (
               <div className="">
                 <nav className="pb-2 md:flex flex-row pt-1.5  border-gray-300 w-full">
-                  <div className="border-r border-gray-400 dark:border-gray-700 pr-6 flex items-center gap-2">
+                  {/* <div className="border-r border-gray-400 dark:border-gray-700 pr-6 flex items-center gap-2">
                     <div className="flex items-center w-56 gap-2 dark:bg-gray-700 bg-gray-100 rounded-xl px-4 py-2">
                       <FiSearch className="text-gray-400 text-base" />
 
@@ -483,7 +450,7 @@ const Header = () => {
                         <FiBookmark className="text-gray-500 text-lg dark:text-gray-200" />
                       )}
                     </button>
-                  </div>
+                  </div> */}
                   {eventCategory?.length > 0 && (
                     <div
                       className={`
@@ -493,7 +460,6 @@ const Header = () => {
       ${isWatchList ? "max-h-40 opacity-100" : "max-h-40"}
     `}
                     >
-                     
                       <button
                         onClick={() =>
                           scrollRef.current?.scrollBy({
@@ -506,7 +472,6 @@ const Header = () => {
                         <FaChevronLeft />
                       </button>
 
-                 
                       <button
                         onClick={() =>
                           scrollRef.current?.scrollBy({
@@ -519,8 +484,7 @@ const Header = () => {
                         <FaChevronRight />
                       </button>
 
-                  
-                      <ul
+                      {/* <ul
                         ref={scrollRef}
                         className={`
         flex gap-10 px-8 pt-6 text-[15px]
@@ -563,12 +527,12 @@ const Header = () => {
                             </div>
                           </li>
                         ))}
-                      </ul>
+                      </ul> */}
                     </div>
                   )}
                 </nav>
 
-                {isFilterQuestion && (
+                {true && (
                   <div className="w-full flex flex-wrap items-center gap-2 bg-transparent rounded-xl">
                     <div className="relative inline-block group">
                       <button
@@ -781,7 +745,7 @@ const Header = () => {
                   </div>
                 )}
               </div>
-            )} */}
+            )}
           </div>
         </header>
       </div>

@@ -259,12 +259,12 @@ const Home = () => {
       <div
         className={`max-w-[1368px] mx-auto px-4 pb-10 ${
           eventCategory?.length > 0 && isFilterQuestion
-            ? "pt-8 lg:pt-22"
+            ? "pt-8 lg:pt-32"
             : eventCategory?.length > 0
-              ? "pt-8 lg:pt-22"
+              ? "pt-8 lg:pt-32"
               : selectedSubCategory == null && isFilterQuestion
                 ? "pt-8 lg:pt-22"
-                : "pt-8 lg:pt-22"
+                : "pt-8 lg:pt-32"
         }`}
       >
         <div
@@ -285,7 +285,9 @@ const Home = () => {
             // ) :
 
             loader ? (
-              [1, 2, 3, 4, 5, 6, 7, 8]?.map((row) => <LoadingCard key={row} />)
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]?.map((row) => (
+                <LoadingCard key={row} />
+              ))
             ) : questionListFilter && questionListFilter.length > 0 ? (
               questionListFilter?.map((row: QuestionItem, index) => {
                 const metaData = JSON.parse(row?.metadata);
@@ -399,7 +401,8 @@ const Home = () => {
                               $
                             </span>
                             <span>
-                              {Number(row?.stats?.totalVolume || 0).toFixed(2)}
+                              {Number(row?.stats?.totalVolume || 0).toFixed(2)}{" "}
+                              Vol
                             </span>
                           </>
                         ) : (

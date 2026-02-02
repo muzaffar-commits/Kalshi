@@ -330,3 +330,31 @@ export interface userIdInterFace {
     };
   };
 }
+
+export interface SocketOption {
+  optionId: number;
+  price: number;
+}
+
+export interface UserDetailsRootState {
+  user?: {
+    user?: { id?: number };
+  };
+}
+
+export interface SellOrder {
+  saleAtPrice?: number | string;
+}
+
+export interface OrderFlowItem {
+  id: number;
+  optionId: number;
+  shares: number;
+  saleAtPrice: number;
+  createdAt: string;
+}
+
+export interface OrderFlow {
+  buys: OrderFlowItem[];
+  sells: OrderFlowItem[];
+}

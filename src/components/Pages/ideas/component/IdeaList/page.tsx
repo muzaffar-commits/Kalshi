@@ -13,12 +13,13 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname(); // ✅ App Router safe
-
+  const userId = useSelector((state: any) => state?.user?.user?.id);
   const handleMenuClick = (path: string) => {
     router.push(path);
     setOpen(false);
@@ -93,8 +94,8 @@ export default function MobileMenu() {
           <MenuItem
             label="Profile"
             icon={<FaUser />}
-            active={pathname.startsWith("/ideas/profile/")}
-            onClick={() => handleMenuClick("/ideas/profile/2")}
+            active={pathname.startsWith(`/ideas/profile/${userId}/`)}
+            onClick={() => handleMenuClick(`/ideas/profile/${userId}/`)}
           />
 
           <MenuItem

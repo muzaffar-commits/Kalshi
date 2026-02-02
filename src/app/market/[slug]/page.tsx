@@ -9,7 +9,7 @@ export default async function Page({
   const { slug } = await params;
 
   return (
-    <Suspense fallback={<div>Loading User...</div>}>
+    <Suspense fallback={<div></div>}>
       <MarketDetails targetId={slug} />
     </Suspense>
   );

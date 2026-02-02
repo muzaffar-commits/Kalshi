@@ -103,13 +103,13 @@ export const getLeaderBoardMarket = async (questionId: string | null) => {
 export const getOrdersList = async (
   userId: number | null,
   questionId: string | null,
+  page: number = 0,
   status: string = "NEW",
   type: string = "LIMIT",
-  // page: string | null = "0",
 ) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getOrders}/?userId=${userId}&questionId=${questionId}&status=${status}&type=${type}&limit=30&offset=0`,
+      `${API_URLs.getOrders}/?userId=${userId}&questionId=${questionId}&status=${status}&type=${type}&limit=5&offset=${page}`,
     );
     return response?.data;
   } catch (error: unknown) {

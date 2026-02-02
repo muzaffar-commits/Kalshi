@@ -73,7 +73,7 @@ export const CreatePostSkeleton = () => {
   );
 };
 
-export const CategorySkeleton = ({ count = 5 }) => {
+export const CategorySkeleton = ({ count = 7 }) => {
   return (
     <>
       {Array.from({ length: count }).map((_, index) => (
@@ -83,7 +83,7 @@ export const CategorySkeleton = ({ count = 5 }) => {
               variant="text"
               className=" !bg-gray-300 dark:!bg-gray-700 "
               width={120}
-              height={40}
+              height={60}
             />
           </div>
         </li>
@@ -97,7 +97,7 @@ export const UserProfileSkeleton = () => {
   const isDark = theme.palette.mode === "dark";
 
   return (
-    <div className="flex justify-center w-full px-5">
+    <div className="flex justify-center w-full px-2">
       <div
         className="
           w-full rounded-2xl p-5
@@ -233,3 +233,48 @@ export function CommentListSkeleton({ count = 3 }: { count?: number }) {
     </Box>
   );
 }
+
+export const NotificationSkeleton = () => {
+  return (
+    <Box px={2} py={1.5} borderBottom="1px solid" borderColor="divider">
+      <Box display="flex" alignItems="flex-start" gap={1.5}>
+        {/* Indicator dot */}
+        <Skeleton
+          variant="circular"
+          className="dark:!bg-gray-400"
+          width={8}
+          height={8}
+          sx={{ mt: "6px" }}
+        />
+
+        {/* Content */}
+        <Box flex={1}>
+          {/* Title */}
+          <Skeleton
+            className="dark:!bg-gray-400"
+            variant="text"
+            width="25%"
+            height={18}
+          />
+
+          {/* Message */}
+          <Skeleton
+            className="dark:!bg-gray-400"
+            variant="text"
+            width="80%"
+            height={14}
+          />
+
+          {/* Time */}
+          <Skeleton
+            className="dark:!bg-gray-400"
+            variant="text"
+            width="30%"
+            height={12}
+            sx={{ mt: 0.5 }}
+          />
+        </Box>
+      </Box>
+    </Box>
+  );
+};

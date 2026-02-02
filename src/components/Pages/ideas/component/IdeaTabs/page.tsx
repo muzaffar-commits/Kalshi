@@ -168,7 +168,7 @@ export default function IdeaTabs({
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", borderRight: 1, borderColor: "#364153" }}>
       <Box
         sx={{
           borderBottom: 1,
@@ -200,7 +200,7 @@ export default function IdeaTabs({
       </Box>
 
       <CustomTabPanel value={value} index={0}>
-        <div>
+        <div className="">
           {isLoader ? (
             <CreatePostSkeleton />
           ) : (

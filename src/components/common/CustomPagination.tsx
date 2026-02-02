@@ -38,17 +38,23 @@ const PageNumber = styled(Typography)(() => ({
 type Props = {
   page: number;
   count: number;
-  onChange: (page: number) => void;
+  onChangeDecrement: () => void;
+  onChangeIncrement: () => void;
 };
 
-export default function CompactPagination({ page, count, onChange }: Props) {
+export default function CompactPagination({
+  page,
+  count,
+  onChangeDecrement,
+  onChangeIncrement,
+}: Props) {
   return (
     <Stack direction="row" spacing={1.5} justifyContent="flex-end" mt={3}>
-      <PageButton disabled={page <= 1} onClick={() => onChange(page - 1)}>
+      <PageButton onClick={onChangeDecrement}>
         <FaAngleLeft fontSize="small" />
       </PageButton>
-      <PageNumber>{page}</PageNumber>
-      <PageButton disabled={page >= count} onClick={() => onChange(page + 1)}>
+      <PageNumber>{count}</PageNumber>
+      <PageButton onClick={onChangeIncrement}>
         <FaAngleRight fontSize="small" />
       </PageButton>
     </Stack>
