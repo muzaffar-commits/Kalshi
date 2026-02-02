@@ -296,9 +296,10 @@ const Home = () => {
               ))
             ) : questionListFilter && questionListFilter.length > 0 ? (
               questionListFilter?.map((row: QuestionItem, index) => {
-                const metaData = row?.metadata
-                  ? JSON.parse(row?.metadata)
-                  : row?.metadata;
+                const metaData = { imageUrl: "" };
+                // row?.metadata == {}
+                //   ? row?.metadata
+                //   : JSON.parse(row?.metadata);
                 console.log(metaData, "metadata==============");
                 return (
                   <div
@@ -411,14 +412,14 @@ const Home = () => {
 
                                 <div
                                   className={`flex items-center gap-1 font-medium ${
-                                    percentage < 50
+                                    percentage > 50
                                       ? "text-green-400"
                                       : "text-red-400"
                                   }`}
                                 >
                                   <FaArrowUp
                                     className={`transition-transform ${
-                                      percentage < 50 ? "" : "rotate-180"
+                                      percentage > 50 ? "" : "rotate-180"
                                     }`}
                                   />
                                   <span>
