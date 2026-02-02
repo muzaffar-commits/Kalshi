@@ -251,8 +251,13 @@ const Header = () => {
     <>
       {/* <div className="hidden lg:block"> */}
       <div>
-        <header className="fixed top-0 left-0 w-full z-[1000] bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)]">
-          <div className="max-w-[1368px] mx-auto px-4 py-1 h-auto ">
+        <header
+          className="fixed top-0 left-0 w-full z-[1000]
+  bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)]
+  shadow-[0_2px_6px_rgba(0,0,0,0.08)]
+  dark:shadow-[0_2px_6px_rgba(0,0,0,0.4)] pb-2"
+        >
+          <div className="max-w-[1268px] mx-auto px-4 py-1 h-auto ">
             <div
               className={`flex items-center justify-between py-2 px-4  ${
                 pathname === "/"
@@ -329,13 +334,26 @@ const Header = () => {
                   <>
                     <button
                       onClick={handleLogin}
-                      className="px-4 py-1.5 cursor-pointer border border-sky-500 dark:text-white text-black/80 font-semibold hover:bg-blue-500/40 rounded-md"
+                      className="px-4 py-1.5 cursor-pointer border border-[#8160ee] dark:text-white text-black/80 font-medium hover:bg-[#8160ee] hover:text-white rounded-md  transition-all duration-300 ease-in-out
+    hover:-translate-y-[3px]
+    active:translate-y-[3px]
+    active:shadow-[0_2px_0_rgb(29,78,216)]"
                     >
                       Log In
                     </button>
                     <button
                       onClick={handleSignup}
-                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
+                      className="md:inline-block hidden
+    group relative
+    hover:bg-btnbg bg-[#8160ee]
+    text-white text-sm font-medium
+    px-4 py-2 rounded-md
+    cursor-pointer
+    transition-all duration-300 ease-in-out
+    hover:-translate-y-[3px]
+    active:translate-y-[3px]
+    active:shadow-[0_2px_0_rgb(29,78,216)]
+  "
                     >
                       Sign Up
                     </button>
@@ -353,13 +371,13 @@ const Header = () => {
                 >
                   <button
                     onClick={() => scroll("left")}
-                    className="absolute -left-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                    className="absolute -left-2 top-[14px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
                   >
                     <FaChevronLeft />
                   </button>
                   <button
                     onClick={() => scroll("right")}
-                    className="absolute -right-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                    className="absolute -right-2 top-[14px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
                   >
                     <FaChevronRight />
                   </button>
@@ -367,7 +385,7 @@ const Header = () => {
                   {/* SCROLLABLE TABS */}
                   <ul
                     ref={scrollRef}
-                    className="flex gap-6 px-10 py-2 text-[15px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
+                    className="flex gap-6 px-10 pb-2 text-[14px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
                   >
                     {isCategory ? (
                       <CategorySkeleton />
