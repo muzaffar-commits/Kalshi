@@ -443,9 +443,10 @@ const Details = ({ marketId }) => {
     }
   };
 
-  const metaData = data?.question?.metadata
-    ? JSON.parse(data?.question?.metadata)
-    : "";
+  // const metaData = data?.question?.metadata
+  //   ? JSON.parse(data?.question?.metadata)
+  //   : "";
+  const metaData = { imageUrl: "" };
 
   console.log(metaData, "metaData");
 
