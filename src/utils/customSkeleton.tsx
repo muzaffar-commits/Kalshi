@@ -1,4 +1,13 @@
-import { Box, Skeleton, useTheme } from "@mui/material";
+import {
+  Box,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Skeleton,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
 export const PostSkeleton = ({ count = 3 }) => {
   return Array.from({ length: count }).map((_, index) => (
@@ -276,5 +285,66 @@ export const NotificationSkeleton = () => {
         </Box>
       </Box>
     </Box>
+  );
+};
+
+export const SearchResultsSkeleton = () => {
+  const theme = useTheme();
+
+  const isDark = theme.palette.mode === "dark";
+
+  const cardBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
+
+  return (
+    <>
+      <Box sx={{ mb: 5 }}>
+        <Stack spacing={1.5}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <ListItem
+              key={i}
+              sx={{
+                py: 1.2,
+                px: 2.5,
+                borderRadius: 3,
+                bgcolor: cardBg,
+                backdropFilter: "blur(6px)",
+              }}
+              className="border border-gray-200 dark:border-gray-700 "
+            >
+              <ListItemAvatar>
+                <Skeleton
+                  variant="circular"
+                  width={40}
+                  height={40}
+                  animation="wave"
+                  className="!bg-gray-200 dark:!bg-gray-700"
+                />
+              </ListItemAvatar>
+
+              <ListItemText
+                primary={
+                  <Skeleton
+                    variant="text"
+                    width="65%"
+                    height={22}
+                    animation="wave"
+                    className="!bg-gray-200 dark:!bg-gray-700"
+                  />
+                }
+                secondary={
+                  <Skeleton
+                    variant="text"
+                    width="45%"
+                    height={16}
+                    animation="wave"
+                    className="!bg-gray-200 dark:!bg-gray-700"
+                  />
+                }
+              />
+            </ListItem>
+          ))}
+        </Stack>
+      </Box>
+    </>
   );
 };
