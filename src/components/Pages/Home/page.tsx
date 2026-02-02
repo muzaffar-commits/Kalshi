@@ -10,7 +10,12 @@ import { commonQuestionFindById } from "@/components/service/apiService/category
 import { useRouter } from "next/navigation";
 import { GiNinjaStar } from "react-icons/gi";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import {
+  FaArrowDown,
+  FaArrowUp,
+  FaBookmark,
+  FaRegBookmark,
+} from "react-icons/fa";
 
 import {
   isWatchListInterface,
@@ -19,13 +24,14 @@ import {
   QuestionItemSecond,
   RootState,
 } from "@/utils/typesInterface";
-import { delay } from "@/utils/Content";
+import { delay, truncateValue } from "@/utils/Content";
 import {
   fetchWatchList,
   postQuestionBookUnBookMark,
 } from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
+import moment from "moment";
 
 interface selectedSubCategory {
   category: {
@@ -257,14 +263,14 @@ const Home = () => {
   return (
     <>
       <div
-        className={`max-w-[1368px] mx-auto px-4 pb-10 ${
+        className={`max-w-[1268px] mx-auto px-4 pb-10 ${
           eventCategory?.length > 0 && isFilterQuestion
             ? "pt-8 lg:pt-32"
             : eventCategory?.length > 0
               ? "pt-8 lg:pt-32"
               : selectedSubCategory == null && isFilterQuestion
-                ? "pt-8 lg:pt-22"
-                : "pt-8 lg:pt-32"
+                ? "pt-8 lg:pt-2"
+                : "pt-44 lg:pt-32"
         }`}
       >
         <div
@@ -272,7 +278,7 @@ const Home = () => {
             // isEvent
             //   ? ""
             //   :
-            "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-10 lg:pt-0"
+            "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 pt-10 lg:pt-0"
           }
         >
           {
@@ -290,34 +296,39 @@ const Home = () => {
               ))
             ) : questionListFilter && questionListFilter.length > 0 ? (
               questionListFilter?.map((row: QuestionItem, index) => {
-                const metaData = JSON.parse(row?.metadata);
+                const metaData = row?.metadata
+                  ? JSON.parse(row?.metadata)
+                  : row?.metadata;
                 console.log(metaData, "metadata==============");
                 return (
                   <div
                     key={index}
-                    className="z-10 border border-[var(--color-borderlight)]
-           dark:border-[var(--color-borderdark)]
-           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
-           relative min-h-48 rounded-xl p-4
-           transition-all duration-300 ease-in-out
-           hover:-translate-y-[8px] hover:shadow-md"
+                    className="border relative border-[var(--color-borderlight)]
+                        dark:border-[var(--color-borderdark)]
+                        bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
+                        relative rounded-xl p-4
+                        transform transition-all duration-300 ease-in-out
+                        hover:scale-110 hover:shadow-md
+                        z-0 hover:z-20
+                        "
                   >
                     <div className="flex mb-3">
-                      {/* IMAGE */}
-                      <div
-                        className="p-1.5 mr-2 rounded-md bg-gray-100 dark:bg-gray-700
+                      {metaData?.imageUrl && (
+                        <div
+                          className="p-1.5 mr-2 rounded-md bg-gray-100 dark:bg-gray-700
              w-[44px] h-[44px] flex items-center justify-center shrink-0 border border-[#8160ee]/60"
-                      >
-                        <Image
-                          src={
-                            metaData?.imageUrl || "/img/opinionLogo-light.png"
-                          }
-                          width={40}
-                          height={40}
-                          alt="trending"
-                          className="w-full h-full object-contain opacity-80 rounded"
-                        />
-                      </div>
+                        >
+                          <Image
+                            src={
+                              metaData?.imageUrl || "/img/opinionLogo-light.png"
+                            }
+                            width={40}
+                            height={40}
+                            alt="trending"
+                            className="w-full h-full object-contain opacity-80 rounded"
+                          />
+                        </div>
+                      )}
 
                       {/* TEXT */}
                       <h2 className="font-semibold text-sm cursor-pointer dark:text-[var(--color-text)] text-[var(--color-text)] flex-1">
@@ -330,115 +341,281 @@ const Home = () => {
                               {row?.question || "--"}
                             </div>
                           </div>
+                          <span className=" text-gray-400 text-[11px]  ">
+                            Resolves, {moment(row?.endDate).format("MMM YYYY")}
+                          </span>
                         </div>
                       </h2>
                     </div>
+                    {/* Yes */}
+                    {row?.options?.length == 2 ? (
+                      <>
+                        {row?.options?.map((item: OptionItem, idx: number) => {
+                          const percentage = item?.price * 100;
 
-                    <div className="text-xs mt-4 mb-5 h-24 hideScrollbar overflow-y-auto space-y-2">
-                      {row?.options?.map((item: OptionItem, idx: number) => (
-                        <div
-                          key={idx}
-                          className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)]"
-                        >
-                          <span className="block max-w-28 truncate">
-                            {item?.name || "--"}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            <span className="text-[16px] font-semibold">
-                              {(item?.price * 100).toFixed(1)}%
-                            </span>
-                            <button
-                              onClick={() =>
-                                handleBuyNow(row, item, "sell", idx)
-                              }
-                              className="group
-    p-2 bg-red-400/20 cursor-pointer
-    text-red-700 dark:text-red-400
-    font-semibold rounded-xs text-[11px] uppercase
-    hover:bg-red-500 hover:text-white
-    transition-all duration-200 ease-in-out
-  "
+                          const firstPrice = row?.options?.[0]?.price ?? 0;
+                          const secondPrice = row?.options?.[1]?.price ?? 0;
+
+                          const diffPercentage =
+                            firstPrice > 0
+                              ? ((secondPrice - firstPrice) / firstPrice) * 100
+                              : 0;
+
+                          console.log(diffPercentage, "diffPercentage");
+
+                          const isUp = diffPercentage >= 0;
+
+                          return (
+                            <div
+                              key={idx}
+                              className="w-100% rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-3 my-2 px-4 dark:text-[var(--color-text)] text-[var(--color-text)] shadow-lg"
                             >
-                              <ArrowDownRight
-                                className="w-3 h-3 inline-block mr-1
-      text-current
-      transition-transform duration-200 ease-in-out
-      group-hover:scale-175"
-                              />
-                              Sell
-                            </button>
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-sm font-semibold tracking-wide">
+                                  {item?.name || "--"}
+                                </span>
+                                <span className="text-sm font-semibold dark:text-[var(--color-text)] text-[var(--color-text)]">
+                                  {(item?.price * 100).toFixed(1)}%
+                                </span>
+                              </div>
 
+                              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mb-3">
+                                {percentage < 50 ? (
+                                  <div
+                                    className="h-full bg-gradient-to-r from-teal-400 to-cyan-400"
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                ) : (
+                                  <div
+                                    className="h-full bg-gradient-to-r from-red-400 to-yellow-400"
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                )}
+                              </div>
+
+                              <div className="flex items-center justify-between text-xs text-gray-400">
+                                <div className="flex gap-3">
+                                  <span>
+                                    Buy{" "}
+                                    <span className="dark:text-[var(--color-text)] text-[var(--color-text)] font-medium">
+                                      {truncateValue(item?.price || 0)}
+                                    </span>
+                                  </span>
+                                  <span>
+                                    Sell{" "}
+                                    <span className="dark:text-[var(--color-text)] text-[var(--color-text)] font-medium">
+                                      {truncateValue(item?.price || 0)}
+                                    </span>
+                                  </span>
+                                </div>
+
+                                <div
+                                  className={`flex items-center gap-1 font-medium ${
+                                    percentage < 50
+                                      ? "text-green-400"
+                                      : "text-red-400"
+                                  }`}
+                                >
+                                  <FaArrowUp
+                                    className={`transition-transform ${
+                                      percentage < 50 ? "" : "rotate-180"
+                                    }`}
+                                  />
+                                  <span>
+                                    {Math.abs(diffPercentage).toFixed(1)}%
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+
+                        <div className="flex mt-4  align-baseline justify-between text-xs font-normal text-muted">
+                          <div className="flex gap-4 items-center">
+                            <span className="flex items-center gap-1">
+                              {row?.stats?.totalVolume > 0 ? (
+                                <>
+                                  <span className="text-yellow-500 font-semibold">
+                                    $
+                                  </span>
+                                  <span className="text-gray-400">
+                                    {Number(
+                                      row?.stats?.totalVolume || 0,
+                                    ).toFixed(2)}{" "}
+                                    Vol
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="text-yellow-500 flex items-center gap-1">
+                                  <GiNinjaStar
+                                    size={12}
+                                    className="rotate-45"
+                                  />
+                                  New
+                                </span>
+                              )}
+                            </span>
+
+                            <span
+                              className="cursor-pointer inline-flex
+             transition-transform duration-200 ease-in-out
+             hover:scale-125"
+                            >
+                              {!row?.isBookmark ? (
+                                <FaRegBookmark
+                                  onClick={() =>
+                                    !getToken
+                                      ? setIsOpen(true)
+                                      : bookMarkUnBookMark(
+                                          row?.id,
+                                          row?.isBookmark,
+                                        )
+                                  }
+                                  className="text-sky-400"
+                                />
+                              ) : (
+                                <FaBookmark
+                                  onClick={() =>
+                                    !getToken
+                                      ? setIsOpen(true)
+                                      : bookMarkUnBookMark(
+                                          row?.id,
+                                          row?.isBookmark,
+                                        )
+                                  }
+                                  className="text-sky-400"
+                                />
+                              )}
+                            </span>
+                          </div>
+                          <div>
                             <button
-                              onClick={() =>
-                                handleBuyNow(row, item, "buy", idx)
-                              }
-                              className="group
+                              onClick={() => goToDetails(row.id)}
+                              className="bg-[#8160ee] cursor-pointer rounded-lg py-2 px-5 text-[14px] font-semibold text-center "
+                            >
+                              Trade
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-xs mt-4  h-[220px] hideScrollbar overflow-y-auto space-y-2">
+                          {row?.options?.map(
+                            (item: OptionItem, idx: number) => (
+                              <div
+                                key={idx}
+                                className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)] dark:bg-[#272f42]  p-3 rounded-lg bg-[#f5f5f5]"
+                              >
+                                <span className="block md:max-w-28 max-w-24 truncate">
+                                  {item?.name || "--"}
+                                </span>
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[16px] font-semibold">
+                                    {(item?.price * 100).toFixed(1)}%
+                                  </span>
+                                  <button
+                                    onClick={() =>
+                                      handleBuyNow(row, item, "sell", idx)
+                                    }
+                                    className="group
+                                    p-2 bg-red-400/20 cursor-pointer
+                                    text-red-700 dark:text-red-400
+                                    font-semibold rounded-xs text-[11px] uppercase
+                                    hover:bg-red-500 hover:text-white
+                                    transition-all duration-200 ease-in-out
+                                  "
+                                  >
+                                    <ArrowDownRight
+                                      className="w-3 h-3 inline-block mr-1
+                                      text-current
+                                      transition-transform duration-200 ease-in-out
+                                      group-hover:scale-175"
+                                    />
+                                    Sell
+                                  </button>
+
+                                  <button
+                                    onClick={() =>
+                                      handleBuyNow(row, item, "buy", idx)
+                                    }
+                                    className="group
     p-2 bg-green-400/20 cursor-pointer
     text-green-700 dark:text-green-400
     font-semibold rounded-xs text-[11px] uppercase
     hover:bg-green-600 hover:text-white
     transition-all duration-200 ease-in-out
   "
-                            >
-                              <ArrowUpRight
-                                className="w-3 h-3 inline-block mr-1
+                                  >
+                                    <ArrowUpRight
+                                      className="w-3 h-3 inline-block mr-1
       text-current
       transition-transform duration-200 ease-in-out
       group-hover:scale-175"
-                              />
-                              Buy
-                            </button>
-                          </div>
+                                    />
+                                    Buy
+                                  </button>
+                                </div>
+                              </div>
+                            ),
+                          )}
                         </div>
-                      ))}
-                    </div>
-
-                    <div className="flex absolute mt-5 bottom-3 w-[88%] align-baseline justify-between text-xs font-semibold text-muted">
-                      <span className="flex items-center gap-1">
-                        {row?.stats?.totalVolume > 0 ? (
-                          <>
-                            <span className="text-yellow-500 font-semibold">
-                              $
-                            </span>
-                            <span>
-                              {Number(row?.stats?.totalVolume || 0).toFixed(2)}{" "}
-                              Vol
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-yellow-500 flex items-center gap-1">
-                            <GiNinjaStar size={12} className="rotate-45" />
-                            New
+                        <div className="flex mt-4  align-baseline justify-between text-xs font-normal text-muted">
+                          <span className="flex items-center gap-1">
+                            {row?.stats?.totalVolume > 0 ? (
+                              <>
+                                <span className="text-yellow-500 font-semibold">
+                                  $
+                                </span>
+                                <span className="text-gray-400">
+                                  {Number(row?.stats?.totalVolume || 0).toFixed(
+                                    2,
+                                  )}{" "}
+                                  Vol
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-yellow-500 flex items-center gap-1">
+                                <GiNinjaStar size={12} className="rotate-45" />
+                                New
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </span>
 
-                      <span
-                        className="cursor-pointer inline-flex
+                          <span
+                            className="cursor-pointer inline-flex
              transition-transform duration-200 ease-in-out
-             hover:scale-125"
-                      >
-                        {!row?.isBookmark ? (
-                          <FaRegBookmark
-                            onClick={() =>
-                              !getToken
-                                ? setIsOpen(true)
-                                : bookMarkUnBookMark(row?.id, row?.isBookmark)
-                            }
-                            className="text-sky-400"
-                          />
-                        ) : (
-                          <FaBookmark
-                            onClick={() =>
-                              !getToken
-                                ? setIsOpen(true)
-                                : bookMarkUnBookMark(row?.id, row?.isBookmark)
-                            }
-                            className="text-sky-400"
-                          />
-                        )}
-                      </span>
-                    </div>
+             hover:scale-125 mr-2"
+                          >
+                            {!row?.isBookmark ? (
+                              <FaRegBookmark
+                                onClick={() =>
+                                  !getToken
+                                    ? setIsOpen(true)
+                                    : bookMarkUnBookMark(
+                                        row?.id,
+                                        row?.isBookmark,
+                                      )
+                                }
+                                className="text-sky-400"
+                              />
+                            ) : (
+                              <FaBookmark
+                                onClick={() =>
+                                  !getToken
+                                    ? setIsOpen(true)
+                                    : bookMarkUnBookMark(
+                                        row?.id,
+                                        row?.isBookmark,
+                                      )
+                                }
+                                className="text-sky-400"
+                              />
+                            )}
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 );
               })

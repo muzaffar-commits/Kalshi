@@ -61,6 +61,7 @@ export interface QuestionStats {
 export interface QuestionItem {
   id: string;
   question: string;
+  endDate: string;
   options: OptionItem[];
   stats?: QuestionStats;
   isBookmark: boolean;
