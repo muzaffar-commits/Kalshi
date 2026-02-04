@@ -208,7 +208,6 @@ export default function BuySell({
           optionIndex,
           debouncedValue,
         );
-        console.log(response, "getCommonQuoteSell");
         if (response?.success) {
           setErrorResponse({});
           setAmount(Number(response?.data?.fee || 0));
@@ -251,8 +250,6 @@ export default function BuySell({
   const totalSharesBuy = Number(share) * Number(limitShare) + LimitFee;
   const totalSharesSell = Number(share) * Number(limitShare) - LimitFee;
 
-  console.log(LimitFee, "LimitFee", totalSharesBuy, "minProceedsValue");
-
   const getUserBalance = async () => {
     try {
       const response = await userBalance();
@@ -291,8 +288,6 @@ export default function BuySell({
       timeInForce: "IOC",
     };
 
-    console.log(reqBody, "reqBody");
-
     try {
       const response: ApiResponse<unknown> = await submitOrder(reqBody);
       if (response?.success) {
@@ -328,13 +323,13 @@ export default function BuySell({
   };
 
   useEffect(() => {
-    currentBalanceDetails();
+    token && currentBalanceDetails();
   }, [isOpen]);
 
   const currentShareDetails = async () => {
     try {
       const response = await getCurrentShares(rowDetailsId, Number(option?.id));
-      console.log(response, "response===>");
+
       if (response?.success) {
         setTotalCurrentShare(response?.data || 0);
       } else {
@@ -433,8 +428,6 @@ export default function BuySell({
     !tpTouched ||
     !slTouched ||
     !tpslPriceIs;
-
-  console.log(totalCurrentShare, "totalCurrentShare");
 
   return (
     <Modal

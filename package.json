@@ -13,6 +13,8 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@firebase/app": "^0.14.6",
+    "@giphy/js-fetch-api": "^5.7.0",
+    "@giphy/react-components": "^10.1.1",
     "@mui/material": "^7.3.5",
     "@radix-ui/react-slot": "^1.2.4",
     "@react-oauth/google": "^0.12.2",

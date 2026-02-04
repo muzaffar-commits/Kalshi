@@ -35,12 +35,11 @@ export default function Authentication({
       };
       // eyJhbGciOiJSUzI1NiIsImtpZCI6IjRiYTZlZmVmNWUxNzIxNDk5NzFhMmQzYWJiNWYzMzJlMGY3ODcxNjUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI4MzU5ODgwMzU5MzAtZWszYjI5N2owbzM0MDk4M2w1c2NiaWdtM21jbWg5b2YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI4MzU5ODgwMzU5MzAtZWszYjI5N2owbzM0MDk4M2w1c2NiaWdtM21jbWg5b2YuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTQyNDM4Nzk0NDg1NzA5NjYzMzkiLCJlbWFpbCI6InZhYmhpNzAyOUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmJmIjoxNzY3OTUzMTU3LCJuYW1lIjoiQWJoaSBWYXJtYSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLcUFqTXR5S29SSEhQTTFFU1VWdGIwWXdvNmphbEdCNWlxYS0yeno2RUhuaVpvWGc9czk2LWMiLCJnaXZlbl9uYW1lIjoiQWJoaSIsImZhbWlseV9uYW1lIjoiVmFybWEiLCJpYXQiOjE3Njc5NTM0NTcsImV4cCI6MTc2Nzk1NzA1NywianRpIjoiY2MyYmMzYWMxN2I3MGY3NzQ3Y2VjYTVhZDQzMzk0ZWJlOGM2YWE4ZCJ9.TeBt3fJzjcVX2YVB7n79z-OkPga5f5jlbi6rNf0IezR37Ufqc86yTXVZ65h2tbguhn8cjL99_3AAKVuUu8wAIje5tk21v34rgXH9ZbwtrL59-XxsRQx_xLA5ljpLWy8lx_xEaAhP-S46m3QpcmI6DjmPNF_aIIYaI2VJ1r3O7FKIKfS-arYY8ElxCyHcVvPuGGONOXMaD2BjU7o-qtalMxRyyOvYl3puLMH-6aij2I3PL_WCa3OoQZak5mG_qvs8e4PN1qi0nGOTDLTys4eiFVXjNSJMUReJH6OF1fPfLnRKaYCgp3hUbidnrjL8xsTEOzQaZispqfc4suNoPpbRAg
       const response = await googleLoginAPI(reqBody);
-      console.log(response, "response");
 
       if (response?.success) {
         localStorage.setItem("token", response?.data?.token);
         dispatch(
-          login({ user: response?.data?.user, token: response?.data?.token })
+          login({ user: response?.data?.user, token: response?.data?.token }),
         );
         toast.success(response?.message);
         // window.location.reload();
@@ -49,8 +48,6 @@ export default function Authentication({
         toast.error(response?.message || "Something went wrong?");
       }
     } catch (error: unknown) {
-      console.log(error, "Error");
-
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
@@ -72,7 +69,7 @@ export default function Authentication({
                 onSuccess={async (credentialResponse) => {
                   const token: string = credentialResponse.credential || "";
                   const userInfo = jwtDecode(token);
-                  console.log("User Info:", userInfo);
+
                   await loginWithGoogle(token);
                 }}
                 onError={() => toast.error("Login Failed")}

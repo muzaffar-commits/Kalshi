@@ -49,8 +49,6 @@ const UserProfile = () => {
     },
   };
 
-  console.log(portFolioData, "portFolioData");
-
   const handleClose = () => {
     setOpen(false);
   };

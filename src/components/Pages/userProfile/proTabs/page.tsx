@@ -91,8 +91,6 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
     try {
       const response = await userPositions();
 
-      console.log(response, "response");
-
       if (response.success) {
         setPositions(response.data);
       } else {
@@ -109,7 +107,6 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
   const fetchMyAllPost = async () => {
     try {
       const response = await getMyAllPost(userId, "");
-      console.log(response, "mypost=====================");
 
       if (response.feed?.length > 0) {
         setMyPost(response?.feed);
@@ -201,7 +198,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", position: "relative" }}>
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "#495964" }}>
         <Tabs
@@ -413,6 +410,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
             allPosts={myPost}
             handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
             handleLikeUnlike={handleLikeUnlike}
+            setAllPosts={null}
           />
         ) : (
           <div className="py-12 flex flex-col items-center justify-center text-center gap-3">

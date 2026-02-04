@@ -62,9 +62,6 @@ export default function Profile({ targetId }: { targetId: string }) {
     getListOfPost();
   }, [getListOfPost]);
 
-  console.log(targetIds, "followingData====");
-
-  console.log(userDetails, "userDetails");
   const joinedDate = userDetails?.user?.createdAt
     ? new Date(userDetails.user.createdAt).toLocaleDateString("en-CA")
     : "";
@@ -106,7 +103,6 @@ export default function Profile({ targetId }: { targetId: string }) {
   const fetchMyAllPost = async () => {
     try {
       const response = await getMyAllPost(targetIds, "");
-      console.log(response, "mypost=====================");
 
       if (response.feed?.length > 0) {
         setMyPost(response?.feed);
@@ -197,8 +193,6 @@ export default function Profile({ targetId }: { targetId: string }) {
     }
   };
 
-  console.log(isUsers, "isUsers");
-
   return (
     <div>
       <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-9 lg:pt-10">
@@ -223,7 +217,7 @@ export default function Profile({ targetId }: { targetId: string }) {
                   <div
                     className="
       w-full  rounded-2xl p-5
-      bg-white/80 dark:bg-[#2B394D]/70
+      bg-white/80 dark:bg-transparent
       backdrop-blur-xl
       border border-gray-200/60 dark:border-white/10
       
@@ -350,6 +344,7 @@ export default function Profile({ targetId }: { targetId: string }) {
                   allPosts={myPost}
                   handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
                   handleLikeUnlike={handleLikeUnlike}
+                  setAllPosts={null}
                 />
               ) : (
                 <div className="py-12 flex flex-col items-center justify-center text-center gap-3">

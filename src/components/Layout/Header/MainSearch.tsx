@@ -16,6 +16,7 @@ export default function MainSearch() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const [questionData, setQuestionData] = useState<QuestionItem[]>([]);
+  const [isLoader, setIsLoader] = useState(false);
   const router = useRouter();
   // 🔹 Outside click close
   useEffect(() => {
@@ -30,23 +31,28 @@ export default function MainSearch() {
 
   const fetchUserList = async (searchValue) => {
     setOpen(true);
+    setIsLoader(true);
     try {
-      const response = await getUserSearch(searchValue);
+      const [response] = await Promise.all([
+        getUserSearch(searchValue, 5),
+        delay(1000),
+      ]);
       if (response.success) {
         setResults(response?.data);
       } else {
         setResults([]);
       }
-      console.log(response, "serachUSErs");
     } catch {
       setResults([]);
+    } finally {
+      setIsLoader(false);
     }
   };
 
   useEffect(() => {
     if (query.trim().length < 2) {
       setResults([]);
-      setOpen(false);
+      // setOpen(false);
       return;
     }
     const timer = setTimeout(() => {
@@ -100,7 +106,13 @@ export default function MainSearch() {
 
       <input
         type="text"
+        onFocus={() => setOpen(true)}
         value={query}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            setOpen(true);
+          }
+        }}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search Opinion Kings"
         className="
@@ -116,17 +128,21 @@ export default function MainSearch() {
       {/* DROPDOWN */}
       {open && (
         <div
+          onWheel={(e) => e.stopPropagation()}
           className="
-            absolute left-0 right-0 mt-2
-            bg-white dark:bg-[#1D293D]
-            border border-gray-200 dark:border-gray-700
-            rounded-xl shadow-lg
-            z-50
-            max-h-96 overflow-y-auto
+            absolute left-0 top-full mt-2
+w-full max-w-full
+bg-white dark:bg-[#1D293D]
+border border-gray-200 dark:border-gray-700
+rounded-xl shadow-lg
+z-50
+max-h-96 overflow-y-auto overscroll-contain
+scroll-smooth
+
           "
         >
           <div className="flex-1 text-start overflow-y-auto overscroll-contain px-3 pr-6 py-6 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
-            {false ? (
+            {isLoader ? (
               <>
                 <SearchResultsSkeleton />
               </>
@@ -183,7 +199,11 @@ export default function MainSearch() {
                     questionData.length > 0 ? (
                       <div className="space-y-1.5">
                         {questionData.map((item) => {
-                          const metaData = JSON.parse(item?.metadata || "{}");
+                          const metaData =
+                            typeof item?.metadata === "string"
+                              ? JSON.parse(item.metadata)
+                              : item?.metadata || {};
+
                           return (
                             <div
                               key={item.id}

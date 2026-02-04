@@ -118,8 +118,6 @@ export default function BuySell({
   const [slTouched, setSlTouched] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
 
-  console.log(rowDetailss, "rowDetailss");
-
   useEffect(() => {
     const t = setTimeout(() => {
       if (activeField === "shares") {
@@ -204,7 +202,7 @@ export default function BuySell({
           Number(optionIndex),
           debouncedValue,
         );
-        console.log(response, "getCommonQuoteSell");
+
         if (response?.success) {
           setErrorResponse({});
           setAmount(Number(response?.data?.fee || 0));
@@ -244,8 +242,6 @@ export default function BuySell({
   const totalSharesBuy = Number(share) * Number(limitShare) + LimitFee;
   const totalSharesSell = Number(share) * Number(limitShare) - LimitFee;
 
-  console.log(share, "LimitFee", totalSharesBuy, "minProceedsValue");
-
   const handleSubmit = async () => {
     const orderId = crypto.randomUUID();
     const reqBody = {
@@ -271,8 +267,6 @@ export default function BuySell({
       timeInForce: "IOC",
     };
 
-    console.log(reqBody, "reqBody");
-
     try {
       const response: ApiResponse<unknown> = await submitOrder(reqBody);
       if (response?.success) {
@@ -290,8 +284,6 @@ export default function BuySell({
   const getTotalSharesDetails =
     Number(rowDetailss?.options?.[optionIndex || 0]?.trading?.totalVolume) || 0;
 
-  console.log(rowDetailss?.options, "getTotalSharesDetails======");
-
   const maxShares = option?.userPosition?.shares ?? 0;
 
   const currentBalanceDetails = async () => {
@@ -308,8 +300,8 @@ export default function BuySell({
   };
 
   useEffect(() => {
-    currentBalanceDetails();
-  }, []);
+    token && currentBalanceDetails();
+  }, [token]);
 
   const currentShareDetails = async () => {
     try {
@@ -341,8 +333,6 @@ export default function BuySell({
       balanceAmount <= Number(totalSharesBuy)) ||
     (orderType === "sell" && sharesInput > availableShares) ||
     (orderType === "buy" && types === "market" && balanceAmount < amountInput);
-
-  console.log(sharesInput, availableShares, "totalSharesBuy");
 
   const takeProfitFee = (Number(tpslShare) * takeProfit * 2) / 100;
   const takeProfitReceive = tpslShare - takeProfitFee;
@@ -393,8 +383,6 @@ export default function BuySell({
   const STEP = 0.01;
   const MIN = 0;
   const MAX = 1;
-
-  console.log(buttonDisable, "buttonDisable");
 
   const hasShares = totalCurrentShare > 0;
 

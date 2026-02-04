@@ -48,8 +48,6 @@ export default function BookMarks() {
   // };
 
   const handleUserDetails = (id: string) => {
-    console.log(id, "hhhhhhhhhhhhhhhhhhhhhh");
-
     // router.push(`/ideas/${id}`);
     // setTargetId(id);
     // setCurrentTabs("Profile");

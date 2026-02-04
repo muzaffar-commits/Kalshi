@@ -113,8 +113,6 @@ const Header = () => {
     setIsOpen(true);
   };
 
-  console.log(user, "user==========");
-
   const categoryAllList = useCallback(async () => {
     setIsCategory(true);
     try {
@@ -141,6 +139,8 @@ const Header = () => {
     categoryAllList();
   }, [categoryAllList]);
 
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const getSubCategory = useCallback(async () => {
     try {
       const response = await fetchSubCategory(categoryId);
@@ -179,11 +179,9 @@ const Header = () => {
   }, [dispatch, categoryId]);
 
   useEffect(() => {
-    getSubCategory();
+    categoryId && getSubCategory();
   }, [getSubCategory, categoryId]);
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   // const getUserBalance = async () => {
   //   try {
   //     const response: UserBalanceResponse = await userBalance();

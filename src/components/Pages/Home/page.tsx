@@ -32,6 +32,7 @@ import {
 import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
 import moment from "moment";
+import GlobalLoader from "@/components/common/Loader";
 
 interface selectedSubCategory {
   category: {
@@ -133,8 +134,6 @@ const Home = () => {
     .filter(([_, value]) => value === true)
     .map(([key]) => CATEGORY_MAP[key]);
 
-  console.log(eventCategory, "eventCategory");
-
   const questionAllList = useCallback(async () => {
     setLoader(true);
     try {
@@ -235,7 +234,6 @@ const Home = () => {
   const getWatchList = async () => {
     try {
       const response = await fetchWatchList();
-      console.log(response?.data?.questions, "kkkkkkkkkkk");
 
       if (response.success) {
         setQuestionBookMark(response?.data?.questions || []);
@@ -253,12 +251,6 @@ const Home = () => {
   }, [isWatchList]);
 
   const questionListFilter = isWatchList ? questionBookMark : questionData;
-
-  console.log(
-    eventCategory?.length > 0,
-    isFilterQuestion,
-    "selectedSubCategory111",
-  );
 
   return (
     <>
@@ -300,7 +292,7 @@ const Home = () => {
                 // row?.metadata == {}
                 //   ? row?.metadata
                 //   : JSON.parse(row?.metadata);
-                console.log(metaData, "metadata==============");
+
                 return (
                   <div
                     key={index}
@@ -362,16 +354,14 @@ const Home = () => {
                               ? ((secondPrice - firstPrice) / firstPrice) * 100
                               : 0;
 
-                          console.log(diffPercentage, "diffPercentage");
-
                           const isUp = diffPercentage >= 0;
 
                           return (
                             <div
                               key={idx}
-                              className="w-100% rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-3 my-2 px-4 dark:text-[var(--color-text)] text-[var(--color-text)] shadow-lg"
+                              className="w-100% rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4 dark:text-[var(--color-text)] text-[var(--color-text)] shadow-lg"
                             >
-                              <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-semibold tracking-wide">
                                   {item?.name || "--"}
                                 </span>
@@ -380,7 +370,7 @@ const Home = () => {
                                 </span>
                               </div>
 
-                              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mb-3">
+                              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mb-2">
                                 {percentage < 50 ? (
                                   <div
                                     className="h-full bg-gradient-to-r from-teal-400 to-cyan-400"
@@ -501,12 +491,12 @@ const Home = () => {
                       </>
                     ) : (
                       <>
-                        <div className="text-xs mt-4  h-[220px] hideScrollbar overflow-y-auto space-y-2">
+                        <div className="text-xs mt-4  h-[165px] hideScrollbar overflow-y-auto space-y-2">
                           {row?.options?.map(
                             (item: OptionItem, idx: number) => (
                               <div
                                 key={idx}
-                                className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)] dark:bg-[#272f42]  p-3 rounded-lg bg-[#f5f5f5]"
+                                className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)] dark:bg-[#272f42]  px-3 py-2 rounded-lg bg-[#f5f5f5]"
                               >
                                 <span className="block md:max-w-28 max-w-24 truncate">
                                   {item?.name || "--"}

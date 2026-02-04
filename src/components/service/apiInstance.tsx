@@ -1,5 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/slice/auth";
 
 // export const basedURLs = "http://192.168.29.218:3000";
 export const basedURLs = "https://api.opinionkings.com";
@@ -18,8 +20,6 @@ if (typeof window !== "undefined") {
   apiInstance.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("token") || "";
-      console.log(token, "token====");
-
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -32,10 +32,13 @@ if (typeof window !== "undefined") {
     (response) => response,
     (error) => {
       const status = error?.response?.status;
-      if (status === 401) {
+      const dispatch = useDispatch();
+      const isToken = localStorage.getItem("token");
+      if (status === 401 && isToken) {
         toast.success("Token expired 🚫 Logging out...");
+        dispatch(logout());
         localStorage.clear();
-        // window.location.href = "/";
+        window.location.href = "/";
       }
 
       return Promise.reject(error);

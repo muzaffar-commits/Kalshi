@@ -1,10 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { ChevronDown } from "lucide-react";
-import {
-  PostFeeBack,
-  UploadedImage,
-  userIdInterFace,
-} from "@/utils/typesInterface";
+import { ChevronDown, Gift } from "lucide-react";
+import { PostFeeBack, userIdInterFace } from "@/utils/typesInterface";
 import {
   getFeed,
   getMyAllPost,
@@ -14,14 +10,15 @@ import {
   userPost,
 } from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
-import GifPicker from "gif-picker-react";
 import InputTextArea from "../../ideas/component/IdeaTabs/InputTextArea";
 import { CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
-import { delay } from "@/utils/Content";
+import { countWords, delay, MAX_WORDS } from "@/utils/Content";
 import { FaRegCommentAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import PostList from "./postList";
+import GiphyModal from "./postList/GiphyModal";
+import { GrCloudUpload } from "react-icons/gr";
 
 export default function IdeasActivityTabs({ marketId }) {
   const [activeTab, setActiveTab] = useState("ideas");
@@ -30,12 +27,11 @@ export default function IdeasActivityTabs({ marketId }) {
   const [message, setMessage] = React.useState<string | null>("");
   const [isPostLoader, setIsPostLoader] = React.useState<boolean>(false);
   const [allPosts, setAllPosts] = useState<PostFeeBack[]>([]);
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
-  const [uploadedImage, setUploadedImage] = React.useState<
-    UploadedImage[] | null
-  >(null);
+  const [isImageUploadLoader, setIsImageUploadLoader] = useState(false);
+  const [gif, setGif] = useState(null);
   const [myPost, setMyPost] = useState<PostFeeBack[]>([]);
   const dropdownRef = useRef(null);
+
   const router = useRouter();
   const userId = useSelector((state: userIdInterFace) => state.user.user?.id);
 
@@ -70,37 +66,35 @@ export default function IdeasActivityTabs({ marketId }) {
   }, [getListOfPost]);
 
   const chooseImages = async (file: File) => {
+    setIsImageUploadLoader(true);
     try {
       const formData = new FormData();
       formData.append("images", file);
-      const response = await imageUpload(formData);
+      const [response] = await Promise.all([
+        imageUpload(formData),
+        delay(1000),
+      ]);
       if (response?.success) {
-        setUploadedImage(response?.data);
+        setGif(response?.data?.[0]?.url);
       } else {
-        setUploadedImage(null);
         toast.error(response?.message);
       }
     } catch (error: unknown) {
-      setUploadedImage(null);
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsImageUploadLoader(false);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setSelectedImage(file);
     chooseImages(file);
   };
-  const removeImage = () => {
-    setUploadedImage(null);
-    setSelectedImage(null);
-  };
-
   const postUserMessage = async () => {
     setIsPostLoader(true);
     try {
@@ -108,21 +102,21 @@ export default function IdeasActivityTabs({ marketId }) {
         questionId: Number(marketId),
         metadata: {
           content: message,
-          images: uploadedImage == null ? [] : [uploadedImage?.[0]?.url],
+          images: gif == null ? [] : [gif],
         },
       };
       const [response] = await Promise.all([userPost(payload), delay(1000)]);
 
       getListOfPost();
       if (response?.reponse?.status) {
-        removeImage();
         setMessage("");
-        // fetchPostList();
+        setGif(null);
         setIsPostLoader(false);
       } else {
         toast.error(response?.reponse?.status);
-        removeImage();
+
         setMessage("");
+        setGif(null);
         setIsPostLoader(false);
       }
     } catch (error: unknown) {
@@ -264,9 +258,6 @@ export default function IdeasActivityTabs({ marketId }) {
   useEffect(() => {
     activeTab == "activity" && fetchMyAllPost();
   }, [activeTab]);
-
-  console.log(myPost, "myPost");
-
   const handleRedirectAllPost = () => {
     router.push("/ideas");
   };
@@ -366,7 +357,7 @@ export default function IdeasActivityTabs({ marketId }) {
           </div>
         </div>
       </div>
-      {/* <GifPicker tenorApiKey={"AIzaSyCTW7MKQHlK4qVplVnymchPmhhpQ51K0TI"} /> */}
+
       <div className="mt-4">
         {activeTab === "ideas" && (
           <>
@@ -375,26 +366,71 @@ export default function IdeasActivityTabs({ marketId }) {
                 <InputTextArea
                   message={message || ""}
                   setMessage={setMessage}
+                  image={gif || ""}
+                  onRemoveImage={() => setGif("")}
                 />
               </div>
 
               <div className=" flex flex-row pl-7 justify-between items-center">
                 <div className="flex justify-between w-full items-center  gap-4 mr-7">
                   <div className="flex flex-row items-center gap-4">
-                    {/* <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="py-2 px-4 cursor-pointer dark:text-gray-300 text-gray-800"
+                    <div
+                      className={`relative inline-block ${gif ? "" : "group"} `}
                     >
-                      <IoImageOutline size={25} className="!text-sky-600" />
-                    </button> */}
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="text-sm font-medium text-gray-500 hover:text-[#e4d4fc] cursor-pointer"
-                    >
-                      GIF
-                    </button>
+                      <button
+                        disabled={gif || isImageUploadLoader ? true : false}
+                        type="button"
+                        className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700  " : "text-gray-500 cursor-pointer  hover:text-[#d2b8fa]"}  
+                    `}
+                      >
+                        {isImageUploadLoader && (
+                          <div className="absolute left-3 flex items-center justify-center">
+                            <CircularProgress
+                              className="!text-gray-400 dark:!text-white/50"
+                              size={25}
+                            />
+                          </div>
+                        )}
+                        UPLOAD
+                      </button>
+                      <div
+                        className="
+                              absolute -left-8 mt-2 w-32
+                              rounded-xl bg-white dark:bg-[#0F172A]
+                              shadow-xl border border-gray-200 dark:border-gray-700
+                              opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                              translate-y-2 group-hover:translate-y-0
+                              transition-all duration-200 z-50
+                            "
+                      >
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-full border-b border-gray-200 dark:border-gray-600 flex cursor-pointer items-center gap-2 text-left px-4 py-2 text-sm
+                     text-gray-700 dark:text-gray-200
+                     hover:bg-gray-100 dark:hover:bg-gray-800
+                     rounded-t-xl"
+                        >
+                          <GrCloudUpload className="text-sky-500" /> Image
+                        </button>
+
+                        <button
+                          onClick={() => setOpen(true)}
+                          className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm
+                     text-gray-700 dark:text-gray-200
+                     hover:bg-gray-100 dark:hover:bg-gray-800
+                     rounded-b-xl"
+                        >
+                          <Gift size={18} className="!text-[#8160EE]" /> GIF
+                        </button>
+                      </div>
+
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                      />
+                    </div>
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -402,34 +438,20 @@ export default function IdeasActivityTabs({ marketId }) {
                       accept="image/gif,image/png,image/jpeg,image/webp"
                       onChange={handleFileChange}
                     />
-                    {selectedImage?.name ? (
-                      <div className="text-xs gap-4 dark:text-gray-200 text-gray-400 items-center flex flex-row">
-                        {selectedImage?.name || ""}
-                        {String(selectedImage?.name)?.length > 0 && (
-                          <div
-                            onClick={removeImage}
-                            className="text-black text-sm cursor-pointer bg-white px-1.5 rounded"
-                          >
-                            x
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div>{/* <CircularWithValueLabel /> */}</div>
-                    )}
                   </div>
-                  <button
-                    disabled={
-                      !selectedImage?.name && String(message).trim().length <= 3
-                    }
-                    onClick={postUserMessage}
-                    className={`
+                  <div className="flex flex-row items-center gap-8">
+                    <div className="right-3 text-xs text-gray-600 dark:text-gray-700">
+                      {countWords(message)} / {MAX_WORDS} words
+                    </div>
+                    <button
+                      disabled={gif && String(message).trim().length <= 3}
+                      onClick={postUserMessage}
+                      className={`
                                     py-1 px-4 w-16 flex items-center justify-center rounded-md
                                     text-lg font-semibold
                                     transition-all duration-200
                                     ${
-                                      selectedImage?.name ||
-                                      String(message).trim().length > 3
+                                      gif || String(message).trim().length > 3
                                         ? `
                                           bg-emerald-500
                                           text-black
@@ -447,13 +469,14 @@ export default function IdeasActivityTabs({ marketId }) {
                                         `
                                     }
                                   `}
-                  >
-                    {isPostLoader ? (
-                      <CircularProgress size={30} className="!text-white " />
-                    ) : (
-                      "Post"
-                    )}
-                  </button>
+                    >
+                      {isPostLoader ? (
+                        <CircularProgress size={30} className="!text-white " />
+                      ) : (
+                        "Post"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -466,6 +489,7 @@ export default function IdeasActivityTabs({ marketId }) {
                   allPosts={allPosts}
                   handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
                   handleLikeUnlike={handleLikeUnlike}
+                  setAllPosts={setAllPosts}
                 />
               ) : (
                 <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
@@ -495,6 +519,7 @@ export default function IdeasActivityTabs({ marketId }) {
                 allPosts={myPost}
                 handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
                 handleLikeUnlike={handleLikeUnlike}
+                setAllPosts={setAllPosts}
               />
             ) : (
               <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
@@ -514,6 +539,11 @@ export default function IdeasActivityTabs({ marketId }) {
           </div>
         )}
       </div>
+      <GiphyModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSelect={setGif}
+      />
     </div>
   );
 }

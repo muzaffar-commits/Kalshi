@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import socket from "../socket";
 import { NotificationSkeleton } from "@/utils/customSkeleton";
+import { useRouter } from "next/navigation";
 
 export default function NotificationBell({ userId }) {
   const [open, setOpen] = useState(false);
@@ -64,6 +65,18 @@ export default function NotificationBell({ userId }) {
     getUnReadCountNotification();
   }, []);
 
+  const router = useRouter();
+  const redirectToPage = (row: any) => {
+    if (row?.type === "LIKE") {
+      router.push(`/ideas/${row?.postId}`);
+    } else if (row?.type === "FOLLOW") {
+      router.push(`/ideas/profile/${row?.actor?.id}`);
+    } else if (row?.type === "COMMENT_REPLY") {
+      router.push(`/ideas/${row?.postId}`);
+    } else if (row?.type === "COMMENT") {
+      router.push(`/ideas/${row?.postId}`);
+    }
+  };
   const markAsRead = async (row: any) => {
     try {
       const payload = {
@@ -76,6 +89,7 @@ export default function NotificationBell({ userId }) {
       );
       setCountNotification((prev) => prev - 1);
       const response = await postReadNotification(payload);
+
       if (response.success) {
         toast.success("Notification Read Successfully");
       }
@@ -92,7 +106,6 @@ export default function NotificationBell({ userId }) {
       if (response.success) {
         toast.success("All notifications marked as read");
       }
-      console.log(response, "read message");
     } catch {
       toast.error("Something went wrongs");
     }
@@ -159,13 +172,13 @@ export default function NotificationBell({ userId }) {
         </div>
 
         {/* List */}
-        <div className="max-h-72 overflow-y-auto">
+        <div className="max-h-72 overflow-y-auto hideScrollbar">
           {isLoader ? (
             Array.from({ length: 4 }).map((_, i) => (
               <NotificationSkeleton key={i} />
             ))
-          ) : notificationData?.filter((item) => item?.isRead === false)
-              ?.length === 0 ? (
+          ) : // ?.filter((item) => item?.isRead === false)
+          notificationData?.length === 0 ? (
             <div className="px-4 py-3 flex flex-col items-center justify-center text-xs border-b text-gray-500 dark:text-gray-300 last:border-b-0 dark:border-gray-700  cursor-pointer">
               <IoMdNotificationsOutline
                 size={30}
@@ -175,36 +188,85 @@ export default function NotificationBell({ userId }) {
             </div>
           ) : (
             notificationData
-              .filter((item) => item?.isRead === false)
+              // ?.filter((item) => item?.isRead === false)
               .map((row) => (
                 <div
                   key={row?.id}
-                  onClick={() => markAsRead(row)}
-                  className="px-4 py-3 border-b last:border-b-0 border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                  className="group relative px-4 py-3 border-b last:border-b-0 
+             border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)]
+             hover:bg-gray-50 dark:hover:bg-gray-800 "
                 >
                   <div className="flex items-start gap-3">
-                    {/* Indicator */}
+                    {/* 🔵 Indicator Dot */}
                     <span
                       className={`mt-1 h-2 w-2 rounded-full ${
-                        row?.type === "sell"
-                          ? "bg-red-500"
-                          : row?.type === "buy"
-                            ? "bg-green-500"
-                            : "bg-blue-500"
+                        row?.type === "LIKE"
+                          ? "bg-rose-500"
+                          : row?.type === "FOLLOW"
+                            ? "bg-sky-500"
+                            : row?.type === "COMMENT"
+                              ? "bg-emerald-500"
+                              : row?.type === "COMMENT_REPLY"
+                                ? "bg-violet-500"
+                                : "bg-slate-400"
                       }`}
                     />
 
+                    {/* 📝 Content */}
                     <div className="flex-1">
-                      <div className="text-sm font-medium dark:text-white text-gray-800">
+                      <div
+                        onClick={() => redirectToPage(row)}
+                        className="text-sm cursor-pointer font-medium text-gray-800 dark:text-white"
+                      >
                         {row?.type}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                         {row?.message}
                       </div>
+
                       <div className="text-[11px] text-gray-400 mt-1">
                         {timeAgoCompact(row?.createdAt)}
                       </div>
                     </div>
+
+                    {row?.isRead ? (
+                      <button
+                        className="
+                      flex items-center justify-center
+                      h-7 w-7 rounded-full
+                      bg-emerald-100 dark:bg-emerald-900/30
+                      text-emerald-600 dark:text-emerald-400
+                     
+                      self-center
+                    "
+                        aria-label="Mark as read"
+                      >
+                        ✓
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          markAsRead(row);
+                        }}
+                        className="
+                      opacity-0 group-hover:opacity-100
+                      transition-all duration-200
+                      cursor-pointer
+                      flex items-center justify-center
+                      h-7 w-7 rounded-full
+                      bg-emerald-100 dark:bg-emerald-900/30
+                      text-emerald-600 dark:text-emerald-400
+                      hover:bg-emerald-300 dark:hover:bg-emerald-900/50
+                      translate-x-2 group-hover:translate-x-0
+                      self-center
+                    "
+                        aria-label="Mark as read"
+                      >
+                        ✓
+                      </button>
+                    )}
                   </div>
                 </div>
               ))

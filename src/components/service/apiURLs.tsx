@@ -3,6 +3,7 @@
 export const API_URLs = {
   register: "/register",
   login: "/login",
+  logout: "/logout",
   googleLogin: "/google-login",
   verifyEmail: "/verify-email",
   commonCategoryAll: "/common/get-list-category",

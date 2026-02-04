@@ -45,7 +45,6 @@ export default function Register({
   const [show, setShow] = useState(false);
   const [isPhone, setIsPhone] = useState(false);
   const dispatch = useDispatch();
-  console.log(isLogin, "isLogin");
 
   const formik = useFormik({
     initialValues: {
@@ -62,7 +61,6 @@ export default function Register({
       if (isLogin) {
         try {
           const response = await loginAPI(reqBody);
-          console.log(response, "response========");
 
           if (response?.success) {
             localStorage.setItem("token", response?.data?.token);
@@ -92,7 +90,6 @@ export default function Register({
       } else {
         try {
           const response = await registerAPI(reqBody);
-          console.log(response, "response");
 
           if (response?.success) {
             toast.success(response?.message);
@@ -102,8 +99,6 @@ export default function Register({
             toast.error(response?.errors?.[0]?.message || response?.message);
           }
         } catch (error: unknown) {
-          console.log(error, "error===");
-
           if (error instanceof Error) {
             toast.error(error.message);
           } else {

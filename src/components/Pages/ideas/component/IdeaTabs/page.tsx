@@ -25,9 +25,11 @@ import IdeaTabsTwo from "../IdeaTabsTwo/page";
 import { IoImageOutline } from "react-icons/io5";
 import { CreatePostSkeleton } from "@/utils/customSkeleton";
 import socket from "@/components/socket";
-import { timeAgoCompact, truncateValue } from "@/utils/Content";
-import { Activity } from "lucide-react";
+import { delay, timeAgoCompact, truncateValue } from "@/utils/Content";
+import { Activity, Gift } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { GrCloudUpload } from "react-icons/gr";
+import GiphyModal from "@/components/Pages/detail/component/postList/GiphyModal";
 
 type HandleComment = (post: PostFeeBack) => void;
 
@@ -73,14 +75,12 @@ export default function IdeaTabs({
 }: IdeaTabsProps) {
   const [value, setValue] = React.useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
-  const [uploadedImage, setUploadedImage] = React.useState<
-    UploadedImage[] | null
-  >(null);
   const [message, setMessage] = React.useState<string | null>("");
   const [isPostLoader, setIsPostLoader] = React.useState<boolean>(false);
   const [liveTrades, setLiveTrades] = useState<any>([]);
+  const [isImageUploadLoader, setIsImageUploadLoader] = useState(false);
+  const [gif, setGif] = useState(null);
+  const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -88,35 +88,34 @@ export default function IdeaTabs({
   };
 
   const chooseImages = async (file: File) => {
+    setIsImageUploadLoader(true);
     try {
       const formData = new FormData();
       formData.append("images", file);
-      const response = await imageUpload(formData);
+      const [response] = await Promise.all([
+        imageUpload(formData),
+        delay(1000),
+      ]);
       if (response?.success) {
-        setUploadedImage(response?.data);
+        setGif(response?.data?.[0]?.url);
       } else {
-        setUploadedImage(null);
         toast.error(response?.message);
       }
     } catch (error: unknown) {
-      setUploadedImage(null);
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsImageUploadLoader(false);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setSelectedImage(file);
     chooseImages(file);
-  };
-  const removeImage = () => {
-    setUploadedImage(null);
-    setSelectedImage(null);
   };
 
   const postUserMessage = async () => {
@@ -124,20 +123,20 @@ export default function IdeaTabs({
     try {
       const metadata = {
         content: message,
-        images: uploadedImage == null ? [] : [uploadedImage?.[0]?.url],
+        images: gif == null ? [] : [gif],
       };
       const response = await userPost({ metadata });
 
       if (response?.reponse?.status) {
-        removeImage();
         setMessage("");
         fetchPostList();
         setIsPostLoader(false);
+        setGif(null);
       } else {
         toast.error(response?.reponse?.status);
-        removeImage();
         setMessage("");
         setIsPostLoader(false);
+        setGif(null);
       }
     } catch (error: unknown) {
       setIsPostLoader(false);
@@ -150,8 +149,6 @@ export default function IdeaTabs({
   };
 
   useEffect(() => {
-    console.log(socket.connected, "isConnnnnnnnn");
-
     socket.emit("subscribeLiveTrade");
     const handleTradeLive = (payload: any) => {
       setLiveTrades((prev: any[]) => [payload, ...prev]);
@@ -217,34 +214,72 @@ export default function IdeaTabs({
                 <InputTextArea
                   message={message || ""}
                   setMessage={setMessage}
+                  image={gif || ""}
+                  onRemoveImage={() => setGif("")}
                 />
               </div>
 
               <div className=" flex flex-row pl-7 justify-between items-center">
-                {selectedImage?.name ? (
-                  <div className="text-xs gap-4 dark:text-gray-200 text-gray-700 items-center flex flex-row">
-                    {selectedImage?.name || ""}
-                    {String(selectedImage?.name)?.length > 0 && (
-                      <div
-                        onClick={removeImage}
-                        className="text-black text-sm cursor-pointer bg-white px-1.5 rounded"
-                      >
-                        x
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div>{/* <CircularWithValueLabel /> */}</div>
-                )}
+                <div></div>
 
-                <div className="flex justify-end gap-4 mr-7">
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="py-2 px-4 cursor-pointer dark:text-gray-300 text-gray-800"
+                <div className="flex items-center justify-end gap-8 mr-7">
+                  <div
+                    className={`relative inline-block ${gif ? "" : "group"} `}
                   >
-                    <IoImageOutline size={25} className="!text-sky-600" />
-                  </button>
+                    <button
+                      disabled={gif || isImageUploadLoader ? true : false}
+                      type="button"
+                      className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700  " : "text-gray-500 cursor-pointer  hover:text-[#d2b8fa]"}  
+                    `}
+                    >
+                      {isImageUploadLoader && (
+                        <div className="absolute left-3 flex items-center justify-center">
+                          <CircularProgress
+                            className="!text-gray-400 dark:!text-white/50"
+                            size={25}
+                          />
+                        </div>
+                      )}
+                      UPLOAD
+                    </button>
+                    <div
+                      className="
+                              absolute -left-8 mt-2 w-32
+                              rounded-xl bg-white dark:bg-[#0F172A]
+                              shadow-xl border border-gray-200 dark:border-gray-700
+                              opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                              translate-y-2 group-hover:translate-y-0
+                              transition-all duration-200 z-50
+                            "
+                    >
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full border-b border-gray-200 dark:border-gray-600 flex cursor-pointer items-center gap-2 text-left px-4 py-2 text-sm
+                     text-gray-700 dark:text-gray-200
+                     hover:bg-gray-100 dark:hover:bg-gray-800
+                     rounded-t-xl"
+                      >
+                        <GrCloudUpload className="text-sky-500" /> Image
+                      </button>
+
+                      <button
+                        onClick={() => setOpen(true)}
+                        className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm
+                     text-gray-700 dark:text-gray-200
+                     hover:bg-gray-100 dark:hover:bg-gray-800
+                     rounded-b-xl"
+                      >
+                        <Gift size={18} className="!text-[#8160EE]" /> GIF
+                      </button>
+                    </div>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                    />
+                  </div>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -253,17 +288,14 @@ export default function IdeaTabs({
                     onChange={handleFileChange}
                   />
                   <button
-                    disabled={
-                      !selectedImage?.name && String(message).trim().length <= 3
-                    }
+                    disabled={gif && String(message).trim().length <= 3}
                     onClick={postUserMessage}
                     className={`
                         py-1 px-4 w-16 flex items-center justify-center rounded-md
                         text-sm font-semibold
                         transition-all duration-200
                         ${
-                          selectedImage?.name ||
-                          String(message).trim().length > 3
+                          gif || String(message).trim().length > 3
                             ? `
                               bg-emerald-500
                               text-black
@@ -571,6 +603,11 @@ export default function IdeaTabs({
           </div>
         </div>
       </CustomTabPanel>
+      <GiphyModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSelect={setGif}
+      />
     </Box>
   );
 }

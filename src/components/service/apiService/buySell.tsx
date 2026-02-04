@@ -148,8 +148,6 @@ export const getCurrentShares = async (
   questionId: number,
   optionId: number,
 ) => {
-  console.log(questionId, optionId, "optionId");
-
   try {
     const response = await apiInstance.get(
       `${API_URLs.currentPositionShares}/?questionId=${questionId}&optionId=${optionId}`,

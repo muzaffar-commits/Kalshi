@@ -46,7 +46,6 @@ export default function FollowingFollowerList({
   const fetchFollowers = async () => {
     try {
       const response = await getFollowers(userId);
-      console.log(response, "response===");
 
       if (response?.followers?.detailList?.length > 0) {
         setFollowers(response?.followers?.detailList || []);

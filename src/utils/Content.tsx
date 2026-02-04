@@ -9,8 +9,6 @@ export const prepareSeries = (data: RawSeries[] | undefined): ChartSeries[] => {
     new Set(data.flatMap((item) => item.data.map((d) => d.timestamp))),
   ).sort((a, b) => a - b);
 
-  console.log(data, "allTimestamps");
-
   return data.map((item) => {
     const priceMap = new Map<number, number>();
 
@@ -138,3 +136,8 @@ export const truncateValue = (num: number, decimals: number = 2) => {
   const truncated = Math.floor(num * factor) / factor;
   return truncated.toFixed(decimals);
 };
+
+export const MAX_WORDS = 500;
+export function countWords(text: string) {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}

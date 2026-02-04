@@ -187,7 +187,6 @@ const Details = ({ marketId }) => {
     });
 
     socket.on("order:update", (payload: SocketOrderUpdatePayload) => {
-      console.log(payload, "order:update====>");
       if (payload?.type == "LIMIT") {
         return;
       } else {
@@ -265,15 +264,10 @@ const Details = ({ marketId }) => {
       }
     });
 
-    socket.on("connect_error", (err) => {
-      console.error("Socket connection error:", err.message);
-    });
+    socket.on("connect_error", (err) => {});
 
-    socket.on("disconnect", (reason) => {
-      console.log("Socket disconnected:", reason);
-    });
+    socket.on("disconnect", (reason) => {});
     return () => {
-      console.log("subscribing from market:", questionId);
       // socket.emit("unsubscribe:market", questionId);
       // socket.off("connect");
       // socket.off("market:prices");
@@ -327,7 +321,6 @@ const Details = ({ marketId }) => {
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);
         setOrderPage(response?.data?.nextOffset || 0);
-        console.log(response?.data?.nextOffset, "setOrderData====>");
       } else {
         // setOrderPage(null);
         setOrderData([]);
@@ -339,7 +332,6 @@ const Details = ({ marketId }) => {
   useEffect(() => {
     ordersList();
   }, [orderCurrentPage]);
-  console.log(orderPage, "orderPAgesss");
 
   const sellPrices =
     orderFlow?.sells?.map((i: SellOrder) => Number(i?.saleAtPrice) || 0) || [];
@@ -390,13 +382,10 @@ const Details = ({ marketId }) => {
   };
 
   const handleDelete = (row: number) => {
-    console.log(row, "row====");
-
     setSelected(row);
     setDeleteOpen(true);
 
     const ordersFilter = orderData?.find((item) => item.id == row);
-    console.log(ordersFilter, "ordersFilter");
 
     setSelectedOrderDetails(
       ordersFilter
@@ -411,7 +400,6 @@ const Details = ({ marketId }) => {
           }
         : null,
     );
-    console.log(ordersFilter, "ordersFilter");
   };
   const closeDeleteModal = () => {
     setDeleteOpen(false);
@@ -447,8 +435,6 @@ const Details = ({ marketId }) => {
   //   ? JSON.parse(data?.question?.metadata)
   //   : "";
   const metaData = { imageUrl: "" };
-
-  console.log(metaData, "metaData");
 
   return (
     <>
@@ -539,7 +525,7 @@ const Details = ({ marketId }) => {
                     <h1 className="md:text-xl font-semibold tracking-wide text-black/80 dark:text-white md:mb-5 mb-4">
                       People are also buying
                     </h1>
-                    <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
+                    {/* <div className="flex justify-start gap-1 items-center p-2 hover:bg-gray-200/40 cursor-pointer dark:hover:bg-gray-600/10">
                       <div>
                         <Image
                           src="/img/blockimg1.jpg"
@@ -599,7 +585,7 @@ const Details = ({ marketId }) => {
                         Show More{" "}
                         <ArrowRight className="inline-block w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
                       </button>
-                    </div>
+                    </div> */}
 
                     <div className="mt-5 md:mt-10">
                       <IdeasActivityTabs marketId={marketId} />

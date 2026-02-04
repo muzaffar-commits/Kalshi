@@ -49,8 +49,6 @@ export default function CommentPage() {
   const { slug } = useParams();
   const router = useRouter();
 
-  console.log(slug, "params");
-
   useEffect(() => {
     setIsLoader(true);
 
@@ -74,7 +72,6 @@ export default function CommentPage() {
       const detailsPost = response?.feed?.[0];
       setIsLike(detailsPost?.isLiked);
       setIsBookmarked(detailsPost?.isBookmarked);
-      console.log(detailsPost, "detailsPost");
 
       setPostDetails(detailsPost || null);
     } catch {
@@ -149,8 +146,6 @@ export default function CommentPage() {
         toast.error("Something went wrong");
       }
     }
-
-    console.log("SEND MESSAGE:", replyComments);
   };
 
   //   replyComments
@@ -181,12 +176,9 @@ export default function CommentPage() {
   const handleSubComment = (row: any, replies: any) => {
     setSubCommentData(row);
     setSubRepliesData(replies);
-    console.log(row, replies, "jjjjjjjjjjj");
   };
 
   const handleSubmitForSubComment = async (row: any) => {
-    console.log(row, "Vijay=====>");
-
     try {
       const payload = {
         postId: slug,
@@ -215,8 +207,6 @@ export default function CommentPage() {
       }
     }
   };
-
-  console.log(subRepliesData, "subRepliesData");
 
   const handleLikeUnlike = async (id: number, isLike: number) => {
     try {

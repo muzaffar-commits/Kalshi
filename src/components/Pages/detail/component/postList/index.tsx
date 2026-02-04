@@ -14,12 +14,14 @@ import { FaBookmark } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { ReplyInput, ReplySubCommentInput } from "./ReplyInput";
+import { useSelector } from "react-redux";
 
 interface PostListProps {
   isIdea?: boolean;
   allPosts?: any[];
   handleLikeUnlike?: any;
   handleBookMarkOrUnBookMark?: any;
+  setAllPosts: any;
 }
 
 interface CommentState {
@@ -34,44 +36,69 @@ export default function PostList({
   allPosts = [],
   handleLikeUnlike = () => {},
   handleBookMarkOrUnBookMark = () => {},
+  setAllPosts = () => {},
 }: PostListProps) {
   const [commentMap, setCommentMap] = useState<Record<number, CommentState>>(
     {},
   );
-  const [replyText, setReplyText] = useState("");
   const [mixText, setMixText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const userDetails = useSelector((state: any) => state?.user?.user);
+  const router = useRouter();
+
   const toggleComments = async (postId: number) => {
     setCommentMap((prev: any) => {
-      const isOpen = prev[postId]?.open ?? false;
+      const isOpen = prev?.[postId]?.open ?? false;
 
-      return {
-        ...prev,
-        [postId]: {
-          open: !isOpen,
-          loading: !isOpen && !prev[postId]?.comments?.length,
-          comments: prev[postId]?.comments || [],
-        },
-      };
+      const updated: any = {};
+
+      Object.keys(prev).forEach((key) => {
+        const id = Number(key);
+
+        updated[id] = {
+          ...prev[id],
+
+          isReply: false,
+          open: id === postId ? !isOpen : prev[id]?.open,
+          loading:
+            id === postId ? !isOpen && !prev[id]?.comments?.length : false,
+          comments: prev[id]?.comments || [],
+        };
+      });
+
+      // if postId not exists yet
+      if (!updated[postId]) {
+        updated[postId] = {
+          open: true,
+          loading: true,
+          comments: [],
+          isReply: false,
+        };
+      }
+
+      return updated;
     });
 
-    // 🔴 If already fetched OR closing → don't call API
-    if (commentMap[postId]?.comments?.length) return;
+    // if (commentMap[postId]?.comments?.length) return;
 
     try {
       const [response] = await Promise.all([
-        getCommentsList(postId), // ✅ postId passed here
+        getCommentsList(postId),
         delay(1000),
       ]);
 
-      setCommentMap((prev: any) => ({
-        ...prev,
-        [postId]: {
-          open: true,
-          loading: false,
-          comments: response?.success ? response.data : [],
-        },
-      }));
+      setCommentMap((prev: any) => {
+        const isOpen = prev?.[postId]?.open ?? false;
+
+        return {
+          ...prev,
+          [postId]: {
+            open: isOpen,
+            loading: false,
+            comments: response?.success ? response.data : [],
+          },
+        };
+      });
     } catch {
       setCommentMap((prev: any) => ({
         ...prev,
@@ -200,30 +227,40 @@ export default function PostList({
   };
 
   const commentMainPost = (postId: number) => {
-    setCommentMap((prev) => {
+    setCommentMap((prev: any) => {
       const updated: any = {};
       const isCurrentlyOpen = prev[postId]?.isReply === true;
+
       Object.keys(prev).forEach((key) => {
         const id = Number(key);
+        const post = prev[id];
+
         updated[id] = {
-          ...(prev[id] || {}),
+          ...post,
           isReply: id === postId ? !isCurrentlyOpen : false,
+          comments: post?.comments?.map((comment: any) => ({
+            ...comment,
+            isReply: false,
+            replies: comment.replies?.map((r: any) => ({
+              ...r,
+              isReply: false,
+            })),
+          })),
         };
       });
       if (!updated[postId]) {
         updated[postId] = {
           isReply: true,
+          comments: [],
         };
       }
+
       return updated;
     });
   };
 
   const handleSend = async (row) => {
     if (!mixText.trim()) return;
-
-    console.log(mixText, "mixText====>");
-
     try {
       const payload = {
         postId: row?.id,
@@ -232,7 +269,40 @@ export default function PostList({
       const response = await replyComments(payload);
       if (response.success) {
         toast.success("Message send successfully!");
-        // commentLists();
+        setAllPosts((prev: any[]) =>
+          prev.map((post) =>
+            post.id === row.id
+              ? {
+                  ...post,
+                  commentCount: (post.commentCount || 0) + 1,
+                }
+              : post,
+          ),
+        );
+        setCommentMap((prev: any) => {
+          if (!prev?.[row.id]) {
+            return prev;
+          }
+
+          return {
+            ...prev,
+            [row.id]: {
+              ...prev[row.id],
+              comments: [
+                ...(prev[row.id]?.comments || []),
+                {
+                  ...response?.data,
+                  User: {
+                    id: userDetails?.id,
+                    image_url: userDetails?.imageUrl || "",
+                    username: userDetails?.username || "",
+                  },
+                },
+              ],
+            },
+          };
+        });
+
         setMixText("");
         // setOpen(false);
       } else {
@@ -251,13 +321,11 @@ export default function PostList({
 
   const insertEmoji = (emoji: string) => {
     const textarea = textareaRef.current;
-    console.log(textarea, "textarea");
-
     if (!textarea) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const text = mixText.substring(0, start) + emoji + mixText.substring(end);
-    console.log(text, "emoji");
+
     setMixText(text);
     setTimeout(() => {
       textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
@@ -274,76 +342,106 @@ export default function PostList({
 
   const handleSubComment = (postId: number, commentDetails: any) => {
     setCommentMap((prev: any) => {
-      const currentOpen = prev?.[postId]?.comments?.find(
-        (c) => c.id === commentDetails.id,
-      )?.isReply;
+      const currentOpen =
+        prev?.[postId]?.comments?.find((c: any) => c.id === commentDetails.id)
+          ?.isReply ?? false;
+      const updated: any = {};
+      Object.keys(prev).forEach((key) => {
+        const id = Number(key);
+        const post = prev[id];
+        updated[id] = {
+          ...post,
+          isReply: false,
 
-      return {
-        ...prev,
-        [postId]: {
-          ...prev[postId],
-          comments: prev[postId].comments.map((comment: any) => ({
-            ...comment,
-            isReply: comment.id === commentDetails.id ? !currentOpen : false,
-          })),
-        },
-      };
-    });
-  };
-
-  const handleSubCommentToComment = (
-    postId: number,
-    commentId: number, // parent comment id
-    replyDetails: any, // clicked reply
-  ) => {
-    setCommentMap((prev: any) => {
-      const parent = prev?.[postId]?.comments?.find(
-        (c: any) => c.id === commentId,
-      );
-
-      const currentOpen = parent?.replies?.find(
-        (r: any) => r.id === replyDetails.id,
-      )?.isReply;
-
-      return {
-        ...prev,
-        [postId]: {
-          ...prev[postId],
-          comments: prev[postId].comments.map((comment: any) => {
-            // ❌ Not this parent comment
-            if (comment.id !== commentId) {
+          comments: post?.comments?.map((comment: any) => {
+            if (id !== postId) {
               return {
                 ...comment,
+                isReply: false,
                 replies: comment.replies?.map((r: any) => ({
                   ...r,
                   isReply: false,
                 })),
               };
             }
-
-            // ✅ This parent comment
             return {
               ...comment,
-              replies: comment.replies.map((reply: any) => ({
+              isReply: comment.id === commentDetails.id ? !currentOpen : false,
+              replies: comment.replies?.map((r: any) => ({
+                ...r,
+                isReply: false,
+              })),
+            };
+          }),
+        };
+      });
+
+      return updated;
+    });
+  };
+
+  const handleSubCommentToComment = (
+    postId: number,
+    commentId: number,
+    replyDetails: any,
+  ) => {
+    setCommentMap((prev: any) => {
+      const parent = prev?.[postId]?.comments?.find(
+        (c: any) => c.id === commentId,
+      );
+      const currentOpen =
+        parent?.replies?.find((r: any) => r.id === replyDetails.id)?.isReply ??
+        false;
+      const updated: any = {};
+      Object.keys(prev).forEach((key) => {
+        const pid = Number(key);
+        const post = prev[pid];
+
+        updated[pid] = {
+          ...post,
+          isReply: false,
+
+          comments: post?.comments?.map((comment: any) => {
+            if (pid !== postId) {
+              return {
+                ...comment,
+                isReply: false,
+                replies: comment.replies?.map((r: any) => ({
+                  ...r,
+                  isReply: false,
+                })),
+              };
+            }
+            if (comment.id !== commentId) {
+              return {
+                ...comment,
+                isReply: false,
+                replies: comment.replies?.map((r: any) => ({
+                  ...r,
+                  isReply: false,
+                })),
+              };
+            }
+            return {
+              ...comment,
+              isReply: false,
+              replies: comment.replies?.map((reply: any) => ({
                 ...reply,
-                // toggle only clicked reply
                 isReply: reply.id === replyDetails.id ? !currentOpen : false,
               })),
             };
           }),
-        },
-      };
+        };
+      });
+
+      return updated;
     });
   };
 
-  const router = useRouter();
   const handleRedirectUserDetails = (id) => {
     router.push(`/ideas/profile/${id}`);
   };
-
   const handleSubmitForSubComment = async (postId: any, row: any) => {
-    console.log(postId, row, "sdlkfjslkdjflksjf");
-
     try {
       const payload = {
         postId: postId,
@@ -354,6 +452,34 @@ export default function PostList({
       if (response.success) {
         toast.success("Message send successfully!");
         setMixText("");
+        setCommentMap((prev: any) => {
+          if (!prev?.[postId]) return prev;
+          return {
+            ...prev,
+            [postId]: {
+              ...prev[postId],
+              comments: prev[postId].comments.map((comment: any) => {
+                if (comment.id !== row.id) return comment;
+                return {
+                  ...comment,
+                  isReply: false,
+                  replies: [
+                    ...(comment.replies || []),
+                    {
+                      ...response.data,
+                      User: {
+                        id: userDetails?.id,
+                        username: userDetails?.username || "",
+                        image_url: userDetails?.imageUrl || "",
+                      },
+                      isReply: false,
+                    },
+                  ],
+                };
+              }),
+            },
+          };
+        });
       } else {
         toast.error(response?.message || "something went wrong");
         setMixText("");
@@ -378,7 +504,6 @@ export default function PostList({
     }
   };
 
-  console.log(commentMap, "commentMap=========>");
   return (
     <div>
       {allPosts?.map((row, index) => {
@@ -391,16 +516,18 @@ export default function PostList({
             key={row?.id}
             className="flex gap-3  py-4 border-b border-gray-200 dark:border-gray-800"
           >
-            <Image
-              src={row?.User?.image_url || "https://i.pravatar.cc/40"}
-              alt="user"
-              height={20}
-              width={20}
-              className="w-10 h-10 rounded-full cursor-pointer object-cover"
-              onClick={() => handleRedirectUserDetails(row?.User?.id)}
-            />
+            <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
+              <Image
+                src={row?.User?.image_url || "https://i.pravatar.cc/40"}
+                alt="user"
+                height={20}
+                width={20}
+                className="w-10 h-10 rounded-full cursor-pointer object-cover"
+                onClick={() => handleRedirectUserDetails(row?.User?.id)}
+              />
+            </div>
             <div className="flex-1">
-              <div className="flex items-center  gap-2 text-sm">
+              <div className="flex items-center   gap-2 text-sm">
                 <div
                   onClick={() => handleRedirectUserDetails(row?.User?.id)}
                   className="font-semibold cursor-pointer relative text-gray-900 dark:text-white"
@@ -508,6 +635,7 @@ export default function PostList({
                   handleComment={handleSend}
                   insertEmoji={insertEmoji}
                   handleKeyDown={handleKeyDown}
+                  userDetails={userDetails}
                 />
               </div>
 
@@ -545,19 +673,21 @@ export default function PostList({
                             className="flex flex-col gap-1 py-2 border-b last:border-b-0 border-gray-200 dark:border-gray-800"
                           >
                             <div className="flex flex-row gap-3">
-                              <Image
-                                src={comment?.User?.image_url}
-                                width={30}
-                                height={30}
-                                className="w-8 h-8 rounded-full cursor-pointer"
-                                alt="user"
-                                onClick={() =>
-                                  handleRedirectUserDetails(row?.User?.id)
-                                }
-                              />
+                              <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
+                                <Image
+                                  src={comment?.User?.image_url}
+                                  width={30}
+                                  height={30}
+                                  className="w-8 h-8 rounded-full cursor-pointer"
+                                  alt="user"
+                                  onClick={() =>
+                                    handleRedirectUserDetails(row?.User?.id)
+                                  }
+                                />
+                              </div>
 
                               <div>
-                                <div className="text-xs font-semibold">
+                                <div className="text-xs flex  items-center gap-1 font-semibold">
                                   <div
                                     onClick={() =>
                                       handleRedirectUserDetails(row?.User?.id)
@@ -578,19 +708,6 @@ export default function PostList({
                               </div>
                             </div>
                             <div className="flex items-center gap-5 pl-10 mt-3 text-gray-400">
-                              {/* <span className="hover:text-gray-600 flex gap-1 items-center">
-                                <button
-                                  onClick={() => toggleComments(comment.id)}
-                                  className="cursor-pointer"
-                                >
-                                  <MessageCircle size={16} />
-                                </button>
-                                <span className="mt-1 text-xs">
-                                  {" "}
-                                  {comment?.commentCount || 0}
-                                </span>
-                              </span> */}
-
                               <div className="flex items-center gap-1 hover:text-red-500">
                                 <button
                                   onClick={() =>
@@ -600,6 +717,7 @@ export default function PostList({
                                       row.id,
                                     )
                                   }
+                                  className="cursor-pointer"
                                 >
                                   {comment?.isUserLike == 1 ? (
                                     <FcLike size={16} />
@@ -641,6 +759,7 @@ export default function PostList({
                                 handleComment={handleSubmitForSubComment}
                                 insertEmoji={insertEmoji}
                                 handleKeyDown={handleKeyDownComment}
+                                userDetails={userDetails}
                               />
                             </div>
                             <div className="pb-2 pl-10">
@@ -648,7 +767,7 @@ export default function PostList({
                                 comment?.replies?.map((replies: IReply) => (
                                   <div key={replies?.id}>
                                     <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                                      <div className="!h-11 !w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500">
+                                      <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
                                         <Image
                                           src={
                                             replies?.User?.image_url ||
@@ -759,6 +878,7 @@ export default function PostList({
                                         }
                                         insertEmoji={insertEmoji}
                                         handleKeyDown={handleKeyDownComment}
+                                        userDetails={userDetails}
                                       />
                                     </div>
                                   </div>

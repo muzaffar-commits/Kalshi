@@ -72,7 +72,6 @@ export default function IdeaTabsTwo({
   };
 
   const handleLikeUnlike = async (id: number, isLike: number) => {
-    console.log(postedList, "postedList");
     try {
       if (isLike == 1) {
         toast.success("Unlike");
@@ -192,7 +191,6 @@ export default function IdeaTabsTwo({
                   typeof row?.metadata === "string"
                     ? JSON.parse(row.metadata)
                     : row.metadata;
-                console.log(row, "contentForPost");
 
                 return (
                   <div
@@ -340,7 +338,7 @@ export default function IdeaTabsTwo({
                               )}
                             </span>
                             <span className="inline-block relative -left-3 font-light text-gray-400"></span>
-                            <span
+                            {/* <span
                               className="
                               p-2
                               rounded
@@ -354,8 +352,7 @@ export default function IdeaTabsTwo({
                             "
                             >
                               <LuUpload />
-                              {/* <LuUpload onClick={() => handleShareNow(row)} /> */}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                       </div>

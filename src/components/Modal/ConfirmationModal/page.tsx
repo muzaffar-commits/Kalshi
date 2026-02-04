@@ -27,13 +27,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     return () => window.removeEventListener("keydown", handler);
   }, [open, onClose, onConfirm]);
 
-  console.log(selectedOrderDetails, "selectedOrderDetails====");
-
   const shares = selectedOrderDetails?.shares ?? 0;
   const maxCost = selectedOrderDetails?.maxCost ?? 0;
   const totalPrice = maxCost * shares;
-
-  console.log(selectedOrderDetails, "totalPrice");
 
   return (
     <Dialog

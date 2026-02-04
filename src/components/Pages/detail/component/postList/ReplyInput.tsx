@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { PROFESSIONAL_EMOJIS } from "@/components/content";
+import Image from "next/image";
 
 export function ReplyInput({
   rows,
@@ -11,6 +12,7 @@ export function ReplyInput({
   insertEmoji,
   textareaRef,
   handleKeyDown,
+  userDetails,
 }) {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<"top" | "bottom">("top");
@@ -60,7 +62,20 @@ export function ReplyInput({
   return (
     <div className="mt-2 relative w-full flex items-center gap-3 bg-white dark:bg-[#1D293D] border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
       {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
+
+      {userDetails?.imageUrl ? (
+        <div className="bg-gray-100 dark:bg-gray-600 rounded-full p-1">
+          <Image
+            src={userDetails?.imageUrl}
+            alt="user"
+            height={30}
+            width={30}
+            className="rounded-full h-6 w-6"
+          />
+        </div>
+      ) : (
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
+      )}
 
       {/* Input */}
       <input
@@ -149,6 +164,7 @@ export function ReplySubCommentInput({
   insertEmoji,
   textareaRef,
   handleKeyDown,
+  userDetails,
 }) {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<"top" | "bottom">("top");
@@ -198,7 +214,19 @@ export function ReplySubCommentInput({
   return (
     <div className="mt-2 relative w-full flex items-center gap-3 bg-white dark:bg-[#1D293D] border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
       {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
+      {userDetails?.imageUrl ? (
+        <div className="bg-gray-100 dark:bg-gray-600 rounded-full p-1">
+          <Image
+            src={userDetails?.imageUrl}
+            alt="user"
+            height={30}
+            width={30}
+            className="rounded-full h-6 w-6"
+          />
+        </div>
+      ) : (
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
+      )}
 
       {/* Input */}
       <input

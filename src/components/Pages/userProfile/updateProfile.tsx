@@ -37,7 +37,6 @@ export default function UpdateProfile({
     UploadedImage[] | null
   >(null);
   const users = userDetails?.user as userDetailProps;
-  console.log(uploadedImage, "uploadedImage");
 
   const chooseImages = async (file: File) => {
     try {

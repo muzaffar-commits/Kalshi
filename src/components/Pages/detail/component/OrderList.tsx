@@ -29,7 +29,6 @@ export default function OrderList({
   page,
   setOrderPage,
 }: OrderListProps) {
-  console.log(page, "pageCount");
   const changePageInc = () => {
     setOrderPage(page - 5);
   };

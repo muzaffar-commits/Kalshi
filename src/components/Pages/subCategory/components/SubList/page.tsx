@@ -22,7 +22,6 @@ export default function SportsMenu({
 
   const handleSubClick = (subId: number) => {
     setEventSubCategoryId(subId);
-    console.log("Clicked sub category id:", subId);
     // 👉 navigate / dispatch / filter logic here
   };
 

@@ -6,9 +6,10 @@ import { useDispatch } from "react-redux";
 import { logout } from "../store/slice/auth";
 import { useRouter } from "next/navigation";
 import { ApiResponse, UserProfileData } from "@/utils/typesInterface";
-import { userDetails } from "../service/apiService/user";
+import { logoutUser, userDetails } from "../service/apiService/user";
 import Image from "next/image";
 import { FiLogOut } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
@@ -27,11 +28,21 @@ export default function ProfileDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // handleClose();
-    localStorage.clear();
-    dispatch(logout());
-    window.location.href = "/";
+    try {
+      const response = await logoutUser();
+      if (response?.success) {
+        dispatch(logout());
+        localStorage.clear();
+        window.location.href = "/";
+        toast.success(response?.message);
+      } else {
+        toast.success(response?.message);
+      }
+    } catch {
+      toast.success("Internal server error");
+    }
   };
 
   const router = useRouter();
@@ -67,8 +78,6 @@ export default function ProfileDropdown() {
 
   const userData = user?.[0] || null;
   // const portFolioData = user?.[1] || null;
-
-  console.log(userData, "userData");
 
   return (
     <div className="relative" ref={ref}>

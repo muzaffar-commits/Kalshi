@@ -14,6 +14,18 @@ export const userBalance = async () => {
   }
 };
 
+export const logoutUser = async () => {
+  try {
+    const response = await apiInstance.post(API_URLs.logout);
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+
 export const userDetails = async () => {
   try {
     const response = await apiInstance.get(API_URLs.userDetails);
@@ -351,4 +363,4 @@ export const getFollowing = async (userId = 1) => {
   }
 };
 
-//
+// logout

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import MarketDetails from "./MarketDetails";
+import MarketSkeleton from "@/components/common/CartDetailLoader";
 
 export default async function Page({
   params,
@@ -9,7 +10,13 @@ export default async function Page({
   const { slug } = await params;
 
   return (
-    <Suspense fallback={<div></div>}>
+    <Suspense
+      fallback={
+        <div>
+          <MarketSkeleton />
+        </div>
+      }
+    >
       <MarketDetails targetId={slug} />
     </Suspense>
   );
