@@ -15,6 +15,7 @@ import { FcLike } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { ReplyInput, ReplySubCommentInput } from "./ReplyInput";
 import { useSelector } from "react-redux";
+import ReplyModal from "./ReplyModal";
 
 interface PostListProps {
   isIdea?: boolean;
@@ -43,6 +44,9 @@ export default function PostList({
   );
   const [mixText, setMixText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [open, setOpen] = useState(false);
+  const [rowDetails, setRowDetails] = useState({});
+  const [isSendMessageLoader, setIsSendMessageLoader] = useState(false);
   const userDetails = useSelector((state: any) => state?.user?.user);
   const router = useRouter();
 
@@ -259,14 +263,21 @@ export default function PostList({
     });
   };
 
-  const handleSend = async (row) => {
-    if (!mixText.trim()) return;
+  const handleSend = async (row: any, inputText: any, imageLink: any) => {
+    if (!inputText.trim()) return;
+    setIsSendMessageLoader(true);
     try {
       const payload = {
         postId: row?.id,
-        comment: mixText,
+        comment: inputText,
+        metadata: {
+          images: imageLink == null ? [] : [imageLink],
+        },
       };
-      const response = await replyComments(payload);
+      const [response] = await Promise.all([
+        replyComments(payload),
+        delay(1000),
+      ]);
       if (response.success) {
         toast.success("Message send successfully!");
         setAllPosts((prev: any[]) =>
@@ -316,6 +327,8 @@ export default function PostList({
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsSendMessageLoader(false);
     }
   };
 
@@ -336,7 +349,7 @@ export default function PostList({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>, row) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend(row);
+      // handleSend(row);
     }
   };
 
@@ -504,6 +517,10 @@ export default function PostList({
     }
   };
 
+  const handleOpenComment = (item) => {
+    setOpen(true);
+    setRowDetails(item);
+  };
   return (
     <div>
       {allPosts?.map((row, index) => {
@@ -610,7 +627,8 @@ export default function PostList({
                 </button>
                 <button
                   className="hover:text-gray-600 cursor-pointer"
-                  onClick={() => commentMainPost(row?.id)}
+                  // onClick={() => commentMainPost(row?.id)}
+                  onClick={() => handleOpenComment(row)}
                 >
                   Reply
                 </button>
@@ -632,7 +650,8 @@ export default function PostList({
                   rows={row}
                   replyText={mixText}
                   setReplyText={setMixText}
-                  handleComment={handleSend}
+                  // handleComment={handleSend}
+                  handleComment={null}
                   insertEmoji={insertEmoji}
                   handleKeyDown={handleKeyDown}
                   userDetails={userDetails}
@@ -895,6 +914,14 @@ export default function PostList({
           </div>
         );
       })}
+
+      <ReplyModal
+        open={open}
+        onClose={() => setOpen(false)}
+        row={rowDetails}
+        handleSend={handleSend}
+        isLoader={isSendMessageLoader}
+      />
     </div>
   );
 }

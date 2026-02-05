@@ -156,6 +156,7 @@ export default function Register({
               name="password"
               value={formik.values.password}
               onChange={formik.handleChange}
+              autoComplete="new-password"
               onBlur={formik.handleBlur}
               error={formik.touched.password ? formik.errors.password : ""}
               startIcon={<TbLockFilled className="text-gray-400" size={22} />}

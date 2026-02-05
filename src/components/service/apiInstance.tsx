@@ -3,8 +3,8 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slice/auth";
 
-// export const basedURLs = "http://192.168.29.218:3000";
-export const basedURLs = "https://api.opinionkings.com";
+export const basedURLs = "http://192.168.29.218:3000";
+// export const basedURLs = "https://api.opinionkings.com";
 export const developmentBaseURL = `${basedURLs}/api`;
 
 const apiInstance = axios.create({
@@ -14,8 +14,6 @@ const apiInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
-
-// Add interceptors if needed
 if (typeof window !== "undefined") {
   apiInstance.interceptors.request.use(
     (config) => {
@@ -32,11 +30,10 @@ if (typeof window !== "undefined") {
     (response) => response,
     (error) => {
       const status = error?.response?.status;
-      const dispatch = useDispatch();
       const isToken = localStorage.getItem("token");
+      console.log(status, isToken, "status");
       if (status === 401 && isToken) {
         toast.success("Token expired 🚫 Logging out...");
-        dispatch(logout());
         localStorage.clear();
         window.location.href = "/";
       }

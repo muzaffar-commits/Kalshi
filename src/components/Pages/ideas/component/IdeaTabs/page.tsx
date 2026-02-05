@@ -34,17 +34,11 @@ import GiphyModal from "@/components/Pages/detail/component/postList/GiphyModal"
 type HandleComment = (post: PostFeeBack) => void;
 
 function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index } = props;
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    <div hidden={value !== index}>
+      {value === index && <Box sx={{ p: 0 }}>{children}</Box>}
     </div>
   );
 }
@@ -164,8 +158,12 @@ export default function IdeaTabs({
     router.push(`/market/${id}`);
   };
 
+  // , borderRight: 1, borderColor: "#364153"
   return (
-    <Box sx={{ width: "100%", borderRight: 1, borderColor: "#364153" }}>
+    <Box
+      sx={{ width: "100%", position: "relative" }}
+      className="md:border-r md:border-[#364153]"
+    >
       <Box
         sx={{
           borderBottom: 1,
@@ -191,6 +189,7 @@ export default function IdeaTabs({
           }}
         >
           <Tab label="Ideas" {...a11yProps(0)} />
+          <Tab label="Feed" {...a11yProps(2)} />
           <Tab label="Live Trades" {...a11yProps(1)} />
           {/* <Tab label="Market Builder" {...a11yProps(2)} /> */}
         </Tabs>
@@ -337,7 +336,7 @@ export default function IdeaTabs({
           </div>
         </div>
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
+      <CustomTabPanel value={value} index={2}>
         {liveTrades?.length > 0 ? (
           liveTrades?.map((row: any, index: number) => (
             <div
@@ -440,7 +439,7 @@ export default function IdeaTabs({
           </div>
         </div> */}
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
+      <CustomTabPanel value={value} index={1}>
         <div className="border-b border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)] pb-3">
           <div className="flex items-start gap-4 w-full px-4 mt-4">
             <Image

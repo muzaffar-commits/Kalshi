@@ -245,9 +245,11 @@ export default function Profile({ targetId }: { targetId: string }) {
                             <span className="font-semibold text-lg text-gray-900 dark:text-white">
                               {userDetails?.user?.username || "0"}
                             </span>
-                            <span className="text-xs text-emerald-500 font-medium">
-                              ● Active
-                            </span>
+                            {isUsers && (
+                              <span className="text-xs text-emerald-500 font-medium">
+                                ● Active
+                              </span>
+                            )}
                           </div>
 
                           <span className="text-xs text-gray-500 dark:text-gray-400">

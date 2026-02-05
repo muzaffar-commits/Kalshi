@@ -1,6 +1,6 @@
 "use client";
 import { delay, timeAgoCompact } from "@/utils/Content";
-import { Bell, Check } from "lucide-react";
+import { Bell, Check, Heart, UserPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   fetchNotification,
@@ -13,6 +13,8 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import socket from "../socket";
 import { NotificationSkeleton } from "@/utils/customSkeleton";
 import { useRouter } from "next/navigation";
+import { FaComment, FaComments, FaHeart } from "react-icons/fa";
+import { HiViewGridAdd } from "react-icons/hi";
 
 export default function NotificationBell({ userId }) {
   const [open, setOpen] = useState(false);
@@ -189,36 +191,56 @@ export default function NotificationBell({ userId }) {
           ) : (
             notificationData
               // ?.filter((item) => item?.isRead === false)
-              .map((row) => (
+              ?.map((row) => (
                 <div
                   key={row?.id}
-                  className="group relative px-4 py-3 border-b last:border-b-0 
+                  className={`group relative px-4 py-3 border-b last:border-b-0 
              border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)]
-             hover:bg-gray-50 dark:hover:bg-gray-800 "
+             ${
+               //  row?.postId == null
+               //    ? "bg-gray-100 dark:bg-gray-600"
+               //    :
+               row?.isRead
+                 ? " hover:bg-gray-50 dark:hover:bg-gray-800"
+                 : "bg-cyan-50 dark:bg-cyan-900/30 dark:!border-gray-600"
+             }
+              `}
                 >
-                  <div className="flex items-start gap-3">
-                    {/* 🔵 Indicator Dot */}
-                    <span
-                      className={`mt-1 h-2 w-2 rounded-full ${
-                        row?.type === "LIKE"
-                          ? "bg-rose-500"
-                          : row?.type === "FOLLOW"
-                            ? "bg-sky-500"
-                            : row?.type === "COMMENT"
-                              ? "bg-emerald-500"
-                              : row?.type === "COMMENT_REPLY"
-                                ? "bg-violet-500"
-                                : "bg-slate-400"
-                      }`}
-                    />
-
+                  <div className="flex items- gap-2">
+                    {row?.type === "LIKE" ? (
+                      <FaHeart className="text-red-500" />
+                    ) : row?.type === "FOLLOW" ? (
+                      <UserPlus className="text-blue-500" />
+                    ) : row?.type === "COMMENT" ? (
+                      <FaComment size={16} className="text-yellow-600" />
+                    ) : row?.type === "COMMENT_REPLY" ? (
+                      <FaComments className="text-gray-500" size={16} />
+                    ) : (
+                      <HiViewGridAdd />
+                    )}
+                    {/* <UserPlus /> */}
                     {/* 📝 Content */}
                     <div className="flex-1">
-                      <div
-                        onClick={() => redirectToPage(row)}
-                        className="text-sm cursor-pointer font-medium text-gray-800 dark:text-white"
-                      >
-                        {row?.type}
+                      <div className="text-sm flex items-center gap-2 cursor-pointer font-medium text-gray-800 dark:text-white">
+                        <div
+                          onClick={() =>
+                            row?.postId == null ? null : redirectToPage(row)
+                          }
+                        >
+                          {row?.type}
+                        </div>
+                        <div
+                          onClick={() =>
+                            router.push(`/ideas/profile/${row?.actor?.id}`)
+                          }
+                          className="text-blue-500 text-xs hover:text-blue-600 "
+                        >
+                          ({" "}
+                          <span className="hover:underline">
+                            {row?.actor?.username}
+                          </span>{" "}
+                          )
+                        </div>
                       </div>
 
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">

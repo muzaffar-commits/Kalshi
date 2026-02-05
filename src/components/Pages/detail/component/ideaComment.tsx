@@ -30,6 +30,8 @@ export default function IdeasActivityTabs({ marketId }) {
   const [isImageUploadLoader, setIsImageUploadLoader] = useState(false);
   const [gif, setGif] = useState(null);
   const [myPost, setMyPost] = useState<PostFeeBack[]>([]);
+  const [showUploadMenu, setShowUploadMenu] = useState(false);
+  const wrapperRef = useRef(null);
   const dropdownRef = useRef(null);
 
   const router = useRouter();
@@ -43,6 +45,22 @@ export default function IdeasActivityTabs({ marketId }) {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowUploadMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
   const getListOfPost = useCallback(async () => {
@@ -375,13 +393,14 @@ export default function IdeasActivityTabs({ marketId }) {
                 <div className="flex justify-between w-full items-center  gap-4 mr-7">
                   <div className="flex flex-row items-center gap-4">
                     <div
+                      ref={wrapperRef}
                       className={`relative inline-block ${gif ? "" : "group"} `}
                     >
                       <button
                         disabled={gif || isImageUploadLoader ? true : false}
                         type="button"
-                        className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700  " : "text-gray-500 cursor-pointer  hover:text-[#d2b8fa]"}  
-                    `}
+                        onClick={() => setShowUploadMenu((prev) => !prev)}
+                        className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700" : "text-gray-500 cursor-pointer hover:text-[#d2b8fa]"}`}
                       >
                         {isImageUploadLoader && (
                           <div className="absolute left-3 flex items-center justify-center">
@@ -394,14 +413,17 @@ export default function IdeasActivityTabs({ marketId }) {
                         UPLOAD
                       </button>
                       <div
-                        className="
-                              absolute -left-8 mt-2 w-32
-                              rounded-xl bg-white dark:bg-[#0F172A]
-                              shadow-xl border border-gray-200 dark:border-gray-700
-                              opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                              translate-y-2 group-hover:translate-y-0
-                              transition-all duration-200 z-50
-                            "
+                        className={`
+                  absolute -left-8 mt-2 w-32
+                  rounded-xl bg-white dark:bg-[#0F172A]
+                  shadow-xl border border-gray-200 dark:border-gray-700
+                  transition-all duration-200 z-50
+                  ${
+                    showUploadMenu
+                      ? "opacity-100 visible translate-y-0"
+                      : "opacity-0 invisible translate-y-2"
+                  }
+                `}
                       >
                         <button
                           onClick={() => fileInputRef.current?.click()}
