@@ -467,7 +467,7 @@ export default function IdeaTabs({
               dark:text-gray-400
               text-gray-900
               dark:placeholder-gray-600
-              placeholder-gray-300
+              placeholder-gray-400
             "
             />
           </div>

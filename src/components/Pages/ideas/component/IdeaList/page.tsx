@@ -52,11 +52,9 @@ export default function MobileMenu() {
     fixed top-0 left-0 h-full
     pt-12 md:pt-5
     py-5 pl-5 md:pl-0
-    bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
-    border-r border-[var(--color-borderlight)]
-    dark:border-[var(--color-borderdark)]
-
-    transition-transform duration-300
+     md:bg:transparent md:dark:bg-transparent
+           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
+        transition-transform duration-300
     ${open ? "translate-x-0" : "-translate-x-full"}
 
     md:translate-x-0
