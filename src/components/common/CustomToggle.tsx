@@ -8,7 +8,7 @@ interface customToggle {
 
 export const CustomToggle = ({ label, checked, onChange }: customToggle) => {
   return (
-    <label className="flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-gray-700 bg-gray-100 text-xs dark:text-gray-300 text-gray-700 hover:bg-[#273244]/10 transition">
+    <label className="flex items-center gap-2 px-4 py-1.5 rounded-full dark:bg-gray-700 bg-gray-100 text-xs dark:text-gray-300 text-gray-700 hover:bg-[#273244]/10 dark:hover:bg-gray-600 transition">
       {/* REAL CHECKBOX */}
       <input
         type="checkbox"

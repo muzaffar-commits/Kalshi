@@ -402,7 +402,7 @@ export default function PostList({
                 alt="user"
                 height={20}
                 width={20}
-                className="w-10 h-10 rounded-full cursor-pointer object-cover"
+                className="md:w-10 w-4 md:h-10 h-4 rounded-full cursor-pointer object-cover"
                 onClick={() => handleRedirectUserDetails(row?.User?.id)}
               />
             </div>
@@ -550,7 +550,7 @@ export default function PostList({
                                   src={comment?.User?.image_url}
                                   width={30}
                                   height={30}
-                                  className="w-8 h-8 rounded-full cursor-pointer"
+                                  className="md:w-8 w-4 md:h-8 h-4 rounded-full cursor-pointer"
                                   alt="user"
                                   onClick={() =>
                                     handleRedirectUserDetails(row?.User?.id)
@@ -564,7 +564,7 @@ export default function PostList({
                                     onClick={() =>
                                       handleRedirectUserDetails(row?.User?.id)
                                     }
-                                    className="text-gray-900 cursor-pointer relative  font-semibold text-sm dark:text-white"
+                                    className="text-gray-900 cursor-pointer relative font-semibold text-sm dark:text-white"
                                   >
                                     {" "}
                                     {comment?.User?.username}
@@ -659,7 +659,7 @@ export default function PostList({
                                   })();
                                   return (
                                     <div key={replies?.id}>
-                                      <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
+                                      <div className="flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
                                         <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
                                           <Image
                                             src={
@@ -674,7 +674,7 @@ export default function PostList({
                                                 row?.User?.id,
                                               )
                                             }
-                                            className="rounded-full h-8 w-8 cursor-pointer"
+                                            className="rounded-full md:h-8 h-2 md:w-8 w-2 cursor-pointer"
                                           />
                                         </div>
                                         <div>
@@ -696,7 +696,7 @@ export default function PostList({
                                               </span>
                                             </h4>
                                           </div>
-                                          <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                                          <p className="text-md md:mt-2 mt-0 dark:text-gray-400 text-gray-800">
                                             {replies?.content && (
                                               <HighlightTexts
                                                 text={replies?.content}
