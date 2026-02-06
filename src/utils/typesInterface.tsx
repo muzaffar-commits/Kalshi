@@ -178,6 +178,7 @@ export interface IReply {
   content: string;
   createdAt: string;
   updatedAt: string;
+  metadata: string;
   User: IUser;
   isReply: boolean;
 }

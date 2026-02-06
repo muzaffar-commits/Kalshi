@@ -44,11 +44,9 @@ export const API_URLs = {
   getUnReadCountNotification: "/user/notifications/unread-count",
   readNotification: "/user/notifications/read",
   allReadNotification: "/user/notifications/all-read",
-  myAllPost: "/user/feed",
+  myAllPost: "/user/my-feed",
   userSearch: "/user/search-users",
   feedDetailsById: "/user/feed-by-id",
   follow: "/user",
+  feedForFollowingList: "/user/feed",
 };
-
-// images
-// user/2/followers/

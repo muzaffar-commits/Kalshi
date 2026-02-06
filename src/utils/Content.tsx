@@ -138,6 +138,8 @@ export const truncateValue = (num: number, decimals: number = 2) => {
 };
 
 export const MAX_WORDS = 500;
+
 export function countWords(text: string) {
-  return text.trim().split(/\s+/).filter(Boolean).length;
+  return text?.length;
+  // return text.trim().split(/\s+/).filter(Boolean).length;
 }

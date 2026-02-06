@@ -15,13 +15,31 @@ import { NotificationSkeleton } from "@/utils/customSkeleton";
 import { useRouter } from "next/navigation";
 import { FaComment, FaComments, FaHeart } from "react-icons/fa";
 import { HiViewGridAdd } from "react-icons/hi";
+import { CircularProgress } from "@mui/material";
 
 export default function NotificationBell({ userId }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
   const [notificationData, setNotificationData] = useState([]);
   const [countNotification, setCountNotification] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [pagination, setPagination] = useState<any>({});
+  const [emptyData, setEmptyData] = useState([]);
   const [isLoader, setIsLoader] = useState(false);
+  const [mainLoader, setMainLoader] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setMainLoader(true);
+
+      const timer = setTimeout(() => {
+        setMainLoader(false);
+      }, 1000); // 1 second
+
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -33,24 +51,68 @@ export default function NotificationBell({ userId }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const getNotificationList = async () => {
+  const getNotificationList = async (newOffset = offset) => {
     setIsLoader(true);
     try {
-      const [response] = await Promise.all([fetchNotification(), delay(1000)]);
+      const [response] = await Promise.all([
+        fetchNotification(10, newOffset),
+        delay(1000),
+      ]);
+
       if (response?.success) {
-        setNotificationData(response?.data || []);
+        const newData = response?.data?.data || [];
+        setEmptyData(newData);
+        setNotificationData((prev: any[]) => {
+          if (newOffset === 0) return newData;
+          const map = new Map();
+          prev.forEach((item) => {
+            map.set(item.id, item);
+          });
+          newData.forEach((item) => {
+            map.set(item.id, item);
+          });
+          return Array.from(map.values());
+        });
+        setPagination(response?.data?.page || {});
       } else {
-        setNotificationData([]);
+        if (newOffset === 0) setNotificationData([]);
       }
     } catch {
-      setNotificationData([]);
+      if (newOffset === 0) setNotificationData([]);
     } finally {
       setIsLoader(false);
     }
   };
+
   useEffect(() => {
-    open && getNotificationList();
+    if (open) {
+      setOffset(0);
+      getNotificationList(0);
+    }
   }, [open]);
+
+  useEffect(() => {
+    if (emptyData?.length === 0) return;
+    const el = listRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+
+      if (scrollTop + clientHeight >= scrollHeight - 10) {
+        if (!isLoader && pagination?.limit) {
+          const newOffset = pagination?.offset + pagination?.limit;
+          setOffset(newOffset);
+          getNotificationList(newOffset);
+        }
+      }
+    };
+
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [offset, pagination, isLoader]);
+  console.log(pagination, "pagination===>");
+
   const getUnReadCountNotification = async () => {
     try {
       const response = await fetchUnReadCountNotification();
@@ -69,6 +131,7 @@ export default function NotificationBell({ userId }) {
 
   const router = useRouter();
   const redirectToPage = (row: any) => {
+    setOpen(false);
     if (row?.type === "LIKE") {
       router.push(`/ideas/${row?.postId}`);
     } else if (row?.type === "FOLLOW") {
@@ -102,8 +165,12 @@ export default function NotificationBell({ userId }) {
 
   const markAsReadAll = async (row: any) => {
     try {
-      setNotificationData([]);
       setCountNotification(0);
+      setNotificationData((prev: any) =>
+        prev.map((item: any) => {
+          return { ...item, isRead: true };
+        }),
+      );
       const response = await postAllReadNotification();
       if (response.success) {
         toast.success("All notifications marked as read");
@@ -174,13 +241,12 @@ export default function NotificationBell({ userId }) {
         </div>
 
         {/* List */}
-        <div className="max-h-72 overflow-y-auto hideScrollbar">
-          {isLoader ? (
+        <div ref={listRef} className="max-h-72 overflow-y-auto hideScrollbar">
+          {mainLoader ? (
             Array.from({ length: 4 }).map((_, i) => (
               <NotificationSkeleton key={i} />
             ))
-          ) : // ?.filter((item) => item?.isRead === false)
-          notificationData?.length === 0 ? (
+          ) : notificationData?.length === 0 ? (
             <div className="px-4 py-3 flex flex-col items-center justify-center text-xs border-b text-gray-500 dark:text-gray-300 last:border-b-0 dark:border-gray-700  cursor-pointer">
               <IoMdNotificationsOutline
                 size={30}
@@ -189,12 +255,10 @@ export default function NotificationBell({ userId }) {
               <span>Not Found Notification</span>
             </div>
           ) : (
-            notificationData
-              // ?.filter((item) => item?.isRead === false)
-              ?.map((row) => (
-                <div
-                  key={row?.id}
-                  className={`group relative px-4 py-3 border-b last:border-b-0 
+            notificationData?.map((row) => (
+              <div
+                key={row?.id}
+                className={`group relative px-4 py-3 border-b last:border-b-0 
              border-[var(--color-borderlight)] dark:border-[var(--color-borderdark)]
              ${
                //  row?.postId == null
@@ -205,56 +269,55 @@ export default function NotificationBell({ userId }) {
                  : "bg-cyan-50 dark:bg-cyan-900/30 dark:!border-gray-600"
              }
               `}
-                >
-                  <div className="flex items- gap-2">
-                    {row?.type === "LIKE" ? (
-                      <FaHeart className="text-red-500" />
-                    ) : row?.type === "FOLLOW" ? (
-                      <UserPlus className="text-blue-500" />
-                    ) : row?.type === "COMMENT" ? (
-                      <FaComment size={16} className="text-yellow-600" />
-                    ) : row?.type === "COMMENT_REPLY" ? (
-                      <FaComments className="text-gray-500" size={16} />
-                    ) : (
-                      <HiViewGridAdd />
-                    )}
-                    {/* <UserPlus /> */}
-                    {/* 📝 Content */}
-                    <div className="flex-1">
-                      <div className="text-sm flex items-center gap-2 cursor-pointer font-medium text-gray-800 dark:text-white">
-                        <div
-                          onClick={() =>
-                            row?.postId == null ? null : redirectToPage(row)
-                          }
-                        >
-                          {row?.type}
-                        </div>
-                        <div
-                          onClick={() =>
-                            router.push(`/ideas/profile/${row?.actor?.id}`)
-                          }
-                          className="text-blue-500 text-xs hover:text-blue-600 "
-                        >
-                          ({" "}
-                          <span className="hover:underline">
-                            {row?.actor?.username}
-                          </span>{" "}
-                          )
-                        </div>
+              >
+                <div className="flex items- gap-2">
+                  {row?.type === "LIKE" ? (
+                    <FaHeart className="text-red-500" />
+                  ) : row?.type === "FOLLOW" ? (
+                    <UserPlus className="text-blue-500" />
+                  ) : row?.type === "COMMENT" ? (
+                    <FaComment size={16} className="text-yellow-600" />
+                  ) : row?.type === "COMMENT_REPLY" ? (
+                    <FaComments className="text-gray-500" size={16} />
+                  ) : (
+                    <HiViewGridAdd />
+                  )}
+                  <div className="flex-1">
+                    <div className="text-sm flex items-center gap-2 cursor-pointer font-medium text-gray-800 dark:text-white">
+                      <div
+                        onClick={() =>
+                          row?.postId == null ? null : redirectToPage(row)
+                        }
+                      >
+                        {row?.type}
                       </div>
-
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {row?.message}
-                      </div>
-
-                      <div className="text-[11px] text-gray-400 mt-1">
-                        {timeAgoCompact(row?.createdAt)}
+                      <div
+                        onClick={() => {
+                          setOpen(false);
+                          router.push(`/ideas/profile/${row?.actor?.id}`);
+                        }}
+                        className="text-blue-500 text-xs hover:text-blue-600 "
+                      >
+                        ({" "}
+                        <span className="hover:underline">
+                          {row?.actor?.username}
+                        </span>{" "}
+                        )
                       </div>
                     </div>
 
-                    {row?.isRead ? (
-                      <button
-                        className="
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      {row?.message}
+                    </div>
+
+                    <div className="text-[11px] text-gray-400 mt-1">
+                      {timeAgoCompact(row?.createdAt)}
+                    </div>
+                  </div>
+
+                  {row?.isRead ? (
+                    <button
+                      className="
                       flex items-center justify-center
                       h-7 w-7 rounded-full
                       bg-emerald-100 dark:bg-emerald-900/30
@@ -262,17 +325,17 @@ export default function NotificationBell({ userId }) {
                      
                       self-center
                     "
-                        aria-label="Mark as read"
-                      >
-                        ✓
-                      </button>
-                    ) : (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          markAsRead(row);
-                        }}
-                        className="
+                      aria-label="Mark as read"
+                    >
+                      ✓
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        markAsRead(row);
+                      }}
+                      className="
                       opacity-0 group-hover:opacity-100
                       transition-all duration-200
                       cursor-pointer
@@ -284,14 +347,22 @@ export default function NotificationBell({ userId }) {
                       translate-x-2 group-hover:translate-x-0
                       self-center
                     "
-                        aria-label="Mark as read"
-                      >
-                        ✓
-                      </button>
-                    )}
-                  </div>
+                      aria-label="Mark as read"
+                    >
+                      ✓
+                    </button>
+                  )}
                 </div>
-              ))
+              </div>
+            ))
+          )}
+          {isLoader && (
+            <div className="flex items-center justify-center py-3">
+              <CircularProgress
+                size={20}
+                className="!text-gray-400 dark:!text-gray-300"
+              />
+            </div>
           )}
         </div>
       </div>

@@ -246,10 +246,10 @@ export const postUserCommentLikeOrUnlike = async (reqBody: unknown) => {
   }
 };
 
-export const fetchNotification = async () => {
+export const fetchNotification = async (limit = 10, offset = 0) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getNotification}?limit=50`,
+      `${API_URLs.getNotification}?limit=${limit}&offset=${offset}`,
     );
     return response?.data;
   } catch (error: unknown) {

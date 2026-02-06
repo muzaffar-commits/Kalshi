@@ -390,7 +390,12 @@ export default function SubComment({
               className="px-4 py-2 cursor-pointer rounded-lg bg-black text-white text-sm font-medium dark:bg-white dark:text-black"
             >
               {isLoader ? (
-                <CircularProgress size={30} className="dark:!text-gray-600 " />
+                <div className="w-9">
+                  <CircularProgress
+                    size={15}
+                    className="!text-white dark:!text-gray-600 "
+                  />
+                </div>
               ) : (
                 "Reply"
               )}

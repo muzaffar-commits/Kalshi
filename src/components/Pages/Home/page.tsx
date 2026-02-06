@@ -142,7 +142,7 @@ const Home = () => {
       const [response] = await Promise.all([
         commonQuestionFindById(
           categoryDetails?.id || 1,
-          userDetails?.user?.id as string,
+          // userDetails?.user?.id as string,
           ids,
           sortBy,
           frequency,

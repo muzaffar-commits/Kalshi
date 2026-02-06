@@ -13,7 +13,6 @@ import toast from "react-hot-toast";
 import { FaBookmark } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
 import { useRouter } from "next/navigation";
-import { ReplyInput, ReplySubCommentInput } from "./ReplyInput";
 import { useSelector } from "react-redux";
 import ReplyModal from "./ReplyModal";
 import SubComment from "@/components/Modal/SubComment";
@@ -49,11 +48,21 @@ export default function PostList({
   const [open, setOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
   const [postId, setPostId] = useState(null);
+  const [commentIds, setCommentIds] = useState(null);
   const [rowDetails, setRowDetails] = useState({});
   const [isSendMessageLoader, setIsSendMessageLoader] = useState(false);
   const userDetails = useSelector((state: any) => state?.user?.user);
   const router = useRouter();
 
+  const handleCloseComment = () => {
+    setMixText("");
+    setOpen(false);
+    setPostId(null);
+    setCommentIds(null);
+    setRowDetails({});
+    setImageGif(null);
+    setCommentOpen(false);
+  };
   const toggleComments = async (postId: number) => {
     setCommentMap((prev: any) => {
       const isOpen = prev?.[postId]?.open ?? false;
@@ -282,14 +291,9 @@ export default function PostList({
             },
           };
         });
-        setOpen(false);
-        setMixText("");
-        setImageGif(null);
-        // setOpen(false);
+        handleCloseComment();
       } else {
         toast.error(response?.message || "something went wrong");
-        setMixText("");
-        setImageGif(null);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -302,136 +306,21 @@ export default function PostList({
     }
   };
 
-  const insertEmoji = (emoji: string) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = mixText.substring(0, start) + emoji + mixText.substring(end);
-
-    setMixText(text);
-    setTimeout(() => {
-      textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
-      textarea.focus();
-    }, 0);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>, row) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      // handleSend(row);
-    }
-  };
-
-  const handleSubComment = (postId: number, commentDetails: any) => {
-    setCommentMap((prev: any) => {
-      const currentOpen =
-        prev?.[postId]?.comments?.find((c: any) => c.id === commentDetails.id)
-          ?.isReply ?? false;
-      const updated: any = {};
-      Object.keys(prev).forEach((key) => {
-        const id = Number(key);
-        const post = prev[id];
-        updated[id] = {
-          ...post,
-          isReply: false,
-
-          comments: post?.comments?.map((comment: any) => {
-            if (id !== postId) {
-              return {
-                ...comment,
-                isReply: false,
-                replies: comment.replies?.map((r: any) => ({
-                  ...r,
-                  isReply: false,
-                })),
-              };
-            }
-            return {
-              ...comment,
-              isReply: comment.id === commentDetails.id ? !currentOpen : false,
-              replies: comment.replies?.map((r: any) => ({
-                ...r,
-                isReply: false,
-              })),
-            };
-          }),
-        };
-      });
-
-      return updated;
-    });
-  };
-
-  const handleSubCommentToComment = (
-    postId: number,
-    commentId: number,
-    replyDetails: any,
-  ) => {
-    setCommentMap((prev: any) => {
-      const parent = prev?.[postId]?.comments?.find(
-        (c: any) => c.id === commentId,
-      );
-      const currentOpen =
-        parent?.replies?.find((r: any) => r.id === replyDetails.id)?.isReply ??
-        false;
-      const updated: any = {};
-      Object.keys(prev).forEach((key) => {
-        const pid = Number(key);
-        const post = prev[pid];
-
-        updated[pid] = {
-          ...post,
-          isReply: false,
-
-          comments: post?.comments?.map((comment: any) => {
-            if (pid !== postId) {
-              return {
-                ...comment,
-                isReply: false,
-                replies: comment.replies?.map((r: any) => ({
-                  ...r,
-                  isReply: false,
-                })),
-              };
-            }
-            if (comment.id !== commentId) {
-              return {
-                ...comment,
-                isReply: false,
-                replies: comment.replies?.map((r: any) => ({
-                  ...r,
-                  isReply: false,
-                })),
-              };
-            }
-            return {
-              ...comment,
-              isReply: false,
-              replies: comment.replies?.map((reply: any) => ({
-                ...reply,
-                isReply: reply.id === replyDetails.id ? !currentOpen : false,
-              })),
-            };
-          }),
-        };
-      });
-
-      return updated;
-    });
-  };
-
   const handleRedirectUserDetails = (id) => {
     router.push(`/ideas/profile/${id}`);
   };
-  const handleSubmitForSubComment = async (row: any, imageLink: any) => {
+  const handleSubmitForSubComment = async (
+    row: any,
+    replyText: string,
+    imageLink: any,
+  ) => {
     setIsSendMessageLoader(true);
     try {
       const payload = {
         postId: postId,
-        comment: `@${row?.User?.username} ${mixText}`,
+        comment: `@${row?.User?.username} ${replyText}`,
         metadata: imageLink ? { images: [imageLink] } : null,
-        replyCommentId: row?.id,
+        replyCommentId: commentIds,
       };
       const [response] = await Promise.all([
         replyComments(payload),
@@ -447,7 +336,7 @@ export default function PostList({
             [postId]: {
               ...prev[postId],
               comments: prev[postId].comments.map((comment: any) => {
-                if (comment.id !== row.id) return comment;
+                if (comment.id !== commentIds) return comment;
                 return {
                   ...comment,
                   isReply: false,
@@ -468,8 +357,7 @@ export default function PostList({
             },
           };
         });
-        setMixText("");
-        setCommentOpen(false);
+        handleCloseComment();
       } else {
         toast.error(response?.message || "something went wrong");
       }
@@ -484,24 +372,15 @@ export default function PostList({
     }
   };
 
-  const handleKeyDownComment = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>,
-    row,
-  ) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      // handleSubmitForSubComment(row);
-    }
-  };
-
   const handleOpenComment = (item) => {
     setOpen(true);
     setRowDetails(item);
   };
 
-  const handleOpenSubComment = (postIds, item) => {
+  const handleOpenSubComment = (postIds, item, commentId = null) => {
     setCommentOpen(true);
     setPostId(postIds);
+    setCommentIds(commentId);
     setRowDetails(item);
   };
 
@@ -555,9 +434,9 @@ export default function PostList({
                   <div className="bg-green-400 p-2 w-fit rounded shadow">
                     <Image
                       src={contentForPost?.images?.[0]}
-                      height={500}
+                      height={250}
                       alt="post image"
-                      width={500}
+                      width={350}
                     />
                   </div>
                 )}
@@ -616,31 +495,6 @@ export default function PostList({
                   Reply
                 </button>
               </div>
-
-              <div
-                className={`
-                  transition-all duration-500 ease-in-out
-                  ${
-                    commentMap[row.id]?.isReply
-                      ? "max-h-[200px] opacity-100 mt-2"
-                      : "max-h-0 opacity-0"
-                  }
-                  overflow-visible
-                `}
-              >
-                <ReplyInput
-                  textareaRef={textareaRef}
-                  rows={row}
-                  replyText={mixText}
-                  setReplyText={setMixText}
-                  // handleComment={handleSend}
-                  handleComment={null}
-                  insertEmoji={insertEmoji}
-                  handleKeyDown={handleKeyDown}
-                  userDetails={userDetails}
-                />
-              </div>
-
               <div
                 className={`
                       grid transition-all duration-300  ease-in-out origin-top
@@ -727,9 +581,9 @@ export default function PostList({
                                   <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
                                     <Image
                                       src={commentImages?.images?.[0]}
-                                      height={500}
+                                      height={250}
                                       alt="post image"
-                                      width={500}
+                                      width={350}
                                     />
                                   </div>
                                 )}
@@ -763,7 +617,11 @@ export default function PostList({
                                 //   handleSubComment(row?.id, comment)
                                 // }
                                 onClick={() =>
-                                  handleOpenSubComment(row?.id, comment)
+                                  handleOpenSubComment(
+                                    row?.id,
+                                    comment,
+                                    comment?.id,
+                                  )
                                 }
                                 className="text-gray-400 hover:text-gray-500 cursor-pointer "
                               >
@@ -780,33 +638,21 @@ export default function PostList({
                                   }
                                   overflow-visible
                                 `}
-                            >
-                              <ReplySubCommentInput
-                                PostId={row?.id}
-                                textareaRef={textareaRef}
-                                rows={comment}
-                                replyText={mixText}
-                                setReplyText={setMixText}
-                                handleComment={handleSubmitForSubComment}
-                                insertEmoji={insertEmoji}
-                                handleKeyDown={handleKeyDownComment}
-                                userDetails={userDetails}
-                              />
-                            </div>
+                            ></div>
                             <div className="pb-2 pl-10">
                               {comment?.replies?.length > 0 &&
                                 comment?.replies?.map((replies: IReply) => {
-                                  const commentImages = (() => {
-                                    if (!comment?.metadata) return null;
-                                    if (typeof comment.metadata === "object") {
-                                      return comment.metadata;
+                                  const commentSubImages = (() => {
+                                    if (!replies?.metadata) return null;
+                                    if (typeof replies.metadata === "object") {
+                                      return replies.metadata;
                                     }
                                     try {
-                                      return JSON.parse(comment.metadata);
+                                      return JSON.parse(replies.metadata);
                                     } catch (e) {
                                       console.error(
                                         "Invalid metadata JSON",
-                                        comment.metadata,
+                                        replies.metadata,
                                       );
                                       return null;
                                     }
@@ -857,6 +703,19 @@ export default function PostList({
                                               />
                                             )}{" "}
                                           </p>
+                                          {commentSubImages?.images?.length >
+                                            0 && (
+                                            <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
+                                              <Image
+                                                src={
+                                                  commentSubImages?.images?.[0]
+                                                }
+                                                height={250}
+                                                alt="post image"
+                                                width={350}
+                                              />
+                                            </div>
+                                          )}
                                           <div className=" py-2">
                                             <div className="flex text-gray-400 flex-row items-center gap-4">
                                               <span></span>
@@ -889,11 +748,18 @@ export default function PostList({
                                               </span>
                                               <div
                                                 className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
+                                                // onClick={() =>
+                                                //   handleSubCommentToComment(
+                                                //     row?.id,
+                                                //     comment?.id,
+                                                //     replies,
+                                                //   )
+                                                // }
                                                 onClick={() =>
-                                                  handleSubCommentToComment(
+                                                  handleOpenSubComment(
                                                     row?.id,
-                                                    comment?.id,
                                                     replies,
+                                                    comment?.id,
                                                   )
                                                 }
                                               >
@@ -913,21 +779,7 @@ export default function PostList({
                                   }
                                   overflow-visible
                                 `}
-                                      >
-                                        <ReplySubCommentInput
-                                          PostId={row?.id}
-                                          textareaRef={textareaRef}
-                                          rows={comment}
-                                          replyText={mixText}
-                                          setReplyText={setMixText}
-                                          handleComment={
-                                            handleSubmitForSubComment
-                                          }
-                                          insertEmoji={insertEmoji}
-                                          handleKeyDown={handleKeyDownComment}
-                                          userDetails={userDetails}
-                                        />
-                                      </div>
+                                      ></div>
                                     </div>
                                   );
                                 })}
@@ -946,7 +798,7 @@ export default function PostList({
 
       <ReplyModal
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleCloseComment}
         row={rowDetails}
         handleSend={handleSend}
         isLoader={isSendMessageLoader}
@@ -957,7 +809,7 @@ export default function PostList({
       />
       <SubComment
         open={commentOpen}
-        onClose={() => setCommentOpen(false)}
+        onClose={handleCloseComment}
         row={rowDetails}
         handleSend={handleSubmitForSubComment}
         isLoader={isSendMessageLoader}

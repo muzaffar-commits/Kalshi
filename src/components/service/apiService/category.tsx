@@ -16,7 +16,7 @@ export const getCommonCategoryAll = async () => {
 
 export const commonQuestionFindById = async (
   id: number,
-  userId: string,
+  // userId: string,
   subCategoryId: number | null,
   sortBy: string,
   frequency: string,
@@ -29,7 +29,6 @@ export const commonQuestionFindById = async (
     const response = await apiInstance.get(API_URLs.commonQuestionFindById, {
       params: {
         categoryId: id,
-        ...(userId && { userId }),
         ...(subCategoryId && { eventSectionId: subCategoryId }),
         ...(sortBy && { sortBy }),
         ...(frequency && { frequency }),

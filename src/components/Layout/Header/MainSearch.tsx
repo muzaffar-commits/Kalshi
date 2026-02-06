@@ -6,19 +6,23 @@ import { SearchResultsSkeleton } from "@/utils/customSkeleton";
 import { QuestionItem } from "@/utils/typesInterface";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { GiNinjaStar } from "react-icons/gi";
 
 export default function MainSearch() {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
   const [questionData, setQuestionData] = useState<QuestionItem[]>([]);
+  const [open, setOpen] = useState(false);
   const [isLoader, setIsLoader] = useState(false);
+  const [activeTab, setActiveTab] = useState<"users" | "questions">("users");
+
+  const ref = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  // 🔹 Outside click close
+
+  // outside click close
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -29,19 +33,24 @@ export default function MainSearch() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const fetchUserList = async (searchValue) => {
-    setOpen(true);
+  // debounce typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 500); // 500ms pause
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // fetch users
+  const fetchUsers = async (searchValue: string) => {
     setIsLoader(true);
     try {
       const [response] = await Promise.all([
         getUserSearch(searchValue, 5),
-        delay(1000),
+        delay(100),
       ]);
-      if (response.success) {
-        setResults(response?.data);
-      } else {
-        setResults([]);
-      }
+      setResults(response?.success ? response.data : []);
     } catch {
       setResults([]);
     } finally {
@@ -49,222 +58,196 @@ export default function MainSearch() {
     }
   };
 
+  // fetch questions
+  const fetchQuestions = async (searchValue: string) => {
+    setIsLoader(true);
+    try {
+      const [response] = await Promise.all([
+        commonQuestionFindById(1, null, null, "", "", searchValue, null),
+        delay(1000),
+      ]);
+      setQuestionData(response?.success ? (response.data.questions ?? []) : []);
+    } catch {
+      setQuestionData([]);
+    } finally {
+      setIsLoader(false);
+    }
+  };
+
+  // API call after debounce
   useEffect(() => {
-    if (query.trim().length < 2) {
+    if (!debouncedQuery.trim() || debouncedQuery.length < 2) {
       setResults([]);
-      // setOpen(false);
+      setQuestionData([]);
       return;
     }
-    const timer = setTimeout(() => {
-      fetchUserList(query);
-    }, 300);
 
-    return () => clearTimeout(timer);
-  }, [query]);
+    setOpen(true);
 
-  const handleRedirectUserProfile = (id) => {
+    if (activeTab === "users") {
+      fetchUsers(debouncedQuery);
+    } else {
+      fetchQuestions(debouncedQuery);
+    }
+  }, [debouncedQuery, activeTab]);
+
+  const handleRedirectUserProfile = (id: number) => {
     setQuery("");
     setOpen(false);
     router.push(`/ideas/profile/${id}`);
   };
 
-  const questionAllList = useCallback(async () => {
-    if (!query.trim()) {
-      setQuestionData([]);
-      return;
-    }
-
-    try {
-      const [response] = await Promise.all([
-        commonQuestionFindById(1, "", null, "", "", "", query, null),
-        delay(800),
-      ]);
-
-      if (response?.success) {
-        setQuestionData(response.data.questions ?? []);
-      } else {
-        setQuestionData([]);
-      }
-    } catch {
-      setQuestionData([]);
-    }
-  }, [query]);
-
-  useEffect(() => {
-    questionAllList();
-  }, [questionAllList]);
-
-  const handleRedirectMarketDetails = (id: string | number) => {
+  const handleRedirectMarketDetails = (id: number | string) => {
     setQuery("");
     setOpen(false);
     router.push(`/market/${id}`);
   };
+
   return (
     <div className="relative w-full" ref={ref}>
       {/* INPUT */}
-      <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-200" />
+      <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
 
       <input
         type="text"
-        onFocus={() => setOpen(true)}
         value={query}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            setOpen(true);
-          }
-        }}
+        onFocus={() => setOpen(true)}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search Opinion Kings"
-        className="
-          w-full pl-10 pr-4 py-2
-          rounded-full
-          bg-gray-100 dark:bg-gray-700
-          text-gray-700 dark:text-gray-200
-          text-sm
-          focus:outline-none
-        "
+        className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-sm focus:outline-none"
       />
 
       {/* DROPDOWN */}
       {open && (
-        <div
-          onWheel={(e) => e.stopPropagation()}
-          className="
-            absolute left-0 top-full mt-2
-w-full max-w-full
-bg-white dark:bg-[#1D293D]
-border border-gray-200 dark:border-gray-700
-rounded-xl shadow-lg
-z-50
-max-h-96 overflow-y-auto overscroll-contain
-scroll-smooth
+        <div className="absolute left-0 top-full mt-2 w-full bg-white dark:bg-[#1D293D] border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50">
+          {/* TABS */}
+          <div className="flex border-b border-gray-400 dark:border-gray-700">
+            <button
+              onClick={() => setActiveTab("users")}
+              className={`flex-1 py-2 text-sm font-medium ${
+                activeTab === "users"
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-500"
+              }`}
+            >
+              Users
+            </button>
+            <button
+              onClick={() => setActiveTab("questions")}
+              className={`flex-1 py-2 text-sm font-medium ${
+                activeTab === "questions"
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-500"
+              }`}
+            >
+              Questions
+            </button>
+          </div>
 
-          "
-        >
-          <div className="flex-1 text-start overflow-y-auto overscroll-contain px-3 pr-6 py-6 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
+          {/* RESULTS */}
+          <div className="max-h-96 overflow-y-auto p-3">
             {isLoader ? (
-              <>
-                <SearchResultsSkeleton />
-              </>
+              <SearchResultsSkeleton />
+            ) : activeTab === "users" ? (
+              results.length > 0 ? (
+                results.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => handleRedirectUserProfile(item.id)}
+                    className="group flex items-center gap-3.5 rounded-xl px-4 py-3 transition hover:bg-gray-100 dark:hover:bg-gray-900/60 cursor-pointer active:scale-[0.98]"
+                  >
+                    {" "}
+                    <div className="relative flex-shrink-0">
+                      {" "}
+                      <Image
+                        src={item.image_url || "/img/user.png"}
+                        height={48}
+                        width={48}
+                        alt={item.username || "User"}
+                        className="rounded-full object-cover ring-1 ring-gray-200/50 dark:ring-gray-700/50"
+                      />{" "}
+                    </div>{" "}
+                    <div className="min-w-0 flex-1">
+                      {" "}
+                      <p className="truncate text-base font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        {" "}
+                        {item.username || "—"}{" "}
+                      </p>{" "}
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {" "}
+                        View profile{" "}
+                      </p>{" "}
+                    </div>{" "}
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 px-4 py-3">
+                  No users found
+                </p>
+              )
+            ) : questionData.length > 0 ? (
+              questionData.map((item) => {
+                const metaData =
+                  typeof item?.metadata === "string"
+                    ? JSON.parse(item.metadata)
+                    : item?.metadata || {};
+
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => handleRedirectMarketDetails(item.id)}
+                    className="group flex items-center gap-3.5 rounded-xl px-4 py-3 transition hover:bg-gray-100 dark:hover:bg-gray-900/60 cursor-pointer active:scale-[0.98]"
+                  >
+                    {" "}
+                    {/* <div className="relative flex-shrink-0">
+                      {" "}
+                      <Image
+                        src={metaData?.imageUrl || "/img/user.png"}
+                        height={48}
+                        width={48}
+                        alt="Question"
+                        className="rounded-full object-cover ring-1 ring-gray-200/50 dark:ring-gray-700/50"
+                      />{" "}
+                    </div>{" "} */}
+                    <div className="min-w-0 flex-1">
+                      {" "}
+                      <p className="line-clamp-1 text-base font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        {" "}
+                        {item.question || "—"}{" "}
+                      </p>{" "}
+                      <span className="flex text-xs items-center gap-1">
+                        {" "}
+                        {item?.stats?.totalVolume > 0 ? (
+                          <>
+                            {" "}
+                            <span className="text-yellow-500 font-semibold">
+                              {" "}
+                              ${" "}
+                            </span>{" "}
+                            <span className="text-gray-500">
+                              {" "}
+                              {Number(item?.stats?.totalVolume || 0).toFixed(
+                                2,
+                              )}{" "}
+                              Vol{" "}
+                            </span>{" "}
+                          </>
+                        ) : (
+                          <span className="text-yellow-500 flex items-center gap-1">
+                            {" "}
+                            <GiNinjaStar size={12} className="rotate-45" />{" "}
+                            New{" "}
+                          </span>
+                        )}{" "}
+                      </span>{" "}
+                    </div>{" "}
+                  </div>
+                );
+              })
             ) : (
-              <>
-                <div className="mb-8">
-                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Users
-                  </h3>
-
-                  {results.length > 0 ? (
-                    <div className="space-y-1.5">
-                      {results.map((item) => (
-                        <div
-                          key={item.id}
-                          onClick={() => handleRedirectUserProfile(item.id)}
-                          className="group flex items-center gap-3.5 rounded-xl px-4 py-3 transition hover:bg-gray-100 dark:hover:bg-gray-900/60 cursor-pointer active:scale-[0.98]"
-                        >
-                          <div className="relative flex-shrink-0">
-                            <Image
-                              src={item.image_url || "/img/user.png"}
-                              height={48}
-                              width={48}
-                              alt={item.username || "User"}
-                              className="rounded-full object-cover ring-1 ring-gray-200/50 dark:ring-gray-700/50"
-                            />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-base font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                              {item.username || "—"}
-                            </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              View profile
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                      {query.trim()
-                        ? "No users found"
-                        : "Start typing to search users"}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Questions
-                  </h3>
-
-                  {query.trim() ? (
-                    questionData.length > 0 ? (
-                      <div className="space-y-1.5">
-                        {questionData.map((item) => {
-                          const metaData =
-                            typeof item?.metadata === "string"
-                              ? JSON.parse(item.metadata)
-                              : item?.metadata || {};
-
-                          return (
-                            <div
-                              key={item.id}
-                              onClick={() =>
-                                handleRedirectMarketDetails(item.id)
-                              }
-                              className="group flex items-center gap-3.5 rounded-xl px-4 py-3.5 transition hover:bg-gray-100 dark:hover:bg-gray-900/60 cursor-pointer active:scale-[0.98]"
-                            >
-                              <div className="relative flex-shrink-0">
-                                <Image
-                                  src={metaData?.imageUrl || "/img/user.png"}
-                                  height={48}
-                                  width={48}
-                                  alt="Question"
-                                  className="rounded-full object-cover ring-1 ring-gray-200/50 dark:ring-gray-700/50"
-                                />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="line-clamp-1 text-base font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                  {item.question || "—"}
-                                </p>
-                                <span className="flex text-xs items-center gap-1">
-                                  {item?.stats?.totalVolume > 0 ? (
-                                    <>
-                                      <span className="text-yellow-500 font-semibold">
-                                        $
-                                      </span>
-                                      <span className="text-gray-500">
-                                        {Number(
-                                          item?.stats?.totalVolume || 0,
-                                        ).toFixed(2)}{" "}
-                                        Vol
-                                      </span>
-                                    </>
-                                  ) : (
-                                    <span className="text-yellow-500 flex items-center gap-1">
-                                      <GiNinjaStar
-                                        size={12}
-                                        className="rotate-45"
-                                      />
-                                      New
-                                    </span>
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <p className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                        No questions found
-                      </p>
-                    )
-                  ) : (
-                    <p className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                      Type to discover questions
-                    </p>
-                  )}
-                </div>
-              </>
+              <p className="text-sm text-gray-500 px-4 py-3">
+                No questions found
+              </p>
             )}
           </div>
         </div>
