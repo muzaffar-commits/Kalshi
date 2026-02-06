@@ -299,13 +299,13 @@ const Home = () => {
                     className="border relative border-[var(--color-borderlight)]
                         dark:border-[var(--color-borderdark)]
                         bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
-                        relative rounded-xl p-4
+                        relative rounded-xl px-4 py-2
                         transform transition-all duration-300 ease-in-out
-                        hover:scale-110 hover:shadow-md
+                        hover:scale-106 hover:shadow-md
                         z-0 hover:z-20
                         "
                   >
-                    <div className="flex mb-3">
+                    <div className="flex mb-2">
                       {metaData?.imageUrl && (
                         <div
                           className="p-1.5 mr-2 rounded-md bg-gray-100 dark:bg-gray-700
@@ -421,7 +421,7 @@ const Home = () => {
                           );
                         })}
 
-                        <div className="flex mt-4  align-baseline justify-between text-xs font-normal text-muted">
+                        <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
                           <div className="flex gap-4 items-center">
                             <span className="flex items-center gap-1">
                               {row?.stats?.totalVolume > 0 ? (
@@ -482,7 +482,7 @@ const Home = () => {
                           <div>
                             <button
                               onClick={() => goToDetails(row.id)}
-                              className="bg-[#8160ee] cursor-pointer rounded-lg py-2 px-5 text-[14px] font-semibold text-center "
+                              className="bg-[#8160ee] cursor-pointer rounded-lg py-2 px-5 text-[14px] text-white font-semibold text-center"
                             >
                               Trade
                             </button>
@@ -491,12 +491,12 @@ const Home = () => {
                       </>
                     ) : (
                       <>
-                        <div className="text-xs mt-4  h-[165px] hideScrollbar overflow-y-auto space-y-2">
+                        <div className="text-xs mt-2  h-[165px] hideScrollbar overflow-y-auto space-y-2">
                           {row?.options?.map(
                             (item: OptionItem, idx: number) => (
                               <div
                                 key={idx}
-                                className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)] dark:bg-[#272f42]  px-3 py-2 rounded-lg bg-[#f5f5f5]"
+                                className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)] dark:bg-[#272f42]  px-3 py-2 rounded-lg bg-[#f5f5f5] mb-1"
                               >
                                 <span className="block md:max-w-28 max-w-24 truncate">
                                   {item?.name || "--"}
@@ -551,7 +551,7 @@ const Home = () => {
                             ),
                           )}
                         </div>
-                        <div className="flex mt-4  align-baseline justify-between text-xs font-normal text-muted">
+                        <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
                           <span className="flex items-center gap-1">
                             {row?.stats?.totalVolume > 0 ? (
                               <>

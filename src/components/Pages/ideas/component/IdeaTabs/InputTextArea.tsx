@@ -119,7 +119,7 @@ export default function InputTextArea({
             pt-4
             w-full
             min-h-[80px]
-            text-sm
+            text-md
             leading-relaxed
             bg-transparent
             resize-none

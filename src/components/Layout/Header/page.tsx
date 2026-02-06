@@ -252,11 +252,11 @@ const Header = () => {
         <header
           className="fixed top-0 left-0 w-full z-[1000]
   bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)]
-  pb-2"
+  md:pb-2 pb-0"
         >
           {/* shadow-[0_2px_6px_rgba(0,0,0,0.08)]
   dark:shadow-[0_2px_6px_rgba(0,0,0,0.4)] */}
-          <div className="max-w-[1268px] mx-auto px-4 py-1 h-auto ">
+          <div className="max-w-[1268px] mx-auto px-4 md:py-1 py-0 h-auto ">
             <div
               className={`flex items-center justify-between py-2 px-4  ${
                 pathname === "/"

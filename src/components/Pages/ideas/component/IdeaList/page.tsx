@@ -41,22 +41,26 @@ export default function MobileMenu() {
       {/* ===== Overlay ===== */}
       {open && (
         <div
-          className="fixed inset-0  z-40 md:hidden"
+          className="fixed inset-0  md:hidden"
           onClick={() => setOpen(false)}
         />
       )}
 
       {/* ===== Sidebar / Drawer ===== */}
       <aside
-        className={`
-          fixed top-0 left-0 h-full  md:pt-5 pt-12 z-50 w-64 p-5 z-40
-          transform transition-transform duration-300 md:border-r-0 border-r border-[var(--color-borderlight)]
-           dark:border-[var(--color-borderdark)]
-           bg:transparent md:dark:bg-transparent
+        className={` md:relative z-50 w-64
+    fixed top-0 left-0 h-full
+    pt-12 md:pt-5
+    py-5 pl-5 md:pl-0
+     md:bg:transparent md:dark:bg-transparent
            bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
-          ${open ? "translate-x-0" : "-translate-x-full z-50"}
-          md:translate-x-0 md:static md:block
-        `}
+        transition-transform duration-300
+    ${open ? "translate-x-0" : "-translate-x-full"}
+
+    md:translate-x-0
+    md:relative
+    md:block
+  `}
       >
         {/* Close (mobile only) */}
         <div className="md:hidden flex justify-end mb-6 mt-12 relative">
@@ -129,7 +133,7 @@ export default function MobileMenu() {
             >
               Post
             </Link> */}
-            <button
+            {/* <button
               onClick={() => setOpen(false)}
               className="block w-full text-center bg-blue-500 
              hover:bg-blue-500/80 active:bg-blue-600 
@@ -137,7 +141,7 @@ export default function MobileMenu() {
              transition duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg cursor-pointer"
             >
               Post
-            </button>
+            </button> */}
           </li>
         </ul>
       </aside>
