@@ -8,10 +8,10 @@ import { GrCloudUpload } from "react-icons/gr";
 import { Gift } from "lucide-react";
 import { imageUpload } from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
-import GiphyModal from "./GiphyModal";
 import { useTheme } from "next-themes";
+import GiphyModal from "@/components/Pages/detail/component/postList/GiphyModal";
 
-export default function ReplyModal({
+export default function SubComment({
   open,
   onClose,
   row,
@@ -154,6 +154,9 @@ export default function ReplyModal({
   const handleSubmit = () => {
     handleSend(row, mixText, gif);
   };
+
+  console.log(row, "rowlskdfjslf");
+
   return (
     <Modal
       className="m-2"
@@ -210,10 +213,10 @@ export default function ReplyModal({
             </p>
 
             <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-              {commentDetails?.content || "--"}
+              {row?.content || "--"}
             </p>
             {commentDetails?.images?.length > 0 && (
-              <div className="bg-green-100 p-2 w-fit rounded shadow">
+              <div className="bg-green-100 mt-1.5 p-2 w-fit rounded shadow">
                 <Image
                   src={commentDetails?.images?.[0]}
                   height={150}

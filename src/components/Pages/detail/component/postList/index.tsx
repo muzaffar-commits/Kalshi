@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { ReplyInput, ReplySubCommentInput } from "./ReplyInput";
 import { useSelector } from "react-redux";
 import ReplyModal from "./ReplyModal";
+import SubComment from "@/components/Modal/SubComment";
 
 interface PostListProps {
   isIdea?: boolean;
@@ -43,8 +44,11 @@ export default function PostList({
     {},
   );
   const [mixText, setMixText] = useState("");
+  const [imageGif, setImageGif] = useState(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState(false);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [postId, setPostId] = useState(null);
   const [rowDetails, setRowDetails] = useState({});
   const [isSendMessageLoader, setIsSendMessageLoader] = useState(false);
   const userDetails = useSelector((state: any) => state?.user?.user);
@@ -230,49 +234,14 @@ export default function PostList({
     }
   };
 
-  const commentMainPost = (postId: number) => {
-    setCommentMap((prev: any) => {
-      const updated: any = {};
-      const isCurrentlyOpen = prev[postId]?.isReply === true;
-
-      Object.keys(prev).forEach((key) => {
-        const id = Number(key);
-        const post = prev[id];
-
-        updated[id] = {
-          ...post,
-          isReply: id === postId ? !isCurrentlyOpen : false,
-          comments: post?.comments?.map((comment: any) => ({
-            ...comment,
-            isReply: false,
-            replies: comment.replies?.map((r: any) => ({
-              ...r,
-              isReply: false,
-            })),
-          })),
-        };
-      });
-      if (!updated[postId]) {
-        updated[postId] = {
-          isReply: true,
-          comments: [],
-        };
-      }
-
-      return updated;
-    });
-  };
-
-  const handleSend = async (row: any, inputText: any, imageLink: any) => {
-    if (!inputText.trim()) return;
+  const handleSend = async (row: any, imageLink: any) => {
+    if (!mixText.trim()) return;
     setIsSendMessageLoader(true);
     try {
       const payload = {
         postId: row?.id,
-        comment: inputText,
-        metadata: {
-          images: imageLink == null ? [] : [imageLink],
-        },
+        comment: mixText,
+        metadata: imageLink ? { images: [imageLink] } : null,
       };
       const [response] = await Promise.all([
         replyComments(payload),
@@ -313,13 +282,14 @@ export default function PostList({
             },
           };
         });
-
+        setOpen(false);
         setMixText("");
+        setImageGif(null);
         // setOpen(false);
       } else {
         toast.error(response?.message || "something went wrong");
         setMixText("");
-        // setOpen(false);
+        setImageGif(null);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -454,17 +424,22 @@ export default function PostList({
   const handleRedirectUserDetails = (id) => {
     router.push(`/ideas/profile/${id}`);
   };
-  const handleSubmitForSubComment = async (postId: any, row: any) => {
+  const handleSubmitForSubComment = async (row: any, imageLink: any) => {
+    setIsSendMessageLoader(true);
     try {
       const payload = {
         postId: postId,
         comment: `@${row?.User?.username} ${mixText}`,
+        metadata: imageLink ? { images: [imageLink] } : null,
         replyCommentId: row?.id,
       };
-      const response = await replyComments(payload);
+      const [response] = await Promise.all([
+        replyComments(payload),
+        delay(100),
+      ]);
       if (response.success) {
         toast.success("Message send successfully!");
-        setMixText("");
+
         setCommentMap((prev: any) => {
           if (!prev?.[postId]) return prev;
           return {
@@ -493,9 +468,10 @@ export default function PostList({
             },
           };
         });
+        setMixText("");
+        setCommentOpen(false);
       } else {
         toast.error(response?.message || "something went wrong");
-        setMixText("");
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -503,17 +479,18 @@ export default function PostList({
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsSendMessageLoader(false);
     }
   };
 
   const handleKeyDownComment = (
     e: React.KeyboardEvent<HTMLTextAreaElement>,
-    postIdDetails,
     row,
   ) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmitForSubComment(postIdDetails, row);
+      // handleSubmitForSubComment(row);
     }
   };
 
@@ -521,6 +498,13 @@ export default function PostList({
     setOpen(true);
     setRowDetails(item);
   };
+
+  const handleOpenSubComment = (postIds, item) => {
+    setCommentOpen(true);
+    setPostId(postIds);
+    setRowDetails(item);
+  };
+
   return (
     <div>
       {allPosts?.map((row, index) => {
@@ -627,7 +611,6 @@ export default function PostList({
                 </button>
                 <button
                   className="hover:text-gray-600 cursor-pointer"
-                  // onClick={() => commentMainPost(row?.id)}
                   onClick={() => handleOpenComment(row)}
                 >
                   Reply
@@ -685,7 +668,23 @@ export default function PostList({
                         "pl-2 pr-2 py-3 bg-gray-50 dark:bg-[#2B394D] rounded-lg border border-gray-200 dark:border-gray-800"
                       }
                     >
-                      {commentMap[row.id].comments.map((comment) => {
+                      {commentMap[row.id].comments.map((comment: any) => {
+                        const commentImages = (() => {
+                          if (!comment?.metadata) return null;
+                          if (typeof comment.metadata === "object") {
+                            return comment.metadata;
+                          }
+                          try {
+                            return JSON.parse(comment.metadata);
+                          } catch (e) {
+                            console.error(
+                              "Invalid metadata JSON",
+                              comment.metadata,
+                            );
+                            return null;
+                          }
+                        })();
+
                         return (
                           <div
                             key={comment.id}
@@ -724,6 +723,16 @@ export default function PostList({
                                 <div className="text-sm text-gray-700 dark:text-gray-300">
                                   {comment.content}
                                 </div>
+                                {commentImages?.images?.length > 0 && (
+                                  <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
+                                    <Image
+                                      src={commentImages?.images?.[0]}
+                                      height={500}
+                                      alt="post image"
+                                      width={500}
+                                    />
+                                  </div>
+                                )}
                               </div>
                             </div>
                             <div className="flex items-center gap-5 pl-10 mt-3 text-gray-400">
@@ -750,8 +759,11 @@ export default function PostList({
                               </div>
 
                               <button
+                                // onClick={() =>
+                                //   handleSubComment(row?.id, comment)
+                                // }
                                 onClick={() =>
-                                  handleSubComment(row?.id, comment)
+                                  handleOpenSubComment(row?.id, comment)
                                 }
                                 className="text-gray-400 hover:text-gray-500 cursor-pointer "
                               >
@@ -783,100 +795,116 @@ export default function PostList({
                             </div>
                             <div className="pb-2 pl-10">
                               {comment?.replies?.length > 0 &&
-                                comment?.replies?.map((replies: IReply) => (
-                                  <div key={replies?.id}>
-                                    <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                                      <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
-                                        <Image
-                                          src={
-                                            replies?.User?.image_url ||
-                                            "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
-                                          }
-                                          alt="user"
-                                          width={30}
-                                          height={30}
-                                          onClick={() =>
-                                            handleRedirectUserDetails(
-                                              row?.User?.id,
-                                            )
-                                          }
-                                          className="rounded-full h-8 w-8 cursor-pointer"
-                                        />
-                                      </div>
-                                      <div>
-                                        <div className="flex items-center gap-2">
-                                          <h4>
-                                            <span
-                                              onClick={() =>
-                                                handleRedirectUserDetails(
-                                                  row?.User?.id,
-                                                )
-                                              }
-                                              className="dark:text-gray-300 cursor-pointer relative hover:underline font-semibold text-gray-700"
-                                            >
-                                              {replies?.User?.username ||
-                                                "Unknown"}
-                                            </span>{" "}
-                                            <span className="text-xs dark:text-gray-500 text-gray-500">
-                                              {timeAgoCompact(row?.updatedAt)}
-                                            </span>
-                                          </h4>
+                                comment?.replies?.map((replies: IReply) => {
+                                  const commentImages = (() => {
+                                    if (!comment?.metadata) return null;
+                                    if (typeof comment.metadata === "object") {
+                                      return comment.metadata;
+                                    }
+                                    try {
+                                      return JSON.parse(comment.metadata);
+                                    } catch (e) {
+                                      console.error(
+                                        "Invalid metadata JSON",
+                                        comment.metadata,
+                                      );
+                                      return null;
+                                    }
+                                  })();
+                                  return (
+                                    <div key={replies?.id}>
+                                      <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
+                                        <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
+                                          <Image
+                                            src={
+                                              replies?.User?.image_url ||
+                                              "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                            }
+                                            alt="user"
+                                            width={30}
+                                            height={30}
+                                            onClick={() =>
+                                              handleRedirectUserDetails(
+                                                row?.User?.id,
+                                              )
+                                            }
+                                            className="rounded-full h-8 w-8 cursor-pointer"
+                                          />
                                         </div>
-                                        <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
-                                          {replies?.content && (
-                                            <HighlightTexts
-                                              text={replies?.content}
-                                            />
-                                          )}{" "}
-                                        </p>
-                                        <div className=" py-2">
-                                          <div className="flex text-gray-400 flex-row items-center gap-4">
-                                            <span></span>
-                                            <span className="flex items-center cursor-pointer gap-2">
-                                              {replies?.isUserLike == 1 ? (
-                                                <FcLike
-                                                  onClick={() =>
-                                                    handleCommentToCommentLikeUnlike(
-                                                      row.id,
-                                                      comment?.id,
-                                                      replies?.id,
-                                                      replies?.isUserLike,
-                                                    )
-                                                  }
-                                                />
-                                              ) : (
-                                                <Heart
-                                                  onClick={() =>
-                                                    handleCommentToCommentLikeUnlike(
-                                                      row.id,
-                                                      comment?.id,
-                                                      replies?.id,
-                                                      replies?.isUserLike,
-                                                    )
-                                                  }
-                                                  size={18}
-                                                />
-                                              )}{" "}
-                                              {replies?.likeCount || 0}
-                                            </span>
-                                            <div
-                                              className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
-                                              onClick={() =>
-                                                handleSubCommentToComment(
-                                                  row?.id,
-                                                  comment?.id,
-                                                  replies,
-                                                )
-                                              }
-                                            >
-                                              Reply
+                                        <div>
+                                          <div className="flex items-center gap-2">
+                                            <h4>
+                                              <span
+                                                onClick={() =>
+                                                  handleRedirectUserDetails(
+                                                    row?.User?.id,
+                                                  )
+                                                }
+                                                className="dark:text-gray-300 cursor-pointer relative hover:underline font-semibold text-gray-700"
+                                              >
+                                                {replies?.User?.username ||
+                                                  "Unknown"}
+                                              </span>{" "}
+                                              <span className="text-xs dark:text-gray-500 text-gray-500">
+                                                {timeAgoCompact(row?.updatedAt)}
+                                              </span>
+                                            </h4>
+                                          </div>
+                                          <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                                            {replies?.content && (
+                                              <HighlightTexts
+                                                text={replies?.content}
+                                              />
+                                            )}{" "}
+                                          </p>
+                                          <div className=" py-2">
+                                            <div className="flex text-gray-400 flex-row items-center gap-4">
+                                              <span></span>
+                                              <span className="flex items-center cursor-pointer gap-2">
+                                                {replies?.isUserLike == 1 ? (
+                                                  <FcLike
+                                                    onClick={() =>
+                                                      handleCommentToCommentLikeUnlike(
+                                                        row.id,
+                                                        comment?.id,
+                                                        replies?.id,
+                                                        replies?.isUserLike,
+                                                      )
+                                                    }
+                                                  />
+                                                ) : (
+                                                  <Heart
+                                                    onClick={() =>
+                                                      handleCommentToCommentLikeUnlike(
+                                                        row.id,
+                                                        comment?.id,
+                                                        replies?.id,
+                                                        replies?.isUserLike,
+                                                      )
+                                                    }
+                                                    size={18}
+                                                  />
+                                                )}{" "}
+                                                {replies?.likeCount || 0}
+                                              </span>
+                                              <div
+                                                className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
+                                                onClick={() =>
+                                                  handleSubCommentToComment(
+                                                    row?.id,
+                                                    comment?.id,
+                                                    replies,
+                                                  )
+                                                }
+                                              >
+                                                Reply
+                                              </div>
                                             </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                    <div
-                                      className={`
+                                      <div
+                                        className={`
                                   transition-all md:pl-10 w-full duration-500 ease-in-out
                                   ${
                                     replies?.isReply
@@ -885,23 +913,24 @@ export default function PostList({
                                   }
                                   overflow-visible
                                 `}
-                                    >
-                                      <ReplySubCommentInput
-                                        PostId={row?.id}
-                                        textareaRef={textareaRef}
-                                        rows={comment}
-                                        replyText={mixText}
-                                        setReplyText={setMixText}
-                                        handleComment={
-                                          handleSubmitForSubComment
-                                        }
-                                        insertEmoji={insertEmoji}
-                                        handleKeyDown={handleKeyDownComment}
-                                        userDetails={userDetails}
-                                      />
+                                      >
+                                        <ReplySubCommentInput
+                                          PostId={row?.id}
+                                          textareaRef={textareaRef}
+                                          rows={comment}
+                                          replyText={mixText}
+                                          setReplyText={setMixText}
+                                          handleComment={
+                                            handleSubmitForSubComment
+                                          }
+                                          insertEmoji={insertEmoji}
+                                          handleKeyDown={handleKeyDownComment}
+                                          userDetails={userDetails}
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                             </div>
                           </div>
                         );
@@ -921,6 +950,21 @@ export default function PostList({
         row={rowDetails}
         handleSend={handleSend}
         isLoader={isSendMessageLoader}
+        mixText={mixText}
+        setMixText={setMixText}
+        gif={imageGif}
+        setGif={setImageGif}
+      />
+      <SubComment
+        open={commentOpen}
+        onClose={() => setCommentOpen(false)}
+        row={rowDetails}
+        handleSend={handleSubmitForSubComment}
+        isLoader={isSendMessageLoader}
+        mixText={mixText}
+        setMixText={setMixText}
+        gif={imageGif}
+        setGif={setImageGif}
       />
     </div>
   );
