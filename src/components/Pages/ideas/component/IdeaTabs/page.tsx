@@ -161,6 +161,7 @@ export default function IdeaTabs({
   // , borderRight: 1, borderColor: "#364153"
   return (
     <Box
+      style={{ position: "relative", zIndex: "10" }}
       sx={{ width: "100%", position: "relative" }}
       className="md:border-r md:border-[#364153]"
     >
@@ -228,7 +229,7 @@ export default function IdeaTabs({
                     <button
                       disabled={gif || isImageUploadLoader ? true : false}
                       type="button"
-                      className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700  " : "text-gray-500 cursor-pointer  hover:text-[#d2b8fa]"}  
+                      className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700" : "text-gray-500 cursor-pointer  hover:text-[#d2b8fa]"}  
                     `}
                     >
                       {isImageUploadLoader && (
@@ -248,15 +249,14 @@ export default function IdeaTabs({
                               shadow-xl border border-gray-200 dark:border-gray-700
                               opacity-0 invisible group-hover:opacity-100 group-hover:visible
                               translate-y-2 group-hover:translate-y-0
-                              transition-all duration-200 z-50
+                              transition-all duration-200 z-40
                             "
                     >
                       <button
                         onClick={() => fileInputRef.current?.click()}
                         className="w-full border-b border-gray-200 dark:border-gray-600 flex cursor-pointer items-center gap-2 text-left px-4 py-2 text-sm
                      text-gray-700 dark:text-gray-200
-                     hover:bg-gray-100 dark:hover:bg-gray-800
-                     rounded-t-xl"
+                     hover:bg-gray-100 dark:hover:bg-gray-800 rounded-t-xl"
                       >
                         <GrCloudUpload className="text-sky-500" /> Image
                       </button>

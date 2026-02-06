@@ -150,7 +150,10 @@ export default function IdeaTabsTwo({
 
   return (
     <>
-      <Box sx={{ width: "100%", position: "relative" }}>
+      <Box
+        style={{ position: "relative", zIndex: "10" }}
+        sx={{ width: "100%", position: "relative" }}
+      >
         <Box
           sx={{
             borderBottom: 1,

@@ -63,27 +63,23 @@ export default function Authentication({
         </h2>
 
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-          <div className="w-full flex justify-center mt-10">
-            <div className="w-full max-w-md">
+          <div className="flex justify-center mt-10">
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "420px",
+              }}
+            >
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
-                  const token: string = credentialResponse.credential || "";
-                  const userInfo = jwtDecode(token);
-
+                  const token = credentialResponse.credential || "";
                   await loginWithGoogle(token);
                 }}
                 onError={() => toast.error("Login Failed")}
-                width="100%"
                 theme="filled_blue"
-                shape="square"
                 size="large"
-                containerProps={{
-                  style: {
-                    width: "100%",
-                    borderRadius: "0px",
-                    overflow: "hidden",
-                  },
-                }}
+                shape="rectangular"
+                width={420}
               />
             </div>
           </div>
