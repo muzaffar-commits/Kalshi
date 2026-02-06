@@ -143,7 +143,18 @@ export default function SubComment({
     if (!file) return;
     chooseImages(file);
   };
-  const commentDetails = open && JSON.parse(row?.metadata || "{}");
+  // const commentDetails = open && JSON.parse(row?.metadata || "{}");
+  const commentDetails = (() => {
+    if (!row?.metadata) return null;
+    if (typeof row?.metadata === "object") {
+      return row?.metadata;
+    }
+    try {
+      return JSON.parse(row?.metadata);
+    } catch (e) {
+      return null;
+    }
+  })();
   const handleClose = () => {
     setIsGifOpen(false);
     setShowUploadMenu(false);
