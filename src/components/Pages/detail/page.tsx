@@ -509,7 +509,7 @@ const Details = ({ marketId }) => {
                     />
                   </div>
 
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-4 lg:col-span-3 border-l border-gray-200 dark:border-gray-700 overflow-visible">
                     <MarketLeaderboard data={leaderBoard} />
 
                     {orderData?.length > 0 && (
