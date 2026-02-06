@@ -190,14 +190,22 @@ export default function IdeaTabsTwo({
               <PostSkeleton />
             ) : postedList?.length > 0 ? (
               postedList?.map((row: PostFeeBack, index: number) => {
-                const contentForPost =
-                  typeof row?.metadata === "string"
-                    ? JSON.parse(row.metadata)
-                    : row.metadata;
+                const contentForPost = (() => {
+                  if (!row?.metadata) return null;
+                  if (typeof row?.metadata === "object") {
+                    return row?.metadata;
+                  }
+                  try {
+                    return JSON.parse(row?.metadata);
+                  } catch (e) {
+                    return null;
+                  }
+                })();
+                console.log(row, "contentForPost");
 
                 return (
                   <div
-                    key={row.id}
+                    key={row?.id}
                     className={`md:flex ${
                       index > 0 &&
                       "pt-4 border-t border-gray-200 dark:border-gray-700"
@@ -213,7 +221,7 @@ export default function IdeaTabsTwo({
                         alt="user"
                         width={50}
                         height={50}
-                        className="rounded-md cursor-pointer"
+                        className="rounded-md   cursor-pointer"
                       />
                     </div>
                     <div>
@@ -242,12 +250,12 @@ export default function IdeaTabsTwo({
                         <br />
                         <br />
                         {contentForPost?.images?.length > 0 && (
-                          <div className="bg-green-400 p-2 rounded shadow">
+                          <div className="bg-green-400 w-fit p-2 rounded shadow">
                             <Image
                               src={contentForPost?.images?.[0]}
-                              height={500}
+                              height={250}
                               alt="post image"
-                              width={500}
+                              width={350}
                             />
                           </div>
                         )}

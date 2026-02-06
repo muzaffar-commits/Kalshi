@@ -46,6 +46,8 @@ const Ideas = () => {
     getListOfPost();
   }, [getListOfPost]);
 
+  // getFeedForFollowingList
+
   const handleComment = (row: PostFeeBack) => {
     router.push(`/ideas/${row?.id}`);
   };

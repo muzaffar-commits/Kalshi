@@ -52,8 +52,19 @@ export const userPositions = async () => {
 export const getFeed = async (id: string, questionId: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getFeed}${id ? `?userId=${id}` : ""}${questionId ? `&questionId=${questionId}` : ""}`,
+      `${API_URLs.getFeed}${questionId ? `?questionId=${questionId}` : ""}`,
     );
+    return response?.data;
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: getErrorMessage(error),
+    };
+  }
+};
+export const getFeedForFollowingList = async () => {
+  try {
+    const response = await apiInstance.get(`${API_URLs.feedForFollowingList}`);
     return response?.data;
   } catch (error: unknown) {
     return {

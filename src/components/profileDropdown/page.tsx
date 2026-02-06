@@ -142,7 +142,8 @@ export default function ProfileDropdown() {
 
         {/* Menu */}
         <div className="py-2 text-md font-semibold">
-          {["Ideas", "Bookmarks", "Privacy Policy", "Terms and Conditions"].map(
+          {/* "Bookmarks", */}
+          {["Ideas", "Privacy Policy", "Terms and Conditions"].map(
             (item, index) => (
               <div
                 key={item}
