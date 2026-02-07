@@ -250,7 +250,7 @@ const Header = () => {
       {/* <div className="hidden lg:block"> */}
       <div>
         <header
-          className="fixed top-0 left-0 w-full z-[9]
+          className="fixed top-0 left-0 w-full z-[99]
   bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)]
   md:pb-2 pb-0 "
         >

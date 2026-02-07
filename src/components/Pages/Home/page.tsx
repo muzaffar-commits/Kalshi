@@ -488,7 +488,7 @@ const Home = () => {
                           <div>
                             <button
                               onClick={() => goToDetails(row.id)}
-                              className="bg-[#8160ee] cursor-pointer rounded-lg py-2 px-5 text-[14px] text-white font-semibold text-center"
+                              className="bg-[#8160ee] cursor-pointer rounded-md py-1.5 px-5 text-[14px] text-white font-semibold text-center"
                             >
                               Trade
                             </button>
@@ -497,7 +497,7 @@ const Home = () => {
                       </>
                     ) : (
                       <>
-                        <div className="text-xs mt-2  h-[165px] hideScrollbar overflow-y-auto space-y-2">
+                        <div className="text-xs mt-2  h-[150px] hideScrollbar overflow-y-auto space-y-2">
                           {row?.options?.map(
                             (item: OptionItem, idx: number) => (
                               <div
@@ -511,7 +511,7 @@ const Home = () => {
                                   <span className="text-[16px] font-semibold">
                                     {(item?.price * 100).toFixed(1)}%
                                   </span>
-                                  <button
+                                  {/* <button
                                     onClick={() =>
                                       handleBuyNow(row, item, "sell", idx)
                                     }
@@ -551,65 +551,78 @@ const Home = () => {
       group-hover:scale-175"
                                     />
                                     Buy
-                                  </button>
+                                  </button> */}
                                 </div>
                               </div>
                             ),
                           )}
                         </div>
                         <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
-                          <span className="flex items-center gap-1">
-                            {row?.stats?.totalVolume > 0 ? (
-                              <>
-                                <span className="text-yellow-500 font-semibold">
-                                  $
+                          <div className="flex gap-4 items-center">
+                            {" "}
+                            <span className="flex items-center gap-1">
+                              {row?.stats?.totalVolume > 0 ? (
+                                <>
+                                  <span className="text-yellow-500 font-semibold">
+                                    $
+                                  </span>
+                                  <span className="text-gray-400">
+                                    {Number(
+                                      row?.stats?.totalVolume || 0,
+                                    ).toFixed(2)}{" "}
+                                    Vol
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="text-yellow-500 flex items-center gap-1">
+                                  <GiNinjaStar
+                                    size={12}
+                                    className="rotate-45"
+                                  />
+                                  New
                                 </span>
-                                <span className="text-gray-400">
-                                  {Number(row?.stats?.totalVolume || 0).toFixed(
-                                    2,
-                                  )}{" "}
-                                  Vol
-                                </span>
-                              </>
-                            ) : (
-                              <span className="text-yellow-500 flex items-center gap-1">
-                                <GiNinjaStar size={12} className="rotate-45" />
-                                New
-                              </span>
-                            )}
-                          </span>
-
-                          <span
-                            className="cursor-pointer inline-flex
+                              )}
+                            </span>
+                            <span
+                              className="cursor-pointer inline-flex
              transition-transform duration-200 ease-in-out
              hover:scale-125 mr-2"
-                          >
-                            {!row?.isBookmark ? (
-                              <FaRegBookmark
-                                onClick={() =>
-                                  !getToken
-                                    ? setIsOpen(true)
-                                    : bookMarkUnBookMark(
-                                        row?.id,
-                                        row?.isBookmark,
-                                      )
-                                }
-                                className="text-sky-400"
-                              />
-                            ) : (
-                              <FaBookmark
-                                onClick={() =>
-                                  !getToken
-                                    ? setIsOpen(true)
-                                    : bookMarkUnBookMark(
-                                        row?.id,
-                                        row?.isBookmark,
-                                      )
-                                }
-                                className="text-sky-400"
-                              />
-                            )}
-                          </span>
+                            >
+                              {!row?.isBookmark ? (
+                                <FaRegBookmark
+                                  onClick={() =>
+                                    !getToken
+                                      ? setIsOpen(true)
+                                      : bookMarkUnBookMark(
+                                          row?.id,
+                                          row?.isBookmark,
+                                        )
+                                  }
+                                  className="text-sky-400"
+                                />
+                              ) : (
+                                <FaBookmark
+                                  onClick={() =>
+                                    !getToken
+                                      ? setIsOpen(true)
+                                      : bookMarkUnBookMark(
+                                          row?.id,
+                                          row?.isBookmark,
+                                        )
+                                  }
+                                  className="text-sky-400"
+                                />
+                              )}
+                            </span>
+                          </div>
+                          <div>
+                            <button
+                              onClick={() => goToDetails(row.id)}
+                              className="bg-[#8160ee] cursor-pointer rounded-md py-1.5 px-5 text-[14px] text-white font-semibold text-center"
+                            >
+                              Trade
+                            </button>
+                          </div>
                         </div>
                       </>
                     )}

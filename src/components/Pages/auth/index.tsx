@@ -22,7 +22,7 @@ export default function Authentication({
 
   const dispatch = useDispatch();
   const handleRegister = () => {
-    handleClose();
+    //
     setRegisterOpen(true);
   };
   const handleRegisterClose = () => {
@@ -62,13 +62,8 @@ export default function Authentication({
         </h2>
 
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-          <div className="flex justify-center mt-10">
-            <div
-              style={{
-                width: "100%",
-                maxWidth: "420px",
-              }}
-            >
+          <div className="mt-6 flex justify-center">
+            <div className="w-full">
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                   const token = credentialResponse.credential || "";
@@ -78,7 +73,14 @@ export default function Authentication({
                 theme="filled_blue"
                 size="large"
                 shape="rectangular"
-                width={420}
+                width="100%"
+                containerProps={{
+                  style: {
+                    width: "100%",
+                    display: "block",
+                    justifyContent: "center",
+                  },
+                }}
               />
             </div>
           </div>
@@ -109,7 +111,9 @@ export default function Authentication({
       <Register
         isLogin={isLogin}
         handleClose={handleRegisterClose}
+        goBack={() => setRegisterOpen(false)}
         isOpen={registerOpen}
+        mainHandleClose={handleClose}
       />
     </>
   );
