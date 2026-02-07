@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { GiNinjaStar } from "react-icons/gi";
+import didYouMean from "didyoumean2";
 
 export default function MobileFullSearch() {
   const [query, setQuery] = useState("");
@@ -22,6 +23,12 @@ export default function MobileFullSearch() {
 
   const ref = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+
+  const correctQuery = (text: string, sourceList: string[]) => {
+    if (!text || sourceList.length === 0) return text;
+    const match = didYouMean(text, sourceList);
+    return match || text;
+  };
 
   // outside click close
   useEffect(() => {
@@ -43,12 +50,11 @@ export default function MobileFullSearch() {
     return () => clearTimeout(timer);
   }, [query]);
 
-  // fetch users
   const fetchUsers = async (searchValue: string) => {
     setIsLoader(true);
     try {
       const [response] = await Promise.all([
-        getUserSearch(searchValue, 5),
+        getUserSearch(searchValue, 20),
         delay(100),
       ]);
       setResults(response?.success ? response.data : []);
@@ -59,7 +65,6 @@ export default function MobileFullSearch() {
     }
   };
 
-  // fetch questions
   const fetchQuestions = async (searchValue: string) => {
     setIsLoader(true);
     try {
@@ -74,8 +79,6 @@ export default function MobileFullSearch() {
       setIsLoader(false);
     }
   };
-
-  // API call after debounce
   useEffect(() => {
     if (!debouncedQuery.trim() || debouncedQuery.length < 2) {
       setResults([]);

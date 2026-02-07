@@ -40,7 +40,7 @@ export default function FollowingFollowerList({
     }
   };
   useEffect(() => {
-    isOpen && activeTab == "following" && fetchFollowing();
+    isOpen && fetchFollowing();
   }, [isOpen, userId, activeTab]);
 
   const fetchFollowers = async () => {
@@ -57,7 +57,7 @@ export default function FollowingFollowerList({
     }
   };
   useEffect(() => {
-    isOpen && activeTab == "followers" && fetchFollowers();
+    isOpen && fetchFollowers();
   }, [isOpen, userId, activeTab]);
 
   const handleFollowing = async (status: boolean, targetId: any) => {
@@ -65,8 +65,8 @@ export default function FollowingFollowerList({
       setFollowing((prev) => {
         const map = new Map(
           prev
-            .filter((item) => String(item.id) !== String(targetId))
-            .map((item) => [String(item.id), item]),
+            .filter((item) => String(item.followingUserId) !== String(targetId))
+            .map((item) => [String(item.followingUserId), item]),
         );
 
         return Array.from(map.values());
@@ -75,8 +75,8 @@ export default function FollowingFollowerList({
       setFollowers((prev) => {
         const map = new Map(
           prev
-            .filter((item) => String(item.id) !== String(targetId))
-            .map((item) => [String(item.id), item]),
+            .filter((item) => String(item.followerUserId) !== String(targetId))
+            .map((item) => [String(item.followerUserId), item]),
         );
 
         return Array.from(map.values());
@@ -136,7 +136,7 @@ export default function FollowingFollowerList({
 
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-800 dark:hover:text-white transition"
+              className="text-gray-500 cursor-pointer hover:text-gray-800 dark:hover:text-white transition"
             >
               ✕
             </button>
@@ -205,7 +205,7 @@ export default function FollowingFollowerList({
                   </div>
 
                   <button
-                    onClick={() => handleFollowing(false, row?.id)}
+                    onClick={() => handleFollowing(false, row?.followingUserId)}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-full transition cursor-pointer bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600
                       
                     `}
@@ -248,7 +248,7 @@ export default function FollowingFollowerList({
                   </div>
 
                   <button
-                    onClick={() => handleFollowing(true, row?.id)}
+                    onClick={() => handleFollowing(true, row?.followerUserId)}
                     className={`px-3 py-1.5 text-xs cursor-pointer font-semibold rounded-full transition 
                         bg-sky-500 text-white hover:bg-sky-600
                     `}

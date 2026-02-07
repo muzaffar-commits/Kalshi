@@ -4,13 +4,6 @@ import Image from "next/image";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { LuUpload } from "react-icons/lu";
-import {
-  FaRegCommentAlt,
-  FaRegBookmark,
-  FaRegHeart,
-  FaRegClock,
-} from "react-icons/fa";
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
 import InputTextArea from "./InputTextArea";
@@ -19,14 +12,8 @@ import {
   imageUpload,
   userPost,
 } from "@/components/service/apiService/user";
-import {
-  PostFeeBack,
-  SetPosts,
-  TabPanelProps,
-  UploadedImage,
-} from "@/utils/typesInterface";
+import { PostFeeBack, SetPosts, TabPanelProps } from "@/utils/typesInterface";
 import IdeaTabsTwo from "../IdeaTabsTwo/page";
-import { IoImageOutline } from "react-icons/io5";
 import { CreatePostSkeleton } from "@/utils/customSkeleton";
 import socket from "@/components/socket";
 import {
@@ -261,7 +248,7 @@ export default function IdeaTabs({
     <Box
       style={{ position: "relative", zIndex: "10" }}
       sx={{ width: "100%", position: "relative" }}
-      className="md:border-r md:border-[#364153]"
+      className="md:border-r md:border-[#d0d0d3] md:dark:border-[#364153]"
     >
       <Box
         sx={{
@@ -444,6 +431,7 @@ export default function IdeaTabs({
               isBookMark={false}
               loader={isLoader}
               handleUserDetails={handleUserDetails}
+              isYourPost={false}
             />
           </div>
         </div>
@@ -701,6 +689,7 @@ export default function IdeaTabs({
               isBookMark={false}
               loader={isLoaderMyFeed}
               handleUserDetails={handleUserDetails}
+              isYourPost={true}
             />
           </div>
         </div>

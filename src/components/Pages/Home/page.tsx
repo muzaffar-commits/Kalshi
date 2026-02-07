@@ -197,6 +197,15 @@ const Home = () => {
     setBuyType(type);
     setIsModalOpen(true);
   };
+  const optionColors = [
+    "34,211,238", // cyan
+    "250,204,21", // yellow
+    "96,165,250", // blue
+    "52,211,153", // green
+    "251,146,60", // orange
+    "168,85,247", // purple
+    "244,63,94", // red
+  ];
 
   const goToDetails = (questionId: string) => {
     router.push(`/market/${questionId}`);
@@ -453,7 +462,7 @@ const Home = () => {
                               )}
                             </span>
 
-                            <span
+                            {/* <span
                               className="cursor-pointer inline-flex
              transition-transform duration-200 ease-in-out
              hover:scale-125"
@@ -483,7 +492,7 @@ const Home = () => {
                                   className="text-sky-400"
                                 />
                               )}
-                            </span>
+                            </span> */}
                           </div>
                           <div>
                             <button
@@ -497,66 +506,40 @@ const Home = () => {
                       </>
                     ) : (
                       <>
-                        <div className="text-xs mt-2  h-[150px] hideScrollbar overflow-y-auto space-y-2">
+                        <div className="text-xs mt-2 h-[170px] hideScrollbar overflow-y-auto space-y-2">
                           {row?.options?.map(
-                            (item: OptionItem, idx: number) => (
-                              <div
-                                key={idx}
-                                className="flex gap-2 justify-between items-center dark:text-[var(--color-text)] text-[var(--color-text)] dark:bg-[#272f42]  px-3 py-2 rounded-lg bg-[#f5f5f5] mb-1"
-                              >
-                                <span className="block md:max-w-28 max-w-24 truncate">
-                                  {item?.name || "--"}
-                                </span>
-                                <div className="flex items-center gap-1">
-                                  <span className="text-[16px] font-semibold">
-                                    {(item?.price * 100).toFixed(1)}%
-                                  </span>
-                                  {/* <button
-                                    onClick={() =>
-                                      handleBuyNow(row, item, "sell", idx)
-                                    }
-                                    className="group
-                                    p-2 bg-red-400/20 cursor-pointer
-                                    text-red-700 dark:text-red-400
-                                    font-semibold rounded-xs text-[11px] uppercase
-                                    hover:bg-red-500 hover:text-white
-                                    transition-all duration-200 ease-in-out
-                                  "
-                                  >
-                                    <ArrowDownRight
-                                      className="w-3 h-3 inline-block mr-1
-                                      text-current
-                                      transition-transform duration-200 ease-in-out
-                                      group-hover:scale-175"
-                                    />
-                                    Sell
-                                  </button>
+                            (item: OptionItem, idx: number) => {
+                              const value = item?.price * 100;
+                              const percent = value.toFixed(1);
 
-                                  <button
-                                    onClick={() =>
-                                      handleBuyNow(row, item, "buy", idx)
-                                    }
-                                    className="group
-    p-2 bg-green-400/20 cursor-pointer
-    text-green-700 dark:text-green-400
-    font-semibold rounded-xs text-[11px] uppercase
-    hover:bg-green-600 hover:text-white
-    transition-all duration-200 ease-in-out
-  "
-                                  >
-                                    <ArrowUpRight
-                                      className="w-3 h-3 inline-block mr-1
-      text-current
-      transition-transform duration-200 ease-in-out
-      group-hover:scale-175"
-                                    />
-                                    Buy
-                                  </button> */}
+                              const rgb =
+                                optionColors[idx % optionColors.length];
+
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex justify-between items-center px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-[var(--color-text)] bg-[#f5f5f5] dark:bg-[#272f42]"
+                                  style={{
+                                    background: `linear-gradient(
+            to left,
+            rgba(${rgb}, 0.3) ${value}%,
+            transparent ${value}%
+          )`,
+                                  }}
+                                >
+                                  <span className="block md:max-w-44 max-w-24 truncate font-semibold">
+                                    {item?.name || "--"}
+                                  </span>
+
+                                  <span className="text-[16px] font-semibold">
+                                    {percent}%
+                                  </span>
                                 </div>
-                              </div>
-                            ),
+                              );
+                            },
                           )}
                         </div>
+
                         <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
                           <div className="flex gap-4 items-center">
                             {" "}
@@ -583,7 +566,7 @@ const Home = () => {
                                 </span>
                               )}
                             </span>
-                            <span
+                            {/* <span
                               className="cursor-pointer inline-flex
              transition-transform duration-200 ease-in-out
              hover:scale-125 mr-2"
@@ -613,7 +596,7 @@ const Home = () => {
                                   className="text-sky-400"
                                 />
                               )}
-                            </span>
+                            </span> */}
                           </div>
                           <div>
                             <button

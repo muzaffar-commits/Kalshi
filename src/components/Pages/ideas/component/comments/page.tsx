@@ -414,23 +414,26 @@ export default function CommentPage() {
 
   return (
     <div>
-      <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-9 lg:pt-10">
+      <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-7 sm:pt-9 lg:pt-10">
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <div className="sticky top-32 dark:border-gray-700">
-              <h1 className="dark:text-white text-gray-800 lg:text-3xl text-xl mb-0 mt-3">
-                Ideas
-              </h1>
-              <span className="text-gray-500 text-xs">
-                Serving public conversation
-              </span>
+              <div className="pl-12 md:pl-0">
+                {" "}
+                <h1 className="dark:text-white text-gray-800 lg:text-3xl text-xl mb-0 mt-3">
+                  Ideas
+                </h1>
+                <span className="text-gray-500 text-xs">
+                  Serving public conversation
+                </span>
+              </div>
               <MobileMenu />
             </div>
           </div>
-          <div className="lg:col-span-3 lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
+          <div className="lg:col-span-3 lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2 ">
             <div className="lg:border-r dark:border-gray-700 border-gray-200">
               <div className="flex flex-col gap-0">
-                <div className="pl-5 flex flex-row items-center gap-3">
+                <div className="sm:pl-5 flex flex-row items-center gap-3">
                   <FaChevronLeft
                     className="cursor-pointer text-sky-300"
                     onClick={goBack}
@@ -439,17 +442,28 @@ export default function CommentPage() {
                     Details
                   </span>
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col w-full h-full gap-2">
                   <div
                     className={`flex 
              pt-4 
-          pb-2 items-start gap-4 w-full md:px-4 px-0`}
+          pb-2 items-start gap-2 sm:gap-4 w-full md:px-4 px-0`}
                   >
                     <div
                       onClick={() =>
                         handleUserDetails(`${postDetails?.User?.id}`)
                       }
-                      className="bg-gray-200 w-fit p-1.5 cursor-pointer rounded-full dark:bg-gray-500"
+                      className="
+                        bg-gray-200 
+                        dark:bg-gray-500
+                        rounded-full 
+                        cursor-pointer
+                        flex-shrink-0
+                        w-10 h-10
+                        p-2
+                        sm:w-12 sm:h-12
+                        md:w-14 md:h-14
+                        overflow-hidden
+                      "
                     >
                       <Image
                         src={
@@ -457,11 +471,12 @@ export default function CommentPage() {
                           "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
                         }
                         alt="user"
-                        width={50}
-                        height={50}
-                        className="rounded-full "
+                        width={56}
+                        height={56}
+                        className="w-full h-full object-cover"
                       />
                     </div>
+
                     <div>
                       <div className="flex items-center gap-2">
                         <h4>
@@ -483,7 +498,6 @@ export default function CommentPage() {
                           <HighlightTexts text={contentForPost?.content} />
                         )}
                         <br />
-                        <br />
 
                         {Number(contentForPost?.images?.length) > 0 && (
                           <div className="bg-green-400 p-2 w-fit rounded">
@@ -492,12 +506,13 @@ export default function CommentPage() {
                               height={170}
                               alt="post image"
                               width={250}
+                              className=" object-cover"
                             />
                           </div>
                         )}
                       </p>
 
-                      <div className="mt-4">
+                      <div className="mt-4 ">
                         <div className="flex justify-between">
                           <div className="flex gap-3 items-center">
                             <span
@@ -562,7 +577,7 @@ export default function CommentPage() {
 
                   <div
                     className={` ${gif ? "pt-2" : ""}
-                    relative rounded-xl m-5 pb-2 border border-gray-200 dark:border-gray-700 
+                    relative rounded-xl sm:mx-5 pb-2 border border-gray-200 dark:border-gray-700 
                     shadow-sm ideasScrollbarHide focus-within:ring-2 focus-within:ring-blue-500/30 transition 
                 `}
                   >
@@ -722,33 +737,51 @@ export default function CommentPage() {
                             className={` w-full border-b border-gray-200 dark:border-gray-700 md:px-4 px-0`}
                           >
                             <div className="md:flex  pt-4  items-start gap-4 ">
-                              <div
-                                onClick={() => handleUserDetails(row?.User?.id)}
-                                className="h-11 w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
-                              >
-                                <Image
-                                  src={
-                                    row?.User?.image_url ||
-                                    "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                              <div className="flex flex-row items-center gap-2">
+                                <div
+                                  onClick={() =>
+                                    handleUserDetails(row?.User?.id)
                                   }
-                                  alt="user"
-                                  width={30}
-                                  height={30}
-                                  className="rounded-full h-8 w-8"
-                                />
+                                  className="h-11 w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
+                                >
+                                  <Image
+                                    src={
+                                      row?.User?.image_url ||
+                                      "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                    }
+                                    alt="user"
+                                    width={30}
+                                    height={30}
+                                    className="rounded-full h-8 w-8"
+                                  />
+                                </div>
+                                <div className="sm:hidden block">
+                                  <div className="flex items-center gap-2">
+                                    <h4>
+                                      <span className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700">
+                                        {row?.User?.username || "Unknown"}
+                                      </span>{" "}
+                                      <span className="text-xs dark:text-gray-500 text-gray-500 ">
+                                        {timeAgoCompact(row?.updatedAt)}
+                                      </span>
+                                    </h4>
+                                  </div>
+                                </div>
                               </div>
                               <div>
-                                <div className="flex items-center gap-2">
-                                  <h4>
-                                    <span className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700">
-                                      {row?.User?.username || "Unknown"}
-                                    </span>{" "}
-                                    <span className="text-xs dark:text-gray-500 text-gray-500 ">
-                                      {timeAgoCompact(row?.updatedAt)}
-                                    </span>
-                                  </h4>
+                                <div className="  hidden sm:block">
+                                  <div className="flex items-center gap-2">
+                                    <h4>
+                                      <span className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700">
+                                        {row?.User?.username || "Unknown"}
+                                      </span>{" "}
+                                      <span className="text-xs dark:text-gray-500 text-gray-500 ">
+                                        {timeAgoCompact(row?.updatedAt)}
+                                      </span>
+                                    </h4>
+                                  </div>
                                 </div>
-                                <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                                <p className="text-md mt-2 pl-5 sm:pl-0 dark:text-gray-400 text-gray-800">
                                   {row?.content && (
                                     <HighlightTexts text={row?.content} />
                                   )}{" "}
@@ -765,9 +798,9 @@ export default function CommentPage() {
                                 )}
                               </div>
                             </div>
-                            <div className=" pl-10 py-2">
+                            <div className="pl-5  overflow-hidden sm:pl-10 sm:py-2 ">
                               <div className="flex text-gray-400 flex-row items-center gap-4">
-                                <span className="flex items-center gap-2">
+                                <span className="flex items-center  gap-2">
                                   <span
                                     onClick={() =>
                                       handleCommentLikeUnlike(
@@ -823,45 +856,62 @@ export default function CommentPage() {
                                     return (
                                       <div key={replies?.id}>
                                         <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                                          <div
-                                            onClick={() =>
-                                              handleUserDetails(
-                                                replies?.User?.id,
-                                              )
-                                            }
-                                            className="!h-11 !w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500"
-                                          >
-                                            <Image
-                                              src={
-                                                replies?.User?.image_url ||
-                                                "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                          <div className="flex flex-row items-center gap-2">
+                                            <div
+                                              onClick={() =>
+                                                handleUserDetails(row?.User?.id)
                                               }
-                                              alt="user"
-                                              width={30}
-                                              height={30}
-                                              className="rounded-full h-8 w-8"
-                                            />
+                                              className="h-11 w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
+                                            >
+                                              <Image
+                                                src={
+                                                  replies?.User?.image_url ||
+                                                  "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                                }
+                                                alt="user"
+                                                width={30}
+                                                height={30}
+                                                className="rounded-full h-8 w-8"
+                                              />
+                                            </div>
+                                            <div className="sm:hidden block">
+                                              <div className="flex items-center gap-2">
+                                                <h4>
+                                                  <span className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700">
+                                                    {replies?.User?.username ||
+                                                      "Unknown"}
+                                                  </span>{" "}
+                                                  <span className="text-xs dark:text-gray-500 text-gray-500 ">
+                                                    {timeAgoCompact(
+                                                      replies?.updatedAt,
+                                                    )}
+                                                  </span>
+                                                </h4>
+                                              </div>
+                                            </div>
                                           </div>
                                           <div>
-                                            <div className="flex items-center gap-2">
-                                              <h4>
-                                                <span
-                                                  onClick={() =>
-                                                    handleUserDetails(
-                                                      replies?.User?.id,
-                                                    )
-                                                  }
-                                                  className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
-                                                >
-                                                  {replies?.User?.username ||
-                                                    "Unknown"}
-                                                </span>{" "}
-                                                <span className="text-xs dark:text-gray-500 text-gray-500">
-                                                  {timeAgoCompact(
-                                                    row?.updatedAt,
-                                                  )}
-                                                </span>
-                                              </h4>
+                                            <div className="  hidden sm:block">
+                                              <div className="flex items-center gap-2">
+                                                <h4>
+                                                  <span
+                                                    onClick={() =>
+                                                      handleUserDetails(
+                                                        replies?.User?.id,
+                                                      )
+                                                    }
+                                                    className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
+                                                  >
+                                                    {replies?.User?.username ||
+                                                      "Unknown"}
+                                                  </span>{" "}
+                                                  <span className="text-xs dark:text-gray-500 text-gray-500 ">
+                                                    {timeAgoCompact(
+                                                      replies?.updatedAt,
+                                                    )}
+                                                  </span>
+                                                </h4>
+                                              </div>
                                             </div>
                                             <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
                                               {replies?.content && (
@@ -883,7 +933,7 @@ export default function CommentPage() {
                                                 />
                                               </div>
                                             )}
-                                            <div className=" py-2">
+                                            <div className=" pt-2 sm:py-2">
                                               <div className="flex text-gray-400 flex-row items-center gap-4">
                                                 <span className="flex items-center gap-2">
                                                   {replies?.isUserLike == 1 ? (

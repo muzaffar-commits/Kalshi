@@ -15,10 +15,13 @@ import { FcLike } from "react-icons/fc";
 import toast from "react-hot-toast";
 import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
 import {
+  getMyAllPost,
   postBookmarkOrUnBookMark,
   postLikeOrUnlike,
+  userPositions,
 } from "@/components/service/apiService/user";
 import { PostSkeleton } from "@/utils/customSkeleton";
+import { Position } from "@/components/Pages/userProfile/proTabs/page";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -57,16 +60,19 @@ export default function IdeaTabsTwo({
   isBookMark = false,
   loader = false,
   handleUserDetails,
+  isYourPost,
 }: {
   postedList: PostFeeBack[];
   setAllPosts: SetPosts;
   handleComment: HandleComment;
   isBookMark: boolean;
   loader: boolean;
+
   handleUserDetails: (id: string) => void;
+  isYourPost: boolean;
 }) {
   const [value, setValue] = React.useState(0);
-
+  const [myPost, setMyPost] = React.useState<PostFeeBack[]>([]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -148,6 +154,29 @@ export default function IdeaTabsTwo({
     }
   };
 
+  const locationUrl = window.location?.pathname;
+
+  console.log(locationUrl, "locationUrl");
+
+  const fetchMyAllPost = async () => {
+    try {
+      const response = await getMyAllPost("");
+
+      if (response.feed?.length > 0) {
+        setMyPost(response?.feed);
+      } else {
+        setMyPost([]);
+      }
+    } catch {
+      setMyPost([]);
+    }
+  };
+  React.useEffect(() => {
+    fetchMyAllPost();
+  }, []);
+
+  console.log(myPost, "positions");
+
   return (
     <>
       <Box
@@ -179,9 +208,9 @@ export default function IdeaTabsTwo({
             }}
           >
             <Tab label="Now" {...a11yProps(0)} />
-            {/* <Tab label="Today" {...a11yProps(1)} />
-            <Tab label="This Week" {...a11yProps(2)} />
-            <Tab label="This Month" {...a11yProps(3)} /> */}
+            {locationUrl != "/ideas/bookmark/" && isYourPost && (
+              <Tab label="Your Post" {...a11yProps(1)} />
+            )}
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
@@ -363,6 +392,194 @@ export default function IdeaTabsTwo({
                             >
                               <LuUpload />
                             </span> */}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
+                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800">
+                  <FaRegCommentAlt className="text-2xl text-gray-500 dark:text-gray-400" />
+                </div>
+
+                <h3 className="text-base font-semibold text-gray-700 dark:text-gray-200">
+                  No Post yet
+                </h3>
+
+                <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                  Be the first to share your thoughts and spark a conversation.
+                </p>
+              </div>
+            )}
+          </div>
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          <div className="p-3 border-b  dark:border-gray-700 border-gray-200">
+            {loader ? (
+              <PostSkeleton />
+            ) : myPost?.length > 0 ? (
+              myPost?.map((row: any, index: number) => {
+                const contentForPost = (() => {
+                  if (!row?.metadata) return null;
+                  if (typeof row?.metadata === "object") {
+                    return row?.metadata;
+                  }
+                  try {
+                    return JSON.parse(row?.metadata);
+                  } catch (e) {
+                    return null;
+                  }
+                })();
+
+                return (
+                  <div
+                    key={row?.id}
+                    className={`md:flex ${
+                      index > 0 &&
+                      "pt-4 border-t border-gray-200 dark:border-gray-700"
+                    }  border-gray-300 pb-2 items-start gap-4 w-full md:px-4 px-0`}
+                  >
+                    <div className="bg-gray-100 dark:bg-gray-600 rounded p-1.5 w-fit">
+                      <Image
+                        onClick={() => handleUserDetails(`${row?.User?.id}`)}
+                        src={
+                          row?.User?.image_url ||
+                          "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                        }
+                        alt="user"
+                        width={50}
+                        height={50}
+                        className="rounded-md   cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex flex-row items-center gap-2">
+                          <div
+                            onClick={() =>
+                              handleUserDetails(`${row?.User?.id}`)
+                            }
+                            className="dark:text-gray-300  cursor-pointer hover:underline font-semibold text-gray-700"
+                          >
+                            {row?.User?.username || "Unknown"}
+                          </div>{" "}
+                          <span className="text-xs dark:text-gray-500 text-gray-500">
+                            {timeAgoCompact(row?.updatedAt)}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                        {contentForPost?.content && (
+                          <HighlightTexts
+                            key={index}
+                            text={contentForPost?.content}
+                          />
+                        )}
+                        <br />
+                        <br />
+                        {contentForPost?.images?.length > 0 && (
+                          <div className="bg-green-400 w-fit p-2 rounded shadow">
+                            <Image
+                              src={contentForPost?.images?.[0]}
+                              height={250}
+                              alt="post image"
+                              width={350}
+                            />
+                          </div>
+                        )}
+                      </p>
+                      {/* <p className="mt-3 cursor-pointer hover:underline text-[#caac75] font-semibold">
+                      Ningbo Rockets vs Beijing Ducks
+                    </p>
+                    <p className="text-sm text-[#caac75]/80">
+                      Yes . Beijing Ducks . BED at NIN (Jan 6) . 86% chance{" "}
+                      <FaArrowUp
+                        className="
+                          rotate-45
+                          text-green-400
+                          transition-transform
+                          duration-200
+                          hover:scale-125 inline-block
+                        "
+                      />{" "}
+                      Now 77% chance
+                    </p> */}
+
+                      <div className="mt-4">
+                        <div className="flex justify-between">
+                          <div className="flex gap-3 items-center">
+                            <span
+                              className="
+                              p-2
+                              rounded
+                              inline-block
+                              text-gray-500
+                              dark:text-gray-400
+                              hover:bg-gray-400/30
+                              transition-all
+                              duration-200
+                              ease-in-out text-lg cursor-pointer
+                            "
+                            >
+                              <FaRegCommentAlt
+                                onClick={() => handleComment(row)}
+                              />
+                            </span>
+                            <span className="inline-block relative -left-3 font-light text-gray-400">
+                              {row?.commentCount || 0}
+                            </span>
+
+                            <div
+                              className="
+                                p-2
+                                rounded
+                                inline-block
+                                text-gray-500
+                                dark:text-gray-400
+                                hover:bg-gray-400/30
+                                transition-all
+                                duration-200
+                                ease-in-out text-xl cursor-pointer
+                              "
+                              onClick={() =>
+                                handleLikeUnlike(row?.id, row?.isLiked)
+                              }
+                            >
+                              {/* FcLike  */}
+                              {row?.isLiked == 1 ? <FcLike /> : <FaRegHeart />}
+                            </div>
+                            <span className="inline-block relative -left-3 font-light text-gray-400">
+                              {row?.likeCount || 0}
+                            </span>
+                            <span
+                              className="
+                              p-2
+                              rounded
+                              inline-block
+                              text-gray-500
+                              dark:text-gray-400
+                              hover:bg-gray-400/30
+                              transition-all
+                              duration-200
+                              ease-in-out text-lg cursor-pointer
+                            "
+                              onClick={() =>
+                                handleBookMarkOrUnBookMark(
+                                  row?.id,
+                                  row?.isBookmarked,
+                                )
+                              }
+                            >
+                              {row?.isBookmarked == 1 ? (
+                                <FaBookmark className="text-[#156bf7]" />
+                              ) : (
+                                <FaRegBookmark />
+                              )}
+                            </span>
+                            <span className="inline-block relative -left-3 font-light text-gray-400"></span>
                           </div>
                         </div>
                       </div>

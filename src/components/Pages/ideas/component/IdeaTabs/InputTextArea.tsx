@@ -89,12 +89,12 @@ export default function InputTextArea({
           aria-hidden="true"
           className="
         absolute inset-0
-        pt-2
+        pt-4
        
         leading-relaxed
         whitespace-pre-wrap
         break-words
-        overflow-auto
+            hideScrollbar
         pointer-events-none
         text-gray-900 dark:text-gray-500
       "
@@ -119,7 +119,7 @@ export default function InputTextArea({
             pt-4
             w-full
             min-h-[80px]
-            
+            hideScrollbar
             leading-relaxed
             bg-transparent
             resize-none
@@ -128,7 +128,8 @@ export default function InputTextArea({
             caret-gray-900 dark:caret-gray-200
             placeholder:text-gray-400
             placeholder:dark:text-gray-600
-            overflow-auto
+        
+
           "
         />
       </div>

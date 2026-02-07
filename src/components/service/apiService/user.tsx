@@ -306,10 +306,10 @@ export const postAllReadNotification = async () => {
   }
 };
 
-export const getMyAllPost = async (userId: string, id: string) => {
+export const getMyAllPost = async (id: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.myAllPost}${userId ? `?userId=${userId}` : ""}${id ? `&questionId=${id}` : ""}`,
+      `${API_URLs.myAllPost}${id ? `?questionId=${id}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {
