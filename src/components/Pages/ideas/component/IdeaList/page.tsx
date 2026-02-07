@@ -50,7 +50,7 @@ export default function MobileMenu() {
       <aside
         className={` md:relative z-50 w-64
     fixed top-0 left-0 h-full
-    pt-12 md:pt-5
+    md:pt-5 pt-16
     py-5 pl-5 md:pl-0
     md:bg-transparent md:dark:bg-transparent
     bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
@@ -61,7 +61,7 @@ export default function MobileMenu() {
     md:block
   `}
       >
-        <div className="md:hidden flex justify-end mb-6 mt-12 relative">
+        <div className="md:hidden flex justify-end mb-6 mt-2 relative">
           <button
             aria-label="Close Menu"
             onClick={() => setOpen(false)}
