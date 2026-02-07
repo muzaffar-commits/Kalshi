@@ -124,13 +124,13 @@ export default function MobileFullSearch() {
         className={`fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
           open ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        onClick={() => setOpen(false)} // close on backdrop click
+        onClick={() => setOpen(false)}
       >
         <div
           className={`fixed inset-x-0 bottom-0 top-0 flex flex-col bg-white dark:bg-gray-950 transform transition-all duration-300 ease-out ${
             open ? "translate-y-0" : "translate-y-full"
           }`}
-          onClick={(e) => e.stopPropagation()} // prevent close when clicking inside
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header / Search bar */}
           <div className="sticky text-start top-0 z-10 border-b border-gray-200/80 dark:border-gray-800/80 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md">

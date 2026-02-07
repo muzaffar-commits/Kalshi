@@ -67,7 +67,6 @@ export default function IdeaTabsTwo({
   handleComment: HandleComment;
   isBookMark: boolean;
   loader: boolean;
-
   handleUserDetails: (id: string) => void;
   isYourPost: boolean;
 }) {
