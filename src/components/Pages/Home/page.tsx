@@ -288,11 +288,17 @@ const Home = () => {
               ))
             ) : questionListFilter && questionListFilter.length > 0 ? (
               questionListFilter?.map((row: QuestionItem, index) => {
-                const metaData = { imageUrl: "" };
-                // row?.metadata == {}
-                //   ? row?.metadata
-                //   : JSON.parse(row?.metadata);
-
+                const metaData = (() => {
+                  if (!row?.metadata) return null;
+                  if (typeof row?.metadata === "object") {
+                    return row?.metadata;
+                  }
+                  try {
+                    return JSON.parse(row?.metadata);
+                  } catch (e) {
+                    return null;
+                  }
+                })();
                 return (
                   <div
                     key={index}

@@ -52,17 +52,15 @@ export default function MobileMenu() {
     fixed top-0 left-0 h-full
     pt-12 md:pt-5
     py-5 pl-5 md:pl-0
-     md:bg:transparent md:dark:bg-transparent
-           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
-        transition-transform duration-300
+    md:bg-transparent md:dark:bg-transparent
+    bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]
+    transition-transform duration-300
     ${open ? "translate-x-0" : "-translate-x-full"}
-
     md:translate-x-0
     md:relative
     md:block
   `}
       >
-        {/* Close (mobile only) */}
         <div className="md:hidden flex justify-end mb-6 mt-12 relative">
           <button
             aria-label="Close Menu"

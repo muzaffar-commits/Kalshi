@@ -31,15 +31,15 @@ function highlightText(text: string) {
   return withBreaks
     .replace(
       urlRegex,
-      `$1<span class="text-blue-500 dark:text-blue-400 underline font-medium">$2</span>`,
+      `$1<span class="text-blue-500 dark:text-blue-400 underline">$2</span>`,
     )
     .replace(
       mentionRegex,
-      `$1<span class="text-emerald-500 dark:text-emerald-400 font-medium">$2</span>`,
+      `$1<span class="text-emerald-500 dark:text-emerald-400">$2</span>`,
     )
     .replace(
       hashRegex,
-      `$1<span class="text-sky-500 dark:text-sky-400 font-medium">$2</span>`,
+      `$1<span class="text-sky-500 dark:text-sky-400">$2</span>`,
     );
 }
 
@@ -90,7 +90,7 @@ export default function InputTextArea({
           className="
         absolute inset-0
         pt-4
-        text-sm
+       
         leading-relaxed
         whitespace-pre-wrap
         break-words
