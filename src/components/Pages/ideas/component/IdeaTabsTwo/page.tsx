@@ -201,7 +201,6 @@ export default function IdeaTabsTwo({
                     return null;
                   }
                 })();
-                console.log(row, "contentForPost");
 
                 return (
                   <div

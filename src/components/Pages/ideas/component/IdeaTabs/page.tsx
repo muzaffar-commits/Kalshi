@@ -96,6 +96,10 @@ export default function IdeaTabs({
 
   console.log(userDetails, "userDetails");
 
+  useEffect(() => {
+    value == 0 && fetchPostList();
+  }, [value]);
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -107,7 +111,7 @@ export default function IdeaTabs({
         getFeedForFollowingList(),
         delay(1000),
       ]);
-      if (response?.success) {
+      if (response?.data?.length > 0) {
         setMyFeedList(response.data ?? []);
       } else {
         setMyFeedList([]);
@@ -170,24 +174,37 @@ export default function IdeaTabs({
 
       if (response?.reponse?.status) {
         setMessage("");
-        setAllPosts((prev: any[]) => {
-          const newPost = {
-            ...response?.reponse,
-            User: {
-              id: userDetails?.id,
-              image_url: userDetails?.imageUrl,
-              username: userDetails?.username,
-            },
-          };
+        if (value == 0) {
+          setAllPosts((prev: any[]) => {
+            const newPost = {
+              ...response?.reponse,
+              User: {
+                id: userDetails?.id,
+                image_url: userDetails?.imageUrl,
+                username: userDetails?.username,
+              },
+            };
 
-          return [newPost, ...prev];
-        });
+            return [newPost, ...prev];
+          });
+        } else {
+          setMyFeedList((prev: any[]) => {
+            const newPost = {
+              ...response?.reponse,
+              User: {
+                id: userDetails?.id,
+                image_url: userDetails?.imageUrl,
+                username: userDetails?.username,
+              },
+            };
 
+            return [newPost, ...prev];
+          });
+        }
         setGif(null);
       } else {
         toast.error(response?.message);
         setMessage("");
-
         setGif(null);
       }
     } catch (error: unknown) {
@@ -681,10 +698,10 @@ export default function IdeaTabs({
           <div className="border-t dark:border-gray-700 border-gray-200 mt-3">
             <IdeaTabsTwo
               handleComment={handleComment}
-              postedList={allPosts}
-              setAllPosts={setAllPosts}
+              postedList={myFeedList}
+              setAllPosts={setMyFeedList}
               isBookMark={false}
-              loader={isLoader}
+              loader={isLoaderMyFeed}
               handleUserDetails={handleUserDetails}
             />
           </div>
