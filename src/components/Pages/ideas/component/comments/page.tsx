@@ -3,12 +3,19 @@
 import {
   getCommentsList,
   getFeedDetailsById,
+  imageUpload,
   postBookmarkOrUnBookMark,
   postLikeOrUnlike,
   postUserCommentLikeOrUnlike,
   replyComments,
 } from "@/components/service/apiService/user";
-import { delay, HighlightTexts, timeAgoCompact } from "@/utils/Content";
+import {
+  countWords,
+  delay,
+  HighlightTexts,
+  MAX_WORDS,
+  timeAgoCompact,
+} from "@/utils/Content";
 import Image from "next/image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -29,10 +36,14 @@ import {
   PostMetadata,
 } from "@/utils/typesInterface";
 import { CircularProgress } from "@mui/material";
-import { Heart } from "lucide-react";
+import { Gift, Heart } from "lucide-react";
 import MobileMenu from "../IdeaList/page";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { PROFESSIONAL_EMOJIS } from "@/components/content";
+import InputTextArea from "../IdeaTabs/InputTextArea";
+import { GrCloudUpload } from "react-icons/gr";
+import GiphyModal from "@/components/Pages/detail/component/postList/GiphyModal";
+import SubComment from "@/components/Modal/SubComment";
 
 export default function CommentPage() {
   const [postDetails, setPostDetails] = useState<PostFeeBack | null>(null);
@@ -48,6 +59,36 @@ export default function CommentPage() {
   const [isBookmarked, setIsBookmarked] = useState(0);
   const { slug } = useParams();
   const router = useRouter();
+  const [gif, setGif] = useState(null);
+  const [showUploadMenu, setShowUploadMenu] = useState(false);
+  const [isImageUploadLoader, setIsImageUploadLoader] = useState(false);
+  const [isSendMessage, setIsSendMessage] = useState(false);
+  const wrapperRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const dropdownRef = useRef(null);
+
+  // new
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [commentIds, setCommentIds] = useState(null);
+  const [rowDetails, setRowDetails] = useState({});
+  const [mixText, setMixText] = useState("");
+  const [imageGif, setImageGif] = useState(null);
+  const [isSendMessageLoader, setIsSendMessageLoader] = useState(false);
+  const handleOpenSubComment = (item, commentId = null) => {
+    setCommentOpen(true);
+
+    setRowDetails(item);
+    setCommentIds(commentId);
+  };
+
+  const handleCloseComment = () => {
+    setMixText("");
+    setOpen(false);
+    setCommentIds(null);
+    setRowDetails({});
+    setImageGif(null);
+    setCommentOpen(false);
+  };
 
   useEffect(() => {
     setIsLoader(true);
@@ -120,23 +161,31 @@ export default function CommentPage() {
 
   const contentForPost = parsePostMetadata(postDetails?.metadata);
 
+  const handleCloseMessage = () => {
+    setGif(null);
+    setIsSendMessage(false);
+    setValue("");
+    setOpen(false);
+  };
   const handleSend = async () => {
     if (!value.trim()) return;
-
+    setIsSendMessage(true);
     try {
       const payload = {
         postId: slug,
         comment: value,
+        metadata: gif ? { images: [gif] } : null,
       };
-      const response = await replyComments(payload);
+      const [response] = await Promise.all([
+        replyComments(payload),
+        delay(1000),
+      ]);
       if (response.success) {
         toast.success("Message send successfully!");
         commentLists();
-        setValue("");
-        setOpen(false);
+        handleCloseMessage();
       } else {
         toast.error(response?.message || "something went wrong");
-        setValue("");
         setOpen(false);
       }
     } catch (error: unknown) {
@@ -145,6 +194,8 @@ export default function CommentPage() {
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsSendMessage(false);
     }
   };
 
@@ -173,31 +224,40 @@ export default function CommentPage() {
     }, 0);
   };
 
-  const handleSubComment = (row: any, replies: any) => {
-    setSubCommentData(row);
-    setSubRepliesData(replies);
-  };
-
-  const handleSubmitForSubComment = async (row: any) => {
+  const handleSubmitForSubComment = async (
+    row: any,
+    replyText: string,
+    imageLink: any,
+  ) => {
+    setIsSendMessageLoader(true);
     try {
       const payload = {
         postId: slug,
         comment: `@${row?.User?.username} ${replyText}`,
-        replyCommentId: subCommentData?.id,
+        metadata: imageLink ? { images: [imageLink] } : null,
+        replyCommentId: commentIds,
       };
-      const response = await replyComments(payload);
+
+      console.log(payload, "payload");
+
+      // return;
+      const [response] = await Promise.all([
+        replyComments(payload),
+        delay(1000),
+      ]);
       if (response.success) {
         toast.success("Message send successfully!");
         commentLists();
-        setValue("");
+        setMixText("");
+        setGif(null);
         setSubCommentData({});
         setSubRepliesData(null);
+        setCommentOpen(false);
+        setCommentIds(null);
         setReplyText("");
         setOpen(false);
       } else {
         toast.error(response?.message || "something went wrong");
-        setValue("");
-        setOpen(false);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -205,6 +265,8 @@ export default function CommentPage() {
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsSendMessageLoader(false);
     }
   };
 
@@ -288,9 +350,68 @@ export default function CommentPage() {
     router.back();
   };
 
+  const chooseImages = async (file: File) => {
+    setIsImageUploadLoader(true);
+    try {
+      const formData = new FormData();
+      formData.append("images", file);
+      const [response] = await Promise.all([
+        imageUpload(formData),
+        delay(1000),
+      ]);
+      if (response?.success) {
+        setGif(response?.data?.[0]?.url);
+        setShowUploadMenu(false);
+      } else {
+        toast.error(response?.message);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setIsImageUploadLoader(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    chooseImages(file);
+  };
+
   const handleUserDetails = (id: any) => {
     router.push(`/ideas/profile/${id}`);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowUploadMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
       <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-9 lg:pt-10">
@@ -365,12 +486,12 @@ export default function CommentPage() {
                         <br />
 
                         {Number(contentForPost?.images?.length) > 0 && (
-                          <div className="bg-green-400 p-2 rounded">
+                          <div className="bg-green-400 p-2 w-fit rounded">
                             <Image
                               src={contentForPost?.images?.[0] || ""}
-                              height={500}
+                              height={170}
                               alt="post image"
-                              width={500}
+                              width={250}
                             />
                           </div>
                         )}
@@ -418,7 +539,7 @@ export default function CommentPage() {
                               )}
                             </span>
                             <span className="inline-block relative -left-3 font-light text-gray-400"></span>
-                            <span
+                            {/* <span
                               className="
                                       p-2
                                       rounded
@@ -432,122 +553,143 @@ export default function CommentPage() {
                                     "
                             >
                               <LuUpload />
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="relative  mx-10">
-                    <div
-                      className="
-                    relative rounded-xl  border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D293D]
-                    shadow-sm ideasScrollbarHide focus-within:ring-2 focus-within:ring-blue-500/30 transition
-                "
-                    >
-                      <textarea
-                        ref={textareaRef}
-                        value={value}
-                        onChange={(e) => setValue(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Write a professional message..."
-                        className="
-                w-full
-                ideasScrollbarHide
-                min-h-[90px]
-                resize-none
-                bg-transparent
-                px-4 pt-4 pb-12
-                text-sm
-                text-gray-900 dark:text-gray-100
-                placeholder:text-gray-400
-                outline-none
-            "
+
+                  <div
+                    className={` ${gif ? "pt-2" : ""}
+                    relative rounded-xl m-5 pb-2 border border-gray-200 dark:border-gray-700 
+                    shadow-sm ideasScrollbarHide focus-within:ring-2 focus-within:ring-blue-500/30 transition 
+                `}
+                  >
+                    <div className="flex items-start gap-4 w-full px-4 ">
+                      <InputTextArea
+                        message={value || ""}
+                        setMessage={setValue}
+                        image={gif || ""}
+                        onRemoveImage={() => setGif("")}
                       />
+                    </div>
 
-                      {/* Footer Actions */}
-                      <div
-                        className="
-      absolute bottom-2 left-0 right-0
-      flex items-center justify-end
-      px-3
-    "
-                      >
-                        {/* Emoji Button */}
-                        <button
-                          type="button"
-                          onClick={() => setOpen(!open)}
-                          className="
-          flex items-center gap-1
-          text-gray-500 hover:text-gray-800
-          dark:text-gray-400 dark:hover:text-white
-          text-lg
-          px-2 py-1
-          rounded-md
-          hover:bg-gray-100 dark:hover:bg-gray-800
-          transition
-        "
+                    <div className=" flex flex-row pl-7 justify-between items-center">
+                      <div></div>
+                      <div className="flex items-center justify-end gap-8 mr-7">
+                        <div className="right-3 text-xs text-gray-600 dark:text-gray-700">
+                          {countWords(value)} / {MAX_WORDS} words
+                        </div>
+                        <div
+                          ref={wrapperRef}
+                          className={`relative inline-block ${gif ? "" : "group"} `}
                         >
-                          🙂
-                        </button>
+                          <button
+                            disabled={gif || isImageUploadLoader ? true : false}
+                            type="button"
+                            onClick={() => setShowUploadMenu((prev) => !prev)}
+                            className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700" : "text-gray-500 cursor-pointer  hover:text-[#d2b8fa]"}  
+                    `}
+                          >
+                            {isImageUploadLoader && (
+                              <div className="absolute left-3 flex items-center justify-center">
+                                <CircularProgress
+                                  className="!text-gray-400 dark:!text-white/50"
+                                  size={25}
+                                />
+                              </div>
+                            )}
+                            UPLOAD
+                          </button>
+                          <div
+                            className={`
+                                      absolute -left-8 mt-2 w-32
+                                      rounded-xl bg-white dark:bg-[#0F172A]
+                                      shadow-xl border border-gray-200 dark:border-gray-700
+                                      transition-all duration-200 z-50
+                                      ${
+                                        showUploadMenu
+                                          ? "opacity-100 visible translate-y-0"
+                                          : "opacity-0 invisible translate-y-2"
+                                      }
+                                    `}
+                          >
+                            <button
+                              onClick={() => fileInputRef.current?.click()}
+                              className="w-full border-b border-gray-200 dark:border-gray-600 flex cursor-pointer items-center gap-2 text-left px-4 py-2 text-sm
+                                         text-gray-700 dark:text-gray-200
+                                         hover:bg-gray-100 dark:hover:bg-gray-800
+                                         rounded-t-xl"
+                            >
+                              <GrCloudUpload className="text-sky-500" /> Image
+                            </button>
 
+                            <button
+                              onClick={() => setOpen(true)}
+                              className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm
+                                         text-gray-700 dark:text-gray-200
+                                         hover:bg-gray-100 dark:hover:bg-gray-800
+                                         rounded-b-xl"
+                            >
+                              <Gift size={18} className="!text-[#8160EE]" /> GIF
+                            </button>
+                          </div>
+
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            hidden
+                          />
+                        </div>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          className="hidden"
+                          accept="image/gif,image/png,image/jpeg,image/webp"
+                          onChange={handleFileChange}
+                        />
                         <button
-                          type="button"
+                          disabled={gif && String(value).trim().length <= 3}
                           onClick={handleSend}
-                          disabled={!value.trim()}
-                          className="
-                bg-blue-600
-                hover:bg-blue-700
-                disabled:bg-blue-300
-                text-white
-                text-sm
-                cursor-pointer
-                flex flex-row items-center gap-2
-                font-medium
-                px-4 py-1.5
-                rounded-md
-                transition
-              "
+                          className={`
+                        py-1.5 px-4 w-16 flex items-center justify-center rounded-md
+                        text-sm font-semibold
+                        transition-all duration-200
+                        ${
+                          gif || String(value).trim().length > 3
+                            ? `
+                              bg-emerald-500
+                              text-black
+                              hover:bg-emerald-600
+                              active:scale-95
+                              cursor-pointer
+                              shadow-[0_4px_14px_rgba(34,197,94,0.45)]
+                            `
+                            : `
+                              bg-gray-300
+                              text-gray-500
+                              border border-gray-400 dark:bg-gray-600 dark:border-gray-700
+                              cursor-not-allowed
+                              shadow-none
+                            `
+                        }
+                      `}
                         >
-                          Reply <MdSend />
+                          {isSendMessage ? (
+                            <CircularProgress
+                              size={18}
+                              className="!text-white dark:!text-white"
+                            />
+                          ) : (
+                            "Reply"
+                          )}
                         </button>
                       </div>
                     </div>
-
-                    {/* Emoji Picker */}
-                    {open && (
-                      <div
-                        className="
-      absolute right-0 bottom-[110%]
-      w-72
-      bg-white dark:bg-gray-900
-      border border-gray-200 dark:border-gray-700
-      shadow-xl
-      rounded-lg
-      p-3
-      flex flex-wrap gap-2
-      z-20
-    "
-                      >
-                        {PROFESSIONAL_EMOJIS.map((emoji) => (
-                          <button
-                            key={emoji}
-                            onClick={() => insertEmoji(emoji)}
-                            className="
-            text-xl
-            rounded-md
-            p-2
-            hover:bg-gray-100
-            dark:hover:bg-gray-800
-            transition
-          "
-                          >
-                            {emoji}
-                          </button>
-                        ))}
-                      </div>
-                    )}
                   </div>
+
                   <div className="px-0">
                     {" "}
                     <hr className="border-gray-200 dark:border-gray-700" />
@@ -559,6 +701,21 @@ export default function CommentPage() {
                       </div>
                     ) : commentList?.length > 0 ? (
                       commentList?.map((row: CommentInterface) => {
+                        const commentImages = (() => {
+                          if (!row?.metadata) return null;
+                          if (typeof row.metadata === "object") {
+                            return row.metadata;
+                          }
+                          try {
+                            return JSON.parse(row.metadata);
+                          } catch (e) {
+                            console.error(
+                              "Invalid metadata JSON",
+                              row.metadata,
+                            );
+                            return null;
+                          }
+                        })();
                         return (
                           <div
                             key={row?.id}
@@ -596,6 +753,16 @@ export default function CommentPage() {
                                     <HighlightTexts text={row?.content} />
                                   )}{" "}
                                 </p>
+                                {commentImages?.images?.length > 0 && (
+                                  <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
+                                    <Image
+                                      src={commentImages?.images?.[0]}
+                                      height={250}
+                                      alt="post image"
+                                      width={350}
+                                    />
+                                  </div>
+                                )}
                               </div>
                             </div>
                             <div className=" pl-10 py-2">
@@ -624,158 +791,147 @@ export default function CommentPage() {
                                 </span>
                                 <div
                                   className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
-                                  onClick={() => handleSubComment(row, null)}
+                                  // onClick={() => handleSubComment(row, null)}
+                                  onClick={() =>
+                                    handleOpenSubComment(row, row?.id)
+                                  }
                                 >
                                   Reply
                                 </div>
                               </div>
-                              {row?.id == subCommentData?.id &&
-                                subRepliesData == null && (
-                                  <div className="mt-2 w-full flex items-center gap-3 dark:bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
-                                    <input
-                                      type="text"
-                                      value={replyText}
-                                      onChange={(e) =>
-                                        setReplyText(e.target.value)
-                                      }
-                                      placeholder={`Reply to ${subCommentData?.User?.username || "--"}`}
-                                      className="flex-1 bg-transparent outline-none text-sm placeholder-gray-300 text-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
-                                    />
-                                    <button
-                                      disabled={replyText.trim().length < 2}
-                                      className={`text-sm font-medium transition ${
-                                        replyText.trim().length >= 2
-                                          ? "text-sky-400 hover:text-sky-300 cursor-pointer"
-                                          : "text-gray-500 cursor-not-allowed"
-                                      }`}
-                                      onClick={() =>
-                                        handleSubmitForSubComment(row)
-                                      }
-                                    >
-                                      Reply
-                                    </button>
-                                  </div>
-                                )}
+
                               <div className="pb-2">
                                 {row?.replies?.length > 0 &&
-                                  row?.replies?.map((replies: IReply) => (
-                                    <div key={replies?.id}>
-                                      <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                                        <div
-                                          onClick={() =>
-                                            handleUserDetails(replies?.User?.id)
-                                          }
-                                          className="!h-11 !w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500"
-                                        >
-                                          <Image
-                                            src={
-                                              replies?.User?.image_url ||
-                                              "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                  row?.replies?.map((replies: IReply) => {
+                                    const repliesImages = (() => {
+                                      if (!replies?.metadata) return null;
+                                      if (
+                                        typeof replies.metadata === "object"
+                                      ) {
+                                        return replies.metadata;
+                                      }
+                                      try {
+                                        return JSON.parse(replies.metadata);
+                                      } catch (e) {
+                                        console.error(
+                                          "Invalid metadata JSON",
+                                          replies.metadata,
+                                        );
+                                        return null;
+                                      }
+                                    })();
+                                    return (
+                                      <div key={replies?.id}>
+                                        <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
+                                          <div
+                                            onClick={() =>
+                                              handleUserDetails(
+                                                replies?.User?.id,
+                                              )
                                             }
-                                            alt="user"
-                                            width={30}
-                                            height={30}
-                                            className="rounded-full h-8 w-8"
-                                          />
-                                        </div>
-                                        <div>
-                                          <div className="flex items-center gap-2">
-                                            <h4>
-                                              <span
-                                                onClick={() =>
-                                                  handleUserDetails(
-                                                    replies?.User?.id,
-                                                  )
-                                                }
-                                                className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
-                                              >
-                                                {replies?.User?.username ||
-                                                  "Unknown"}
-                                              </span>{" "}
-                                              <span className="text-xs dark:text-gray-500 text-gray-500">
-                                                {timeAgoCompact(row?.updatedAt)}
-                                              </span>
-                                            </h4>
+                                            className="!h-11 !w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-900 dark:bg-gray-500"
+                                          >
+                                            <Image
+                                              src={
+                                                replies?.User?.image_url ||
+                                                "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                              }
+                                              alt="user"
+                                              width={30}
+                                              height={30}
+                                              className="rounded-full h-8 w-8"
+                                            />
                                           </div>
-                                          <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
-                                            {replies?.content && (
-                                              <HighlightTexts
-                                                text={replies?.content}
-                                              />
-                                            )}{" "}
-                                          </p>
-                                          <div className=" py-2">
-                                            <div className="flex text-gray-400 flex-row items-center gap-4">
-                                              <span className="flex items-center gap-2">
-                                                {replies?.isUserLike == 1 ? (
-                                                  <FcLike
-                                                    onClick={() =>
-                                                      handleCommentLikeUnlike(
-                                                        replies?.id,
-                                                        replies?.isUserLike,
-                                                      )
-                                                    }
-                                                  />
-                                                ) : (
-                                                  <Heart
-                                                    onClick={() =>
-                                                      handleCommentLikeUnlike(
-                                                        replies?.id,
-                                                        replies?.isUserLike,
-                                                      )
-                                                    }
-                                                    size={18}
-                                                  />
-                                                )}{" "}
-                                                {replies?.likeCount || 0}
-                                              </span>
-                                              <div
-                                                className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
-                                                onClick={() =>
-                                                  handleSubComment(row, replies)
-                                                }
-                                              >
-                                                Reply
+                                          <div>
+                                            <div className="flex items-center gap-2">
+                                              <h4>
+                                                <span
+                                                  onClick={() =>
+                                                    handleUserDetails(
+                                                      replies?.User?.id,
+                                                    )
+                                                  }
+                                                  className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
+                                                >
+                                                  {replies?.User?.username ||
+                                                    "Unknown"}
+                                                </span>{" "}
+                                                <span className="text-xs dark:text-gray-500 text-gray-500">
+                                                  {timeAgoCompact(
+                                                    row?.updatedAt,
+                                                  )}
+                                                </span>
+                                              </h4>
+                                            </div>
+                                            <p className="text-md mt-2 dark:text-gray-400 text-gray-800">
+                                              {replies?.content && (
+                                                <HighlightTexts
+                                                  text={replies?.content}
+                                                />
+                                              )}{" "}
+                                            </p>
+                                            {repliesImages?.images?.length >
+                                              0 && (
+                                              <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
+                                                <Image
+                                                  src={
+                                                    repliesImages?.images?.[0]
+                                                  }
+                                                  height={250}
+                                                  alt="post image"
+                                                  width={350}
+                                                />
+                                              </div>
+                                            )}
+                                            <div className=" py-2">
+                                              <div className="flex text-gray-400 flex-row items-center gap-4">
+                                                <span className="flex items-center gap-2">
+                                                  {replies?.isUserLike == 1 ? (
+                                                    <FcLike
+                                                      onClick={() =>
+                                                        handleCommentLikeUnlike(
+                                                          replies?.id,
+                                                          replies?.isUserLike,
+                                                        )
+                                                      }
+                                                    />
+                                                  ) : (
+                                                    <Heart
+                                                      onClick={() =>
+                                                        handleCommentLikeUnlike(
+                                                          replies?.id,
+                                                          replies?.isUserLike,
+                                                        )
+                                                      }
+                                                      size={18}
+                                                    />
+                                                  )}{" "}
+                                                  {replies?.likeCount || 0}
+                                                </span>
+                                                <div
+                                                  className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
+                                                  // onClick={() =>
+                                                  //   handleSubComment(
+                                                  //     row,
+                                                  //     replies,
+                                                  //   )
+                                                  // }
+                                                  onClick={() =>
+                                                    handleOpenSubComment(
+                                                      replies,
+                                                      row?.id,
+                                                    )
+                                                  }
+                                                >
+                                                  Reply
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
                                         </div>
                                       </div>
-                                      {row?.id == subCommentData?.id &&
-                                        replies?.id == subRepliesData?.id && (
-                                          <div className="mt-2 w-full flex items-center gap-3 dark:bg-[#1D293D] border border-gray-700 rounded-xl px-3 py-2 focus-within:ring-1 focus-within:ring-sky-500/40">
-                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400 flex-shrink-0" />
-                                            <input
-                                              type="text"
-                                              value={replyText}
-                                              onChange={(e) =>
-                                                setReplyText(e.target.value)
-                                              }
-                                              placeholder={`Reply to ${subCommentData?.User?.username || "--"}`}
-                                              className="flex-1 bg-transparent outline-none text-sm placeholder-gray-300 text-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
-                                            />
-                                            <button
-                                              disabled={
-                                                replyText.trim().length < 2
-                                              }
-                                              className={`text-sm font-medium transition ${
-                                                replyText.trim().length >= 2
-                                                  ? "text-sky-400 hover:text-sky-300 cursor-pointer"
-                                                  : "text-gray-500 cursor-not-allowed"
-                                              }`}
-                                              onClick={() =>
-                                                handleSubmitForSubComment(
-                                                  replies,
-                                                )
-                                              }
-                                            >
-                                              Reply
-                                            </button>
-                                          </div>
-                                        )}
-                                    </div>
-                                  ))}
+                                    );
+                                  })}
                               </div>
                             </div>
                           </div>
@@ -804,6 +960,25 @@ export default function CommentPage() {
           </div>
         </div>
       </div>
+      <GiphyModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSelect={(gifImage) => {
+          setShowUploadMenu(false);
+          setGif(gifImage);
+        }}
+      />
+      <SubComment
+        open={commentOpen}
+        onClose={handleCloseComment}
+        row={rowDetails}
+        handleSend={handleSubmitForSubComment}
+        isLoader={isSendMessageLoader}
+        mixText={mixText}
+        setMixText={setMixText}
+        gif={imageGif}
+        setGif={setImageGif}
+      />
     </div>
   );
 }

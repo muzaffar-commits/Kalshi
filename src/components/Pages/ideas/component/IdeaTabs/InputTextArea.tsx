@@ -66,7 +66,7 @@ export default function InputTextArea({
   return (
     <div className="w-full">
       {image && (
-        <div className="relative mb-2 w-fit">
+        <div className="relative w-fit">
           <img
             src={image}
             alt="preview"
@@ -89,7 +89,7 @@ export default function InputTextArea({
           aria-hidden="true"
           className="
         absolute inset-0
-        pt-4
+        pt-2
        
         leading-relaxed
         whitespace-pre-wrap
@@ -119,7 +119,7 @@ export default function InputTextArea({
             pt-4
             w-full
             min-h-[80px]
-            text-md
+            
             leading-relaxed
             bg-transparent
             resize-none

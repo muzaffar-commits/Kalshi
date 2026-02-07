@@ -201,6 +201,7 @@ export interface CommentInterface {
   User?: UserPost;
   replies: IReply[];
   isReply: boolean;
+  metadata: any;
 }
 
 export interface TabPanelProps {

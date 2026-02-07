@@ -118,6 +118,7 @@ export default function IdeasActivityTabs({ marketId }) {
     try {
       const payload = {
         questionId: Number(marketId),
+        postType: "PUBLIC",
         metadata: {
           content: message,
           images: gif == null ? [] : [gif],

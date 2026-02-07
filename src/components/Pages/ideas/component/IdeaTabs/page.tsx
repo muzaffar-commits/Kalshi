@@ -158,17 +158,17 @@ export default function IdeaTabs({
     chooseImages(file);
   };
 
-  const postUserMessage = async () => {
+  const postUserMessage = async (keyType: string) => {
     setIsPostLoader(true);
     try {
-      const metadata = {
-        content: message,
-        images: gif == null ? null : [gif],
+      const payload = {
+        postType: keyType,
+        metadata: {
+          content: message,
+          images: gif == null ? [] : [gif],
+        },
       };
-      const [response] = await Promise.all([
-        userPost({ metadata }),
-        delay(100),
-      ]);
+      const [response] = await Promise.all([userPost(payload), delay(1000)]);
 
       console.log(response, "response");
 
@@ -204,8 +204,6 @@ export default function IdeaTabs({
         setGif(null);
       } else {
         toast.error(response?.message);
-        setMessage("");
-        setGif(null);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -399,7 +397,7 @@ export default function IdeaTabs({
                   />
                   <button
                     disabled={gif && String(message).trim().length <= 3}
-                    onClick={postUserMessage}
+                    onClick={() => postUserMessage("PUBLIC")}
                     className={`
                         py-1.5 px-4 w-16 flex items-center justify-center rounded-md
                         text-sm font-semibold
@@ -656,7 +654,7 @@ export default function IdeaTabs({
                   />
                   <button
                     disabled={gif && String(message).trim().length <= 3}
-                    onClick={postUserMessage}
+                    onClick={() => postUserMessage("PRIVATE")}
                     className={`
                         py-1.5 px-4 w-16 flex items-center justify-center rounded-md
                         text-sm font-semibold
