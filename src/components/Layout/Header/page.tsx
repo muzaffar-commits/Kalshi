@@ -250,9 +250,9 @@ const Header = () => {
       {/* <div className="hidden lg:block"> */}
       <div>
         <header
-          className="fixed top-0 left-0 w-full z-[1000]
+          className="fixed top-0 left-0 w-full z-[9]
   bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)]
-  md:pb-2 pb-0 z-10"
+  md:pb-2 pb-0 "
         >
           {/* shadow-[0_2px_6px_rgba(0,0,0,0.08)]
   dark:shadow-[0_2px_6px_rgba(0,0,0,0.4)] */}

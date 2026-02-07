@@ -302,7 +302,7 @@ const Home = () => {
                         relative rounded-xl px-4 py-2
                         transform transition-all duration-300 ease-in-out
                         hover:scale-106 hover:shadow-md
-                        z-0 hover:z-20
+                        z-0 hover:z-8
                         "
                   >
                     <div className="flex mb-2">
