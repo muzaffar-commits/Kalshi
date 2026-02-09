@@ -308,6 +308,17 @@ const Home = () => {
                     return null;
                   }
                 })();
+                // const maxPrice = Math.max(
+                //   ...(row?.options?.map((opt) => opt.price) || [0]),
+                // );
+
+                const prices = row?.options?.map((opt) => opt.price) || [];
+
+                const maxPrice = Math.max(...prices);
+                const minPrice = Math.min(...prices);
+
+                // check if all options have same price
+                const isAllEqual = maxPrice === minPrice;
                 return (
                   <div
                     key={index}
@@ -343,7 +354,7 @@ const Home = () => {
                         <div onClick={() => goToDetails(row.id)}>
                           <div className="block text-primary">
                             <div
-                              className="line-clamp-2"
+                              className="line-clamp-1"
                               title={row?.question || "--"}
                             >
                               {row?.question || "--"}
@@ -355,8 +366,8 @@ const Home = () => {
                         </div>
                       </h2>
                     </div>
-                    {/* Yes */}
-                    {row?.options?.length == 2 ? (
+
+                    {/* {row?.options?.length == 2 ? (
                       <>
                         {row?.options?.map((item: OptionItem, idx: number) => {
                           const percentage = item?.price * 100;
@@ -374,7 +385,7 @@ const Home = () => {
                           return (
                             <div
                               key={idx}
-                              className="w-100% rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4 dark:text-[var(--color-text)] text-[var(--color-text)] shadow-lg"
+                              className="w-100% rounded-xl  dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4 dark:text-[var(--color-text)] text-[var(--color-text)] shadow-lg"
                             >
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-semibold tracking-wide">
@@ -402,13 +413,7 @@ const Home = () => {
                               <div className="flex items-center justify-between text-xs text-gray-400">
                                 <div className="flex gap-3">
                                   <span>
-                                    Buy{" "}
-                                    <span className="dark:text-[var(--color-text)] text-[var(--color-text)] font-medium">
-                                      {truncateValue(item?.price || 0)}
-                                    </span>
-                                  </span>
-                                  <span>
-                                    Sell{" "}
+                                    Price{" "}
                                     <span className="dark:text-[var(--color-text)] text-[var(--color-text)] font-medium">
                                       {truncateValue(item?.price || 0)}
                                     </span>
@@ -462,7 +467,7 @@ const Home = () => {
                               )}
                             </span>
 
-                            {/* <span
+                            <span
                               className="cursor-pointer inline-flex
              transition-transform duration-200 ease-in-out
              hover:scale-125"
@@ -492,7 +497,7 @@ const Home = () => {
                                   className="text-sky-400"
                                 />
                               )}
-                            </span> */}
+                            </span>
                           </div>
                           <div>
                             <button
@@ -566,7 +571,7 @@ const Home = () => {
                                 </span>
                               )}
                             </span>
-                            {/* <span
+                            <span
                               className="cursor-pointer inline-flex
              transition-transform duration-200 ease-in-out
              hover:scale-125 mr-2"
@@ -596,7 +601,7 @@ const Home = () => {
                                   className="text-sky-400"
                                 />
                               )}
-                            </span> */}
+                            </span>
                           </div>
                           <div>
                             <button
@@ -608,7 +613,135 @@ const Home = () => {
                           </div>
                         </div>
                       </>
+                    )} */}
+
+                    {row?.options?.length > 0 && (
+                      <div className="text-xs mt-2 h-[170px] hideScrollbar overflow-y-auto space-y-2">
+                        {row?.options?.map((item: OptionItem, idx: number) => {
+                          const percentage = item?.price * 100;
+                          const isTopOption = item?.price === maxPrice;
+
+                          return (
+                            <div
+                              key={idx}
+                              className="w-full rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4"
+                            >
+                              <div className="flex items-center justify-between mb-2 gap-2">
+                                <span className="flex-1 min-w-0 truncate text-sm font-semibold tracking-wide">
+                                  {item?.name || "--"}
+                                </span>
+                                <span className="shrink-0 text-sm font-semibold">
+                                  {percentage.toFixed(1)}%
+                                </span>
+                              </div>
+
+                              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mb-2">
+                                <div
+                                  className={`h-full ${
+                                    isTopOption
+                                      ? "bg-gradient-to-r from-teal-400 to-cyan-400"
+                                      : "bg-gradient-to-r from-yellow-400 to-red-400"
+                                  }`}
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
+
+                              <div className="flex items-center justify-between text-xs text-gray-400">
+                                <span>
+                                  Price{" "}
+                                  <span className="font-medium">
+                                    {truncateValue(item?.price || 0)}
+                                  </span>
+                                </span>
+
+                                <div
+                                  className={`flex items-center gap-1 font-medium ${
+                                    isAllEqual
+                                      ? "text-gray-400"
+                                      : isTopOption
+                                        ? "text-green-400"
+                                        : "text-yellow-400"
+                                  }`}
+                                >
+                                  {isAllEqual ? (
+                                    <span className="text-lg text-slate-300 leading-none">
+                                      ~
+                                    </span>
+                                  ) : (
+                                    <FaArrowUp
+                                      className={`transition-transform ${
+                                        isTopOption ? "" : "rotate-180"
+                                      }`}
+                                    />
+                                  )}
+
+                                  <span>{percentage.toFixed(1)}%</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
+
+                    <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
+                      <div className="flex gap-4 items-center">
+                        <span className="flex items-center gap-1">
+                          {row?.stats?.totalVolume > 0 ? (
+                            <>
+                              <span className="text-yellow-500 font-semibold">
+                                $
+                              </span>
+                              <span className="text-gray-400">
+                                {Number(row?.stats?.totalVolume || 0).toFixed(
+                                  2,
+                                )}{" "}
+                                Vol
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-yellow-500 flex items-center gap-1">
+                              <GiNinjaStar size={12} className="rotate-45" />
+                              New
+                            </span>
+                          )}
+                        </span>
+
+                        <span
+                          className="cursor-pointer inline-flex
+             transition-transform duration-200 ease-in-out
+             hover:scale-125"
+                        >
+                          {!row?.isBookmark ? (
+                            <FaRegBookmark
+                              onClick={() =>
+                                !getToken
+                                  ? setIsOpen(true)
+                                  : bookMarkUnBookMark(row?.id, row?.isBookmark)
+                              }
+                              className="text-sky-400"
+                            />
+                          ) : (
+                            <FaBookmark
+                              onClick={() =>
+                                !getToken
+                                  ? setIsOpen(true)
+                                  : bookMarkUnBookMark(row?.id, row?.isBookmark)
+                              }
+                              className="text-sky-400"
+                            />
+                          )}
+                        </span>
+                      </div>
+                      <div>
+                        <button
+                          onClick={() => goToDetails(row.id)}
+                          className="bg-[#8160ee] cursor-pointer rounded-md py-1.5 px-5 text-[14px] text-white font-semibold text-center"
+                        >
+                          Trade
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 );
               })

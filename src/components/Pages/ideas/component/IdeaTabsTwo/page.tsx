@@ -22,6 +22,7 @@ import {
 } from "@/components/service/apiService/user";
 import { PostSkeleton } from "@/utils/customSkeleton";
 import { Position } from "@/components/Pages/userProfile/proTabs/page";
+import ViewImage from "@/components/common/ViewImage";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -309,44 +310,8 @@ export default function IdeaTabsTwo({
                         )}
                         <br />
 
-                        {imageUrl && (
-                          <div className="mt-2 relative">
-                            {isGifImage(imageUrl) ? (
-                              // ✅ GIF → show as-is (no optimization)
-                              <img
-                                src={imageUrl}
-                                alt="post media"
-                                className="w-48  rounded-lg"
-                              />
-                            ) : (
-                              // ✅ Normal image → optimized + fixed width
-                              <Image
-                                src={imageUrl}
-                                alt="post media"
-                                width={150}
-                                height={150}
-                                className="h-auto rounded-lg object-cover"
-                              />
-                            )}
-                          </div>
-                        )}
+                        {imageUrl && <ViewImage imageUrl={imageUrl} />}
                       </p>
-                      {/* <p className="mt-3 cursor-pointer hover:underline text-[#caac75] font-semibold">
-                      Ningbo Rockets vs Beijing Ducks
-                    </p>
-                    <p className="text-sm text-[#caac75]/80">
-                      Yes . Beijing Ducks . BED at NIN (Jan 6) . 86% chance{" "}
-                      <FaArrowUp
-                        className="
-                          rotate-45
-                          text-green-400
-                          transition-transform
-                          duration-200
-                          hover:scale-125 inline-block
-                        "
-                      />{" "}
-                      Now 77% chance
-                    </p> */}
 
                       <div className="mt-4">
                         <div className="flex justify-between">
@@ -420,21 +385,6 @@ export default function IdeaTabsTwo({
                               )}
                             </span>
                             <span className="inline-block relative -left-3 font-light text-gray-400"></span>
-                            {/* <span
-                              className="
-                              p-2
-                              rounded
-                              inline-block
-                              text-gray-500
-                              dark:text-gray-400
-                              hover:bg-gray-400/30
-                              transition-all
-                              duration-200
-                              ease-in-out text-lg cursor-pointer
-                            "
-                            >
-                              <LuUpload />
-                            </span> */}
                           </div>
                         </div>
                       </div>
@@ -476,6 +426,8 @@ export default function IdeaTabsTwo({
                     return null;
                   }
                 })();
+
+                const imageUrl = contentForPost?.images?.[0];
 
                 return (
                   <div
@@ -522,34 +474,9 @@ export default function IdeaTabsTwo({
                           />
                         )}
                         <br />
-                        <br />
-                        {contentForPost?.images?.length > 0 && (
-                          <div className="bg-green-400 w-fit p-2 rounded shadow">
-                            <Image
-                              src={contentForPost?.images?.[0]}
-                              height={250}
-                              alt="post image"
-                              width={350}
-                            />
-                          </div>
-                        )}
+
+                        {imageUrl && <ViewImage imageUrl={imageUrl} />}
                       </p>
-                      {/* <p className="mt-3 cursor-pointer hover:underline text-[#caac75] font-semibold">
-                      Ningbo Rockets vs Beijing Ducks
-                    </p>
-                    <p className="text-sm text-[#caac75]/80">
-                      Yes . Beijing Ducks . BED at NIN (Jan 6) . 86% chance{" "}
-                      <FaArrowUp
-                        className="
-                          rotate-45
-                          text-green-400
-                          transition-transform
-                          duration-200
-                          hover:scale-125 inline-block
-                        "
-                      />{" "}
-                      Now 77% chance
-                    </p> */}
 
                       <div className="mt-4">
                         <div className="flex justify-between">

@@ -199,14 +199,14 @@ export default function Profile({ targetId }: { targetId: string }) {
                 <div className="flex justify-center w-full px-5">
                   <div
                     className="
-      w-full  rounded-2xl p-5
-      bg-white/80 dark:bg-transparent
-      backdrop-blur-xl
-      border border-gray-200/60 dark:border-white/10
-      
-      transition-all duration-300
-     
-    "
+                      w-full  rounded-2xl p-5
+                      bg-white/80 dark:bg-transparent
+                      backdrop-blur-xl
+                      border border-gray-200/60 dark:border-white/10
+                      
+                      transition-all duration-300
+                    
+                    "
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex gap-4">
@@ -219,7 +219,7 @@ export default function Profile({ targetId }: { targetId: string }) {
                             alt="Profile"
                             width={80}
                             height={80}
-                            className="relative rounded-xl object-cover border border-white/20"
+                            className="relative rounded-xl object-cover "
                           />
                         </div>
 
@@ -292,9 +292,11 @@ export default function Profile({ targetId }: { targetId: string }) {
                       )}
                     </div>
 
-                    <p className="mt-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-                      {userDetails?.user?.description || "--"}
-                    </p>
+                    {userDetails?.user?.description && (
+                      <p className="mt-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                        {userDetails?.user?.description || ""}
+                      </p>
+                    )}
 
                     {/* EMBEDDED MARKET CARD */}
 
