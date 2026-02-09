@@ -334,8 +334,8 @@ const Home = () => {
                     <div className="flex mb-2">
                       {metaData?.imageUrl && (
                         <div
-                          className="p-1.5 mr-2 rounded-md bg-gray-100 dark:bg-gray-700
-             w-[44px] h-[44px] flex items-center justify-center shrink-0 border border-[#8160ee]/60"
+                          className=" mr-2 rounded-md bg-gray-100 dark:bg-gray-700
+             w-[44px] h-[44px] flex items-center justify-center shrink-0 "
                         >
                           <Image
                             src={
@@ -627,7 +627,7 @@ const Home = () => {
                               className="w-full rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4"
                             >
                               <div className="flex items-center justify-between mb-2 gap-2">
-                                <span className="flex-1 min-w-0 truncate text-sm font-semibold tracking-wide">
+                                <span className="flex-1 min-w-0  truncate text-sm font-semibold tracking-wide">
                                   {item?.name || "--"}
                                 </span>
                                 <span className="shrink-0 text-sm font-semibold">
