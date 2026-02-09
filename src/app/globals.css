@@ -147,3 +147,13 @@ body {
   z-index: -51;
   position: relative;
 }
+
+.google-btn-wrapper iframe {
+  width: 100% !important;
+}
+
+@layer base {
+  .google-btn-wrapper iframe {
+    width: 100% !important;
+  }
+}

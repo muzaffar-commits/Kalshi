@@ -1,5 +1,4 @@
 import {
-  getMyAllPost,
   getUsersAllDetails,
   postBookmarkOrUnBookMark,
   postFollowUser,
@@ -16,7 +15,6 @@ import MobileMenu from "../IdeaList/page";
 import PostList from "@/components/Pages/detail/component/postList";
 import { FaRegCommentAlt } from "react-icons/fa";
 import { PostFeeBack } from "@/utils/typesInterface";
-import { SiGooglemessages } from "react-icons/si";
 import { LuMessageSquareShare } from "react-icons/lu";
 import FollowingFollowerList from "@/components/Modal/FollowingFollowerList/page";
 
@@ -29,7 +27,6 @@ interface userDetailProps {
 }
 
 export default function Profile({ targetId }: { targetId: string }) {
-  // const [userDetails, setUserDetails] = useState({});
   const [isLoader, setIsLoader] = useState(false);
   const [followingData, setFollowingData] = useState([]);
   const usersOwn = useSelector((state: any) => state?.user?.user);
@@ -43,11 +40,14 @@ export default function Profile({ targetId }: { targetId: string }) {
     setIsLoader(true);
     try {
       const [response] = await Promise.all([
-        getUsersAllDetails(targetIds, userId),
+        getUsersAllDetails(targetIds),
         delay(1000),
       ]);
       if (response?.success) {
+        const postDetails = response?.data?.[2] ?? [];
         setFollowingData(response.data ?? []);
+        setMyPost(postDetails);
+        console.log(response.data, "response.data");
       } else {
         setFollowingData([]);
       }
@@ -100,23 +100,6 @@ export default function Profile({ targetId }: { targetId: string }) {
       toast.error("Inter Server Error");
     }
   };
-  const fetchMyAllPost = async () => {
-    try {
-      const response = await getMyAllPost(targetIds, "");
-
-      if (response.feed?.length > 0) {
-        setMyPost(response?.feed);
-      } else {
-        setMyPost([]);
-      }
-    } catch {
-      setMyPost([]);
-    }
-    // getMyAllPost
-  };
-  useEffect(() => {
-    fetchMyAllPost();
-  }, []);
 
   const handleBookMarkOrUnBookMark = async (
     id: number,
@@ -310,14 +293,13 @@ export default function Profile({ targetId }: { targetId: string }) {
                     </div>
 
                     <p className="mt-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-                      I believe this market will cross expectations 🚀 Strong
-                      momentum building up with smart money inflow.
+                      {userDetails?.user?.description || "--"}
                     </p>
 
                     {/* EMBEDDED MARKET CARD */}
 
                     {/* FOOTER ACTIONS */}
-                    <div className="mt-4 flex justify-between items-center text-gray-500 dark:text-gray-400">
+                    {/* <div className="mt-4 flex justify-between items-center text-gray-500 dark:text-gray-400">
                       <div className="flex gap-6 text-sm">
                         <button className="hover:text-emerald-500 transition">
                           ↗
@@ -327,7 +309,7 @@ export default function Profile({ targetId }: { targetId: string }) {
                       <button className="text-xs hover:text-gray-700 dark:hover:text-gray-200">
                         Share
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}

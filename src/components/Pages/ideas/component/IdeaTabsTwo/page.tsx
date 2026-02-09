@@ -10,7 +10,7 @@ import {
   FaRegHeart,
   FaBookmark,
 } from "react-icons/fa";
-import { HighlightTexts, timeAgoCompact } from "@/utils/Content";
+import { HighlightTexts, isGifImage, timeAgoCompact } from "@/utils/Content";
 import { FcLike } from "react-icons/fc";
 import toast from "react-hot-toast";
 import { PostFeeBack, SetPosts } from "@/utils/typesInterface";
@@ -52,7 +52,9 @@ function a11yProps(index: number) {
   };
 }
 type HandleComment = (post: PostFeeBack) => void;
+// const [currentTabs, setCurrentTabs] = useState(0);
 
+const isGif = (url = "") => url.includes("giphy") || /\.gif($|\?)/i.test(url);
 export default function IdeaTabsTwo({
   postedList,
   setAllPosts,
@@ -61,6 +63,9 @@ export default function IdeaTabsTwo({
   loader = false,
   handleUserDetails,
   isYourPost,
+  setCurrentTabs,
+  setMyPost,
+  myPost,
 }: {
   postedList: PostFeeBack[];
   setAllPosts: SetPosts;
@@ -69,12 +74,17 @@ export default function IdeaTabsTwo({
   loader: boolean;
   handleUserDetails: (id: string) => void;
   isYourPost: boolean;
+  setCurrentTabs: (id: number) => void;
+  setMyPost: SetPosts;
+  myPost: PostFeeBack[];
 }) {
   const [value, setValue] = React.useState(0);
-  const [myPost, setMyPost] = React.useState<PostFeeBack[]>([]);
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    setCurrentTabs(newValue);
   };
+  console.log(value, "value===>");
 
   const handleLikeUnlike = async (id: number, isLike: number) => {
     try {
@@ -83,22 +93,41 @@ export default function IdeaTabsTwo({
       } else {
         toast.success("like");
       }
-      setAllPosts((prev) =>
-        prev.map((item) => {
-          if (item.id == id) {
-            const isLiked = item.isLiked === 1 ? 0 : 1;
+      if (value == 1) {
+        setMyPost((prev) =>
+          prev.map((item) => {
+            if (item.id == id) {
+              const isLiked = item.isLiked === 1 ? 0 : 1;
 
-            return {
-              ...item,
-              isLiked,
-              likeCount: isLiked
-                ? item.likeCount + 1
-                : Math.max(item.likeCount - 1, 0),
-            };
-          }
-          return item;
-        }),
-      );
+              return {
+                ...item,
+                isLiked,
+                likeCount: isLiked
+                  ? item.likeCount + 1
+                  : Math.max(item.likeCount - 1, 0),
+              };
+            }
+            return item;
+          }),
+        );
+      } else {
+        setAllPosts((prev) =>
+          prev.map((item) => {
+            if (item.id == id) {
+              const isLiked = item.isLiked === 1 ? 0 : 1;
+
+              return {
+                ...item,
+                isLiked,
+                likeCount: isLiked
+                  ? item.likeCount + 1
+                  : Math.max(item.likeCount - 1, 0),
+              };
+            }
+            return item;
+          }),
+        );
+      }
 
       const payload = {
         postId: id,
@@ -119,22 +148,42 @@ export default function IdeaTabsTwo({
     isBookmarked: number,
   ) => {
     try {
-      setAllPosts((prev) => {
-        if (isBookMark === true) {
-          return prev.filter((item) => item.id !== id);
-        } else {
-          return prev.map((item) => {
-            if (item.id === id) {
-              const booked = item.isBookmarked === 1 ? 0 : 1;
-              return {
-                ...item,
-                isBookmarked: booked,
-              };
-            }
-            return item;
-          });
-        }
-      });
+      if (value == 1) {
+        setMyPost((prev) => {
+          if (isBookMark === true) {
+            return prev.filter((item) => item.id !== id);
+          } else {
+            return prev.map((item) => {
+              if (item.id === id) {
+                const booked = item.isBookmarked === 1 ? 0 : 1;
+                return {
+                  ...item,
+                  isBookmarked: booked,
+                };
+              }
+              return item;
+            });
+          }
+        });
+      } else {
+        setAllPosts((prev) => {
+          if (isBookMark === true) {
+            return prev.filter((item) => item.id !== id);
+          } else {
+            return prev.map((item) => {
+              if (item.id === id) {
+                const booked = item.isBookmarked === 1 ? 0 : 1;
+                return {
+                  ...item,
+                  isBookmarked: booked,
+                };
+              }
+              return item;
+            });
+          }
+        });
+      }
+
       if (isBookmarked == 1) {
         toast.success("Remove for bookmarks");
       } else {
@@ -156,23 +205,6 @@ export default function IdeaTabsTwo({
   const locationUrl = window.location?.pathname;
 
   console.log(locationUrl, "locationUrl");
-
-  const fetchMyAllPost = async () => {
-    try {
-      const response = await getMyAllPost("");
-
-      if (response.feed?.length > 0) {
-        setMyPost(response?.feed);
-      } else {
-        setMyPost([]);
-      }
-    } catch {
-      setMyPost([]);
-    }
-  };
-  React.useEffect(() => {
-    fetchMyAllPost();
-  }, []);
 
   console.log(myPost, "positions");
 
@@ -230,6 +262,7 @@ export default function IdeaTabsTwo({
                   }
                 })();
 
+                const imageUrl = contentForPost?.images?.[0];
                 return (
                   <div
                     key={row?.id}
@@ -275,15 +308,26 @@ export default function IdeaTabsTwo({
                           />
                         )}
                         <br />
-                        <br />
-                        {contentForPost?.images?.length > 0 && (
-                          <div className="bg-green-400 w-fit p-2 rounded shadow">
-                            <Image
-                              src={contentForPost?.images?.[0]}
-                              height={250}
-                              alt="post image"
-                              width={350}
-                            />
+
+                        {imageUrl && (
+                          <div className="mt-2 relative">
+                            {isGifImage(imageUrl) ? (
+                              // ✅ GIF → show as-is (no optimization)
+                              <img
+                                src={imageUrl}
+                                alt="post media"
+                                className="w-48  rounded-lg"
+                              />
+                            ) : (
+                              // ✅ Normal image → optimized + fixed width
+                              <Image
+                                src={imageUrl}
+                                alt="post media"
+                                width={150}
+                                height={150}
+                                className="h-auto rounded-lg object-cover"
+                              />
+                            )}
                           </div>
                         )}
                       </p>

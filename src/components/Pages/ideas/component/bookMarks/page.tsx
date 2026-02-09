@@ -80,6 +80,10 @@ export default function BookMarks() {
                 isBookMark={true}
                 loader={iseLoader}
                 handleUserDetails={handleUserDetails}
+                isYourPost={false}
+                myPost={null}
+                setCurrentTabs={null}
+                setMyPost={null}
               />
             </div>
           </div>

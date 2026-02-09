@@ -143,3 +143,6 @@ export function countWords(text: string) {
   return text?.length;
   // return text.trim().split(/\s+/).filter(Boolean).length;
 }
+
+export const isGifImage = (url = "") =>
+  /\.gif($|\?)/i.test(url) || url.includes("giphy.com");

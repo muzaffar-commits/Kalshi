@@ -106,7 +106,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
 
   const fetchMyAllPost = async () => {
     try {
-      const response = await getMyAllPost(userId, "");
+      const response = await getMyAllPost("");
 
       if (response.feed?.length > 0) {
         setMyPost(response?.feed);

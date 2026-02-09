@@ -9,6 +9,7 @@ export interface UserCore {
   email: string;
   createdAt: string;
   image_url?: string;
+  description?: string;
   id: number;
 }
 
@@ -305,6 +306,7 @@ export interface userDetailProps {
   username: string;
   email: string;
   image_url: string;
+  description: string;
 }
 
 export interface headerRootState {

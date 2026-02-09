@@ -62,8 +62,14 @@ export default function Authentication({
         </h2>
 
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-          <div className="mt-6 flex justify-center">
-            <div className="w-full">
+          <div className="mt-6 flex justify-center w-full">
+            <div
+              className="google-btn-wrapper"
+              style={{
+                width: "100%",
+                maxWidth: "420px",
+              }}
+            >
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                   const token = credentialResponse.credential || "";

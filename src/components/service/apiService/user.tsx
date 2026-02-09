@@ -177,10 +177,10 @@ export const replyComments = async (reqBody: unknown) => {
     };
   }
 };
-export const getUsersAllDetails = async (id: string, userId: string) => {
+export const getUsersAllDetails = async (id: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getProfileListAllUser}${userId ? `?userId=${userId}` : ""}${id ? `&targetId=${id}` : ""}`,
+      `${API_URLs.getProfileListAllUser}${id ? `?targetId=${id}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {
@@ -309,7 +309,7 @@ export const postAllReadNotification = async () => {
 export const getMyAllPost = async (id: string) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.myAllPost}${id ? `?questionId=${id}` : ""}`,
+      `${API_URLs.myAllPost}${id ? `?questionId=${id}` : ""}${true ? `?username=${"unknown"}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {

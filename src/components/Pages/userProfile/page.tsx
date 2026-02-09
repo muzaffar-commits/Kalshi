@@ -96,7 +96,7 @@ const UserProfile = () => {
                   alt="Profile"
                   width={80}
                   height={80}
-                  className="rounded-lg object-cover"
+                  className="rounded object-cover"
                 />
               </div>
               <div className="flex-1">
@@ -165,9 +165,17 @@ const UserProfile = () => {
               </button>
             </div>
           </div>
+          <div className="mt-2">
+            <span className="text-gray-800 text-xs dark:text-gray-400">
+              <span className="font-medium text-gray-900 dark:text-gray-200">
+                Bio:
+              </span>{" "}
+              {userData?.user?.description || "--"}
+            </span>
+          </div>
 
           {/* Total Balance */}
-          <div className="md:mt-3 pt-3 border-t dark:border-gray-700 border-gray-300">
+          <div className="md:mt-3 pt-1 border-t dark:border-gray-700 border-gray-300">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="me-2">

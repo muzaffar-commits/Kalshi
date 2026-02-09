@@ -166,7 +166,7 @@ export default function SubComment({
     handleSend(row, mixText, gif);
   };
 
-  console.log(row, "rowlskdfjslf");
+  console.log(mixText?.length, "rowlskdfjslf");
 
   return (
     <Modal

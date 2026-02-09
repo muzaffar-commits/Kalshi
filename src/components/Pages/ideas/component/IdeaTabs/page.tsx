@@ -9,6 +9,7 @@ import { CircularProgress } from "@mui/material";
 import InputTextArea from "./InputTextArea";
 import {
   getFeedForFollowingList,
+  getMyAllPost,
   imageUpload,
   userPost,
 } from "@/components/service/apiService/user";
@@ -79,8 +80,10 @@ export default function IdeaTabs({
   const dropdownRef = useRef(null);
   const [myFeedList, setMyFeedList] = useState([]);
   const [isLoaderMyFeed, setIsLoaderMyFeed] = useState(false);
-  const userDetails = useSelector((state: any) => state?.user?.user);
 
+  const userDetails = useSelector((state: any) => state?.user?.user);
+  const [myPost, setMyPost] = React.useState<PostFeeBack[]>([]);
+  const [currentTabs, setCurrentTabs] = useState(0);
   console.log(userDetails, "userDetails");
 
   useEffect(() => {
@@ -161,7 +164,20 @@ export default function IdeaTabs({
 
       if (response?.reponse?.status) {
         setMessage("");
-        if (value == 0) {
+        if (currentTabs == 1) {
+          setMyPost((prev: any[]) => {
+            const newPost = {
+              ...response?.reponse,
+              User: {
+                id: userDetails?.id,
+                image_url: userDetails?.imageUrl,
+                username: userDetails?.username,
+              },
+            };
+
+            return [newPost, ...prev];
+          });
+        } else if (value == 0) {
           setAllPosts((prev: any[]) => {
             const newPost = {
               ...response?.reponse,
@@ -244,6 +260,23 @@ export default function IdeaTabs({
       document.removeEventListener("touchstart", handleClickOutside);
     };
   }, []);
+
+  const fetchMyAllPost = async () => {
+    try {
+      const response = await getMyAllPost("");
+
+      if (response.feed?.length > 0) {
+        setMyPost(response?.feed);
+      } else {
+        setMyPost([]);
+      }
+    } catch {
+      setMyPost([]);
+    }
+  };
+  React.useEffect(() => {
+    currentTabs == 1 && fetchMyAllPost();
+  }, [currentTabs]);
   return (
     <Box
       style={{ position: "relative", zIndex: "10" }}
@@ -409,7 +442,7 @@ export default function IdeaTabs({
                         }
                       `}
                   >
-                    {isLoader ? (
+                    {isPostLoader ? (
                       <CircularProgress
                         size={18}
                         className="!text-white dark:!text-white"
@@ -432,6 +465,9 @@ export default function IdeaTabs({
               loader={isLoader}
               handleUserDetails={handleUserDetails}
               isYourPost={false}
+              setCurrentTabs={setCurrentTabs}
+              myPost={[]}
+              setMyPost={() => null}
             />
           </div>
         </div>
@@ -667,7 +703,7 @@ export default function IdeaTabs({
                         }
                       `}
                   >
-                    {isLoader ? (
+                    {isPostLoader ? (
                       <CircularProgress
                         size={18}
                         className="!text-white dark:!text-white"
@@ -690,6 +726,9 @@ export default function IdeaTabs({
               loader={isLoaderMyFeed}
               handleUserDetails={handleUserDetails}
               isYourPost={true}
+              setCurrentTabs={setCurrentTabs}
+              myPost={myPost}
+              setMyPost={setMyPost}
             />
           </div>
         </div>
