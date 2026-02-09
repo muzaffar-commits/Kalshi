@@ -258,7 +258,7 @@ export function ReplySubCommentInput({
 
       {/* Reply Button */}
       <button
-        disabled={replyText.trim().length < 2}
+        // disabled={replyText.trim().length < 2}
         className={`text-sm font-medium transition ${
           replyText.trim().length >= 2
             ? "text-sky-400 hover:text-sky-300 cursor-pointer"

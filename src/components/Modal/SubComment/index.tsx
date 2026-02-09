@@ -397,7 +397,7 @@ export default function SubComment({
               {countWords(mixText)} / {MAX_WORDS} words
             </span>
             <button
-              disabled={mixText?.length > 3}
+              // disabled={mixText?.length > 3}
               onClick={handleSubmit}
               className="px-4 py-2 cursor-pointer rounded-lg bg-black text-white text-sm font-medium dark:bg-white dark:text-black"
             >

@@ -80,6 +80,7 @@ export default function Authentication({
                 size="large"
                 shape="rectangular"
                 width="100%"
+                auto_select={false}
                 containerProps={{
                   style: {
                     width: "100%",

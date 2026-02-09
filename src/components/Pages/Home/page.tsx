@@ -620,6 +620,12 @@ const Home = () => {
                         {row?.options?.map((item: OptionItem, idx: number) => {
                           const percentage = item?.price * 100;
                           const isTopOption = item?.price === maxPrice;
+                          const gapPercent = maxPrice
+                            ? ((maxPrice - item.price) / maxPrice) * 100
+                            : 0;
+                          const diffPercent = maxPrice
+                            ? ((item.price - maxPrice) / maxPrice) * 100
+                            : 0;
 
                           return (
                             <div
@@ -675,7 +681,9 @@ const Home = () => {
                                     />
                                   )}
 
-                                  <span>{percentage.toFixed(1)}%</span>
+                                  <span>
+                                    {Math.abs(diffPercent).toFixed(1)}%
+                                  </span>
                                 </div>
                               </div>
                             </div>
