@@ -693,53 +693,62 @@ const Home = () => {
                     )}
 
                     <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
-                      <div className="flex gap-4 items-center">
-                        <span className="flex items-center gap-1">
-                          {row?.stats?.totalVolume > 0 ? (
-                            <>
-                              <span className="text-yellow-500 font-semibold">
-                                $
+                      <div className="flex flex-row gap-2 items-center">
+                        <span>2 market</span>
+                        <div className="flex gap-4 items-center">
+                          <span className="flex items-center gap-1">
+                            {row?.stats?.totalVolume > 0 ? (
+                              <>
+                                <span className="text-yellow-500 font-semibold">
+                                  $
+                                </span>
+                                <span className="text-gray-400">
+                                  {Number(row?.stats?.totalVolume || 0).toFixed(
+                                    2,
+                                  )}{" "}
+                                  Vol
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-yellow-500 flex items-center gap-1">
+                                <GiNinjaStar size={12} className="rotate-45" />
+                                New
                               </span>
-                              <span className="text-gray-400">
-                                {Number(row?.stats?.totalVolume || 0).toFixed(
-                                  2,
-                                )}{" "}
-                                Vol
-                              </span>
-                            </>
-                          ) : (
-                            <span className="text-yellow-500 flex items-center gap-1">
-                              <GiNinjaStar size={12} className="rotate-45" />
-                              New
-                            </span>
-                          )}
-                        </span>
+                            )}
+                          </span>
 
-                        <span
-                          className="cursor-pointer inline-flex
+                          <span
+                            className="cursor-pointer inline-flex
              transition-transform duration-200 ease-in-out
              hover:scale-125"
-                        >
-                          {!row?.isBookmark ? (
-                            <FaRegBookmark
-                              onClick={() =>
-                                !getToken
-                                  ? setIsOpen(true)
-                                  : bookMarkUnBookMark(row?.id, row?.isBookmark)
-                              }
-                              className="text-sky-400"
-                            />
-                          ) : (
-                            <FaBookmark
-                              onClick={() =>
-                                !getToken
-                                  ? setIsOpen(true)
-                                  : bookMarkUnBookMark(row?.id, row?.isBookmark)
-                              }
-                              className="text-sky-400"
-                            />
-                          )}
-                        </span>
+                          >
+                            {!row?.isBookmark ? (
+                              <FaRegBookmark
+                                onClick={() =>
+                                  !getToken
+                                    ? setIsOpen(true)
+                                    : bookMarkUnBookMark(
+                                        row?.id,
+                                        row?.isBookmark,
+                                      )
+                                }
+                                className="text-sky-400"
+                              />
+                            ) : (
+                              <FaBookmark
+                                onClick={() =>
+                                  !getToken
+                                    ? setIsOpen(true)
+                                    : bookMarkUnBookMark(
+                                        row?.id,
+                                        row?.isBookmark,
+                                      )
+                                }
+                                className="text-sky-400"
+                              />
+                            )}
+                          </span>
+                        </div>
                       </div>
                       <div>
                         <button

@@ -61,7 +61,15 @@ export default function Authentication({
           {isLogin ? " Login your account" : " Create your account"}
         </h2>
 
-        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <GoogleOAuthProvider
+          clientId={GOOGLE_CLIENT_ID}
+          // onScriptLoadSuccess={() => {
+          //   // disable auto select from previous session
+          //   if (window.google?.accounts?.id) {
+          //     window.google.accounts.id.disableAutoSelect();
+          //   }
+          // }}
+        >
           <div className="mt-6 flex justify-center w-full">
             <div
               className="google-btn-wrapper"
@@ -79,15 +87,19 @@ export default function Authentication({
                 theme="filled_blue"
                 size="large"
                 shape="rectangular"
-                width="100%"
+                // width="100%"
                 auto_select={false}
-                containerProps={{
-                  style: {
-                    width: "100%",
-                    display: "block",
-                    justifyContent: "center",
-                  },
-                }}
+                useOneTap={false}
+                width={330}
+
+                // prompt="select_account"
+                // containerProps={{
+                //   style: {
+                //     // width: "100%",
+                //     display: "block",
+                //     justifyContent: "center",
+                //   },
+                // }}
               />
             </div>
           </div>
