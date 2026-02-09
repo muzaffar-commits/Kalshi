@@ -391,6 +391,7 @@ export default function PostList({
           typeof row?.metadata === "string"
             ? JSON.parse(row.metadata)
             : row.metadata;
+        // const imageUrl = contentForPost?.images?.[0];
         return (
           <div
             key={row?.id}
@@ -431,7 +432,7 @@ export default function PostList({
                   </>
                 )}
                 {contentForPost?.images?.length > 0 && (
-                  <div className="bg-green-400 p-2 w-fit rounded shadow">
+                  <div className=" w-fit rounded shadow">
                     <Image
                       src={contentForPost?.images?.[0]}
                       height={250}
@@ -578,7 +579,7 @@ export default function PostList({
                                   {comment.content}
                                 </div>
                                 {commentImages?.images?.length > 0 && (
-                                  <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
+                                  <div className=" mt-2 w-fit rounded shadow">
                                     <Image
                                       src={commentImages?.images?.[0]}
                                       height={250}
@@ -705,7 +706,7 @@ export default function PostList({
                                           </p>
                                           {commentSubImages?.images?.length >
                                             0 && (
-                                            <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
+                                            <div className=" mt-2 w-fit rounded shadow">
                                               <Image
                                                 src={
                                                   commentSubImages?.images?.[0]

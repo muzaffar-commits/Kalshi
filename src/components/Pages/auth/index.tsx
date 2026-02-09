@@ -72,11 +72,11 @@ export default function Authentication({
         >
           <div className="mt-6 flex justify-center w-full">
             <div
-              className="google-btn-wrapper"
-              style={{
-                width: "100%",
-                maxWidth: "420px",
-              }}
+              className="google-btn-wrapper w-full"
+              // style={{
+              //   width: "100%",
+              //   maxWidth: "420px",
+              // }}
             >
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
@@ -90,7 +90,7 @@ export default function Authentication({
                 // width="100%"
                 auto_select={false}
                 useOneTap={false}
-                width={330}
+                // width={330}
 
                 // prompt="select_account"
                 // containerProps={{

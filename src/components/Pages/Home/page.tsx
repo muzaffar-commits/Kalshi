@@ -694,7 +694,7 @@ const Home = () => {
 
                     <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
                       <div className="flex flex-row gap-2 items-center">
-                        <span>2 market</span>
+                        <span>{row?.options?.length || "0"} market</span>
                         <div className="flex gap-4 items-center">
                           <span className="flex items-center gap-1">
                             {row?.stats?.totalVolume > 0 ? (
