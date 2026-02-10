@@ -386,6 +386,7 @@ const Header = () => {
                     ref={scrollRef}
                     className="flex gap-6 px-10 pb-2 text-[14px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
                   >
+                    {/* isCategory */}
                     {isCategory ? (
                       <CategorySkeleton />
                     ) : (
@@ -419,63 +420,16 @@ const Header = () => {
               </>
             )}
 
-            {pathname === "/" && !isCategory && (
-              <div className="">
-                <nav className="pb-2 md:flex flex-row pt-1.5  border-gray-300 w-full">
-                  {/* <div className="border-r border-gray-400 dark:border-gray-700 pr-6 flex items-center gap-2">
-                    <div className="flex items-center w-56 gap-2 dark:bg-gray-700 bg-gray-100 rounded-xl px-4 py-2">
-                      <FiSearch className="text-gray-400 text-base" />
+            {/* event Category Start */}
 
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => {
-                          setSearchQuery(e.target.value);
-                          dispatch(
-                            changeFilter({
-                              key: "search",
-                              value: e.target.value,
-                            }),
-                          );
-                        }}
-                        placeholder="Search"
-                        className="w-full bg-transparent outline-none text-sm  text-gray-700 dark:text-gray-200 placeholder-gray-400"
-                      />
-                    </div>
-                    <button
-                      onClick={handleFilter}
-                      className="w-10 h-10 flex items-center cursor-pointer hover:bg-gray-300 justify-center rounded-xl dark:bg-gray-700 bg-gray-100 hover:dark:bg-[#273244] transition"
-                    >
-                      <FiSliders className="text-gray-500 text-lg dark:text-gray-200" />
-                    </button>
-                    <button
-                      onClick={() =>
-                        !getToken
-                          ? setIsOpen(true)
-                          : dispatch(changeWatch(!isWatchList))
-                      }
-                      className={`w-10 h-10 flex items-center cursor-pointer justify-center rounded-xl
-                        dark:bg-gray-700 bg-gray-100
-                        hover:bg-gray-300 hover:dark:bg-[#273244]
-                        transition-all duration-300
-                        ${isWatchList ? "bg-sky-100 dark:bg-sky-100/10" : ""}
-                      `}
-                    >
-                      {isWatchList ? (
-                        <FaBookmark className="text-sky-500 text-lg dark:text-gray-200 dark:text-sky-500" />
-                      ) : (
-                        <FiBookmark className="text-gray-500 text-lg dark:text-gray-200" />
-                      )}
-                    </button>
-                  </div> */}
-                  {eventCategory?.length > 0 && (
+            {/* {eventCategory?.length > 0 && (
                     <div
                       className={`
-      relative
-      overflow-hidden
-      transition-all duration-1000 ease-in-out
-      ${isWatchList ? "max-h-40 opacity-100" : "max-h-40"}
-    `}
+                    relative
+                    overflow-hidden
+                    transition-all duration-1000 ease-in-out
+                    ${isWatchList ? "max-h-40 opacity-100" : "max-h-40"}
+                  `}
                     >
                       <button
                         onClick={() =>
@@ -501,7 +455,7 @@ const Header = () => {
                         <FaChevronRight />
                       </button>
 
-                      {/* <ul
+                      <ul
                         ref={scrollRef}
                         className={`
         flex gap-10 px-8 pt-6 text-[15px]
@@ -544,14 +498,48 @@ const Header = () => {
                             </div>
                           </li>
                         ))}
-                      </ul> */}
+                      </ul>
                     </div>
-                  )}
-                </nav>
+                  )} */}
 
+            {/* event Category End */}
+
+            {pathname === "/" && !isCategory && (
+              <div className="flex flex-col sm:flex-row ">
                 {true && (
-                  <div className="w-full flex flex-wrap items-center gap-2 bg-transparent rounded-xl">
-                    <div className="relative inline-block group">
+                  <div
+                    className="w-full sm:pl-8 mt-1
+                   flex flex-wrap items-center gap-2 bg-transparent rounded-xl"
+                  >
+                    {/* <div className="sm:hidden block">
+                      <button
+                        onClick={handleFilter}
+                        className="w-9 h-9 flex items-center cursor-pointer hover:bg-gray-300 justify-center rounded-xl dark:bg-gray-700 bg-gray-100 hover:dark:bg-[#273244] transition"
+                      >
+                        <FiSliders className="text-gray-500 text-lg dark:text-gray-200" />
+                      </button>
+                    </div> */}
+                    <button
+                      onClick={() =>
+                        !getToken
+                          ? setIsOpen(true)
+                          : dispatch(changeWatch(!isWatchList))
+                      }
+                      className={`w-8 h-8 flex items-center cursor-pointer justify-center rounded-md
+                        dark:bg-gray-700 bg-gray-100
+                        hover:bg-gray-300 hover:dark:bg-[#273244]
+                        transition-all duration-300
+                        ${isWatchList ? "bg-sky-200 dark:bg-sky-200/20" : ""}
+                      `}
+                    >
+                      {isWatchList ? (
+                        <FaBookmark className="text-sky-500 text-lg dark:text-gray-200 dark:text-sky-500" />
+                      ) : (
+                        <FiBookmark className="text-gray-500 text-lg dark:text-gray-200" />
+                      )}
+                    </button>
+                    <div className="border-r h-6 border-gray-300 dark:border-gray-700 pr-1"></div>
+                    <div className="relative  inline-block group">
                       <button
                         className="
       flex items-center gap-2 px-4 py-1.5 rounded-full

@@ -271,7 +271,7 @@ const Home = () => {
               ? "pt-8 lg:pt-32"
               : selectedSubCategory == null && isFilterQuestion
                 ? "pt-8 lg:pt-2"
-                : "pt-44 lg:pt-32"
+                : "pt-36 lg:pt-24 "
         }`}
       >
         <div
@@ -308,16 +308,9 @@ const Home = () => {
                     return null;
                   }
                 })();
-                // const maxPrice = Math.max(
-                //   ...(row?.options?.map((opt) => opt.price) || [0]),
-                // );
-
                 const prices = row?.options?.map((opt) => opt.price) || [];
-
                 const maxPrice = Math.max(...prices);
                 const minPrice = Math.min(...prices);
-
-                // check if all options have same price
                 const isAllEqual = maxPrice === minPrice;
                 return (
                   <div
@@ -349,7 +342,6 @@ const Home = () => {
                         </div>
                       )}
 
-                      {/* TEXT */}
                       <h2 className="font-semibold text-sm cursor-pointer dark:text-[var(--color-text)] text-[var(--color-text)] flex-1">
                         <div onClick={() => goToDetails(row.id)}>
                           <div className="block text-primary">

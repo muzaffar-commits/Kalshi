@@ -311,12 +311,7 @@ const Details = ({ marketId }) => {
 
   const ordersList = async () => {
     try {
-      const response = await getOrdersList(
-        userDetails?.user?.id || null,
-        marketId,
-        orderCurrentPage,
-        "NEW",
-      );
+      const response = await getOrdersList(marketId, orderCurrentPage, "NEW");
 
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);
@@ -436,6 +431,21 @@ const Details = ({ marketId }) => {
   //   : "";
   const metaData = { imageUrl: "" };
 
+  const commentImages = (() => {
+    if (!data?.question?.metadata) return null;
+    if (typeof data?.question?.metadata === "object") {
+      return data?.question?.metadata;
+    }
+    try {
+      return JSON.parse(data?.question?.metadata);
+    } catch (e) {
+      console.error("Invalid metadata JSON", data?.question?.metadata);
+      return null;
+    }
+  })();
+
+  console.log(commentImages, "commentImages");
+
   return (
     <>
       {isLoader ? (
@@ -445,15 +455,19 @@ const Details = ({ marketId }) => {
           <div className="max-w-[1268px] mx-auto px-4 md:mt-18 mt-6">
             <div className="container mx-auto pb-6">
               <div className="flex mb-6">
-                <div className="p-1.5 dark:bg-gray-600 rounded-lg w-fit mr-4">
-                  <Image
-                    src={metaData?.imageUrl || "/img/opinionLogo-light.png"}
-                    alt="NYC Flag"
-                    width={80}
-                    height={80}
-                    className={`rounded-lg ${metaData ? "" : "opacity-45"} `}
-                  />
-                </div>
+                {commentImages?.imageUrl && (
+                  <div className="p-1.5 dark:bg-gray-600 rounded-lg w-fit mr-4">
+                    <Image
+                      src={
+                        commentImages?.imageUrl || "/img/opinionLogo-light.png"
+                      }
+                      alt="NYC Flag"
+                      width={80}
+                      height={80}
+                      className={`rounded-lg ${metaData ? "" : "opacity-45"} `}
+                    />
+                  </div>
+                )}
                 <div>
                   <h1 className=" text-lg sm:text-xl lg:text-2xl font-bold text-black dark:text-white">
                     {data?.question?.question}

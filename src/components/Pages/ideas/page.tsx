@@ -58,7 +58,7 @@ const Ideas = () => {
   return (
     <>
       <div>
-        <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-8 lg:pt-10">
+        <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-0 lg:pt-10">
           <div className="grid grid-cols-1 lg:grid-cols-5">
             <div className="lg:col-span-1">
               <div className="sticky top-30   h-fit z-50">
@@ -71,7 +71,7 @@ const Ideas = () => {
                 <MobileMenu />
               </div>
             </div>
-            <div className="lg:col-span-4  lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
+            <div className=" relative -top-8  sm:top-0 lg:col-span-4  lg:border-l dark:border-gray-700 border-gray-200 min-h-1/2">
               {/* <TabsOne /> */}
               <IdeaTabs
                 allPosts={allPosts}
