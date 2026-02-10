@@ -151,8 +151,8 @@ body {
 .google-btn-wrapper {
   width: 100%;
   max-width: 420px;
-  overflow: hidden; /* prevent overflow */
-  border-radius: 5px; /* match your other buttons */
+  overflow: hidden;
+  border-radius: 5px; /* same as Apple button */
 }
 
 .google-btn-wrapper > div {
@@ -161,6 +161,12 @@ body {
 
 .google-btn-wrapper iframe {
   width: 100% !important;
+  height: 52px !important; /* match Apple button height */
+}
+
+.google-btn-wrapper .haAclf {
+  width: 100% !important;
+  display: block !important;
 }
 
 /* .haAclf {
