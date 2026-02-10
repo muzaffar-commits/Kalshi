@@ -148,17 +148,22 @@ body {
   position: relative;
 }
 
+.google-btn-wrapper {
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden; /* prevent overflow */
+  border-radius: 5px; /* match your other buttons */
+}
+
+.google-btn-wrapper > div {
+  width: 100% !important;
+}
+
 .google-btn-wrapper iframe {
   width: 100% !important;
 }
 
-@layer base {
-  .google-btn-wrapper iframe {
-    width: 100% !important;
-  }
-}
-
-.haAclf {
+/* .haAclf {
   display: block !important;
   width: 100% !important;
-}
+} */

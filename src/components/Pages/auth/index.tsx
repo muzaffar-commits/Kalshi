@@ -63,21 +63,15 @@ export default function Authentication({
 
         <GoogleOAuthProvider
           clientId={GOOGLE_CLIENT_ID}
-          // onScriptLoadSuccess={() => {
-          //   // disable auto select from previous session
-          //   if (window.google?.accounts?.id) {
-          //     window.google.accounts.id.disableAutoSelect();
-          //   }
-          // }}
+          onScriptLoadSuccess={() => {
+            const google = (window as any).google;
+            if (google?.accounts?.id) {
+              google.accounts.id.disableAutoSelect();
+            }
+          }}
         >
           <div className="mt-6 flex justify-center w-full">
-            <div
-              className="google-btn-wrapper w-full"
-              // style={{
-              //   width: "100%",
-              //   maxWidth: "420px",
-              // }}
-            >
+            <div className="google-btn-wrapper">
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                   const token = credentialResponse.credential || "";
@@ -87,19 +81,9 @@ export default function Authentication({
                 theme="filled_blue"
                 size="large"
                 shape="rectangular"
-                // width="100%"
                 auto_select={false}
                 useOneTap={false}
-                // width={330}
-
-                // prompt="select_account"
-                // containerProps={{
-                //   style: {
-                //     // width: "100%",
-                //     display: "block",
-                //     justifyContent: "center",
-                //   },
-                // }}
+                width="420"
               />
             </div>
           </div>
