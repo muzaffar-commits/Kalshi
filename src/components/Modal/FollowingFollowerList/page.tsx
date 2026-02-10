@@ -72,15 +72,14 @@ export default function FollowingFollowerList({
         return Array.from(map.values());
       });
     } else {
-      setFollowers((prev) => {
-        const map = new Map(
-          prev
-            .filter((item) => String(item.followerUserId) !== String(targetId))
-            .map((item) => [String(item.followerUserId), item]),
-        );
-
-        return Array.from(map.values());
-      });
+      // setFollowers((prev) => {
+      //   const map = new Map(
+      //     prev
+      //       .filter((item) => String(item.followerUserId) !== String(targetId))
+      //       .map((item) => [String(item.followerUserId), item]),
+      //   );
+      //   return Array.from(map.values());
+      // });
     }
     try {
       const payload = { targetUserId: targetId };
