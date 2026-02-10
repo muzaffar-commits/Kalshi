@@ -412,7 +412,7 @@ export default function IdeaTabs({
                     type="file"
                     ref={fileInputRef}
                     className="hidden"
-                    accept="image/gif,image/png,image/jpeg,image/webp"
+                    accept="image/png,image/jpeg,image/webp"
                     onChange={handleFileChange}
                   />
                   <button
@@ -673,7 +673,7 @@ export default function IdeaTabs({
                     type="file"
                     ref={fileInputRef}
                     className="hidden"
-                    accept="image/gif,image/png,image/jpeg,image/webp"
+                    accept="image/png,image/jpeg,image/webp"
                     onChange={handleFileChange}
                   />
                   <button

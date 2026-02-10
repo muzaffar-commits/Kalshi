@@ -270,23 +270,40 @@ export default function IdeaTabsTwo({
                     className={`md:flex ${
                       index > 0 &&
                       "pt-4 border-t border-gray-200 dark:border-gray-700"
-                    }  border-gray-300 pb-2 items-start gap-4 w-full md:px-4 px-0`}
+                    }  border-gray-300 pb-2 items-start sm:gap-2 w-full md:px-4 px-0`}
                   >
-                    <div className="bg-gray-100 dark:bg-gray-600 rounded p-1.5 w-fit">
-                      <Image
-                        onClick={() => handleUserDetails(`${row?.User?.id}`)}
-                        src={
-                          row?.User?.image_url ||
-                          "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
-                        }
-                        alt="user"
-                        width={50}
-                        height={50}
-                        className="rounded-md   cursor-pointer"
-                      />
+                    <div className=" flex items-center gap-2  rounded  w-fit">
+                      <div className="bg-gray-100 rounded-full dark:bg-gray-600 p-0.5">
+                        <Image
+                          onClick={() => handleUserDetails(`${row?.User?.id}`)}
+                          src={
+                            row?.User?.image_url ||
+                            "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                          }
+                          alt="user"
+                          width={50}
+                          height={50}
+                          className="rounded-full h-9 w-9   cursor-pointer"
+                        />
+                      </div>
+                      <div className="sm:hidden block">
+                        <div className="flex flex-row items-center gap-2">
+                          <div
+                            onClick={() =>
+                              handleUserDetails(`${row?.User?.id}`)
+                            }
+                            className="dark:text-gray-300  cursor-pointer hover:underline font-semibold text-gray-700"
+                          >
+                            {row?.User?.username || "Unknown"}
+                          </div>{" "}
+                          <span className="text-xs dark:text-gray-500 text-gray-500">
+                            {timeAgoCompact(row?.updatedAt)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="hidden sm:block">
                         <div className="flex flex-row items-center gap-2">
                           <div
                             onClick={() =>
@@ -435,23 +452,40 @@ export default function IdeaTabsTwo({
                     className={`md:flex ${
                       index > 0 &&
                       "pt-4 border-t border-gray-200 dark:border-gray-700"
-                    }  border-gray-300 pb-2 items-start gap-4 w-full md:px-4 px-0`}
+                    }  border-gray-300 pb-2 items-start sm:gap-2 w-full md:px-4 px-0`}
                   >
-                    <div className="bg-gray-100 dark:bg-gray-600 rounded p-1.5 w-fit">
-                      <Image
-                        onClick={() => handleUserDetails(`${row?.User?.id}`)}
-                        src={
-                          row?.User?.image_url ||
-                          "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
-                        }
-                        alt="user"
-                        width={50}
-                        height={50}
-                        className="rounded-md   cursor-pointer"
-                      />
+                    <div className=" flex items-center gap-2   rounded  w-fit">
+                      <div className="bg-gray-100 rounded-full dark:bg-gray-600 p-0.5">
+                        <Image
+                          onClick={() => handleUserDetails(`${row?.User?.id}`)}
+                          src={
+                            row?.User?.image_url ||
+                            "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                          }
+                          alt="user"
+                          width={50}
+                          height={50}
+                          className="rounded-full h-9 w-9   cursor-pointer"
+                        />
+                      </div>
+                      <div className="sm:hidden block">
+                        <div className="flex flex-row items-center gap-2">
+                          <div
+                            onClick={() =>
+                              handleUserDetails(`${row?.User?.id}`)
+                            }
+                            className="dark:text-gray-300  cursor-pointer hover:underline font-semibold text-gray-700"
+                          >
+                            {row?.User?.username || "Unknown"}
+                          </div>{" "}
+                          <span className="text-xs dark:text-gray-500 text-gray-500">
+                            {timeAgoCompact(row?.updatedAt)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
+                    <div className="">
+                      <div className="hidden   sm:block">
                         <div className="flex flex-row items-center gap-2">
                           <div
                             onClick={() =>

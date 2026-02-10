@@ -44,6 +44,7 @@ import InputTextArea from "../IdeaTabs/InputTextArea";
 import { GrCloudUpload } from "react-icons/gr";
 import GiphyModal from "@/components/Pages/detail/component/postList/GiphyModal";
 import SubComment from "@/components/Modal/SubComment";
+import ViewImage from "@/components/common/ViewImage";
 
 export default function CommentPage() {
   const [postDetails, setPostDetails] = useState<PostFeeBack | null>(null);
@@ -459,7 +460,7 @@ export default function CommentPage() {
                         cursor-pointer
                         flex-shrink-0
                         w-10 h-10
-                        p-2
+                        p-0.2
                         sm:w-12 sm:h-12
                         md:w-14 md:h-14
                         overflow-hidden
@@ -473,7 +474,7 @@ export default function CommentPage() {
                         alt="user"
                         width={56}
                         height={56}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full rounded-full object-cover"
                       />
                     </div>
 
@@ -498,9 +499,10 @@ export default function CommentPage() {
                           <HighlightTexts text={contentForPost?.content} />
                         )}
                         <br />
+                        <br />
 
                         {Number(contentForPost?.images?.length) > 0 && (
-                          <div className="bg-green-400 p-2 w-fit rounded">
+                          <div className=" w-fit rounded">
                             <Image
                               src={contentForPost?.images?.[0] || ""}
                               height={170}
@@ -662,7 +664,7 @@ export default function CommentPage() {
                           type="file"
                           ref={fileInputRef}
                           className="hidden"
-                          accept="image/gif,image/png,image/jpeg,image/webp"
+                          accept="image/png,image/jpeg,image/webp"
                           onChange={handleFileChange}
                         />
                         <button
@@ -731,6 +733,7 @@ export default function CommentPage() {
                             return null;
                           }
                         })();
+                        const imageUrl = commentImages?.images?.[0];
                         return (
                           <div
                             key={row?.id}
@@ -742,7 +745,7 @@ export default function CommentPage() {
                                   onClick={() =>
                                     handleUserDetails(row?.User?.id)
                                   }
-                                  className="h-11 w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
+                                  className="p-0.5 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
                                 >
                                   <Image
                                     src={
@@ -752,7 +755,7 @@ export default function CommentPage() {
                                     alt="user"
                                     width={30}
                                     height={30}
-                                    className="rounded-full h-8 w-8"
+                                    className="rounded-full h-6 w-6 sm:h-8 sm:w-8"
                                   />
                                 </div>
                                 <div className="sm:hidden block">
@@ -786,16 +789,7 @@ export default function CommentPage() {
                                     <HighlightTexts text={row?.content} />
                                   )}{" "}
                                 </p>
-                                {commentImages?.images?.length > 0 && (
-                                  <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
-                                    <Image
-                                      src={commentImages?.images?.[0]}
-                                      height={250}
-                                      alt="post image"
-                                      width={350}
-                                    />
-                                  </div>
-                                )}
+                                {imageUrl && <ViewImage imageUrl={imageUrl} />}
                               </div>
                             </div>
                             <div className="pl-5  overflow-hidden sm:pl-10 sm:py-2 ">
@@ -853,6 +847,9 @@ export default function CommentPage() {
                                         return null;
                                       }
                                     })();
+                                    const imageUrl12 =
+                                      repliesImages?.images?.[0];
+
                                     return (
                                       <div key={replies?.id}>
                                         <div className="md:flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
@@ -920,18 +917,10 @@ export default function CommentPage() {
                                                 />
                                               )}{" "}
                                             </p>
-                                            {repliesImages?.images?.length >
-                                              0 && (
-                                              <div className="bg-green-400 p-2 mt-2 w-fit rounded shadow">
-                                                <Image
-                                                  src={
-                                                    repliesImages?.images?.[0]
-                                                  }
-                                                  height={250}
-                                                  alt="post image"
-                                                  width={350}
-                                                />
-                                              </div>
+                                            {imageUrl12 && (
+                                              <ViewImage
+                                                imageUrl={imageUrl12}
+                                              />
                                             )}
                                             <div className=" pt-2 sm:py-2">
                                               <div className="flex text-gray-400 flex-row items-center gap-4">
@@ -960,12 +949,6 @@ export default function CommentPage() {
                                                 </span>
                                                 <div
                                                   className="text-gray-400 hover:text-gray-200 text-sm cursor-pointer"
-                                                  // onClick={() =>
-                                                  //   handleSubComment(
-                                                  //     row,
-                                                  //     replies,
-                                                  //   )
-                                                  // }
                                                   onClick={() =>
                                                     handleOpenSubComment(
                                                       replies,

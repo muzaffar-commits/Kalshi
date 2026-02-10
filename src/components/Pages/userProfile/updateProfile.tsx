@@ -230,8 +230,10 @@ export default function UpdateProfile({
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 300,
+
           sx: {
             backdropFilter: "blur(10px)",
+
             backgroundColor:
               theme === "dark"
                 ? "rgba(15, 23, 42, 0.7)"
@@ -247,10 +249,10 @@ export default function UpdateProfile({
               left: "50%",
               transform: "translate(-50%, -50%)",
             }}
-            className="dark:bg-[#1D293D] w-full max-w-[320px] lg:max-w-[520px] rounded-2xl p-6 lg:p-8 shadow-xl outline-none dark:border-gray-600 border border-gray-300"
+            className="dark:bg-[#1D293D] w-full mr-4  max-w-[380px] lg:max-w-[520px] rounded-2xl p-6 lg:p-8 shadow-xl outline-none dark:border-gray-600 border border-gray-300"
           >
             {/* HEADER */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center sm:mb-6">
               <h2 className="text-xl font-semibold dark:text-white text-center text-gray-900">
                 Update Profile
               </h2>

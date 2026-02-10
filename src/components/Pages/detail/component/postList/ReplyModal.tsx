@@ -2,7 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { Modal, Box, IconButton, CircularProgress } from "@mui/material";
 import Image from "next/image";
 import { IoArrowBack, IoClose } from "react-icons/io5";
-import { countWords, delay, MAX_WORDS, timeAgoCompact } from "@/utils/Content";
+import {
+  countWords,
+  delay,
+  getCleanTextLength,
+  MAX_WORDS,
+  timeAgoCompact,
+} from "@/utils/Content";
 import { PROFESSIONAL_EMOJIS } from "@/components/content";
 import { GrCloudUpload } from "react-icons/gr";
 import { Gift } from "lucide-react";
@@ -165,6 +171,8 @@ export default function ReplyModal({
   const handleSubmit = () => {
     handleSend(row, mixText, gif);
   };
+
+  const isDisabled = getCleanTextLength(mixText) < 3;
   return (
     <Modal
       className="m-2"
@@ -355,7 +363,7 @@ export default function ReplyModal({
                 type="file"
                 ref={fileInputRef}
                 hidden
-                accept="image/*"
+                accept="image/png,image/jpeg,image/webp,image/jpg"
                 onChange={handleFileChange}
               />
             </div>
@@ -394,11 +402,21 @@ export default function ReplyModal({
               {countWords(mixText)} / {MAX_WORDS} words
             </span>
             <button
+              disabled={isDisabled}
               onClick={handleSubmit}
-              className="px-4 py-2 cursor-pointer rounded-lg bg-black text-white text-sm font-medium dark:bg-white dark:text-black"
+              className={`px-4 py-2 w-20 flex items-center justify-center rounded-lg text-sm font-medium
+  transition-colors duration-300
+  ${
+    isDisabled
+      ? "bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400"
+      : "bg-black text-white cursor-pointer dark:bg-white dark:text-black"
+  }`}
             >
               {isLoader ? (
-                <CircularProgress size={30} className="dark:!text-gray-600 " />
+                <CircularProgress
+                  size={19}
+                  className="!text-white dark:!text-gray-600"
+                />
               ) : (
                 "Reply"
               )}

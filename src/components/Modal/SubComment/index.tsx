@@ -2,7 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { Modal, Box, IconButton, CircularProgress } from "@mui/material";
 import Image from "next/image";
 import { IoArrowBack, IoClose } from "react-icons/io5";
-import { countWords, delay, MAX_WORDS, timeAgoCompact } from "@/utils/Content";
+import {
+  countWords,
+  delay,
+  getCleanTextLength,
+  MAX_WORDS,
+  timeAgoCompact,
+} from "@/utils/Content";
 import { PROFESSIONAL_EMOJIS } from "@/components/content";
 import { GrCloudUpload } from "react-icons/gr";
 import { Gift } from "lucide-react";
@@ -168,6 +174,7 @@ export default function SubComment({
 
   console.log(mixText?.length, "rowlskdfjslf");
 
+  const isDisabled = getCleanTextLength(mixText) < 3;
   return (
     <Modal
       className="m-2"
@@ -358,7 +365,7 @@ export default function SubComment({
                 type="file"
                 ref={fileInputRef}
                 hidden
-                accept="image/*"
+                accept="image/png,image/jpeg,image/webp"
                 onChange={handleFileChange}
               />
             </div>
@@ -396,18 +403,23 @@ export default function SubComment({
             <span className="text-xs text-gray-400">
               {countWords(mixText)} / {MAX_WORDS} words
             </span>
+
             <button
-              // disabled={mixText?.length > 3}
+              disabled={isDisabled}
               onClick={handleSubmit}
-              className="px-4 py-2 cursor-pointer rounded-lg bg-black text-white text-sm font-medium dark:bg-white dark:text-black"
+              className={`px-4 py-2 w-20 flex items-center justify-center rounded-lg text-sm font-medium
+              transition-colors duration-300
+              ${
+                isDisabled
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400"
+                  : "bg-black text-white cursor-pointer dark:bg-white dark:text-black"
+              }`}
             >
               {isLoader ? (
-                <div className="w-9">
-                  <CircularProgress
-                    size={15}
-                    className="!text-white dark:!text-gray-600 "
-                  />
-                </div>
+                <CircularProgress
+                  size={19}
+                  className="!text-white dark:!text-gray-600"
+                />
               ) : (
                 "Reply"
               )}

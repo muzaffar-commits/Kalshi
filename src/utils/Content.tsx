@@ -146,3 +146,12 @@ export function countWords(text: string) {
 
 export const isGifImage = (url = "") =>
   /\.gif($|\?)/i.test(url) || url.includes("giphy.com");
+
+export const getCleanTextLength = (text: string) => {
+  if (!text) return 0;
+
+  // remove @mentions like @ram123456
+  const cleaned = text.replace(/@\w+/g, "").trim();
+
+  return cleaned.length;
+};

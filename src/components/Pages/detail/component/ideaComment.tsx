@@ -263,7 +263,7 @@ export default function IdeasActivityTabs({ marketId }) {
 
   const fetchMyAllPost = async () => {
     try {
-      const response = await getMyAllPost(userId, marketId);
+      const response = await getMyAllPost(marketId);
       if (response.feed?.length > 0) {
         setMyPost(response?.feed);
       } else {
@@ -458,7 +458,7 @@ export default function IdeasActivityTabs({ marketId }) {
                       type="file"
                       ref={fileInputRef}
                       className="hidden"
-                      accept="image/gif,image/png,image/jpeg,image/webp"
+                      accept="image/png,image/jpeg,image/webp"
                       onChange={handleFileChange}
                     />
                   </div>

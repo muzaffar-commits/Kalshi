@@ -120,12 +120,13 @@ export default function ProfileDropdown() {
         >
           <div className="flex items-center gap-3">
             {userData?.user?.image_url ? (
-              <div className="bg-gray-100 rounded-md p-1">
+              <div className="bg-gray-100 rounded-md p-0.5">
                 <Image
                   src={userData?.user?.image_url}
                   alt="No"
                   height={30}
                   width={30}
+                  className="rounded"
                 />
               </div>
             ) : (

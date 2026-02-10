@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import ReplyModal from "./ReplyModal";
 import SubComment from "@/components/Modal/SubComment";
+import ViewImage from "@/components/common/ViewImage";
 
 interface PostListProps {
   isIdea?: boolean;
@@ -243,13 +244,13 @@ export default function PostList({
     }
   };
 
-  const handleSend = async (row: any, imageLink: any) => {
+  const handleSend = async (row: any, textForInput: any, imageLink: any) => {
     if (!mixText.trim()) return;
     setIsSendMessageLoader(true);
     try {
       const payload = {
         postId: row?.id,
-        comment: mixText,
+        comment: textForInput,
         metadata: imageLink ? { images: [imageLink] } : null,
       };
       const [response] = await Promise.all([
@@ -395,9 +396,9 @@ export default function PostList({
         return (
           <div
             key={row?.id}
-            className="flex gap-3  py-4 border-b border-gray-200 dark:border-gray-800"
+            className="flex   w-full flex-col sm:flex-row gap-3  py-4 border-b border-gray-200 dark:border-gray-800"
           >
-            <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
+            {/* <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
               <Image
                 src={row?.User?.image_url || "https://i.pravatar.cc/40"}
                 alt="user"
@@ -418,6 +419,51 @@ export default function PostList({
                 <span className="text-gray-400">
                   {timeAgoCompact(row?.createdAt)}
                 </span>
+              </div> */}
+            <div className="flex flex-row gap-2">
+              <div
+                onClick={() => handleRedirectUserDetails(row?.User?.id)}
+                className="p-0.5 cursor-pointer flex h-fit overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
+              >
+                <Image
+                  src={
+                    row?.User?.image_url ||
+                    "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                  }
+                  alt="user"
+                  width={30}
+                  height={30}
+                  className="rounded-full h-6 w-6 sm:h-8 sm:w-8"
+                />
+              </div>
+              <div className="sm:hidden block">
+                <div className="flex items-center gap-2">
+                  <h4>
+                    <span
+                      onClick={() => handleRedirectUserDetails(row?.User?.id)}
+                      className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700"
+                    >
+                      {row?.User?.username || "Unknown"}
+                    </span>{" "}
+                    <span className="text-xs dark:text-gray-500 text-gray-500 ">
+                      {timeAgoCompact(row?.updatedAt)}
+                    </span>
+                  </h4>
+                </div>
+              </div>
+            </div>
+            <div className=" w-full">
+              <div className="  hidden sm:block">
+                <div className="flex items-center gap-2">
+                  <h4>
+                    <span className="dark:text-gray-300 cursor-pointer hover:underline font-semibold text-gray-700">
+                      {row?.User?.username || "Unknown"}
+                    </span>{" "}
+                    <span className="text-xs dark:text-gray-500 text-gray-500 ">
+                      {timeAgoCompact(row?.updatedAt)}
+                    </span>
+                  </h4>
+                </div>
               </div>
 
               <p className="mt-1 text-sm text-gray-800 dark:text-gray-300 leading-relaxed">
@@ -432,7 +478,7 @@ export default function PostList({
                   </>
                 )}
                 {contentForPost?.images?.length > 0 && (
-                  <div className=" w-fit rounded shadow">
+                  <div className=" w-fit rounded ">
                     <Image
                       src={contentForPost?.images?.[0]}
                       height={250}
@@ -520,7 +566,7 @@ export default function PostList({
                   {commentMap[row.id]?.comments?.length > 0 && (
                     <div
                       className={
-                        "pl-2 pr-2 py-3 bg-gray-50 dark:bg-[#2B394D] rounded-lg border border-gray-200 dark:border-gray-800"
+                        "pl-2 pr-2 py-3 w-full bg-gray-50 dark:bg-[#2B394D] rounded-lg border border-gray-200 dark:border-gray-800"
                       }
                     >
                       {commentMap[row.id].comments.map((comment: any) => {
@@ -539,19 +585,19 @@ export default function PostList({
                             return null;
                           }
                         })();
-
+                        const commentImg = commentImages?.images?.[0];
                         return (
                           <div
                             key={comment.id}
                             className="flex flex-col gap-1 py-2 border-b last:border-b-0 border-gray-200 dark:border-gray-800"
                           >
                             <div className="flex flex-row gap-3">
-                              <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
+                              <div className="w-fit h-fit p-0.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
                                 <Image
                                   src={comment?.User?.image_url}
                                   width={30}
                                   height={30}
-                                  className="md:w-8 w-4 md:h-8 h-4 rounded-full cursor-pointer"
+                                  className="md:w-8 w-6 h-6 md:h-8  rounded-full cursor-pointer"
                                   alt="user"
                                   onClick={() =>
                                     handleRedirectUserDetails(row?.User?.id)
@@ -578,15 +624,8 @@ export default function PostList({
                                 <div className="text-sm text-gray-700 dark:text-gray-300">
                                   {comment.content}
                                 </div>
-                                {commentImages?.images?.length > 0 && (
-                                  <div className=" mt-2 w-fit rounded shadow">
-                                    <Image
-                                      src={commentImages?.images?.[0]}
-                                      height={250}
-                                      alt="post image"
-                                      width={350}
-                                    />
-                                  </div>
+                                {commentImg && (
+                                  <ViewImage imageUrl={commentImg} />
                                 )}
                               </div>
                             </div>
@@ -658,10 +697,12 @@ export default function PostList({
                                       return null;
                                     }
                                   })();
+                                  const imageUrl =
+                                    commentSubImages?.images?.[0];
                                   return (
                                     <div key={replies?.id}>
                                       <div className="flex border-t mt-4 border-gray-200 dark:border-gray-700 pt-2  items-start gap-4 ">
-                                        <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
+                                        <div className="w-fit h-fit p-0.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
                                           <Image
                                             src={
                                               replies?.User?.image_url ||
@@ -675,7 +716,7 @@ export default function PostList({
                                                 row?.User?.id,
                                               )
                                             }
-                                            className="rounded-full md:h-8 h-2 md:w-8 w-2 cursor-pointer"
+                                            className="md:w-8 w-6 h-6 md:h-8  rounded-full cursor-pointer"
                                           />
                                         </div>
                                         <div>
@@ -704,18 +745,8 @@ export default function PostList({
                                               />
                                             )}{" "}
                                           </p>
-                                          {commentSubImages?.images?.length >
-                                            0 && (
-                                            <div className=" mt-2 w-fit rounded shadow">
-                                              <Image
-                                                src={
-                                                  commentSubImages?.images?.[0]
-                                                }
-                                                height={250}
-                                                alt="post image"
-                                                width={350}
-                                              />
-                                            </div>
+                                          {imageUrl && (
+                                            <ViewImage imageUrl={imageUrl} />
                                           )}
                                           <div className=" py-2">
                                             <div className="flex text-gray-400 flex-row items-center gap-4">

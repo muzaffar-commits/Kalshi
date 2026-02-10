@@ -87,10 +87,10 @@ const UserProfile = () => {
   return (
     <>
       <div>
-        <div className="max-w-[800px] xl:max-w-[65%] mx-auto px-4 mt-2 lg:mt-6">
-          <div className="md:flex justify-between md:pt-16 pt-8">
-            <div className="md:w-3/4 gap-3 md:flex md:mb-0 mb-4">
-              <div className="h-24 w-24 flex items-center justify-center rounded bg-gray-300/20">
+        <div className="max-w-[900px] md:container 2xl:max-w-[65%]  mx-auto px-4 mt-2 lg:mt-6">
+          <div className="flex  justify-between md:pt-16 pt-8">
+            <div className="flex gap-3 md:mb-0 sm:mb-4">
+              <div className="h-16 w-16 sm:h-24 sm:w-24 flex items-center justify-center rounded bg-gray-300/20">
                 <Image
                   src={userData?.user?.image_url || "/img/user.png"}
                   alt="Profile"
@@ -103,43 +103,45 @@ const UserProfile = () => {
                 <h2 className="dark:text-white text-black font-bold text-xl">
                   {userData?.user?.username || "Unknown User"}
                 </h2>
-                <p className="dark:text-gray-400 text-gray-700 text-sm">
+                <p className="dark:text-gray-400 text-gray-700 text-xs sm:text-sm">
                   {userData?.user?.email || "--"}
                 </p>
-                <p className="dark:text-gray-400 text-gray-700 text-sm">
+                <p className="dark:text-gray-400 text-gray-700 text-xs sm:text-sm">
                   Joined{" "}
                   {userData?.user?.createdAt
                     ? moment(userData.user.createdAt).format("DD MMM YYYY")
                     : "--"}
                 </p>
-                <p className="text-gray-200 mt-3 text-sm flex flex-wrap gap-4">
-                  <span
-                    onClick={() => setIsFollow(true)}
-                    className="dark:text-gray-400 cursor-pointer text-gray-700"
-                  >
-                    <span className="dark:text-white text-gray-800 font-semibold">
-                      {userData?.following || "0"}
-                    </span>{" "}
-                    Following
-                  </span>
+                <div className="sm:block hidden">
+                  <div className="text-gray-200 mt-3 text-sm flex  gap-4">
+                    <span
+                      onClick={() => setIsFollow(true)}
+                      className="dark:text-gray-400 flex gap-2 cursor-pointer text-gray-700"
+                    >
+                      <span className="dark:text-white text-gray-800 font-semibold">
+                        {userData?.following || "0"}
+                      </span>{" "}
+                      Following
+                    </span>
 
-                  <span
-                    onClick={() => setIsFollow(true)}
-                    className="dark:text-gray-400 cursor-pointer text-gray-700"
-                  >
-                    <span className="dark:text-white text-gray-800 font-semibold">
-                      {userData?.follower || "0"}
-                    </span>{" "}
-                    Followers
-                  </span>
+                    <span
+                      onClick={() => setIsFollow(true)}
+                      className="dark:text-gray-400 flex gap-2 cursor-pointer text-gray-700"
+                    >
+                      <span className="dark:text-white text-gray-800 font-semibold">
+                        {userData?.follower || "0"}
+                      </span>{" "}
+                      Followers
+                    </span>
 
-                  <span className="dark:text-gray-400 text-gray-700">
-                    <span className="dark:text-white text-gray-800 font-semibold">
-                      {profileStats.stats.totalTrades}
-                    </span>{" "}
-                    Predictions
-                  </span>
-                </p>
+                    <span className="dark:text-gray-400 flex gap-2 text-gray-700">
+                      <span className="dark:text-white text-gray-800 font-semibold">
+                        {profileStats.stats.totalTrades}
+                      </span>{" "}
+                      Predictions
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -149,9 +151,9 @@ const UserProfile = () => {
                 className="
     md:float-end mb-3
     relative select-none cursor-pointer
-
+                    text-nowrap
     bg-[#0099FF] text-white
-    py-2 px-6 rounded-2xl text-sm font-semibold
+    py-2 px-3 sm:px-6 rounded-2xl text-xs sm:text-sm font-semibold
 
     
     transition-all duration-150 ease-in-out
@@ -165,6 +167,36 @@ const UserProfile = () => {
               </button>
             </div>
           </div>
+          <div className="block mt-2 sm:hidden">
+            <div className="text-gray-200 text-sm flex  gap-4">
+              <span
+                onClick={() => setIsFollow(true)}
+                className="dark:text-gray-400 flex gap-2 cursor-pointer text-gray-700"
+              >
+                <span className="dark:text-white text-gray-800 font-semibold">
+                  {userData?.following || "0"}
+                </span>{" "}
+                Following
+              </span>
+
+              <span
+                onClick={() => setIsFollow(true)}
+                className="dark:text-gray-400 flex gap-2 cursor-pointer text-gray-700"
+              >
+                <span className="dark:text-white text-gray-800 font-semibold">
+                  {userData?.follower || "0"}
+                </span>{" "}
+                Followers
+              </span>
+
+              <span className="dark:text-gray-400 flex gap-2 text-gray-700">
+                <span className="dark:text-white text-gray-800 font-semibold">
+                  {profileStats.stats.totalTrades}
+                </span>{" "}
+                Predictions
+              </span>
+            </div>
+          </div>
           <div className="mt-2">
             <span className="text-gray-800 text-xs dark:text-gray-400">
               <span className="font-medium text-gray-900 dark:text-gray-200">
@@ -174,7 +206,6 @@ const UserProfile = () => {
             </span>
           </div>
 
-          {/* Total Balance */}
           <div className="md:mt-3 pt-1 border-t dark:border-gray-700 border-gray-300">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
@@ -201,7 +232,6 @@ const UserProfile = () => {
             </div>
           </div>
 
-          {/* Total Investment */}
           <div className="md:mt-3 pt-3 border-t dark:border-gray-700 border-gray-300">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
@@ -263,7 +293,6 @@ const UserProfile = () => {
             </div>
           </div>
 
-          {/* Tabs */}
           <div className="py-4">
             <ProfileTabs data={profileStats} />
           </div>

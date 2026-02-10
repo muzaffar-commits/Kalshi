@@ -56,12 +56,12 @@ export default function GiphyModal({ open, onClose, onSelect }) {
                 bg-gray-100 dark:bg-gray-800
                 border border-transparent
                 focus:border-indigo-500
-                focus:ring-2 focus:ring-indigo-500/40
+                focus:ring-1 focus:ring-indigo-500/40
                 box-border transition-none
               "
             />
             <IconButton size="small" onClick={onClose}>
-              <IoClose />
+              <IoClose className="dark:!text-gray-300" />
             </IconButton>
           </div>
           <div className="flex-1 p-3 overflow-y-scroll hideScrollbar">

@@ -24,7 +24,7 @@ export default function ViewImage({ imageUrl }) {
           alt="post media"
           width={300}
           height={300}
-          className="max-w-40 h-auto rounded-lg object-contain"
+          className="max-w-52 h-auto rounded-lg object-contain"
         />
       )}
     </div>
