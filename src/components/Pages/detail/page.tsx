@@ -444,7 +444,7 @@ const Details = ({ marketId }) => {
   })();
 
   return (
-    <>
+    <div>
       {isLoader ? (
         <MarketSkeleton />
       ) : (
@@ -714,7 +714,7 @@ const Details = ({ marketId }) => {
         isLoading={deleteResponse}
         selectedOrderDetails={selectedOrderDetails}
       />
-    </>
+    </div>
   );
 };
 

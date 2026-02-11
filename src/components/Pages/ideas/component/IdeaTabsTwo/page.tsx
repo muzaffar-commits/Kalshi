@@ -268,7 +268,7 @@ export default function IdeaTabsTwo({
                     }  border-gray-300 pb-2 items-start sm:gap-2 w-full md:px-4 px-0`}
                   >
                     <div className=" flex items-center gap-2  rounded  w-fit">
-                      <div className="bg-gray-100 rounded-full dark:bg-gray-600 p-0.5">
+                      <div className="bg-gray-100 h-10 w-10 rounded-full dark:bg-gray-600 p-0.5">
                         <Image
                           onClick={() => handleUserDetails(`${row?.User?.id}`)}
                           src={
@@ -450,7 +450,7 @@ export default function IdeaTabsTwo({
                     }  border-gray-300 pb-2 items-start sm:gap-2 w-full md:px-4 px-0`}
                   >
                     <div className=" flex items-center gap-2   rounded  w-fit">
-                      <div className="bg-gray-100 rounded-full dark:bg-gray-600 p-0.5">
+                      <div className="bg-gray-100 h-10 w-10 rounded-full dark:bg-gray-600 p-0.5">
                         <Image
                           onClick={() => handleUserDetails(`${row?.User?.id}`)}
                           src={

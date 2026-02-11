@@ -453,7 +453,7 @@ export default function IdeaTabs({
             </div>
           )}
 
-          <div className="border-t dark:border-gray-700 border-gray-200 mt-3">
+          <div className="border-t  dark:border-gray-700 border-gray-200 mt-3">
             <IdeaTabsTwo
               handleComment={handleComment}
               postedList={allPosts}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import Authentication from "@/components/Pages/auth";
@@ -95,6 +95,14 @@ const Home = () => {
   // const [eventSubCategoryId, setEventSubCategoryId] = useState<number | null>(
   //   null,
   // );
+
+  // pagination start
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const [offset, setOffset] = useState(0);
+  const [pagination, setPagination] = useState<any>({});
+  const [emptyData, setEmptyData] = useState([]);
+  const [isLoader, setIsLoader] = useState(false);
+  // pagination end
   const eventSubCategoryId = null;
   const getToken = localStorage.getItem("token");
   const router = useRouter();
@@ -134,35 +142,56 @@ const Home = () => {
     .filter(([_, value]) => value === true)
     .map(([key]) => CATEGORY_MAP[key]);
 
-  const questionAllList = useCallback(async () => {
-    setLoader(true);
+  const questionAllList = async (newOffset = 0) => {
+    if (newOffset === 0) {
+      setLoader(true);
+    } else {
+      setIsLoader(true);
+    }
+
     try {
       const ids = isEvent ? eventSubCategoryId : selectedSubCategory?.id;
 
       const [response] = await Promise.all([
         commonQuestionFindById(
           categoryDetails?.id || 1,
-          // userDetails?.user?.id as string,
           ids,
           sortBy,
           frequency,
           status,
           search,
           hiddenCategories,
+          12,
+          newOffset, // important
         ),
-        delay(1000),
+        delay(newOffset === 0 ? 1000 : 500),
       ]);
 
+      const newData = response?.data?.questions || [];
+
+      setEmptyData(newData);
       if (response?.success) {
-        setQuestionData(response.data.questions ?? []);
-      } else {
-        setQuestionData([]);
+        setQuestionData((prev: any[]) => {
+          if (newOffset === 0) return newData;
+
+          const map = new Map();
+          prev.forEach((item) => map.set(item.id, item));
+          newData.forEach((item) => map.set(item.id, item));
+
+          return Array.from(map.values());
+        });
+
+        setPagination(response?.data || {});
       }
-    } catch {
-      setQuestionData([]);
     } finally {
       setLoader(false);
+      setIsLoader(false);
     }
+  };
+
+  useEffect(() => {
+    setOffset(0);
+    questionAllList(0);
   }, [
     isWatchList,
     categoryDetails?.id,
@@ -177,9 +206,61 @@ const Home = () => {
     hiddenCategories.join(","),
   ]);
 
+  // useEffect(() => {
+  //   if (emptyData?.length == 0) {
+  //     return;
+  //   }
+  //   const container = document.getElementById("app-scroll-container");
+  //   if (!container) return;
+
+  //   const handleScroll = () => {
+  //     const scrollTop = container.scrollTop;
+  //     const scrollHeight = container.scrollHeight;
+  //     const clientHeight = container.clientHeight;
+
+  //     // near bottom
+  //     if (scrollTop + clientHeight >= scrollHeight - 150) {
+  //       if (!isLoader && pagination?.limit) {
+  //         const newOffset = pagination.offset + pagination.limit;
+
+  //         if (newOffset !== offset) {
+  //           setOffset(newOffset);
+  //           questionAllList(newOffset);
+  //         }
+  //       }
+  //     }
+  //   };
+
+  //   container.addEventListener("scroll", handleScroll);
+  //   return () => container.removeEventListener("scroll", handleScroll);
+  // }, [pagination, isLoader, offset]);
+
   useEffect(() => {
-    questionAllList();
-  }, [questionAllList]);
+    if (emptyData?.length === 0) {
+      return;
+    }
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= fullHeight - 200) {
+        if (!isLoader && pagination?.limit) {
+          const newOffset =
+            (pagination?.offset || 0) + (pagination?.limit || 12);
+
+          // ✅ stop duplicate calls
+          if (newOffset > offset) {
+            setOffset(newOffset);
+            questionAllList(newOffset);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pagination?.offset, pagination?.limit, isLoader, offset]);
 
   const handleBuyNow = (
     row: QuestionItemSecond,
@@ -264,7 +345,7 @@ const Home = () => {
   return (
     <>
       <div
-        className={`max-w-[1268px] mx-auto px-4 pb-10 ${
+        className={`max-w-[1268px]  mx-auto px-4 pb-10 ${
           eventCategory?.length > 0 && isFilterQuestion
             ? "pt-8 lg:pt-32"
             : eventCategory?.length > 0
@@ -275,12 +356,8 @@ const Home = () => {
         }`}
       >
         <div
-          className={
-            // isEvent
-            //   ? ""
-            //   :
-            "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 pt-10 lg:pt-0"
-          }
+          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 pt-10 lg:pt-0"
+          // ref={listRef}
         >
           {
             // isEvent ? (
@@ -766,6 +843,9 @@ const Home = () => {
               </div>
             )
           }
+
+          {isLoader &&
+            [1, 2, 3, 4, 5, 6]?.map((row) => <LoadingCard key={row} />)}
         </div>
       </div>
       <Authentication

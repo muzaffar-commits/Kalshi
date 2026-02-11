@@ -34,6 +34,13 @@ export default function IdeasActivityTabs({ marketId }) {
   const wrapperRef = useRef(null);
   const dropdownRef = useRef(null);
 
+  // pagination pending start
+  const [offset, setOffset] = useState(0);
+  const [pagination, setPagination] = useState<any>({});
+  const [emptyData, setEmptyData] = useState([]);
+  const [isPaginationLoader, setIsPaginationLoader] = useState(false);
+  // pagination pending end
+
   const router = useRouter();
   const userId = useSelector((state: userIdInterFace) => state.user.user?.id);
 
@@ -63,25 +70,50 @@ export default function IdeasActivityTabs({ marketId }) {
     };
   }, []);
 
-  const getListOfPost = useCallback(async () => {
+  const getListOfPost = async (newOffset = 0) => {
+    setIsPaginationLoader(true);
+
     try {
       const [response] = await Promise.all([
-        getFeed(userId, marketId),
+        getFeed(marketId, 10, newOffset),
         delay(1000),
       ]);
+      setPagination(response.data ?? {});
+      const newData = response?.data?.posts || [];
+      setEmptyData(newData);
       if (response?.success) {
-        setAllPosts(response.data ?? []);
+        setAllPosts((prev: any[]) => {
+          if (newOffset === 0) return newData;
+
+          const map = new Map();
+          prev.forEach((item) => map.set(item.id, item));
+          newData.forEach((item) => map.set(item.id, item));
+
+          return Array.from(map.values());
+        });
       } else {
-        setAllPosts([]);
+        if (newOffset === 0) setAllPosts([]);
       }
     } catch {
-      setAllPosts([]);
+      if (newOffset === 0) setAllPosts([]);
+    } finally {
+      setIsPaginationLoader(false);
     }
-  }, [userId]);
+  };
 
   useEffect(() => {
-    getListOfPost();
-  }, [getListOfPost]);
+    setOffset(0);
+    getListOfPost(0);
+  }, [userId]);
+
+  const handleChangePage = () => {
+    if (emptyData?.length === 0) return;
+    const newOffset = (pagination?.offset || 0) + (pagination?.limit || 12);
+    if (newOffset > offset) {
+      setOffset(newOffset);
+      getListOfPost(newOffset);
+    }
+  };
 
   const chooseImages = async (file: File) => {
     setIsImageUploadLoader(true);
@@ -531,6 +563,24 @@ export default function IdeasActivityTabs({ marketId }) {
                 </div>
               )}
             </div>
+
+            {isPaginationLoader && (
+              <div className="flex items-center justify-center pt-5">
+                <CircularProgress
+                  size={30}
+                  className="!text-gray-500 dark:!text-gray-300 "
+                />
+              </div>
+            )}
+
+            {!isPaginationLoader && emptyData?.length > 0 && (
+              <div
+                onClick={() => handleChangePage()}
+                className="text-end mt-2 text-sm dark:text-gray-400 cursor-pointer"
+              >
+                show more...
+              </div>
+            )}
           </>
         )}
 

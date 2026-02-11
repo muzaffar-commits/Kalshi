@@ -23,28 +23,67 @@ const Ideas = () => {
   const users = useSelector((state: userDetails) => state?.user?.user);
   const router = useRouter();
 
-  const getListOfPost = useCallback(async () => {
-    setIsLoader(true);
-    try {
-      const [response] = await Promise.all([
-        getFeed(users?.id, null),
-        delay(1000),
-      ]);
-      if (response?.success) {
-        setAllPosts(response.data ?? []);
+  // pagination pending start
+  const [offset, setOffset] = useState(0);
+  const [pagination, setPagination] = useState<any>({});
+  const [emptyData, setEmptyData] = useState([]);
+  const [isPaginationLoader, setIsPaginationLoader] = useState(false);
+  // pagination pending end
+  const getListOfPost = useCallback(
+    async (newOffset = offset) => {
+      if (newOffset === 0) {
+        setIsPaginationLoader(true);
       } else {
-        setAllPosts([]);
+        setIsLoader(true);
       }
-    } catch {
-      setAllPosts([]);
-    } finally {
-      setIsLoader(false);
-    }
-  }, [users?.id]);
+
+      try {
+        const [response] = await Promise.all([getFeed(null), delay(1000)]);
+        if (response?.success) {
+          setAllPosts(response.data?.posts ?? []);
+        } else {
+          setAllPosts([]);
+        }
+      } catch {
+        setAllPosts([]);
+      } finally {
+        setIsLoader(false);
+        setIsPaginationLoader(false);
+      }
+    },
+    [users?.id],
+  );
 
   useEffect(() => {
     getListOfPost();
   }, [getListOfPost]);
+
+  useEffect(() => {
+    if (emptyData?.length === 0) {
+      return;
+    }
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= fullHeight - 200) {
+        if (!isLoader && pagination?.limit) {
+          const newOffset =
+            (pagination?.offset || 0) + (pagination?.limit || 12);
+
+          // ✅ stop duplicate calls
+          if (newOffset > offset) {
+            setOffset(newOffset);
+            getListOfPost(newOffset);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pagination?.offset, pagination?.limit, isLoader, offset]);
 
   // getFeedForFollowingList
 

@@ -49,10 +49,10 @@ export const userPositions = async () => {
     };
   }
 };
-export const getFeed = async (id: string, questionId: string) => {
+export const getFeed = async (questionId: string, limit = 10, offset = 0) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getFeed}${questionId ? `?questionId=${questionId}` : ""}`,
+      `${API_URLs.getFeed}${`?limit=${limit}&offset=${offset}${questionId ? `&questionId=${questionId}` : ""}`}`,
     );
     return response?.data;
   } catch (error: unknown) {

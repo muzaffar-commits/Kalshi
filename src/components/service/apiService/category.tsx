@@ -23,6 +23,8 @@ export const commonQuestionFindById = async (
   status: string,
   search: string,
   excludeCategories: number[],
+  limit: number = 12,
+  offset: number = 0,
 ) => {
   // ?categoryId=
   try {
@@ -37,6 +39,8 @@ export const commonQuestionFindById = async (
         ...(excludeCategories?.length > 0 && {
           excludeCategories: excludeCategories,
         }),
+        limit,
+        offset,
       },
     });
 
