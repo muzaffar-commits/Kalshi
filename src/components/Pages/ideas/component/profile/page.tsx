@@ -47,7 +47,6 @@ export default function Profile({ targetId }: { targetId: string }) {
         const postDetails = response?.data?.[2] ?? [];
         setFollowingData(response.data ?? []);
         setMyPost(postDetails);
-        console.log(response.data, "response.data");
       } else {
         setFollowingData([]);
       }

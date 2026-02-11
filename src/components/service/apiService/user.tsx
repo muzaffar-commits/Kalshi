@@ -348,10 +348,10 @@ export const getFeedDetailsById = async (id = 1) => {
   }
 };
 
-export const getFollowers = async (userId = 1) => {
+export const getFollowers = async (userId = 1, limit = 10, offset = 0) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.follow}/${userId}/followers`,
+      `${API_URLs.follow}/${userId}/followers?limit=${limit}&offset=${offset}`,
     );
     return response?.data;
   } catch (error: unknown) {
@@ -362,10 +362,10 @@ export const getFollowers = async (userId = 1) => {
   }
 };
 
-export const getFollowing = async (userId = 1) => {
+export const getFollowing = async (userId = 1, limit = 10, offset = 0) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.follow}/${userId}/following?limit=10&offset=0`,
+      `${API_URLs.follow}/${userId}/following?limit=${limit}&offset=${offset}`,
     );
     return response?.data;
   } catch (error: unknown) {

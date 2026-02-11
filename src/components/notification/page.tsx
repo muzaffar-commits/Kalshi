@@ -111,7 +111,6 @@ export default function NotificationBell({ userId }) {
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
   }, [offset, pagination, isLoader]);
-  console.log(pagination, "pagination===>");
 
   const getUnReadCountNotification = async () => {
     try {

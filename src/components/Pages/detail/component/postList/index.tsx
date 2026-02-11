@@ -578,10 +578,6 @@ export default function PostList({
                           try {
                             return JSON.parse(comment.metadata);
                           } catch (e) {
-                            console.error(
-                              "Invalid metadata JSON",
-                              comment.metadata,
-                            );
                             return null;
                           }
                         })();
@@ -690,10 +686,6 @@ export default function PostList({
                                     try {
                                       return JSON.parse(replies.metadata);
                                     } catch (e) {
-                                      console.error(
-                                        "Invalid metadata JSON",
-                                        replies.metadata,
-                                      );
                                       return null;
                                     }
                                   })();

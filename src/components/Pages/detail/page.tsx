@@ -439,12 +439,9 @@ const Details = ({ marketId }) => {
     try {
       return JSON.parse(data?.question?.metadata);
     } catch (e) {
-      console.error("Invalid metadata JSON", data?.question?.metadata);
       return null;
     }
   })();
-
-  console.log(commentImages, "commentImages");
 
   return (
     <>
@@ -456,7 +453,7 @@ const Details = ({ marketId }) => {
             <div className="container mx-auto pb-6">
               <div className="flex mb-6">
                 {commentImages?.imageUrl && (
-                  <div className="p-1.5 dark:bg-gray-600 rounded-lg w-fit mr-4">
+                  <div className="p-0.5  dark:bg-gray-600 rounded-lg w-fit mr-2">
                     <Image
                       src={
                         commentImages?.imageUrl || "/img/opinionLogo-light.png"
@@ -464,11 +461,11 @@ const Details = ({ marketId }) => {
                       alt="NYC Flag"
                       width={80}
                       height={80}
-                      className={`rounded-lg ${metaData ? "" : "opacity-45"} `}
+                      className={`rounded ${metaData ? "" : "opacity-45"} `}
                     />
                   </div>
                 )}
-                <div>
+                <div className="">
                   <h1 className=" text-lg sm:text-xl lg:text-2xl font-bold text-black dark:text-white">
                     {data?.question?.question}
                   </h1>

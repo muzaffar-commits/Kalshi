@@ -239,8 +239,6 @@ export default function CommentPage() {
         replyCommentId: commentIds,
       };
 
-      console.log(payload, "payload");
-
       // return;
       const [response] = await Promise.all([
         replyComments(payload),
@@ -726,10 +724,6 @@ export default function CommentPage() {
                           try {
                             return JSON.parse(row.metadata);
                           } catch (e) {
-                            console.error(
-                              "Invalid metadata JSON",
-                              row.metadata,
-                            );
                             return null;
                           }
                         })();
@@ -840,10 +834,6 @@ export default function CommentPage() {
                                       try {
                                         return JSON.parse(replies.metadata);
                                       } catch (e) {
-                                        console.error(
-                                          "Invalid metadata JSON",
-                                          replies.metadata,
-                                        );
                                         return null;
                                       }
                                     })();

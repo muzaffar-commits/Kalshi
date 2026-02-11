@@ -84,7 +84,6 @@ export default function IdeaTabs({
   const userDetails = useSelector((state: any) => state?.user?.user);
   const [myPost, setMyPost] = React.useState<PostFeeBack[]>([]);
   const [currentTabs, setCurrentTabs] = useState(0);
-  console.log(userDetails, "userDetails");
 
   useEffect(() => {
     value == 0 && fetchPostList();
@@ -159,8 +158,6 @@ export default function IdeaTabs({
         },
       };
       const [response] = await Promise.all([userPost(payload), delay(1000)]);
-
-      console.log(response, "response");
 
       if (response?.reponse?.status) {
         setMessage("");

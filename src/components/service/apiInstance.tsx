@@ -31,7 +31,7 @@ if (typeof window !== "undefined") {
     (error) => {
       const status = error?.response?.status;
       const isToken = localStorage.getItem("token");
-      console.log(status, isToken, "status");
+      // console.log(status, isToken, "status");
       if (status === 401 && isToken) {
         toast.success("Token expired 🚫 Logging out...");
         localStorage.clear();

@@ -172,8 +172,6 @@ export default function SubComment({
     handleSend(row, mixText, gif);
   };
 
-  console.log(mixText?.length, "rowlskdfjslf");
-
   const isDisabled = getCleanTextLength(mixText) < 3;
   return (
     <Modal

@@ -85,7 +85,6 @@ export default function IdeaTabsTwo({
     setValue(newValue);
     setCurrentTabs(newValue);
   };
-  console.log(value, "value===>");
 
   const handleLikeUnlike = async (id: number, isLike: number) => {
     try {
@@ -204,10 +203,6 @@ export default function IdeaTabsTwo({
   };
 
   const locationUrl = window.location?.pathname;
-
-  console.log(locationUrl, "locationUrl");
-
-  console.log(myPost, "positions");
 
   return (
     <>
