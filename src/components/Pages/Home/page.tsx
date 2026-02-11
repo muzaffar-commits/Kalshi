@@ -97,7 +97,7 @@ const Home = () => {
   // );
 
   // pagination start
-
+  const listRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(0);
   const [pagination, setPagination] = useState<any>({});
   const [emptyData, setEmptyData] = useState([]);
