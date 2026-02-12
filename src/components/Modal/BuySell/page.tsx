@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
 import { userBalance } from "@/components/service/apiService/user";
 import { truncateValue } from "@/utils/Content";
+import { Minus, Plus } from "lucide-react";
 
 interface UserPosition {
   shares: number;
@@ -123,6 +124,8 @@ export default function BuySell({
 
   const [tpTouched, setTpTouched] = useState(false);
   const [slTouched, setSlTouched] = useState(false);
+
+  const [percentageValue, setPercentageValue] = useState(null);
   // const [btnLoader, setBtnLoader] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => {
@@ -429,6 +432,53 @@ export default function BuySell({
     !slTouched ||
     !tpslPriceIs;
 
+  const MIN = 0;
+  const MAX = 1;
+  const STEP = 0.1;
+
+  console.log(totalCurrentBalance, "totalCurrentBalance");
+
+  console.log(totalCurrentShare, "orderType");
+
+  const handleSetValue = (currentValue) => {
+    setPercentageValue(currentValue);
+
+    // SELL CASE
+    if (orderType === "sell") {
+      const totalShareSell = totalCurrentShare || 0;
+
+      let calculatedValue = 0;
+      if (currentValue === "Max") {
+        calculatedValue = totalShareSell;
+      } else {
+        calculatedValue = (totalShareSell * currentValue) / 100;
+      }
+
+      setShare(Number(calculatedValue.toFixed(2)));
+    }
+
+    // BUY CASE
+    else {
+      const price = Number(limitShare) || 0; // upper input
+      const balance = Number(totalCurrentBalance) || 0;
+
+      if (price <= 0) {
+        setShare(0);
+        return;
+      }
+
+      const maxShares = balance / price;
+
+      let calculatedValue = 0;
+      if (currentValue === "Max") {
+        calculatedValue = maxShares;
+      } else {
+        calculatedValue = (maxShares * currentValue) / 100;
+      }
+
+      setShare(Number(calculatedValue.toFixed(2))); // lower input
+    }
+  };
   return (
     <Modal
       open={isOpen}
@@ -456,7 +506,7 @@ export default function BuySell({
           }}
           className="border border-[var(--color-borderlight)]
            dark:border-[var(--color-borderdark)]
-           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)] p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[320px] lg:max-w-[430px] outline-none"
+           bg-[var(--boxbg2)] dark:bg-[var(--boxbg1)]  p-6 lg:p-10 rounded-xl overflow-hidden shadow-lg w-full max-w-[370px] lg:max-w-[430px] outline-none"
         >
           {/* Close */}
           <button
@@ -664,10 +714,10 @@ export default function BuySell({
 
                     <div className="p-3 border-t dark:border-gray-800 border-gray-300 px-3 pt-2">
                       <label className="w-full flex flex-col gap-1">
-                        <span className="text-sm dark:text-gray-200 text-gray-700 font-medium">
+                        <span className="text-sm flex items-center justify-between dark:text-gray-200 text-gray-700 font-medium">
                           <span>Stop Loss</span>{" "}
                           {slTouched && stopLoss > currentPrice && (
-                            <span className="text-xs text-yellow-300">
+                            <span className="text-xs text-end text-yellow-300">
                               ⚠ Down to current market price (
                               {truncateValue(currentPrice)})
                             </span>
@@ -722,7 +772,7 @@ export default function BuySell({
                 </>
               ) : types === "limit" ? (
                 <>
-                  <label className="w-full flex flex-col gap-1">
+                  {/* <label className="w-full flex flex-col gap-1">
                     <span className="text-xs text-gray-400 font-medium">
                       {orderType === "sell" ? "Sell" : "Buy"} at price
                     </span>
@@ -738,32 +788,110 @@ export default function BuySell({
                       onWheel={(e) => e.currentTarget.blur()}
                       className="w-full no-arrow px-3 py-2 text-2xl font-semibold text-right bg-transparent border border-gray-200 dark:border-gray-700 rounded-md  text-gray-900 dark:text-gray-100  focus:ring-1 focus:ring-gray-400 outline-none  "
                     />
-                  </label>
+                  </label> */}
+                  <label className="w-full flex flex-row items-center gap-10">
+                    <span className="text-sm text-nowrap text-gray-100 font-semibold dark:text-gray-200 text-gray-700">
+                      Limit Price
+                    </span>
 
-                  <label className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700  rounded-md  flex items-center justify-between bg-transparent ">
-                    <div className="flex flex-col leading-tight">
-                      <span className="text-xs text-gray-400 font-medium">
-                        Quantity of Shares
-                      </span>
-                      <span className="text-xs dark:text-gray-200 text-gray-700  font-medium">
-                        USD
-                      </span>
+                    <div className="relative w-full">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setLimitShare((prev) => {
+                            const current = Number(prev) || 0;
+                            const newVal = Math.max(MIN, current - STEP);
+                            return Number(newVal.toFixed(1));
+                          })
+                        }
+                        className="absolute w-fit left-2 top-1/2 -translate-y-1/2
+                                p-1 rounded-md text-gray-300 hover:text-[#0099FF]
+                                hover:bg-gray-100 dark:hover:bg-gray-800"
+                      >
+                        <Minus size={18} />
+                      </button>
+
+                      <input
+                        type="number"
+                        inputMode="decimal"
+                        placeholder="0.00"
+                        value={limitShare || ""}
+                        onWheel={(e) => e.currentTarget.blur()}
+                        onChange={(e) => {
+                          let val = Number(e.target.value);
+                          if (isNaN(val)) val = 0;
+                          val = Math.min(Math.max(val, MIN), MAX);
+                          setLimitShare(Number(val.toFixed(2)));
+                        }}
+                        className="w-full no-arrow px-10 py-2 text-2xl text-center
+                                bg-transparent border border-gray-300 dark:border-gray-700 rounded-md
+                                text-gray-900 dark:text-gray-100 
+                                focus:ring-1 focus:ring-gray-400 outline-none"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setLimitShare((prev) => {
+                            const current = Number(prev) || 0;
+                            const newVal = Math.min(MAX, current + STEP);
+                            return Number(newVal.toFixed(1));
+                          })
+                        }
+                        className="absolute right-2 top-1/2 -translate-y-1/2
+                        p-1 rounded-md cursor-pointer text-gray-300 hover:text-[#0099FF]
+                        hover:bg-gray-100 dark:hover:bg-gray-800"
+                      >
+                        <Plus size={18} />
+                      </button>
                     </div>
-
-                    <input
-                      type="number"
-                      placeholder="0.00"
-                      onFocus={() => setActiveField("shares")}
-                      value={share || ""}
-                      onChange={(e) =>
-                        setShare(
-                          e.target.value === "" ? 0 : Number(e.target.value),
-                        )
-                      }
-                      onWheel={(e) => e.currentTarget.blur()}
-                      className=" w-28 text-2xl no-arrow font-semibold text-right bg-transparent  border-none outline-none text-gray-900 dark:text-gray-100"
-                    />
                   </label>
+
+                  <div className="border-t border-b pb-3 dark:border-gray-700 border-gray-200 pt-3">
+                    <label className="w-full flex flex-row items-center gap-10 gap-1">
+                      <span className="text-sm text-nowrap text-gray-100 font-semibold dark:text-gray-200 text-gray-700">
+                        Shares
+                      </span>
+
+                      <input
+                        type="number"
+                        placeholder="0.00"
+                        onFocus={() => setActiveField("shares")}
+                        value={share || ""}
+                        onChange={(e) =>
+                          setShare(
+                            e.target.value === "" ? 0 : Number(e.target.value),
+                          )
+                        }
+                        onWheel={(e) => e.currentTarget.blur()}
+                        className="w-full no-arrow px-10 py-2 text-2xl text-center
+                                bg-transparent border border-gray-300 dark:border-gray-700 rounded-md
+                                text-gray-900 dark:text-gray-100 
+                                focus:ring-1 focus:ring-gray-400 outline-none"
+                      />
+                    </label>
+                    <div className="flex flex-row mt-2 justify-between ">
+                      <div className="w-12"></div>
+                      <div className="  flex items-center justify-between gap-1">
+                        {[25, 50, 75, "Max"].map((val) => (
+                          <span
+                            key={val}
+                            onClick={() => handleSetValue(val)}
+                            className={`
+      rounded shadow cursor-pointer text-xs px-3 py-1
+      ${
+        percentageValue == val
+          ? "bg-blue-500 text-white dark:bg-blue-600"
+          : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500"
+      }
+    `}
+                          >
+                            {val} {val == "Max" ? "" : "%"}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </>
               ) : orderType === "buy" ? (
                 <>
@@ -780,7 +908,7 @@ export default function BuySell({
                     <input
                       type="number"
                       placeholder="0"
-                      value={share}
+                      value={share || ""}
                       onFocus={() => setActiveField("shares")}
                       onChange={(e) =>
                         setShare(
@@ -807,7 +935,7 @@ export default function BuySell({
                     <input
                       type="number"
                       placeholder="0"
-                      value={amount}
+                      value={amount || ""}
                       onFocus={() => setActiveField("amount")}
                       onChange={(e) =>
                         setAmount(
@@ -847,7 +975,7 @@ export default function BuySell({
                         getTotalSharesDetails ??
                         0
                       }
-                      value={share}
+                      value={share || ""}
                       onFocus={() => setActiveField("shares")}
                       onChange={(e) => {
                         const value = Number(e.target.value);
@@ -1055,7 +1183,9 @@ export default function BuySell({
     }
   `}
               >
-                <span className="capitalize">{orderType || "--"}</span>{" "}
+                <span className="capitalize text-white">
+                  {orderType || "--"}
+                </span>{" "}
                 <span className="text-white">$</span>{" "}
                 <span className="text-white">
                   {types === "limit" && orderType === "buy"

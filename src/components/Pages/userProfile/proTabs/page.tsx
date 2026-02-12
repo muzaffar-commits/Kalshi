@@ -15,6 +15,7 @@ import { FaRegCommentAlt } from "react-icons/fa";
 import PostList from "../../detail/component/postList";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { delay } from "@/utils/Content";
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -86,7 +87,12 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
   const [value, setValue] = React.useState(0);
   const [positions, setPositions] = React.useState<Position[]>([]);
   const [myPost, setMyPost] = React.useState<PostFeeBack[]>([]);
-  const userId = useSelector((state: any) => state?.user?.user?.id);
+
+  const [offset, setOffset] = React.useState(0);
+  const [pagination, setPagination] = React.useState<any>({});
+  const [emptyData, setEmptyData] = React.useState([]);
+  const [isPaginationLoader, setIsPaginationLoader] = React.useState(false);
+
   const fetchPositions = async () => {
     try {
       const response = await userPositions();
@@ -104,23 +110,69 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
     fetchPositions();
   }, []);
 
-  const fetchMyAllPost = async () => {
+  const fetchMyAllPost = async (newOffset = offset) => {
+    setIsPaginationLoader(true);
     try {
-      const response = await getMyAllPost("");
+      const [response] = await Promise.all([
+        getMyAllPost("", 10, newOffset),
+        delay(500),
+      ]);
 
-      if (response.feed?.length > 0) {
-        setMyPost(response?.feed);
+      const newItem = response.feed?.posts ?? [];
+      setEmptyData(newItem);
+      setPagination(response.feed);
+      if (response.feed?.posts?.length > 0) {
+        setMyPost((prev: any[]) => {
+          if (newOffset === 0) return newItem;
+
+          const map = new Map();
+          prev.forEach((item) => map.set(item.id, item));
+          newItem.forEach((item) => map.set(item.id, item));
+
+          return Array.from(map.values());
+        });
       } else {
-        setMyPost([]);
+        newOffset === 0 && setMyPost([]);
       }
     } catch {
-      setMyPost([]);
+      newOffset === 0 && setMyPost([]);
+    } finally {
+      setIsPaginationLoader(false);
     }
     // getMyAllPost
   };
   React.useEffect(() => {
-    fetchMyAllPost();
-  }, []);
+    value == 2 && fetchMyAllPost();
+  }, [value]);
+
+  console.log(emptyData, "emptyData");
+
+  React.useEffect(() => {
+    if (value == 2 && emptyData?.length === 0) {
+      return;
+    }
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= fullHeight - 200) {
+        if (!isPaginationLoader && pagination?.limit) {
+          const newOffset =
+            (pagination?.offset || 0) + (pagination?.limit || 12);
+
+          // ✅ stop duplicate calls
+          if (newOffset > offset) {
+            setOffset(newOffset);
+            fetchMyAllPost(newOffset);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pagination?.offset, pagination?.limit, isPaginationLoader, offset]);
 
   const handleBookMarkOrUnBookMark = async (
     id: number,
@@ -411,6 +463,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
             handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
             handleLikeUnlike={handleLikeUnlike}
             setAllPosts={null}
+            isPaginationLoader={isPaginationLoader}
           />
         ) : (
           <div className="py-12 flex flex-col items-center justify-center text-center gap-3">

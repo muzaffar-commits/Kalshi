@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import ReplyModal from "./ReplyModal";
 import SubComment from "@/components/Modal/SubComment";
 import ViewImage from "@/components/common/ViewImage";
+import { CircularProgress } from "@mui/material";
 
 interface PostListProps {
   isIdea?: boolean;
@@ -24,6 +25,7 @@ interface PostListProps {
   handleLikeUnlike?: any;
   handleBookMarkOrUnBookMark?: any;
   setAllPosts: any;
+  isPaginationLoader: boolean;
 }
 
 interface CommentState {
@@ -39,6 +41,7 @@ export default function PostList({
   handleLikeUnlike = () => {},
   handleBookMarkOrUnBookMark = () => {},
   setAllPosts = () => {},
+  isPaginationLoader = false,
 }: PostListProps) {
   const [commentMap, setCommentMap] = useState<Record<number, CommentState>>(
     {},
@@ -819,6 +822,14 @@ export default function PostList({
           </div>
         );
       })}
+      {isPaginationLoader && (
+        <div className="flex items-center justify-center pt-5">
+          <CircularProgress
+            size={30}
+            className="!text-gray-500 dark:!text-gray-300 "
+          />
+        </div>
+      )}
 
       <ReplyModal
         open={open}

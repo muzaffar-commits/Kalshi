@@ -348,3 +348,29 @@ export const SearchResultsSkeleton = () => {
     </>
   );
 };
+
+export const PostLoaderSkeleton = () => {
+  return (
+    <div className="divide-y divide-gray-200 border-t dark:border-gray-700 border-gray-200 dark:divide-gray-700">
+      {[...Array(3)].map((_, index) => (
+        <div key={index} className="w-full px-4 py-5 animate-pulse">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-4 w-24 rounded bg-gray-300 dark:bg-gray-700"></div>
+                <div className="h-3 w-10 rounded bg-gray-200 dark:bg-gray-600"></div>
+              </div>
+              <div className="h-8 w-full rounded bg-gray-300 dark:bg-gray-700 mb-4"></div>
+              <div className="flex items-center gap-6">
+                <div className="h-4 w-6 rounded bg-gray-200 dark:bg-gray-600"></div>
+                <div className="h-4 w-6 rounded bg-gray-200 dark:bg-gray-600"></div>
+                <div className="h-4 w-6 rounded bg-gray-200 dark:bg-gray-600"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};

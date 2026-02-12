@@ -22,44 +22,77 @@ const Ideas = () => {
   const [isLoader, setIsLoader] = useState(false);
   const users = useSelector((state: userDetails) => state?.user?.user);
   const router = useRouter();
+  const [mainTabs, setMainTabs] = useState(0);
 
   // pagination pending start
   const [offset, setOffset] = useState(0);
   const [pagination, setPagination] = useState<any>({});
   const [emptyData, setEmptyData] = useState([]);
   const [isPaginationLoader, setIsPaginationLoader] = useState(false);
+
   // pagination pending end
-  const getListOfPost = useCallback(
-    async (newOffset = offset) => {
-      if (newOffset === 0) {
-        setIsPaginationLoader(true);
+
+  useEffect(() => {
+    if (mainTabs == 0) {
+      setOffset(0);
+    } else {
+      setOffset(0);
+      setEmptyData([]);
+    }
+  }, [mainTabs]);
+  const getListOfPost = async (newOffset = offset) => {
+    if (newOffset === 0) {
+      setIsLoader(true);
+    } else {
+      setIsPaginationLoader(true);
+    }
+
+    try {
+      const [response] = await Promise.all([
+        getFeed(null, 10, newOffset),
+        delay(1000),
+      ]);
+      const newItem = response.data?.posts ?? [];
+      setEmptyData(newItem);
+      setPagination(response.data);
+      if (response?.success) {
+        setAllPosts((prev: any[]) => {
+          if (newOffset === 0) return newItem;
+
+          const map = new Map();
+          prev.forEach((item) => map.set(item.id, item));
+          newItem.forEach((item) => map.set(item.id, item));
+
+          return Array.from(map.values());
+        });
       } else {
-        setIsLoader(true);
-      }
-
-      try {
-        const [response] = await Promise.all([getFeed(null), delay(1000)]);
-        if (response?.success) {
-          setAllPosts(response.data?.posts ?? []);
-        } else {
-          setAllPosts([]);
-        }
-      } catch {
         setAllPosts([]);
-      } finally {
-        setIsLoader(false);
-        setIsPaginationLoader(false);
       }
-    },
-    [users?.id],
-  );
+    } catch {
+      setAllPosts([]);
+    } finally {
+      setIsLoader(false);
+      setIsPaginationLoader(false);
+    }
+  };
 
   useEffect(() => {
-    getListOfPost();
-  }, [getListOfPost]);
+    getListOfPost(0);
+  }, [users?.id]);
+
+  // const handleChangePage = () => {
+  //   if (emptyData?.length === 0) return;
+  //   const newOffset = (pagination?.offset || 0) + (pagination?.limit || 12);
+  //   if (newOffset > offset) {
+  //     setOffset(newOffset);
+  //     getListOfPost(newOffset);
+  //   }
+  // };
+
+  console.log(mainTabs, "mainTabs");
 
   useEffect(() => {
-    if (emptyData?.length === 0) {
+    if (mainTabs > 0 || emptyData?.length === 0) {
       return;
     }
     const handleScroll = () => {
@@ -119,7 +152,14 @@ const Ideas = () => {
                 handleComment={handleComment}
                 isLoader={isLoader}
                 handleUserDetails={handleUserDetails}
+                paginationLoader={isPaginationLoader}
+                setMainTabs={setMainTabs}
               />
+              {/* <div className="flex items-end justify-end  text-end   text-sm pt-2 pr-3 lg:border-r dark:border-gray-600 border-gray-200">
+                <div className=" cursor-pointer" onClick={handleChangePage}>
+                  Show more...
+                </div>
+              </div> */}
             </div>
           </div>
         </div>

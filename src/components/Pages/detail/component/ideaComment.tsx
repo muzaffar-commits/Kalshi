@@ -545,6 +545,7 @@ export default function IdeasActivityTabs({ marketId }) {
                   handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
                   handleLikeUnlike={handleLikeUnlike}
                   setAllPosts={setAllPosts}
+                  isPaginationLoader={false}
                 />
               ) : (
                 <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
@@ -593,6 +594,7 @@ export default function IdeasActivityTabs({ marketId }) {
                 handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
                 handleLikeUnlike={handleLikeUnlike}
                 setAllPosts={setAllPosts}
+                isPaginationLoader={false}
               />
             ) : (
               <div className="py-12 flex flex-col items-center justify-center text-center gap-3">

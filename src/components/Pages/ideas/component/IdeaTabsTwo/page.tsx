@@ -20,9 +20,10 @@ import {
   postLikeOrUnlike,
   userPositions,
 } from "@/components/service/apiService/user";
-import { PostSkeleton } from "@/utils/customSkeleton";
+import { PostLoaderSkeleton, PostSkeleton } from "@/utils/customSkeleton";
 import { Position } from "@/components/Pages/userProfile/proTabs/page";
 import ViewImage from "@/components/common/ViewImage";
+import { CircularProgress } from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -67,6 +68,7 @@ export default function IdeaTabsTwo({
   setCurrentTabs,
   setMyPost,
   myPost,
+  paginationLoader = false,
 }: {
   postedList: PostFeeBack[];
   setAllPosts: SetPosts;
@@ -78,6 +80,7 @@ export default function IdeaTabsTwo({
   setCurrentTabs: (id: number) => void;
   setMyPost: SetPosts;
   myPost: PostFeeBack[];
+  paginationLoader: boolean;
 }) {
   const [value, setValue] = React.useState(0);
 
@@ -419,6 +422,13 @@ export default function IdeaTabsTwo({
                 </p>
               </div>
             )}
+            <div className="text-center mx-auto">
+              {paginationLoader && (
+                <>
+                  <PostLoaderSkeleton />
+                </>
+              )}
+            </div>
           </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
@@ -601,6 +611,13 @@ export default function IdeaTabsTwo({
                 </p>
               </div>
             )}
+            <div className="text-center mx-auto">
+              {paginationLoader && (
+                <>
+                  <PostLoaderSkeleton />
+                </>
+              )}
+            </div>
           </div>
         </CustomTabPanel>
       </Box>

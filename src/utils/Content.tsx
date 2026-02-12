@@ -155,3 +155,26 @@ export const getCleanTextLength = (text: string) => {
 
   return cleaned.length;
 };
+
+export const BASE_COLORS = [
+  "#008FFB",
+  "#00E396",
+  "#FEB019",
+  "#FF4560",
+  "#775DD0",
+  "#3F51B5",
+  "#546E7A",
+  "#D4526E",
+  "#8D5B4C",
+  "#F86624",
+  "#2E93fA",
+  "#66DA26",
+  "#546E7A",
+  "#E91E63",
+  "#FF9800",
+  "#009688",
+  "#673AB7",
+  "#9C27B0",
+  "#03A9F4",
+  "#4CAF50",
+];

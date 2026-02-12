@@ -62,9 +62,11 @@ export const getFeed = async (questionId: string, limit = 10, offset = 0) => {
     };
   }
 };
-export const getFeedForFollowingList = async () => {
+export const getFeedForFollowingList = async (limit = 3, offset = 0) => {
   try {
-    const response = await apiInstance.get(`${API_URLs.feedForFollowingList}`);
+    const response = await apiInstance.get(
+      `${API_URLs.feedForFollowingList}?limit=${limit}&offset=${offset}`,
+    );
     return response?.data;
   } catch (error: unknown) {
     return {
@@ -306,10 +308,10 @@ export const postAllReadNotification = async () => {
   }
 };
 
-export const getMyAllPost = async (id: string) => {
+export const getMyAllPost = async (id: string, limit = 10, offset = 0) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.myAllPost}${id ? `?questionId=${id}` : ""}`, ////${true ? `?username=${"unknown"}` : ""}
+      `${API_URLs.myAllPost}?limit=${limit}&offset=${offset}${id ? `&questionId=${id}` : ""}`, ////${true ? `?username=${"unknown"}` : ""}
     );
     return response?.data;
   } catch (error: unknown) {

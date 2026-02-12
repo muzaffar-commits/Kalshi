@@ -67,13 +67,15 @@ export default function CommentPage() {
   const wrapperRef = useRef(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dropdownRef = useRef(null);
-
+  const [openEmoji, setOpenEmoji] = useState(false);
+  const popupRef = useRef(null);
   // new
   const [commentOpen, setCommentOpen] = useState(false);
   const [commentIds, setCommentIds] = useState(null);
   const [rowDetails, setRowDetails] = useState({});
   const [mixText, setMixText] = useState("");
   const [imageGif, setImageGif] = useState(null);
+  const emojiBtnRef = useRef(null);
   const [isSendMessageLoader, setIsSendMessageLoader] = useState(false);
   const handleOpenSubComment = (item, commentId = null) => {
     setCommentOpen(true);
@@ -125,6 +127,8 @@ export default function CommentPage() {
     postDetailsById();
   }, [postDetailsById]);
 
+  console.log(value, "value");
+
   const commentLists = useCallback(async () => {
     // setIsLoader(true);
     try {
@@ -169,12 +173,11 @@ export default function CommentPage() {
     setOpen(false);
   };
   const handleSend = async () => {
-    if (!value.trim()) return;
     setIsSendMessage(true);
     try {
       const payload = {
         postId: slug,
-        comment: value,
+        comment: `@${postDetails?.User?.username} ${value}`,
         metadata: gif ? { images: [gif] } : null,
       };
       const [response] = await Promise.all([
@@ -211,14 +214,10 @@ export default function CommentPage() {
   const insertEmoji = (emoji: string) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
-
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-
     const text = value.substring(0, start) + emoji + value.substring(end);
-
     setValue(text);
-
     setTimeout(() => {
       textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
       textarea.focus();
@@ -411,6 +410,37 @@ export default function CommentPage() {
     };
   }, []);
 
+  const toggleEmoji = (e) => {
+    e.stopPropagation();
+    if (!emojiBtnRef.current) return;
+    setOpenEmoji((prev) => !prev);
+  };
+
+  const hasText = String(value).trim().length > 0;
+  const hasGif = !!gif;
+
+  useEffect(() => {
+    if (!openEmoji) return;
+
+    const handleOutside = (e) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(e.target) &&
+        emojiBtnRef.current &&
+        !emojiBtnRef.current.contains(e.target)
+      ) {
+        setOpenEmoji(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("touchstart", handleOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
+  }, [openEmoji]);
   return (
     <div>
       <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-0 sm:pt-9 lg:pt-10">
@@ -576,25 +606,80 @@ export default function CommentPage() {
                   </div>
 
                   <div
-                    className={` ${gif ? "pt-2" : ""}
+                    className={` ""}
                     relative rounded-xl sm:mx-5 pb-2 border border-gray-200 dark:border-gray-700 
                     shadow-sm ideasScrollbarHide focus-within:ring-2 focus-within:ring-blue-500/30 transition 
                 `}
                   >
-                    <div className="flex items-start gap-4 w-full px-4 ">
-                      <InputTextArea
-                        message={value || ""}
-                        setMessage={setValue}
-                        image={gif || ""}
-                        onRemoveImage={() => setGif("")}
+                    <div className="flex relative items-start gap-4 w-full px-4 pt-2 ">
+                      <textarea
+                        ref={textareaRef}
+                        rows={2}
+                        value={value}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (countWords(value) <= MAX_WORDS) {
+                            setValue(value);
+                          }
+                        }}
+                        placeholder={`Reply to @${postDetails?.User?.username}`}
+                        className="w-full resize-none hideScrollbar bg-transparent outline-none text-[15px] text-gray-600 dark:text-gray-100 placeholder-gray-400 leading-5 max-h-[80px] overflow-y-auto pt-1"
+                        // onInput={handleInput}
                       />
+                      {/* <div className="top-0 left-0">
+                        Reply to @${postDetails?.User?.username}
+                      </div> */}
                     </div>
+                    {gif && (
+                      <div className="relative w-fit pl-5">
+                        <img
+                          src={gif}
+                          alt="preview"
+                          className="max-h-40 rounded-xl border border-gray-300 dark:border-gray-700"
+                        />
+                        {gif && (
+                          <button
+                            type="button"
+                            onClick={() => setGif(null)}
+                            className="absolute !cursor-pointer -top-2 -right-2 w-6 h-6 rounded-full bg-black/70 text-white text-xs flex items-center justify-center"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    )}
 
                     <div className=" flex flex-row pl-7 justify-between items-center">
                       <div></div>
-                      <div className="flex items-center justify-end gap-8 mr-7">
+                      <div className="flex items-center justify-end gap-6 mr-7">
                         <div className="right-3 text-xs text-gray-600 dark:text-gray-700">
                           {countWords(value)} / {MAX_WORDS} words
+                        </div>
+                        <div className="relative">
+                          <button
+                            ref={emojiBtnRef}
+                            onClick={toggleEmoji}
+                            className="text-lg  py-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                          >
+                            🙂
+                          </button>
+
+                          {openEmoji && (
+                            <div
+                              ref={popupRef}
+                              className="absolute right-0 bottom-12 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl rounded-lg p-3 flex flex-wrap gap-2 z-50"
+                            >
+                              {PROFESSIONAL_EMOJIS.map((emoji) => (
+                                <button
+                                  key={emoji}
+                                  onClick={() => insertEmoji(emoji)}
+                                  className="text-xl p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div
                           ref={wrapperRef}
@@ -666,31 +751,31 @@ export default function CommentPage() {
                           onChange={handleFileChange}
                         />
                         <button
-                          disabled={gif && String(value).trim().length <= 3}
+                          disabled={!hasText && !hasGif}
                           onClick={handleSend}
                           className={`
-                        py-1.5 px-4 w-16 flex items-center justify-center rounded-md
-                        text-sm font-semibold
-                        transition-all duration-200
-                        ${
-                          gif || String(value).trim().length > 3
-                            ? `
-                              bg-emerald-500
-                              text-black
-                              hover:bg-emerald-600
-                              active:scale-95
-                              cursor-pointer
-                              shadow-[0_4px_14px_rgba(34,197,94,0.45)]
-                            `
-                            : `
-                              bg-gray-300
-                              text-gray-500
-                              border border-gray-400 dark:bg-gray-600 dark:border-gray-700
-                              cursor-not-allowed
-                              shadow-none
-                            `
-                        }
-                      `}
+    py-1.5 px-4 w-16 flex items-center justify-center rounded-md
+    text-sm font-semibold
+    transition-all duration-200
+    ${
+      !hasText && !hasGif
+        ? `
+          bg-gray-300
+          text-gray-500
+          border border-gray-400 dark:bg-gray-600 dark:border-gray-700
+          cursor-not-allowed
+          shadow-none
+        `
+        : `
+          bg-emerald-500
+          text-black
+          hover:bg-emerald-600
+          active:scale-95
+          cursor-pointer
+          shadow-[0_4px_14px_rgba(34,197,94,0.45)]
+        `
+    }
+  `}
                         >
                           {isSendMessage ? (
                             <CircularProgress

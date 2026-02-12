@@ -288,7 +288,7 @@ export default function NotificationBell({ userId }) {
                           row?.postId == null ? null : redirectToPage(row)
                         }
                       >
-                        {row?.type}
+                        {row?.type.replace("_", " ")}
                       </div>
                       <div
                         onClick={() => {
@@ -299,8 +299,10 @@ export default function NotificationBell({ userId }) {
                       >
                         ({" "}
                         <span className="hover:underline">
-                          {row?.actor?.username}
-                        </span>{" "}
+                          {row?.actor?.username?.length > 7
+                            ? row.actor.username.slice(0, 6) + "..."
+                            : row?.actor?.username}
+                        </span>
                         )
                       </div>
                     </div>

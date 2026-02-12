@@ -56,6 +56,8 @@ interface IdeaTabsProps {
   handleComment: HandleComment;
   isLoader: boolean;
   handleUserDetails: (id: string) => void;
+  paginationLoader: boolean;
+  setMainTabs: (id: number) => void;
 }
 
 export default function IdeaTabs({
@@ -65,6 +67,8 @@ export default function IdeaTabs({
   handleComment,
   isLoader,
   handleUserDetails,
+  paginationLoader = false,
+  setMainTabs,
 }: IdeaTabsProps) {
   const [value, setValue] = React.useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -85,12 +89,25 @@ export default function IdeaTabs({
   const [myPost, setMyPost] = React.useState<PostFeeBack[]>([]);
   const [currentTabs, setCurrentTabs] = useState(0);
 
+  // pagination for the my feed start
+
+  const [offset, setOffset] = useState(0);
+  const [pagination, setPagination] = useState<any>({});
+  const [emptyData, setEmptyData] = useState([]);
+  const [isPaginationLoader, setIsPaginationLoader] = useState(false);
+
+  useEffect(() => {
+    currentTabs == 1 && setOffset(0);
+  }, [currentTabs]);
+  // pagination for the my feed end
+
   useEffect(() => {
     value == 0 && fetchPostList();
   }, [value]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    setMainTabs(newValue);
   };
 
   const getListOfPost = useCallback(async () => {
@@ -258,22 +275,76 @@ export default function IdeaTabs({
     };
   }, []);
 
-  const fetchMyAllPost = async () => {
-    try {
-      const response = await getMyAllPost("");
+  const fetchMyAllPost = async (newOffset = offset) => {
+    setIsPaginationLoader(true);
 
-      if (response.feed?.length > 0) {
-        setMyPost(response?.feed);
+    try {
+      const [response] = await Promise.all([
+        getMyAllPost("", 4, newOffset),
+        delay(500),
+      ]);
+
+      const newItem = response?.feed?.posts ?? [];
+      setEmptyData(newItem);
+      setPagination(response.feed);
+      if (response.feed?.posts?.length > 0) {
+        setMyPost((prev: any[]) => {
+          if (newOffset === 0) return newItem;
+
+          const map = new Map();
+          prev.forEach((item) => map.set(item.id, item));
+          newItem.forEach((item) => map.set(item.id, item));
+
+          return Array.from(map.values());
+        });
       } else {
-        setMyPost([]);
+        newOffset === 0 && setMyPost([]);
       }
     } catch {
-      setMyPost([]);
+      newOffset === 0 && setMyPost([]);
+    } finally {
+      setIsPaginationLoader(false);
     }
   };
   React.useEffect(() => {
-    currentTabs == 1 && fetchMyAllPost();
+    if (currentTabs == 1) {
+      setEmptyData([]);
+      fetchMyAllPost(0);
+    }
   }, [currentTabs]);
+
+  console.log(value, currentTabs, emptyData, "currentTabs");
+
+  useEffect(() => {
+    if (currentTabs != 1) {
+      return;
+    }
+    if (value == 1 && emptyData?.length === 0) {
+      return;
+    }
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= fullHeight - 200) {
+        if (!isLoader && pagination?.limit) {
+          const newOffset =
+            (pagination?.offset || 0) + (pagination?.limit || 12);
+
+          // ✅ stop duplicate calls
+          if (newOffset > offset) {
+            setOffset(newOffset);
+            fetchMyAllPost(newOffset);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pagination?.offset, pagination?.limit, isLoader, offset]);
+
   return (
     <Box
       style={{ position: "relative", zIndex: "10" }}
@@ -465,6 +536,7 @@ export default function IdeaTabs({
               setCurrentTabs={setCurrentTabs}
               myPost={[]}
               setMyPost={() => null}
+              paginationLoader={paginationLoader}
             />
           </div>
         </div>
@@ -534,43 +606,6 @@ export default function IdeaTabs({
             </p>
           </div>
         )}
-        {/* 
-        <div className="p-3 border-b dark:border-gray-700 border-gray-200">
-          <div className="flex justify-between">
-            <div className="md:flex justify-start gap-4">
-              <div>
-                {" "}
-                <Image
-                  src="/img/nick.jpg"
-                  alt="user"
-                  width={70}
-                  height={70}
-                  className="rounded-md mt-1"
-                />
-              </div>
-              <div>
-                <p className="dark:text-gray-400 text-gray-800 text-sm">
-                  Majchrzak vs Opelka
-                </p>
-                <p className="text-md mt-4">
-                  <Link href="/">
-                    <span className="cursor-pointer text-[#c8aa76]">
-                      Bought YES:{" "}
-                      <span className="dark:text-gray-200 text-gray-800">
-                        Reilly Opelka
-                      </span>{" "}
-                    </span>
-                  </Link>
-                </p>
-                <p className="text-sm dark:text-gray-500 text-gray-600">
-                  100 contracts (28
-                  <FaCentSign className="inline-block text-xs" />)
-                </p>
-              </div>
-            </div>
-            <div className="dark:text-gray-500 text-gray-400 text-sm">2m</div>
-          </div>
-        </div> */}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <div className="">
@@ -726,6 +761,7 @@ export default function IdeaTabs({
               setCurrentTabs={setCurrentTabs}
               myPost={myPost}
               setMyPost={setMyPost}
+              paginationLoader={isPaginationLoader}
             />
           </div>
         </div>

@@ -4,7 +4,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { useTheme } from "next-themes";
-import { prepareSeries } from "@/utils/Content";
+import { BASE_COLORS, prepareSeries } from "@/utils/Content";
 import { RawSeries } from "@/utils/typesInterface";
 
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -14,18 +14,6 @@ interface StackedAreaChartProps {
   timeIntervalValue: string;
   setTimeIntervalValue: (value: string) => void;
 }
-const BASE_COLORS = [
-  "#008FFB",
-  "#00E396",
-  "#FEB019",
-  "#FF4560",
-  "#775DD0",
-  "#3F51B5",
-  "#546E7A",
-  "#D4526E",
-  "#8D5B4C",
-  "#F86624",
-];
 
 const StackedAreaChart = ({
   data = [],

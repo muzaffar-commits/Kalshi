@@ -32,7 +32,7 @@ import {
   SocketTradePayload,
   UserDetailsRootState,
 } from "@/utils/typesInterface";
-import { delay, truncateValue } from "@/utils/Content";
+import { BASE_COLORS, delay, truncateValue } from "@/utils/Content";
 import OrderList from "./component/OrderList";
 import StackedAreaChart from "./component/realTimeChart";
 import IdeasActivityTabs from "./component/ideaComment";
@@ -451,9 +451,9 @@ const Details = ({ marketId }) => {
         <div>
           <div className="max-w-[1268px] mx-auto px-4 md:mt-18 mt-6">
             <div className="container mx-auto pb-6">
-              <div className="flex mb-6">
+              <div className="flex md:mb-6">
                 {commentImages?.imageUrl && (
-                  <div className="p-0.5  dark:bg-gray-600 rounded-lg w-fit mr-2">
+                  <div className=" h-16 w-16 flex items-center justify-center   dark:bg-gray-600 rounded mr-2">
                     <Image
                       src={
                         commentImages?.imageUrl || "/img/opinionLogo-light.png"
@@ -472,24 +472,17 @@ const Details = ({ marketId }) => {
                   <p className="text-sm text-[#7F90A7] dark:text-gray-300">
                     $ {truncateValue(Number(currentVolume || 0)) || 0} Vol.
                   </p>
-                  <div className="lg:flex flex-wrap space-x-4 mt-1 text-sm">
+
+                  <div className="hidden md:block lg:flex flex-wrap space-x-4 mt-1 text-sm">
                     {data?.options?.map((item: OptionItem, index: number) => (
                       <div key={index} className=" text-wrap items-center">
                         <span
-                          className={`rounded-full ${
-                            index === 0
-                              ? "bg-red-700 "
-                              : index === 1
-                                ? "bg-blue-500 "
-                                : index === 2
-                                  ? "bg-green-500 "
-                                  : index === 3
-                                    ? "bg-purple-600 "
-                                    : index === 4
-                                      ? "bg-yellow-700 "
-                                      : "bg-pink-500"
-                          } inline-block mr-2`}
-                          style={{ width: "10px", height: "10px" }}
+                          className={`rounded-full  inline-block mr-2`}
+                          style={{
+                            width: "10px",
+                            height: "10px",
+                            background: BASE_COLORS[index],
+                          }}
                         ></span>
                         <span className="text-[#7F90A7] font-semibold dark:text-gray-300">
                           {item?.name || "--"},{" "}
@@ -499,6 +492,24 @@ const Details = ({ marketId }) => {
                     ))}
                   </div>
                 </div>
+              </div>
+              <div className="flex md:hidden mb-6 flex-wrap space-x-2 text-sm">
+                {data?.options?.map((item: OptionItem, index: number) => (
+                  <div key={index} className=" text-wrap items-center">
+                    <span
+                      className={`rounded-full  inline-block mr-2`}
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        background: BASE_COLORS[index],
+                      }}
+                    ></span>
+                    <span className="text-[#7F90A7] font-semibold dark:text-gray-300">
+                      {item?.name || "--"},{" "}
+                      {truncateValue(item?.price * 100, 1)} %
+                    </span>
+                  </div>
+                ))}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-visible">
