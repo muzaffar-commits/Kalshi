@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
 import Box from "@mui/material/Box";
-import Dropdown from "@/components/popupDropdown/page";
+import Dropdown from "@/components/Modal/popupDropdown/page";
 import BlockImg from "../../../../public/img/blockimg1.jpg";
 import {
   getCommonQuoteSell,
@@ -435,10 +435,6 @@ export default function BuySell({
   const MIN = 0;
   const MAX = 1;
   const STEP = 0.1;
-
-  console.log(totalCurrentBalance, "totalCurrentBalance");
-
-  console.log(totalCurrentShare, "orderType");
 
   const handleSetValue = (currentValue) => {
     setPercentageValue(currentValue);

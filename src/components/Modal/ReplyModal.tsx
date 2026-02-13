@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, Box, IconButton, CircularProgress } from "@mui/material";
 import Image from "next/image";
@@ -9,12 +11,13 @@ import {
   MAX_WORDS,
   timeAgoCompact,
 } from "@/utils/Content";
-import { PROFESSIONAL_EMOJIS } from "@/components/content";
 import { GrCloudUpload } from "react-icons/gr";
 import { Gift } from "lucide-react";
 import { imageUpload } from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
 import GiphyModal from "./GiphyModal";
+import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
+import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
 
 export default function ReplyModal({
@@ -27,63 +30,115 @@ export default function ReplyModal({
   setMixText,
   gif,
   setGif,
-}) {
-  const textareaRef = useRef(null);
-  const emojiBtnRef = useRef(null);
-  const popupRef = useRef(null);
-  const wrapperRef = useRef(null);
-  const dropdownRef = useRef(null);
-  const fileInputRef = useRef(null);
-  const { theme } = useTheme();
+}: any) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const emojiBtnRef = useRef<HTMLButtonElement | null>(null);
+  const popupRef = useRef<HTMLDivElement | null>(null);
+
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [openEmoji, setOpenEmoji] = useState(false);
+  const [emojiPos, setEmojiPos] = useState<{ top: number; left: number }>({
+    top: 0,
+    left: 0,
+  });
+
+  const [isMobile, setIsMobile] = useState(false);
 
   const [imageLoading, setImageLoading] = useState(true);
   const [isImageUploadLoader, setIsImageUploadLoader] = useState(false);
   const [showUploadMenu, setShowUploadMenu] = useState(false);
   const [isGifOpen, setIsGifOpen] = useState(false);
+  const { theme, resolvedTheme } = useTheme();
+  const pickerTheme: Theme =
+    resolvedTheme === "dark" ? Theme.DARK : Theme.LIGHT;
+  // Detect mobile responsively
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640); // tailwind sm breakpoint
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Auto textarea resize
-  const handleInput = (e) => {
-    const el = e.target;
+  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const el = e.currentTarget;
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 80) + "px";
   };
 
-  // Toggle emoji
-  const toggleEmoji = (e) => {
+  // Toggle emoji (desktop = anchored, mobile = bottom sheet)
+  const toggleEmoji = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!emojiBtnRef.current) return;
+
+    // Mobile: just open/close bottom sheet (no coords needed)
+    if (typeof window !== "undefined" && window.innerWidth < 640) {
+      setOpenEmoji((p) => !p);
+      return;
+    }
+
+    // Desktop: position near button
+    const btn = emojiBtnRef.current;
+    if (!btn) return;
+
+    const r = btn.getBoundingClientRect();
+
+    const pickerWidth = 350;
+    const pickerHeight = 420;
+
+    let left = r.right;
+    let top = r.bottom + 8;
+
+    // If out bottom -> show above
+    if (top + pickerHeight > window.innerHeight) {
+      top = r.top - 8;
+    }
+
+    // If out left -> shift
+    if (left - pickerWidth < 8) {
+      left = r.left + pickerWidth;
+    }
+
+    setEmojiPos({ top, left });
     setOpenEmoji((prev) => !prev);
   };
 
-  // Insert emoji
-  const insertEmoji = (emoji) => {
+  // Insert emoji at cursor
+  const insertEmoji = (emojiData: EmojiClickData) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
+    const start = textarea.selectionStart ?? mixText.length;
+    const end = textarea.selectionEnd ?? mixText.length;
 
-    const text = mixText.substring(0, start) + emoji + mixText.substring(end);
+    const text =
+      mixText.substring(0, start) + emojiData.emoji + mixText.substring(end);
 
     setMixText(text);
 
-    setTimeout(() => {
-      textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+    requestAnimationFrame(() => {
       textarea.focus();
-    }, 0);
+      const pos = start + emojiData.emoji.length;
+      textarea.selectionStart = pos;
+      textarea.selectionEnd = pos;
+    });
   };
 
-  // Close emoji on outside click
+  // Close emoji on outside click (works for desktop popover + mobile sheet)
   useEffect(() => {
     if (!openEmoji) return;
 
-    const handleOutside = (e) => {
+    const handleOutside = (e: any) => {
+      const target = e.target as Node;
+
       if (
         popupRef.current &&
-        !popupRef.current.contains(e.target) &&
+        !popupRef.current.contains(target) &&
         emojiBtnRef.current &&
-        !emojiBtnRef.current.contains(e.target)
+        !emojiBtnRef.current.contains(target)
       ) {
         setOpenEmoji(false);
       }
@@ -102,12 +157,14 @@ export default function ReplyModal({
   useEffect(() => {
     if (!showUploadMenu) return;
 
-    const handleOutside = (e) => {
+    const handleOutside = (e: any) => {
+      const target = e.target as Node;
+
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(e.target) &&
+        !dropdownRef.current.contains(target) &&
         wrapperRef.current &&
-        !wrapperRef.current.contains(e.target)
+        !wrapperRef.current.contains(target)
       ) {
         setShowUploadMenu(false);
       }
@@ -123,19 +180,21 @@ export default function ReplyModal({
   }, [showUploadMenu]);
 
   // Image upload
-  const chooseImages = async (file) => {
+  const chooseImages = async (file: File) => {
     setIsImageUploadLoader(true);
     try {
       const formData = new FormData();
       formData.append("images", file);
+
       const [response] = await Promise.all([
         imageUpload(formData),
         delay(1000),
       ]);
+
       if (response?.success) {
         setGif(response?.data?.[0]?.url);
       } else {
-        toast.error(response?.message);
+        toast.error(response?.message || "Upload failed");
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -144,23 +203,22 @@ export default function ReplyModal({
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     chooseImages(file);
   };
-  // const commentDetails = open && JSON.parse(row?.metadata || "{}");
+
   const commentDetails = (() => {
     if (!row?.metadata) return null;
-    if (typeof row?.metadata === "object") {
-      return row?.metadata;
-    }
+    if (typeof row?.metadata === "object") return row?.metadata;
     try {
       return JSON.parse(row?.metadata);
     } catch (e) {
       return null;
     }
   })();
+
   const handleClose = () => {
     setIsGifOpen(false);
     setShowUploadMenu(false);
@@ -172,12 +230,86 @@ export default function ReplyModal({
     handleSend(row, mixText, gif);
   };
 
-  const isDisabled = getCleanTextLength(mixText) < 3;
+  const isDisabled = getCleanTextLength(mixText) < 2;
+
+  const emojiPortal =
+    openEmoji &&
+    typeof window !== "undefined" &&
+    createPortal(
+      <div
+        ref={popupRef}
+        style={{
+          position: "fixed",
+          zIndex: 999999,
+          ...(isMobile
+            ? {
+                left: 0,
+                right: 0,
+                bottom: 0,
+                top: "auto",
+                transform: "none",
+                padding: 12,
+              }
+            : {
+                top: emojiPos.top,
+                left: emojiPos.left,
+                transform:
+                  emojiPos.top <
+                  (emojiBtnRef.current?.getBoundingClientRect().top || 0)
+                    ? "translate(-100%, -100%)" // shown above
+                    : "translateX(-100%)", // shown below
+              }),
+        }}
+      >
+        {isMobile && (
+          <div
+            onClick={() => setOpenEmoji(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.35)",
+              zIndex: -1,
+            }}
+          />
+        )}
+
+        <div
+          className={
+            isMobile
+              ? "w-full max-w-[520px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0F172A]"
+              : "rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0F172A]"
+          }
+        >
+          {isMobile && (
+            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                Emojis
+              </span>
+              <button
+                onClick={() => setOpenEmoji(false)}
+                className="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center"
+                type="button"
+              >
+                <IoClose className="text-gray-700 dark:text-gray-200" />
+              </button>
+            </div>
+          )}
+
+          <EmojiPicker
+            onEmojiClick={insertEmoji}
+            width={isMobile ? "100%" : 350}
+            theme={pickerTheme}
+          />
+        </div>
+      </div>,
+      document.body,
+    );
+
   return (
     <Modal
       className="m-2"
       BackdropProps={{
-        timeout: 500, // ✅ backdrop open/close duration
+        timeout: 500,
         sx: {
           backdropFilter: "blur(10px)",
           backgroundColor:
@@ -231,6 +363,7 @@ export default function ReplyModal({
             <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
               {commentDetails?.content || "--"}
             </p>
+
             {commentDetails?.images?.length > 0 && (
               <div className="bg-green-100 p-2 w-fit rounded shadow">
                 <Image
@@ -245,7 +378,7 @@ export default function ReplyModal({
             <p className="text-xs text-gray-400 mt-2">
               Replying to{" "}
               <span className="text-teal-500">
-                {row?.User?.username || "--"}
+                @{row?.User?.username || "--"}
               </span>
             </p>
           </div>
@@ -259,9 +392,7 @@ export default function ReplyModal({
             value={mixText}
             onChange={(e) => {
               const value = e.target.value;
-              if (countWords(value) <= MAX_WORDS) {
-                setMixText(value);
-              }
+              if (countWords(value) <= MAX_WORDS) setMixText(value);
             }}
             placeholder="Enter the reply..."
             className="w-full resize-none bg-transparent outline-none text-[15px] text-gray-600 dark:text-gray-100 placeholder-gray-400 leading-5 max-h-[80px] overflow-y-auto pt-1"
@@ -270,21 +401,12 @@ export default function ReplyModal({
 
           {gif && (
             <div className="relative w-fit mt-2 mb-4">
-              {/* Loader */}
               {imageLoading && (
-                <div
-                  className="
-          absolute inset-0 z-10
-          flex items-center justify-center
-          rounded-xl
-          bg-black/30
-        "
-                >
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/30">
                   <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 </div>
               )}
 
-              {/* Image */}
               <Image
                 src={gif}
                 alt="gif"
@@ -296,18 +418,13 @@ export default function ReplyModal({
                 onLoadingComplete={() => setImageLoading(false)}
               />
 
-              {/* Remove Button */}
               <button
                 onClick={() => {
                   setGif(null);
                   setImageLoading(true);
                 }}
-                className="
-        absolute cursor-pointer top-1 right-1 z-20
-        bg-black/70 text-white
-        rounded-full w-6 h-6
-        flex items-center justify-center text-xs
-      "
+                className="absolute cursor-pointer top-1 right-1 z-20 bg-black/70 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                type="button"
               >
                 <IoClose />
               </button>
@@ -319,11 +436,16 @@ export default function ReplyModal({
         <div className="flex items-center justify-between relative">
           <div className="flex items-center gap-4">
             {/* Upload dropdown */}
-            <div ref={wrapperRef} className="relative">
+            <div className="relative" ref={wrapperRef}>
               <button
                 disabled={gif || isImageUploadLoader}
                 onClick={() => setShowUploadMenu((p) => !p)}
-                className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700" : "text-gray-500 cursor-pointer hover:text-[#d2b8fa]"}`}
+                className={`text-sm relative font-medium ${
+                  gif || isImageUploadLoader
+                    ? "text-gray-400 dark:text-gray-700"
+                    : "text-gray-500 cursor-pointer hover:text-[#d2b8fa]"
+                }`}
+                type="button"
               >
                 {isImageUploadLoader ? (
                   <CircularProgress size={18} />
@@ -344,6 +466,7 @@ export default function ReplyModal({
                     setShowUploadMenu(false);
                   }}
                   className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+                  type="button"
                 >
                   <GrCloudUpload /> Image
                 </button>
@@ -354,6 +477,7 @@ export default function ReplyModal({
                     setShowUploadMenu(false);
                   }}
                   className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+                  type="button"
                 >
                   <Gift size={18} /> GIF
                 </button>
@@ -369,32 +493,14 @@ export default function ReplyModal({
             </div>
 
             {/* Emoji */}
-            <div className="relative">
-              <button
-                ref={emojiBtnRef}
-                onClick={toggleEmoji}
-                className="text-lg px-2 py-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
-              >
-                🙂
-              </button>
-
-              {openEmoji && (
-                <div
-                  ref={popupRef}
-                  className="absolute right-0 bottom-12 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl rounded-lg p-3 flex flex-wrap gap-2 z-50"
-                >
-                  {PROFESSIONAL_EMOJIS.map((emoji) => (
-                    <button
-                      key={emoji}
-                      onClick={() => insertEmoji(emoji)}
-                      className="text-xl p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <button
+              ref={emojiBtnRef}
+              onClick={toggleEmoji}
+              className="text-lg px-2 py-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+              type="button"
+            >
+              🙂
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
@@ -405,12 +511,13 @@ export default function ReplyModal({
               disabled={isDisabled}
               onClick={handleSubmit}
               className={`px-4 py-2 w-20 flex items-center justify-center rounded-lg text-sm font-medium
-  transition-colors duration-300
-  ${
-    isDisabled
-      ? "bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400"
-      : "bg-black text-white cursor-pointer dark:bg-white dark:text-black"
-  }`}
+              transition-colors duration-300
+              ${
+                isDisabled
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400"
+                  : "bg-black text-white cursor-pointer dark:bg-white dark:text-black"
+              }`}
+              type="button"
             >
               {isLoader ? (
                 <CircularProgress
@@ -423,7 +530,11 @@ export default function ReplyModal({
             </button>
           </div>
         </div>
-        {/* isLoader */}
+
+        {/* Emoji Portal (Responsive) */}
+        {emojiPortal}
+
+        {/* GIF Modal */}
         <GiphyModal
           open={isGifOpen}
           onClose={() => setIsGifOpen(false)}

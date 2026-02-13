@@ -431,7 +431,7 @@ const Details = ({ marketId }) => {
   //   : "";
   const metaData = { imageUrl: "" };
 
-  const commentImages = (() => {
+  const questionImages = (() => {
     if (!data?.question?.metadata) return null;
     if (typeof data?.question?.metadata === "object") {
       return data?.question?.metadata;
@@ -443,6 +443,13 @@ const Details = ({ marketId }) => {
     }
   })();
 
+  const handleLoginCheck = () => {
+    if (!getToken) {
+      setIsOpen(true);
+      return;
+    }
+  };
+
   return (
     <div>
       {isLoader ? (
@@ -452,11 +459,11 @@ const Details = ({ marketId }) => {
           <div className="max-w-[1268px] mx-auto px-4 md:mt-18 mt-6">
             <div className="container mx-auto pb-6">
               <div className="flex md:mb-6">
-                {commentImages?.imageUrl && (
+                {questionImages?.imageUrl && (
                   <div className=" h-16 w-16 flex items-center justify-center   dark:bg-gray-600 rounded mr-2">
                     <Image
                       src={
-                        commentImages?.imageUrl || "/img/opinionLogo-light.png"
+                        questionImages?.imageUrl || "/img/opinionLogo-light.png"
                       }
                       alt="NYC Flag"
                       width={80}
@@ -610,7 +617,11 @@ const Details = ({ marketId }) => {
                     </div> */}
 
                     <div className="mt-5 md:mt-10">
-                      <IdeasActivityTabs marketId={marketId} />
+                      <IdeasActivityTabs
+                        marketId={marketId}
+                        handleLoginCheck={handleLoginCheck}
+                        token={getToken}
+                      />
                     </div>
                   </div>
                 </div>

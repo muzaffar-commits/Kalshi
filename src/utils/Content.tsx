@@ -96,24 +96,64 @@ function escapeHtml(str: string) {
     .replace(/'/g, "&#039;");
 }
 
+// export function HighlightTexts({ text }: { text: string }) {
+//   if (!text) return null;
+
+//   const escaped = escapeHtml(text);
+
+//   const withBreaks = escaped
+//     .replace(/\n/g, "<br/>")
+//     .replace(/ {2}/g, " &nbsp;");
+
+//   const mentionRegex = /(^|[\s(>])(@[a-zA-Z0-9_.]{1,30})/g;
+//   const hashRegex = /(^|[\s(>])(#[_a-zA-Z0-9]{1,50})/g;
+//   const urlRegex = /(^|[\s(>])((https?:\/\/|www\.)[^\s<]+[^<.,:;"')\]\s])/gi;
+
+//   const highlightedHtml = withBreaks
+//     .replace(
+//       urlRegex,
+//       `$1<span class="text-blue-500 text-sm dark:text-blue-400 underline font-medium">$2</span>`,
+//     )
+//     .replace(
+//       mentionRegex,
+//       `$1<span class="text-emerald-500 dark:text-emerald-400 font-medium">$2</span>`,
+//     )
+//     .replace(
+//       hashRegex,
+//       `$1<span class="text-sky-500 dark:text-sky-400 font-medium">$2</span>`,
+//     );
+
+//   return (
+//     <span
+//       className="text-[15px] leading-relaxed whitespace-pre-wrap break-words"
+//       dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+//     />
+//   );
+// }
+
 export function HighlightTexts({ text }: { text: string }) {
   if (!text) return null;
 
   const escaped = escapeHtml(text);
 
+  // ✅ only keep real line breaks (no extra whitespace handling in CSS)
   const withBreaks = escaped
     .replace(/\n/g, "<br/>")
-    .replace(/ {2}/g, " &nbsp;");
+    .replace(/ {2,}/g, (m) => "&nbsp;".repeat(m.length)); // keep multiple spaces only
 
   const mentionRegex = /(^|[\s(>])(@[a-zA-Z0-9_.]{1,30})/g;
   const hashRegex = /(^|[\s(>])(#[_a-zA-Z0-9]{1,50})/g;
   const urlRegex = /(^|[\s(>])((https?:\/\/|www\.)[^\s<]+[^<.,:;"')\]\s])/gi;
 
   const highlightedHtml = withBreaks
-    .replace(
-      urlRegex,
-      `$1<span class="text-blue-500 text-sm dark:text-blue-400 underline font-medium">$2</span>`,
-    )
+    .replace(urlRegex, (_match, p1, p2) => {
+      const href = p2.toLowerCase().startsWith("www.") ? `https://${p2}` : p2;
+
+      return `${p1}<a href="${href}" target="_blank" rel="noopener noreferrer"
+        class="text-blue-500 dark:text-blue-400 underline font-medium break-words">
+        ${p2}
+      </a>`;
+    })
     .replace(
       mentionRegex,
       `$1<span class="text-emerald-500 dark:text-emerald-400 font-medium">$2</span>`,
@@ -125,7 +165,7 @@ export function HighlightTexts({ text }: { text: string }) {
 
   return (
     <span
-      className="text-[15px] leading-relaxed whitespace-pre-wrap break-words"
+      className="text-[15px] leading-snug break-words whitespace-normal"
       dangerouslySetInnerHTML={{ __html: highlightedHtml }}
     />
   );

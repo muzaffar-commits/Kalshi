@@ -58,7 +58,9 @@ export default function MarketCard({ data = [], handleBuySell }) {
           after:border-l-transparent after:border-r-transparent
           after:border-b-gray-200 dark:after:border-b-gray-700
         `
-        : `
+        : !getToken
+          ? ""
+          : `
           /* ARROW DOWN */
           after:bottom-[-8px]
           after:border-l-[8px] after:border-r-[8px] after:border-t-[8px]
@@ -130,14 +132,8 @@ export default function MarketCard({ data = [], handleBuySell }) {
                     </button>
                   </div>
                 </div>
-                {/* LEFT */}
 
-                {/* MID */}
                 <div> </div>
-
-                {/* RIGHT */}
-
-                {/* ACTION BUTTONS */}
               </div>
             </div>
 

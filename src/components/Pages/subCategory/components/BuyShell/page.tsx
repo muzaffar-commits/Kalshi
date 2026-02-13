@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import Dropdown from "@/components/popupDropdown/page";
+import Dropdown from "@/components/Modal/popupDropdown/page";
 import BlockImg from "../../../../../../public/img/blockimg1.jpg";
 import { Minus, Plus } from "lucide-react";
 import {

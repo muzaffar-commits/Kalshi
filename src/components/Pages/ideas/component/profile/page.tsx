@@ -35,31 +35,83 @@ export default function Profile({ targetId }: { targetId: string }) {
   const targetIds = targetId ? targetId : userId;
   const [isFollow, setIsFollow] = useState(false);
   const [myPost, setMyPost] = useState<PostFeeBack[]>([]);
+
+  //pagination start
+  const [offset, setOffset] = React.useState(0);
+  const [pagination, setPagination] = React.useState<any>({});
+  const [emptyData, setEmptyData] = React.useState([]);
+  const [isPaginationLoader, setIsPaginationLoader] = React.useState(false);
+  // pagination end
+
   const isUsers = targetId == userId ? true : false;
-  const getListOfPost = useCallback(async () => {
-    setIsLoader(true);
+
+  const getListOfPost = async (newOffset = offset) => {
+    if (newOffset == 0) {
+      setIsLoader(true);
+    } else {
+      setIsPaginationLoader(true);
+    }
     try {
       const [response] = await Promise.all([
-        getUsersAllDetails(targetIds),
+        getUsersAllDetails(targetIds, 10, newOffset),
         delay(1000),
       ]);
+
+      const postDetails = response?.data?.[2] ?? [];
+      setEmptyData(postDetails);
+      setPagination(response.data?.[3] || {});
       if (response?.success) {
-        const postDetails = response?.data?.[2] ?? [];
-        setFollowingData(response.data ?? []);
-        setMyPost(postDetails);
+        newOffset == 0 && setFollowingData(response.data ?? []);
+
+        setMyPost((prev: any[]) => {
+          if (newOffset === 0) return postDetails;
+          const map = new Map();
+          prev.forEach((item) => map.set(item.id, item));
+          postDetails.forEach((item) => map.set(item.id, item));
+
+          return Array.from(map.values());
+        });
       } else {
-        setFollowingData([]);
+        newOffset === 0 && setFollowingData([]);
       }
     } catch {
-      setFollowingData([]);
+      newOffset === 0 && setFollowingData([]);
     } finally {
       setIsLoader(false);
+      setIsPaginationLoader(false);
     }
-  }, [targetIds, userId]);
+  };
 
   useEffect(() => {
-    getListOfPost();
-  }, [getListOfPost]);
+    getListOfPost(0);
+  }, [targetIds, userId]);
+
+  React.useEffect(() => {
+    if (emptyData?.length === 0) {
+      return;
+    }
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + windowHeight >= fullHeight - 200) {
+        if (!isPaginationLoader && pagination?.limit) {
+          const newOffset =
+            (pagination?.offset || 0) + (pagination?.limit || 12);
+
+          // ✅ stop duplicate calls
+          if (newOffset > offset) {
+            setOffset(newOffset);
+            getListOfPost(newOffset);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pagination?.offset, pagination?.limit, isPaginationLoader, offset]);
 
   const joinedDate = userDetails?.user?.createdAt
     ? new Date(userDetails.user.createdAt).toLocaleDateString("en-CA")
@@ -330,6 +382,9 @@ export default function Profile({ targetId }: { targetId: string }) {
                   handleBookMarkOrUnBookMark={handleBookMarkOrUnBookMark}
                   handleLikeUnlike={handleLikeUnlike}
                   setAllPosts={null}
+                  handleLoginCheck={null}
+                  token=""
+                  isPaginationLoader={isPaginationLoader}
                 />
               ) : (
                 <div className="py-12 flex flex-col items-center justify-center text-center gap-3">

@@ -75,8 +75,6 @@ export default function FollowingFollowerList({
     isOpen && fetchFollowing(0);
   }, [isOpen, userId, activeTab]);
 
-  console.log(emptyData, "emptyData");
-
   useEffect(() => {
     if (emptyData?.length === 0) return;
     const el = listRef.current;

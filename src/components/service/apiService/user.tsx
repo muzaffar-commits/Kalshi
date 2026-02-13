@@ -179,10 +179,14 @@ export const replyComments = async (reqBody: unknown) => {
     };
   }
 };
-export const getUsersAllDetails = async (id: string) => {
+export const getUsersAllDetails = async (
+  id: string,
+  limit = 10,
+  offset = 0,
+) => {
   try {
     const response = await apiInstance.get(
-      `${API_URLs.getProfileListAllUser}${id ? `?targetId=${id}` : ""}`,
+      `${API_URLs.getProfileListAllUser}?limit=${limit}&offset=${offset}${id ? `&targetId=${id}` : ""}`,
     );
     return response?.data;
   } catch (error: unknown) {

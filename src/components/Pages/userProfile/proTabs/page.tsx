@@ -145,8 +145,6 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
     value == 2 && fetchMyAllPost();
   }, [value]);
 
-  console.log(emptyData, "emptyData");
-
   React.useEffect(() => {
     if (value == 2 && emptyData?.length === 0) {
       return;
@@ -464,6 +462,8 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
             handleLikeUnlike={handleLikeUnlike}
             setAllPosts={null}
             isPaginationLoader={isPaginationLoader}
+            handleLoginCheck={null}
+            token=""
           />
         ) : (
           <div className="py-12 flex flex-col items-center justify-center text-center gap-3">

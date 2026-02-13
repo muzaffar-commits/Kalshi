@@ -89,8 +89,6 @@ const Ideas = () => {
   //   }
   // };
 
-  console.log(mainTabs, "mainTabs");
-
   useEffect(() => {
     if (mainTabs > 0 || emptyData?.length === 0) {
       return;

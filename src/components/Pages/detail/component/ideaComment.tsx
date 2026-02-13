@@ -17,10 +17,14 @@ import { countWords, delay, MAX_WORDS } from "@/utils/Content";
 import { FaRegCommentAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import PostList from "./postList";
-import GiphyModal from "./postList/GiphyModal";
+import GiphyModal from "../../../Modal/GiphyModal";
 import { GrCloudUpload } from "react-icons/gr";
 
-export default function IdeasActivityTabs({ marketId }) {
+export default function IdeasActivityTabs({
+  marketId,
+  handleLoginCheck,
+  token,
+}) {
   const [activeTab, setActiveTab] = useState("ideas");
   const [open, setOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -321,7 +325,9 @@ export default function IdeasActivityTabs({ marketId }) {
           {/* Tabs */}
           <div className="flex items-center gap-6 text-lg font-medium">
             <button
-              onClick={() => setActiveTab("ideas")}
+              onClick={() =>
+                token ? setActiveTab("ideas") : handleLoginCheck()
+              }
               className={`pb-1 ${
                 activeTab === "ideas"
                   ? "dark:text-white text-black border-b-2 dark:border-white/60 border-black"
@@ -332,7 +338,9 @@ export default function IdeasActivityTabs({ marketId }) {
             </button>
 
             <button
-              onClick={() => setActiveTab("activity")}
+              onClick={() =>
+                token ? setActiveTab("activity") : handleLoginCheck()
+              }
               className={`pb-1 ${
                 activeTab === "activity"
                   ? "dark:text-white text-black border-b-2 dark:border-white/60 border-black"
@@ -378,7 +386,9 @@ export default function IdeasActivityTabs({ marketId }) {
             {/* {activeTab === "activity" && ( */}
             <div className="relative">
               <button
-                onClick={handleRedirectAllPost}
+                onClick={() =>
+                  token ? handleRedirectAllPost() : handleLoginCheck()
+                }
                 className=" flex items-center gap-2
       relative cursor-pointer
       px-4 pt-2 pb-1 rounded-full
@@ -432,7 +442,11 @@ export default function IdeasActivityTabs({ marketId }) {
                       <button
                         disabled={gif || isImageUploadLoader ? true : false}
                         type="button"
-                        onClick={() => setShowUploadMenu((prev) => !prev)}
+                        onClick={() =>
+                          token
+                            ? setShowUploadMenu((prev) => !prev)
+                            : handleLoginCheck()
+                        }
                         className={`text-sm relative font-medium ${gif || isImageUploadLoader ? "text-gray-400 dark:text-gray-700" : "text-gray-500 cursor-pointer hover:text-[#d2b8fa]"}`}
                       >
                         {isImageUploadLoader && (
@@ -500,7 +514,9 @@ export default function IdeasActivityTabs({ marketId }) {
                     </div>
                     <button
                       disabled={gif && String(message).trim().length <= 3}
-                      onClick={postUserMessage}
+                      onClick={() =>
+                        token ? postUserMessage() : handleLoginCheck()
+                      }
                       className={`
                                     py-1 px-4 w-16 flex items-center justify-center rounded-md
                                     text-lg font-semibold
@@ -546,6 +562,8 @@ export default function IdeasActivityTabs({ marketId }) {
                   handleLikeUnlike={handleLikeUnlike}
                   setAllPosts={setAllPosts}
                   isPaginationLoader={false}
+                  handleLoginCheck={handleLoginCheck}
+                  token={token}
                 />
               ) : (
                 <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
@@ -595,6 +613,8 @@ export default function IdeasActivityTabs({ marketId }) {
                 handleLikeUnlike={handleLikeUnlike}
                 setAllPosts={setAllPosts}
                 isPaginationLoader={false}
+                handleLoginCheck={handleLoginCheck}
+                token={token}
               />
             ) : (
               <div className="py-12 flex flex-col items-center justify-center text-center gap-3">

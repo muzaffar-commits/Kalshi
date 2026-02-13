@@ -8,13 +8,13 @@ import { CommentListSkeleton } from "@/utils/customSkeleton";
 import { CommentInterface, IReply } from "@/utils/typesInterface";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { FaBookmark } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
-import ReplyModal from "./ReplyModal";
+import ReplyModal from "../../../../Modal/ReplyModal";
 import SubComment from "@/components/Modal/SubComment";
 import ViewImage from "@/components/common/ViewImage";
 import { CircularProgress } from "@mui/material";
@@ -26,6 +26,8 @@ interface PostListProps {
   handleBookMarkOrUnBookMark?: any;
   setAllPosts: any;
   isPaginationLoader: boolean;
+  token: string;
+  handleLoginCheck: any;
 }
 
 interface CommentState {
@@ -42,13 +44,14 @@ export default function PostList({
   handleBookMarkOrUnBookMark = () => {},
   setAllPosts = () => {},
   isPaginationLoader = false,
+  token = "",
+  handleLoginCheck = () => null,
 }: PostListProps) {
   const [commentMap, setCommentMap] = useState<Record<number, CommentState>>(
     {},
   );
   const [mixText, setMixText] = useState("");
   const [imageGif, setImageGif] = useState(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
   const [postId, setPostId] = useState(null);
@@ -401,28 +404,6 @@ export default function PostList({
             key={row?.id}
             className="flex   w-full flex-col sm:flex-row gap-3  py-4 border-b border-gray-200 dark:border-gray-800"
           >
-            {/* <div className="w-fit h-fit p-1.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
-              <Image
-                src={row?.User?.image_url || "https://i.pravatar.cc/40"}
-                alt="user"
-                height={20}
-                width={20}
-                className="md:w-10 w-4 md:h-10 h-4 rounded-full cursor-pointer object-cover"
-                onClick={() => handleRedirectUserDetails(row?.User?.id)}
-              />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center   gap-2 text-sm">
-                <div
-                  onClick={() => handleRedirectUserDetails(row?.User?.id)}
-                  className="font-semibold cursor-pointer relative text-gray-900 dark:text-white"
-                >
-                  {row?.User?.username || "--"}
-                </div>
-                <span className="text-gray-400">
-                  {timeAgoCompact(row?.createdAt)}
-                </span>
-              </div> */}
             <div className="flex flex-row gap-2">
               <div
                 onClick={() => handleRedirectUserDetails(row?.User?.id)}
@@ -495,7 +476,13 @@ export default function PostList({
               <div className="flex items-center  gap-5 mt-3 text-gray-400">
                 <span className=" flex gap-1 items-center">
                   <button
-                    onClick={() => toggleComments(row.id)}
+                    onClick={() =>
+                      row?.commentCount < 1
+                        ? null
+                        : token
+                          ? toggleComments(row.id)
+                          : handleLoginCheck()
+                    }
                     className="cursor-pointer hover:text-gray-600"
                   >
                     <MessageCircle size={16} />
@@ -540,7 +527,9 @@ export default function PostList({
                 </button>
                 <button
                   className="hover:text-gray-600 cursor-pointer"
-                  onClick={() => handleOpenComment(row)}
+                  onClick={() =>
+                    token ? handleOpenComment(row) : handleLoginCheck()
+                  }
                 >
                   Reply
                 </button>

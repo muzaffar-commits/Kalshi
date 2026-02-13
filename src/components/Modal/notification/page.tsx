@@ -7,10 +7,10 @@ import {
   fetchUnReadCountNotification,
   postAllReadNotification,
   postReadNotification,
-} from "../service/apiService/user";
+} from "../../service/apiService/user";
 import toast from "react-hot-toast";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import socket from "../socket";
+import socket from "../../socket";
 import { NotificationSkeleton } from "@/utils/customSkeleton";
 import { useRouter } from "next/navigation";
 import { FaComment, FaComments, FaHeart } from "react-icons/fa";

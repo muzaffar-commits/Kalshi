@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-// import Drawer from "@/components/Drawer/page";
 import Authentication from "@/components/Pages/auth";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -35,10 +34,9 @@ import { headerRootState, isWatchListInterface } from "@/utils/typesInterface";
 import { FiBookmark, FiSearch, FiSliders } from "react-icons/fi";
 import { CustomToggle } from "@/components/common/CustomToggle";
 import { SlArrowDown } from "react-icons/sl";
-import ProfileDropdown from "@/components/profileDropdown/page";
-import NotificationBell from "@/components/notification/page";
+import ProfileDropdown from "@/components/Modal/profileDropdown/page";
+import NotificationBell from "@/components/Modal/notification/page";
 import MainSearch from "./MainSearch";
-import socket from "@/components/socket";
 import MobileSearch from "./MainMobileSearch";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Crown } from "lucide-react";
@@ -86,14 +84,13 @@ const Header = () => {
   const [frequency, setFrequency] = useState("all");
   const [status, setStatus] = useState("Active");
   const [sortBy, setSortBy] = useState("newest");
-  const [searchQuery, setSearchQuery] = useState("");
+
   const [hideFilter, setHideFilter] = useState({
     sports: false,
     crypto: false,
     earnings: false,
   });
-  const [notificationData, setNotificationData] = useState([]);
-  const [countNotification, setCountNotification] = useState(0);
+
   const getToken = localStorage.getItem("token");
   const user = useSelector((state: headerRootState) => state?.user);
   const isWatchList = useSelector(

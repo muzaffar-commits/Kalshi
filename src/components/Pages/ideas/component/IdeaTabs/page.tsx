@@ -27,7 +27,7 @@ import {
 import { Activity, Gift } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { GrCloudUpload } from "react-icons/gr";
-import GiphyModal from "@/components/Pages/detail/component/postList/GiphyModal";
+import GiphyModal from "@/components/Modal/GiphyModal";
 import { useSelector } from "react-redux";
 
 type HandleComment = (post: PostFeeBack) => void;
@@ -312,8 +312,6 @@ export default function IdeaTabs({
       fetchMyAllPost(0);
     }
   }, [currentTabs]);
-
-  console.log(value, currentTabs, emptyData, "currentTabs");
 
   useEffect(() => {
     if (currentTabs != 1) {

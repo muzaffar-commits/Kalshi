@@ -26,8 +26,6 @@ import {
   FaRegHeart,
 } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
-import { LuUpload } from "react-icons/lu";
-import { MdSend } from "react-icons/md";
 import toast from "react-hot-toast";
 import {
   CommentInterface,
@@ -38,13 +36,12 @@ import {
 import { CircularProgress } from "@mui/material";
 import { Gift, Heart } from "lucide-react";
 import MobileMenu from "../IdeaList/page";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { PROFESSIONAL_EMOJIS } from "@/components/content";
-import InputTextArea from "../IdeaTabs/InputTextArea";
+import { useParams, useRouter } from "next/navigation";
 import { GrCloudUpload } from "react-icons/gr";
-import GiphyModal from "@/components/Pages/detail/component/postList/GiphyModal";
+import GiphyModal from "@/components/Modal/GiphyModal";
 import SubComment from "@/components/Modal/SubComment";
 import ViewImage from "@/components/common/ViewImage";
+import EmojiPopover from "@/components/Pages/ideas/component/comments/component/EmojiPopover";
 
 export default function CommentPage() {
   const [postDetails, setPostDetails] = useState<PostFeeBack | null>(null);
@@ -53,9 +50,6 @@ export default function CommentPage() {
   const [open, setOpen] = useState(false);
   const [isLoader, setIsLoader] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [subCommentData, setSubCommentData] = useState<any>({});
-  const [replyText, setReplyText] = useState("");
-  const [subRepliesData, setSubRepliesData] = useState<any>({});
   const [isLike, setIsLike] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(0);
   const { slug } = useParams();
@@ -126,8 +120,6 @@ export default function CommentPage() {
   useEffect(() => {
     postDetailsById();
   }, [postDetailsById]);
-
-  console.log(value, "value");
 
   const commentLists = useCallback(async () => {
     // setIsLoader(true);
@@ -203,25 +195,22 @@ export default function CommentPage() {
     }
   };
 
-  //   replyComments
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // stop new line
-      handleSend();
-    }
-  };
-
-  const insertEmoji = (emoji: string) => {
+  const insertEmojiAtCursor = (emoji: string) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = value.substring(0, start) + emoji + value.substring(end);
-    setValue(text);
-    setTimeout(() => {
-      textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+
+    const start = textarea.selectionStart ?? value.length;
+    const end = textarea.selectionEnd ?? value.length;
+
+    const next = value.substring(0, start) + emoji + value.substring(end);
+    setValue(next);
+
+    requestAnimationFrame(() => {
       textarea.focus();
-    }, 0);
+      const pos = start + emoji.length;
+      textarea.selectionStart = pos;
+      textarea.selectionEnd = pos;
+    });
   };
 
   const handleSubmitForSubComment = async (
@@ -248,11 +237,8 @@ export default function CommentPage() {
         commentLists();
         setMixText("");
         setGif(null);
-        setSubCommentData({});
-        setSubRepliesData(null);
         setCommentOpen(false);
         setCommentIds(null);
-        setReplyText("");
         setOpen(false);
       } else {
         toast.error(response?.message || "something went wrong");
@@ -584,21 +570,6 @@ export default function CommentPage() {
                               )}
                             </span>
                             <span className="inline-block relative -left-3 font-light text-gray-400"></span>
-                            {/* <span
-                              className="
-                                      p-2
-                                      rounded
-                                      inline-block
-                                      text-gray-500
-                                      dark:text-gray-400
-                                      hover:bg-gray-400/30
-                                      transition-all
-                                      duration-200
-                                      ease-in-out text-lg cursor-pointer
-                                    "
-                            >
-                              <LuUpload />
-                            </span> */}
                           </div>
                         </div>
                       </div>
@@ -624,14 +595,10 @@ export default function CommentPage() {
                         }}
                         placeholder={`Reply to @${postDetails?.User?.username}`}
                         className="w-full resize-none hideScrollbar bg-transparent outline-none text-[15px] text-gray-600 dark:text-gray-100 placeholder-gray-400 leading-5 max-h-[80px] overflow-y-auto pt-1"
-                        // onInput={handleInput}
                       />
-                      {/* <div className="top-0 left-0">
-                        Reply to @${postDetails?.User?.username}
-                      </div> */}
                     </div>
                     {gif && (
-                      <div className="relative w-fit pl-5">
+                      <div className="relative top-8 w-fit pl-5 ">
                         <img
                           src={gif}
                           alt="preview"
@@ -655,32 +622,13 @@ export default function CommentPage() {
                         <div className="right-3 text-xs text-gray-600 dark:text-gray-700">
                           {countWords(value)} / {MAX_WORDS} words
                         </div>
-                        <div className="relative">
-                          <button
-                            ref={emojiBtnRef}
-                            onClick={toggleEmoji}
-                            className="text-lg  py-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
-                          >
-                            🙂
-                          </button>
+                        <EmojiPopover
+                          // theme={theme === "dark" ? "dark" : "light"}
+                          buttonClassName="text-lg  cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                          buttonContent="🙂"
+                          onEmojiSelect={insertEmojiAtCursor}
+                        />
 
-                          {openEmoji && (
-                            <div
-                              ref={popupRef}
-                              className="absolute right-0 bottom-12 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl rounded-lg p-3 flex flex-wrap gap-2 z-50"
-                            >
-                              {PROFESSIONAL_EMOJIS.map((emoji) => (
-                                <button
-                                  key={emoji}
-                                  onClick={() => insertEmoji(emoji)}
-                                  className="text-xl p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
-                                >
-                                  {emoji}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
                         <div
                           ref={wrapperRef}
                           className={`relative inline-block ${gif ? "" : "group"} `}
