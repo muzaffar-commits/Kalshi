@@ -4,8 +4,8 @@ import React, { useMemo, useRef } from "react";
 type Props = {
   message: string;
   setMessage: (v: string) => void;
-  image?: string | null; // 👈 image props se
-  onRemoveImage?: () => void; // 👈 remove handler
+  image?: string | null;
+  onRemoveImage?: () => void;
 };
 
 function escapeHtml(str: string) {
@@ -66,7 +66,7 @@ export default function InputTextArea({
   return (
     <div className="w-full">
       {image && (
-        <div className="relative w-fit">
+        <div className="relative w-fit pt-4">
           <img
             src={image}
             alt="preview"
@@ -76,32 +76,36 @@ export default function InputTextArea({
             <button
               type="button"
               onClick={onRemoveImage}
-              className="absolute !cursor-pointer -top-2 -right-2 w-6 h-6 rounded-full bg-black/70 text-white text-xs flex items-center justify-center"
+              className="absolute !cursor-pointer top-2 -right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs flex items-center justify-center"
             >
               ✕
             </button>
           )}
         </div>
       )}
+
       <div className="relative w-full">
+        {/* Highlight overlay */}
         <div
           ref={overlayRef}
           aria-hidden="true"
           className="
-        absolute inset-0
-        pt-4
-       
-        leading-relaxed
-        whitespace-pre-wrap
-        break-words
+            absolute inset-0
+            pt-4
+            px-0
+            h-[110px]             /* 👈 approx 4 rows */
+            overflow-y-auto       /* 👈 scrolling */
+            leading-relaxed
+            whitespace-pre-wrap
+            break-words
             hideScrollbar
-        pointer-events-none
-        text-gray-900 dark:text-gray-500
-      "
+            pointer-events-none
+            text-gray-900 dark:text-gray-400
+          "
           dangerouslySetInnerHTML={{ __html: highlightedHtml }}
         />
 
-        {/* ✍️ TEXTAREA */}
+        {/* Textarea */}
         <textarea
           ref={taRef}
           rows={4}
@@ -118,7 +122,8 @@ export default function InputTextArea({
             relative
             pt-4
             w-full
-            min-h-[80px]
+            h-[110px]            /* 👈 fixed height */
+            overflow-y-auto      /* 👈 scroll after 4 rows */
             hideScrollbar
             leading-relaxed
             bg-transparent
@@ -128,8 +133,6 @@ export default function InputTextArea({
             caret-gray-900 dark:caret-gray-200
             placeholder:text-gray-400
             placeholder:dark:text-gray-600
-        
-
           "
         />
       </div>

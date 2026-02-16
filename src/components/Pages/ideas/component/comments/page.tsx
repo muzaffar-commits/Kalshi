@@ -881,7 +881,7 @@ export default function CommentPage() {
                                               onClick={() =>
                                                 handleUserDetails(row?.User?.id)
                                               }
-                                              className="h-11 w-11 cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
+                                              className="h-9 w-9  cursor-pointer flex items-center justify-center overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500"
                                             >
                                               <Image
                                                 src={

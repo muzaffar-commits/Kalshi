@@ -79,12 +79,12 @@ export default function MobileMenu() {
             onClick={() => handleMenuClick("/ideas")}
           />
 
-          <MenuItem
+          {/* <MenuItem
             label="Replies"
             icon={<FaCommentAlt />}
             active={pathname === "/ideas/replies/"}
             onClick={() => handleMenuClick("/ideas/replies")}
-          />
+          /> */}
 
           <MenuItem
             label="Bookmarks"

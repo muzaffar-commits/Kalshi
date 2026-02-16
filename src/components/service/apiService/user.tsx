@@ -62,7 +62,7 @@ export const getFeed = async (questionId: string, limit = 10, offset = 0) => {
     };
   }
 };
-export const getFeedForFollowingList = async (limit = 3, offset = 0) => {
+export const getFeedForFollowingList = async (limit = 10, offset = 0) => {
   try {
     const response = await apiInstance.get(
       `${API_URLs.feedForFollowingList}?limit=${limit}&offset=${offset}`,

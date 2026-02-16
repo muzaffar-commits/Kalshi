@@ -92,6 +92,18 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
   const [pagination, setPagination] = React.useState<any>({});
   const [emptyData, setEmptyData] = React.useState([]);
   const [isPaginationLoader, setIsPaginationLoader] = React.useState(false);
+  const [width, setWidth] = React.useState(0);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    handleResize(); // initial
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchPositions = async () => {
     try {
@@ -154,7 +166,7 @@ export default function ProfileTabs({ data }: ProfileTabsProps) {
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
 
-      if (scrollTop + windowHeight >= fullHeight - 200) {
+      if (scrollTop + windowHeight >= fullHeight - (width > 500 ? 200 : 1000)) {
         if (!isPaginationLoader && pagination?.limit) {
           const newOffset =
             (pagination?.offset || 0) + (pagination?.limit || 12);

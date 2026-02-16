@@ -41,6 +41,19 @@ export default function Profile({ targetId }: { targetId: string }) {
   const [pagination, setPagination] = React.useState<any>({});
   const [emptyData, setEmptyData] = React.useState([]);
   const [isPaginationLoader, setIsPaginationLoader] = React.useState(false);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    handleResize(); // initial
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // pagination end
 
   const isUsers = targetId == userId ? true : false;
@@ -95,7 +108,7 @@ export default function Profile({ targetId }: { targetId: string }) {
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
 
-      if (scrollTop + windowHeight >= fullHeight - 200) {
+      if (scrollTop + windowHeight >= fullHeight - (width > 500 ? 200 : 1000)) {
         if (!isPaginationLoader && pagination?.limit) {
           const newOffset =
             (pagination?.offset || 0) + (pagination?.limit || 12);

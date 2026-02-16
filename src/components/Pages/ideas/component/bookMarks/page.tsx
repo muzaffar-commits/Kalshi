@@ -84,6 +84,7 @@ export default function BookMarks() {
                 myPost={null}
                 setCurrentTabs={null}
                 setMyPost={null}
+                paginationLoader={false}
               />
             </div>
           </div>

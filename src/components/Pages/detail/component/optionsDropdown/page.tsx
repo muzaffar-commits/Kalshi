@@ -25,7 +25,7 @@ export default function MarketCard({ data = [], handleBuySell }) {
         return (
           <div key={row.id} className="relative">
             {isOpen && (
-              <div className="absolute delay-500 left-0 top-0 h-full w-1 bg-emerald-500 rounded-l-lg" />
+              <div className="absolute delay-500 left-0 top-0 h-full w-1 rounded-lg  rounded-l-lg" /> //bg-emerald-500 
             )}
 
             <div
@@ -33,7 +33,7 @@ export default function MarketCard({ data = [], handleBuySell }) {
               className={`
     relative
     border border-gray-200 dark:border-gray-700
-    rounded-lg px-4 py-3
+     px-4 py-3
     cursor-pointer
     transition-all duration-300 ease-in-out
     hover:bg-gray-100 dark:hover:bg-gray-700/60

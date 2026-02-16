@@ -10,7 +10,7 @@ import {
   userPost,
 } from "@/components/service/apiService/user";
 import toast from "react-hot-toast";
-import InputTextArea from "../../ideas/component/IdeaTabs/InputTextArea";
+import InputTextArea from "../../../common/InputTextArea";
 import { CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
 import { countWords, delay, MAX_WORDS } from "@/utils/Content";

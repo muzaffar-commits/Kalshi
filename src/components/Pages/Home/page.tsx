@@ -102,6 +102,18 @@ const Home = () => {
   const [pagination, setPagination] = useState<any>({});
   const [emptyData, setEmptyData] = useState([]);
   const [isLoader, setIsLoader] = useState(false);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    handleResize(); // initial
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   // pagination end
   const eventSubCategoryId = null;
   const getToken = localStorage.getItem("token");
@@ -244,7 +256,7 @@ const Home = () => {
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
 
-      if (scrollTop + windowHeight >= fullHeight - 200) {
+      if (scrollTop + windowHeight >= fullHeight - (width > 500 ? 200 : 1000)) {
         if (!isLoader && pagination?.limit) {
           const newOffset =
             (pagination?.offset || 0) + (pagination?.limit || 12);
@@ -351,12 +363,12 @@ const Home = () => {
             : eventCategory?.length > 0
               ? "pt-8 lg:pt-32"
               : selectedSubCategory == null && isFilterQuestion
-                ? "pt-8 lg:pt-2"
-                : "pt-36 lg:pt-24 "
+                ? "pt-44 lg:pt-2"
+                : "pt-12 sm:pt-32 md:pt-28 lg:pt-24 "
         }`}
       >
         <div
-          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 pt-10 lg:pt-0"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-10 lg:pt-0"
           // ref={listRef}
         >
           {

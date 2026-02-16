@@ -11,13 +11,14 @@ const gf = new GiphyFetch("6yXO79zQVXhs6Qfk4x8hdUIugnQujLni");
 export default function GiphyModal({ open, onClose, onSelect }) {
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
+
   useEffect(() => {
     const t = setTimeout(() => {
       setQuery(input.trim());
     }, 400);
-
     return () => clearTimeout(t);
   }, [input]);
+
   useEffect(() => {
     if (!open) {
       setInput("");
@@ -28,24 +29,32 @@ export default function GiphyModal({ open, onClose, onSelect }) {
   const fetchGifs = useCallback(
     (offset: number) => {
       if (query) {
-        return gf.search(query, {
-          offset,
-          limit: 6,
-        });
+        return gf.search(query, { offset, limit: 6 });
       }
-      return gf.trending({
-        offset,
-        limit: 6,
-      });
+      return gf.trending({ offset, limit: 6 });
     },
     [query],
   );
 
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div className="bg-white dark:bg-[#0F172A] w-[420px] h-[600px] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-          <div className="h-[60px] px-4 flex items-center gap-3 border-b border-gray-200 dark:border-gray-700">
+      {/* overlay */}
+      <div className="fixed inset-0 p-2 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        {/* modal */}
+        <div
+          className="
+            bg-white dark:bg-[#0F172A]
+            w-[95%] sm:w-[420px]
+            max-w-[420px]
+            h-[75vh] sm:h-[600px]
+            rounded-2xl
+            shadow-2xl
+            flex flex-col
+            overflow-hidden   /* ✅ IMPORTANT: remove extra scroll */
+          "
+        >
+          {/* header */}
+          <div className="h-[60px] px-3 sm:px-4 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
             <input
               type="text"
               placeholder="Search GIFs"
@@ -57,17 +66,23 @@ export default function GiphyModal({ open, onClose, onSelect }) {
                 border border-transparent
                 focus:border-indigo-500
                 focus:ring-1 focus:ring-indigo-500/40
-                box-border transition-none
+                outline-none
               "
             />
             <IconButton size="small" onClick={onClose}>
               <IoClose className="dark:!text-gray-300" />
             </IconButton>
           </div>
-          <div className="flex-1 p-3 overflow-y-scroll hideScrollbar">
+
+          {/* GIF LIST */}
+          <div className="flex-1 p-2 sm:p-3 overflow-y-scroll overflow-x-hidden hideScrollbar">
             <Grid
               key={query || "trending"}
-              width={400}
+              width={
+                typeof window !== "undefined"
+                  ? Math.min(window.innerWidth - 50, 380)
+                  : 390
+              }
               columns={2}
               gutter={6}
               fetchGifs={fetchGifs}
@@ -76,7 +91,6 @@ export default function GiphyModal({ open, onClose, onSelect }) {
               onGifClick={(gif, e) => {
                 e.preventDefault();
                 const preview = gif.images.fixed_width_small_still.url;
-
                 onSelect(preview);
                 onClose();
               }}

@@ -21,19 +21,32 @@ const StackedAreaChart = ({
   setTimeIntervalValue,
 }: StackedAreaChartProps) => {
   const { theme } = useTheme();
+
   const series = prepareSeries(data);
+
   const colors = series.map(
     (_, index) => BASE_COLORS[index % BASE_COLORS.length],
   );
+
   const options: ApexOptions = {
     chart: {
       type: "area",
       stacked: false,
-      toolbar: {
-        show: false,
-      },
-      zoom: {
+      toolbar: { show: false },
+      zoom: { enabled: true },
+
+      // ✅ smooth hover
+      animations: {
         enabled: true,
+      },
+
+      events: {
+        dataPointSelection: (event, chartContext, config) => {
+          const { seriesIndex, dataPointIndex, w } = config;
+          const value = w.config.series[seriesIndex].data[dataPointIndex];
+
+          console.log("Clicked value:", value);
+        },
       },
     },
 
@@ -41,6 +54,14 @@ const StackedAreaChart = ({
 
     dataLabels: {
       enabled: false,
+    },
+
+    // ✅ important for hover detection
+    markers: {
+      size: 0,
+      hover: {
+        size: 6,
+      },
     },
 
     stroke: {
@@ -60,11 +81,6 @@ const StackedAreaChart = ({
 
     legend: {
       show: false,
-      position: "top",
-      horizontalAlign: "left",
-      floating: true,
-      offsetY: -10,
-      offsetX: 0,
       labels: {
         colors: theme === "dark" ? "#fff" : "#000",
       },
@@ -72,6 +88,13 @@ const StackedAreaChart = ({
 
     xaxis: {
       type: "datetime",
+
+      // ✅ full chart hover
+      crosshairs: {
+        show: true,
+        width: 1,
+      },
+
       labels: {
         style: {
           colors: "#6b7280",
@@ -82,26 +105,18 @@ const StackedAreaChart = ({
           day: "dd MMM",
         },
       },
+
       tickPlacement: "on",
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: true,
-      },
+      axisBorder: { show: false },
+      axisTicks: { show: true },
     },
 
     yaxis: {
       min: 0,
       max: 1,
       labels: {
-        style: {
-          colors: "#6b7280",
-        },
+        style: { colors: "#6b7280" },
         formatter: (val: number) => val.toFixed(2),
-      },
-      title: {
-        text: undefined,
       },
     },
 
@@ -116,9 +131,12 @@ const StackedAreaChart = ({
       },
     },
 
+    // ✅ FINAL tooltip fix
     tooltip: {
-      shared: true, // ❌ sabka data ek sath nahi
+      shared: true,
       intersect: false,
+      followCursor: true, // 🔥 hover anywhere
+
       x: {
         format: "dd MMM yyyy HH:mm",
       },
@@ -131,36 +149,34 @@ const StackedAreaChart = ({
   const timeInterval = ["5m", "15m", "30m", "1h", "24h", "7d", "all"];
 
   return (
-    <div className="w-full flex  relative -mx-4 sm:mx-0">
+    <div className="w-full flex relative -mx-4 sm:mx-0">
       <div
         className="absolute right-0 -top-1 flex items-center gap-1
-  dark:bg-[#2B394D] bg-gray-200 rounded-lg px-1 py-1
-"
+        dark:bg-[#2B394D] bg-gray-200 rounded-lg px-1 py-1"
       >
         {timeInterval.map((item) => (
           <button
             key={item}
             onClick={() => setTimeIntervalValue(item)}
             className={`
-        px-3 py-1 text-xs font-medium rounded-md
-        transition-all
-        ${
-          item === timeIntervalValue
-            ? "dark:bg-[#1D293D] bg-gray-50 dark:text-white text-black"
-            : "dark:text-gray-400 text-gray-600 hover:text-white cursor-pointer hover:bg-white/5"
-        }
-      `}
+              px-3 py-1 text-xs font-medium rounded-md transition-all
+              ${
+                item === timeIntervalValue
+                  ? "dark:bg-[#1D293D] bg-gray-50 dark:text-white text-black"
+                  : "dark:text-gray-400 text-gray-600 hover:text-white cursor-pointer hover:bg-white/5"
+              }
+            `}
           >
             {item.toUpperCase()}
           </button>
         ))}
       </div>
-      <div className="mt-4  w-full">
-        {Number(data?.length) > 0 ? (
+
+      <div className="mt-4 w-full">
+        {data?.length > 0 ? (
           <ApexChart
             type="area"
             height={230}
-            // width={800}
             series={series}
             options={options}
           />

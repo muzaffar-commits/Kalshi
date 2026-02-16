@@ -90,6 +90,18 @@ const Header = () => {
     crypto: false,
     earnings: false,
   });
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    handleResize(); // initial
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getToken = localStorage.getItem("token");
   const user = useSelector((state: headerRootState) => state?.user);
@@ -241,7 +253,6 @@ const Header = () => {
   };
   // fetchNotification
 
-  //
   return (
     <>
       {/* <div className="hidden lg:block"> */}
@@ -506,16 +517,16 @@ const Header = () => {
                 {true && (
                   <div
                     className="w-full sm:pl-8 mt-1
-                   flex flex-wrap items-center gap-2 bg-transparent rounded-xl"
+                   flex flex-wrap  items-center gap-2   rounded-xl"
                   >
-                    {/* <div className="sm:hidden block">
+                    <div className="sm:hidden block ">
                       <button
                         onClick={handleFilter}
                         className="w-9 h-9 flex items-center cursor-pointer hover:bg-gray-300 justify-center rounded-xl dark:bg-gray-700 bg-gray-100 hover:dark:bg-[#273244] transition"
                       >
                         <FiSliders className="text-gray-500 text-lg dark:text-gray-200" />
                       </button>
-                    </div> */}
+                    </div>
                     <button
                       onClick={() =>
                         !getToken
@@ -535,10 +546,13 @@ const Header = () => {
                         <FiBookmark className="text-gray-500 text-lg dark:text-gray-200" />
                       )}
                     </button>
-                    <div className="border-r h-6 border-gray-300 dark:border-gray-700 pr-1"></div>
-                    <div className="relative  inline-block group">
-                      <button
-                        className="
+
+                    {width > 500 && (
+                      <>
+                        <div className="border-r h-6 border-gray-300 dark:border-gray-700 pr-1"></div>
+                        <div className="relative  inline-block group">
+                          <button
+                            className="
       flex items-center gap-2 px-4 py-1.5 rounded-full
       dark:bg-gray-700 bg-gray-100
       text-xs dark:text-gray-300 text-gray-700
@@ -546,24 +560,26 @@ const Header = () => {
       group-hover:dark:bg-gray-600
       group-hover:bg-gray-200
     "
-                      >
-                        <span className="text-gray-400 text-xs">Sort by:</span>
+                          >
+                            <span className="text-gray-400 text-xs">
+                              Sort by:
+                            </span>
 
-                        <span className="dark:text-white text-black font-medium">
-                          {formatLabel(sortBy)}
-                        </span>
+                            <span className="dark:text-white text-black font-medium">
+                              {formatLabel(sortBy)}
+                            </span>
 
-                        <SlArrowDown
-                          size={10}
-                          className={`
+                            <SlArrowDown
+                              size={10}
+                              className={`
         transition-transform duration-200 ease-out
         group-hover:rotate-180
       `}
-                        />
-                      </button>
+                            />
+                          </button>
 
-                      <div
-                        className={`
+                          <div
+                            className={`
       absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
       bg-gray-100 dark:bg-[#1D293D]
       border border-gray-200 dark:border-gray-700
@@ -571,33 +587,33 @@ const Header = () => {
       transform-gpu
       transition-all duration-200 ease-out "opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0  group-hover:visible
     `}
-                      >
-                        {sortOptions.map((item) => (
-                          <button
-                            key={item}
-                            onClick={() => {
-                              setSortBy(item);
-                              dispatch(
-                                changeFilter({
-                                  key: "sortBy",
-                                  value: item,
-                                }),
-                              );
-                            }}
-                            className={`
+                          >
+                            {sortOptions.map((item) => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  setSortBy(item);
+                                  dispatch(
+                                    changeFilter({
+                                      key: "sortBy",
+                                      value: item,
+                                    }),
+                                  );
+                                }}
+                                className={`
           w-full text-left px-4 py-2 text-xs
           transition-colors duration-150 ease-out text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]
         `}
-                          >
-                            {formatLabel(item)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                              >
+                                {formatLabel(item)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
 
-                    <div className="relative inline-block group">
-                      <button
-                        className="
+                        <div className="relative inline-block group">
+                          <button
+                            className="
       flex items-center gap-2 px-4 py-1.5 rounded-full
       dark:bg-gray-700 bg-gray-100
       text-xs dark:text-gray-300 text-gray-700
@@ -605,23 +621,23 @@ const Header = () => {
       group-hover:dark:bg-gray-600
       group-hover:bg-gray-200
     "
-                      >
-                        <span className="text-gray-400">Frequency:</span>
+                          >
+                            <span className="text-gray-400">Frequency:</span>
 
-                        <span className="dark:text-gray-300 text-gray-700 w-10 font-medium">
-                          {formatLabel(frequency)}
-                        </span>
+                            <span className="dark:text-gray-300 text-gray-700 w-10 font-medium">
+                              {formatLabel(frequency)}
+                            </span>
 
-                        <SlArrowDown
-                          size={10}
-                          className={`
+                            <SlArrowDown
+                              size={10}
+                              className={`
         transition-transform duration-200 ease-out group-hover:rotate-180
       `}
-                        />
-                      </button>
+                            />
+                          </button>
 
-                      <div
-                        className={`
+                          <div
+                            className={`
       absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
       bg-gray-100 dark:bg-[#1D293D]
       border border-gray-200 dark:border-gray-700
@@ -629,20 +645,20 @@ const Header = () => {
       transform-gpu
       transition-all duration-200 ease-out "opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:visible
     `}
-                      >
-                        {frequencies.map((item) => (
-                          <button
-                            key={item}
-                            onClick={() => {
-                              setFrequency(item);
-                              dispatch(
-                                changeFilter({
-                                  key: "frequency",
-                                  value: item,
-                                }),
-                              );
-                            }}
-                            className={`
+                          >
+                            {frequencies.map((item) => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  setFrequency(item);
+                                  dispatch(
+                                    changeFilter({
+                                      key: "frequency",
+                                      value: item,
+                                    }),
+                                  );
+                                }}
+                                className={`
           w-full text-left px-4 py-2 text-xs
           transition-colors duration-150 ease-out
           ${
@@ -651,16 +667,16 @@ const Header = () => {
               : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]"
           }
         `}
-                          >
-                            {formatLabel(item)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                              >
+                                {formatLabel(item)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
 
-                    <div className="relative inline-block group">
-                      <button
-                        className="
+                        <div className="relative inline-block group">
+                          <button
+                            className="
       flex items-center gap-2 px-4 py-1.5 rounded-full
       dark:bg-gray-700 bg-gray-100
       text-xs dark:text-gray-300 text-gray-700
@@ -668,21 +684,21 @@ const Header = () => {
       group-hover:dark:bg-gray-600
       group-hover:bg-gray-200
     "
-                      >
-                        <span className="text-gray-400">Status:</span>
+                          >
+                            <span className="text-gray-400">Status:</span>
 
-                        <span className="dark:text-gray-300 text-gray-700 font-medium">
-                          {formatLabel(status)}
-                        </span>
+                            <span className="dark:text-gray-300 text-gray-700 font-medium">
+                              {formatLabel(status)}
+                            </span>
 
-                        <SlArrowDown
-                          size={10}
-                          className={` transition-transform duration-200 ease-out group-hover:rotate-180`}
-                        />
-                      </button>
+                            <SlArrowDown
+                              size={10}
+                              className={` transition-transform duration-200 ease-out group-hover:rotate-180`}
+                            />
+                          </button>
 
-                      <div
-                        className={`
+                          <div
+                            className={`
       absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
       bg-gray-100 dark:bg-[#1D293D]
       border border-gray-200 dark:border-gray-700
@@ -691,20 +707,20 @@ const Header = () => {
       transition-all duration-200 ease-out opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100  group-hover:scale-100  group-hover:translate-y-0 group-hover:visible
       
     `}
-                      >
-                        {statusList.map((item) => (
-                          <button
-                            key={item}
-                            onClick={() => {
-                              setStatus(item);
-                              dispatch(
-                                changeFilter({
-                                  key: "status",
-                                  value: item,
-                                }),
-                              );
-                            }}
-                            className={`
+                          >
+                            {statusList.map((item) => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  setStatus(item);
+                                  dispatch(
+                                    changeFilter({
+                                      key: "status",
+                                      value: item,
+                                    }),
+                                  );
+                                }}
+                                className={`
           w-full text-left px-4 py-2 text-xs
           transition-colors duration-150 ease-out
           ${
@@ -713,37 +729,255 @@ const Header = () => {
               : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]"
           }
         `}
+                              >
+                                {formatLabel(item)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <CustomToggle
+                          label="Hide sports?"
+                          checked={hideFilter.sports}
+                          onChange={() => toggleFilter("sports")}
+                        />
+
+                        <CustomToggle
+                          label="Hide crypto?"
+                          checked={hideFilter.crypto}
+                          onChange={() => toggleFilter("crypto")}
+                        />
+
+                        <CustomToggle
+                          label="Hide earnings?"
+                          checked={hideFilter.earnings}
+                          onChange={() => toggleFilter("earnings")}
+                        />
+
+                        <button
+                          onClick={handleCleanFilter}
+                          className="!text-xs text-gray-700 dark:text-gray-400  hover:dark:bg-gray-700 !px-4 py-1.5 rounded-full hover:underline cursor-pointer hover:!text-gray-300 hover:text-gray-700 hover:dark:text-gray-300"
+                        >
+                          Clear filters
+                        </button>
+                      </>
+                    )}
+
+                    {width < 500 && isFilterQuestion && (
+                      <>
+                        <div className="border-r h-6 border-gray-300 dark:border-gray-700 pr-1"></div>
+                        <div className="relative  inline-block group">
+                          <button
+                            className="
+      flex items-center gap-2 px-4 py-1.5 rounded-full
+      dark:bg-gray-700 bg-gray-100
+      text-xs dark:text-gray-300 text-gray-700
+      transition-colors duration-200 ease-out
+      group-hover:dark:bg-gray-600
+      group-hover:bg-gray-200
+    "
                           >
-                            {formatLabel(item)}
+                            <span className="text-gray-400 text-xs">
+                              Sort by:
+                            </span>
+
+                            <span className="dark:text-white text-black font-medium">
+                              {formatLabel(sortBy)}
+                            </span>
+
+                            <SlArrowDown
+                              size={10}
+                              className={`
+        transition-transform duration-200 ease-out
+        group-hover:rotate-180
+      `}
+                            />
                           </button>
-                        ))}
-                      </div>
-                    </div>
 
-                    <CustomToggle
-                      label="Hide sports?"
-                      checked={hideFilter.sports}
-                      onChange={() => toggleFilter("sports")}
-                    />
+                          <div
+                            className={`
+      absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
+      bg-gray-100 dark:bg-[#1D293D]
+      border border-gray-200 dark:border-gray-700
+      shadow-lg z-50
+      transform-gpu
+      transition-all duration-200 ease-out "opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0  group-hover:visible
+    `}
+                          >
+                            {sortOptions.map((item) => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  setSortBy(item);
+                                  dispatch(
+                                    changeFilter({
+                                      key: "sortBy",
+                                      value: item,
+                                    }),
+                                  );
+                                }}
+                                className={`
+          w-full text-left px-4 py-2 text-xs
+          transition-colors duration-150 ease-out text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]
+        `}
+                              >
+                                {formatLabel(item)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
 
-                    <CustomToggle
-                      label="Hide crypto?"
-                      checked={hideFilter.crypto}
-                      onChange={() => toggleFilter("crypto")}
-                    />
+                        <div className="relative inline-block group">
+                          <button
+                            className="
+      flex items-center gap-2 px-4 py-1.5 rounded-full
+      dark:bg-gray-700 bg-gray-100
+      text-xs dark:text-gray-300 text-gray-700
+      transition-colors duration-200 ease-out
+      group-hover:dark:bg-gray-600
+      group-hover:bg-gray-200
+    "
+                          >
+                            <span className="text-gray-400">Frequency:</span>
 
-                    <CustomToggle
-                      label="Hide earnings?"
-                      checked={hideFilter.earnings}
-                      onChange={() => toggleFilter("earnings")}
-                    />
+                            <span className="dark:text-gray-300 text-gray-700 w-10 font-medium">
+                              {formatLabel(frequency)}
+                            </span>
 
-                    <button
-                      onClick={handleCleanFilter}
-                      className="!text-xs text-gray-700 dark:text-gray-400  hover:dark:bg-gray-700 !px-4 py-1.5 rounded-full hover:underline cursor-pointer hover:!text-gray-300 hover:text-gray-700 hover:dark:text-gray-300"
-                    >
-                      Clear filters
-                    </button>
+                            <SlArrowDown
+                              size={10}
+                              className={`
+        transition-transform duration-200 ease-out group-hover:rotate-180
+      `}
+                            />
+                          </button>
+
+                          <div
+                            className={`
+      absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
+      bg-gray-100 dark:bg-[#1D293D]
+      border border-gray-200 dark:border-gray-700
+      shadow-lg z-50
+      transform-gpu
+      transition-all duration-200 ease-out "opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:visible
+    `}
+                          >
+                            {frequencies.map((item) => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  setFrequency(item);
+                                  dispatch(
+                                    changeFilter({
+                                      key: "frequency",
+                                      value: item,
+                                    }),
+                                  );
+                                }}
+                                className={`
+          w-full text-left px-4 py-2 text-xs
+          transition-colors duration-150 ease-out
+          ${
+            frequency === item
+              ? "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
+              : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]"
+          }
+        `}
+                              >
+                                {formatLabel(item)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="relative inline-block group">
+                          <button
+                            className="
+      flex items-center gap-2 px-4 py-1.5 rounded-full
+      dark:bg-gray-700 bg-gray-100
+      text-xs dark:text-gray-300 text-gray-700
+      transition-colors duration-200 ease-out
+      group-hover:dark:bg-gray-600
+      group-hover:bg-gray-200
+    "
+                          >
+                            <span className="text-gray-400">Status:</span>
+
+                            <span className="dark:text-gray-300 text-gray-700 font-medium">
+                              {formatLabel(status)}
+                            </span>
+
+                            <SlArrowDown
+                              size={10}
+                              className={` transition-transform duration-200 ease-out group-hover:rotate-180`}
+                            />
+                          </button>
+
+                          <div
+                            className={`
+      absolute left-0 mt-2 w-44 overflow-hidden rounded-lg
+      bg-gray-100 dark:bg-[#1D293D]
+      border border-gray-200 dark:border-gray-700
+      shadow-lg z-50
+      transform-gpu
+      transition-all duration-200 ease-out opacity-0 scale-95 -translate-y-1 invisible group-hover:opacity-100  group-hover:scale-100  group-hover:translate-y-0 group-hover:visible
+      
+    `}
+                          >
+                            {statusList.map((item) => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  setStatus(item);
+                                  dispatch(
+                                    changeFilter({
+                                      key: "status",
+                                      value: item,
+                                    }),
+                                  );
+                                }}
+                                className={`
+          w-full text-left px-4 py-2 text-xs
+          transition-colors duration-150 ease-out
+          ${
+            status === item
+              ? "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
+              : "text-gray-700 dark:text-gray-300 hover:bg-gray-300 hover:dark:bg-[#1f2937]"
+          }
+        `}
+                              >
+                                {formatLabel(item)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <CustomToggle
+                          label="Hide sports?"
+                          checked={hideFilter.sports}
+                          onChange={() => toggleFilter("sports")}
+                        />
+
+                        <CustomToggle
+                          label="Hide crypto?"
+                          checked={hideFilter.crypto}
+                          onChange={() => toggleFilter("crypto")}
+                        />
+
+                        <CustomToggle
+                          label="Hide earnings?"
+                          checked={hideFilter.earnings}
+                          onChange={() => toggleFilter("earnings")}
+                        />
+
+                        <button
+                          onClick={handleCleanFilter}
+                          className="!text-xs text-gray-700 dark:text-gray-400  hover:dark:bg-gray-700 !px-4 py-1.5 rounded-full hover:underline cursor-pointer hover:!text-gray-300 hover:text-gray-700 hover:dark:text-gray-300"
+                        >
+                          Clear filters
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -760,5 +994,5 @@ const Header = () => {
     </>
   );
 };
-
+// || width < 500) &&
 export default Header;

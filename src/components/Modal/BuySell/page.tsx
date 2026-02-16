@@ -20,8 +20,9 @@ import { TfiExchangeVertical } from "react-icons/tfi";
 import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
 import { userBalance } from "@/components/service/apiService/user";
-import { truncateValue } from "@/utils/Content";
+import { delay, truncateValue } from "@/utils/Content";
 import { Minus, Plus } from "lucide-react";
+import { CircularProgress } from "@mui/material";
 
 interface UserPosition {
   shares: number;
@@ -116,6 +117,7 @@ export default function BuySell({
   const [totalCurrentBalance, setTotalCurrentBalance] = useState<number>(0);
   const [totalCurrentShare, setTotalCurrentShare] = useState<number>(0);
 
+  const [isSubmit, setIsSubmit] = useState(false);
   // tpsl state manage
 
   const [tpslShare, setTpslShare] = useState<number>(0);
@@ -291,8 +293,9 @@ export default function BuySell({
       timeInForce: "IOC",
     };
 
+    setIsSubmit(true);
     try {
-      const response: ApiResponse<unknown> = await submitOrder(reqBody);
+      const [response] = await Promise.all([submitOrder(reqBody), delay(500)]);
       if (response?.success) {
         toast.success(response.message || "");
         if (types == "limit") {
@@ -304,6 +307,8 @@ export default function BuySell({
       }
     } catch {
       toast.error("internal server error");
+    } finally {
+      setIsSubmit(false);
     }
   };
 
@@ -381,9 +386,12 @@ export default function BuySell({
       timeInForce: "IOC",
       idempotencyKey: orderId,
     };
-    // setBtnLoader(true);
+    setIsSubmit(true);
     try {
-      const response: ApiResponse<unknown> = await submitOrdersTpAndSl(payload);
+      const [response] = await Promise.all([
+        submitOrdersTpAndSl(payload),
+        delay(500),
+      ]);
       if (response?.success) {
         toast.success(response.message || "");
         if (types == "tpsl") {
@@ -394,10 +402,9 @@ export default function BuySell({
       }
     } catch {
       toast.error("internal server error");
+    } finally {
+      setIsSubmit(false);
     }
-    // finally {
-    //   setBtnLoader(false);
-    // }
   };
   // const isSharesValid = tpslShare > 0;
   // const isTPValid = takeProfit > 0;
@@ -891,12 +898,12 @@ export default function BuySell({
                 </>
               ) : orderType === "buy" ? (
                 <>
-                  <label className="w-full p-3 border dark:border-gray-700 border-gray-200 rounded-md md:flex justify-between items-center">
+                  <label className="w-full p-3 border dark:border-gray-700 border-gray-200 rounded-md flex justify-between gap-2 items-center">
                     <span>
                       <span className="block text-sm text-gray-400">
                         Shares
                       </span>
-                      <span className="block text-sm text-gray-950 dark:text-gray-200">
+                      <span className="block text-nowrap text-sm text-gray-950 dark:text-gray-200">
                         No Interest
                       </span>
                     </span>
@@ -912,18 +919,18 @@ export default function BuySell({
                         )
                       }
                       onWheel={(e) => e.currentTarget.blur()}
-                      className="border-none outline-none no-arrow text-gray-800 dark:text-gray-300 text-3xl text-right w-full md:w-56 bg-transparent"
+                      className="border-none outline-none no-arrow text-gray-800 dark:text-gray-300 md:text-3xl text-xl text-right w-full md:w-56 bg-transparent"
                     />
                   </label>
-                  <div className="md:flex items-center justify-center text-gray-400">
+                  <div className="flex items-center justify-center text-gray-400">
                     <TfiExchangeVertical size={25} />
                   </div>
-                  <label className="w-full p-3 border dark:border-gray-700 border-gray-200 rounded-md md:flex justify-between items-center">
+                  <label className="w-full p-3 border dark:border-gray-700 border-gray-200 rounded-md flex justify-between gap-2 items-center">
                     <span>
                       <span className="block text-sm text-gray-400">
                         Amount
                       </span>
-                      <span className="block text-sm text-gray-950 dark:text-gray-200">
+                      <span className="block text-nowrap text-sm text-gray-950 dark:text-gray-200">
                         No Interest
                       </span>
                     </span>
@@ -1131,15 +1138,19 @@ export default function BuySell({
                 onClick={handleTpspSubmit}
                 className={`mt-4 py-3 text-lg text-white font-bold ${
                   disabledTpslBtn
-                    ? "bg-red-300"
-                    : "bg-red-500 hover:bg-red-600 cursor-pointer"
+                    ? "bg-red-600/40 text-white"
+                    : "bg-red-500 text-white shadow-[0_6px_0_rgba(239,68,68,0.5)] hover:bg-red-600 active:translate-y-[4px]  active:shadow-[0_2px_0_rgba(239,68,68,0.5)]"
                 }  rounded-xl w-full`}
               >
-                Sell
+                {isSubmit ? (
+                  <CircularProgress className="!text-white" size={22} />
+                ) : (
+                  "Sell"
+                )}
               </button>
             ) : (
               <button
-                disabled={buttonDisable}
+                disabled={isSubmit || buttonDisable}
                 onClick={handleSubmit}
                 className={`
     mt-4 w-full rounded-xl py-3 text-lg font-bold
@@ -1158,7 +1169,7 @@ export default function BuySell({
       `
         : `
         ${
-          orderType === "Sell"
+          orderType === "sell"
             ? `
             bg-red-500 text-white
             shadow-[0_6px_0_rgba(239,68,68,0.5)]
@@ -1179,25 +1190,31 @@ export default function BuySell({
     }
   `}
               >
-                <span className="capitalize text-white">
-                  {orderType || "--"}
-                </span>{" "}
-                <span className="text-white">$</span>{" "}
-                <span className="text-white">
-                  {types === "limit" && orderType === "buy"
-                    ? truncateValue(Number(totalSharesBuy || 0), 3)
-                    : types === "limit" && orderType === "sell"
-                      ? truncateValue(Number(totalSharesSell || 0), 3)
-                      : orderType === "buy"
-                        ? truncateValue(
-                            Number(shareDetailAmount?.grossCost || 0),
-                            3,
-                          )
-                        : truncateValue(
-                            Number(shareDetailAmount?.grossProceeds) || 0,
-                            3,
-                          )}
-                </span>
+                {isSubmit ? (
+                  <CircularProgress className="!text-white" size={22} />
+                ) : (
+                  <>
+                    <span className="capitalize text-white">
+                      {orderType || "--"}
+                    </span>{" "}
+                    <span className="text-white">$</span>{" "}
+                    <span className="text-white">
+                      {types === "limit" && orderType === "buy"
+                        ? truncateValue(Number(totalSharesBuy || 0), 3)
+                        : types === "limit" && orderType === "sell"
+                          ? truncateValue(Number(totalSharesSell || 0), 3)
+                          : orderType === "buy"
+                            ? truncateValue(
+                                Number(shareDetailAmount?.grossCost || 0),
+                                3,
+                              )
+                            : truncateValue(
+                                Number(shareDetailAmount?.grossProceeds) || 0,
+                                3,
+                              )}
+                    </span>
+                  </>
+                )}
               </button>
             )}
           </>

@@ -6,7 +6,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import toast from "react-hot-toast";
 import { CircularProgress } from "@mui/material";
-import InputTextArea from "./InputTextArea";
+import InputTextArea from "../../../../common/InputTextArea";
 import {
   getFeedForFollowingList,
   getMyAllPost,
@@ -95,7 +95,18 @@ export default function IdeaTabs({
   const [pagination, setPagination] = useState<any>({});
   const [emptyData, setEmptyData] = useState([]);
   const [isPaginationLoader, setIsPaginationLoader] = useState(false);
+  const [width, setWidth] = useState(0);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    handleResize(); // initial
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   useEffect(() => {
     currentTabs == 1 && setOffset(0);
   }, [currentTabs]);
@@ -280,7 +291,7 @@ export default function IdeaTabs({
 
     try {
       const [response] = await Promise.all([
-        getMyAllPost("", 4, newOffset),
+        getMyAllPost("", 10, newOffset),
         delay(500),
       ]);
 
@@ -325,7 +336,7 @@ export default function IdeaTabs({
       const windowHeight = window.innerHeight;
       const fullHeight = document.documentElement.scrollHeight;
 
-      if (scrollTop + windowHeight >= fullHeight - 200) {
+      if (scrollTop + windowHeight >= fullHeight - (width > 500 ? 200 : 1000)) {
         if (!isLoader && pagination?.limit) {
           const newOffset =
             (pagination?.offset || 0) + (pagination?.limit || 12);
@@ -386,8 +397,8 @@ export default function IdeaTabs({
             <CreatePostSkeleton />
           ) : (
             <div>
-              <div className="flex items-start gap-4 w-full px-4 mt-4">
-                <div className="border border-gray-200 dark:border-gray-700 rounded-xl px-1">
+              <div className="flex items-start gap-4 w-full px-4 mt-0">
+                {/* <div className="border border-gray-200 dark:border-gray-700 rounded-xl px-1">
                   <Image
                     src={userDetails?.imageUrl || "/img/user.png"}
                     alt="user"
@@ -395,7 +406,7 @@ export default function IdeaTabs({
                     height={60}
                     className="rounded-md mt-1"
                   />
-                </div>
+                </div> */}
 
                 <InputTextArea
                   message={message || ""}
@@ -482,14 +493,14 @@ export default function IdeaTabs({
                     onChange={handleFileChange}
                   />
                   <button
-                    disabled={gif && String(message).trim().length <= 3}
+                    disabled={gif && String(message).trim().length <= 2}
                     onClick={() => postUserMessage("PUBLIC")}
                     className={`
                         py-1.5 px-4 w-16 flex items-center justify-center rounded-md
                         text-sm font-semibold
                         transition-all duration-200
                         ${
-                          gif || String(message).trim().length > 3
+                          gif || String(message).trim().length > 2
                             ? `
                               bg-emerald-500
                               text-black
@@ -611,8 +622,8 @@ export default function IdeaTabs({
             <CreatePostSkeleton />
           ) : (
             <div>
-              <div className="flex items-start gap-4 w-full px-4 mt-4">
-                <div className="border border-gray-200 dark:border-gray-700 rounded-xl px-1">
+              <div className="flex items-start gap-4 w-full px-4">
+                {/* <div className="border border-gray-200 dark:border-gray-700 rounded-xl px-1">
                   <Image
                     src={userDetails?.imageUrl || "/img/user.png"}
                     alt="user"
@@ -620,7 +631,7 @@ export default function IdeaTabs({
                     height={60}
                     className="rounded-md mt-1"
                   />
-                </div>
+                </div> */}
 
                 <InputTextArea
                   message={message || ""}
