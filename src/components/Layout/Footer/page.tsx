@@ -2,11 +2,18 @@ import React from "react";
 import Image from "next/image";
 import { Crown } from "lucide-react";
 
-const Footer = () => {
+const Footer = ({ isPosition }) => {
   return (
     <>
       <div className="pt-16 lg:pt-30 pb-10 bg-bglight dark:bg-bgdark">
-        <div className="max-w-[1268px] mx-auto px-4 mt-4">
+        <div
+          className={`
+    
+    transition-[max-width,padding] duration-500 ease-in-out 
+    mx-auto md:pt-1 py-0 h-auto w-full
+    ${isPosition ? "max-w-full px-10" : "max-w-[1450px] px-4"}
+  `}
+        >
           <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
             <div className="col-span-2 md:col-span-1">
               <a href="#">

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import Authentication from "@/components/Pages/auth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LoadingCard from "@/components/common/LoadingCard";
 import BuySell from "@/components/Modal/BuySell/page";
 import { commonQuestionFindById } from "@/components/service/apiService/category";
@@ -33,6 +33,12 @@ import toast from "react-hot-toast";
 import { useTheme } from "next-themes";
 import moment from "moment";
 import GlobalLoader from "@/components/common/Loader";
+import {
+  addWatchList,
+  removeWatchList,
+  saveQuestion,
+} from "@/components/store/slice/watchList";
+import { distance } from "framer-motion";
 
 interface selectedSubCategory {
   category: {
@@ -86,8 +92,6 @@ const Home = () => {
   const [loader, setLoader] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [questionData, setQuestionData] = useState<QuestionItem[]>([]);
-  const [questionBookMark, setQuestionBookMark] = useState<QuestionItem[]>([]);
   const [buyType, setBuyType] = useState<string | null>(null);
   const [options, setOptions] = useState<OptionItem | null>(null);
   const [rowDetails, setRowDetails] = useState<QuestionItemSecond | null>(null);
@@ -103,6 +107,11 @@ const Home = () => {
   const [emptyData, setEmptyData] = useState([]);
   const [isLoader, setIsLoader] = useState(false);
   const [width, setWidth] = useState(0);
+
+  const questionData = useSelector(
+    (state: any) => state?.watchlist?.questionList || [],
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleResize = () => {
@@ -155,11 +164,7 @@ const Home = () => {
     .map(([key]) => CATEGORY_MAP[key]);
 
   const questionAllList = async (newOffset = 0) => {
-    if (newOffset === 0) {
-      setLoader(true);
-    } else {
-      setIsLoader(true);
-    }
+    newOffset === 0 ? setLoader(true) : setIsLoader(true);
 
     try {
       const ids = isEvent ? eventSubCategoryId : selectedSubCategory?.id;
@@ -174,27 +179,26 @@ const Home = () => {
           search,
           hiddenCategories,
           12,
-          newOffset, // important
+          newOffset,
         ),
         delay(newOffset === 0 ? 1000 : 500),
       ]);
 
-      const newData = response?.data?.questions || [];
-
-      setEmptyData(newData);
       if (response?.success) {
-        setQuestionData((prev: any[]) => {
-          if (newOffset === 0) return newData;
+        const newData = response?.data?.questions || [];
+        setEmptyData(newData);
 
-          const map = new Map();
-          prev.forEach((item) => map.set(item.id, item));
-          newData.forEach((item) => map.set(item.id, item));
-
-          return Array.from(map.values());
-        });
+        dispatch(
+          saveQuestion({
+            newData: newData,
+            newOffset: newOffset,
+          }),
+        );
 
         setPagination(response?.data || {});
       }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
     } finally {
       setLoader(false);
       setIsLoader(false);
@@ -259,7 +263,7 @@ const Home = () => {
       if (scrollTop + windowHeight >= fullHeight - (width > 500 ? 200 : 1000)) {
         if (!isLoader && pagination?.limit) {
           const newOffset =
-            (pagination?.offset || 0) + (pagination?.limit || 12);
+            (pagination?.offset || 0) + (pagination?.limit || 12) + 1;
 
           // ✅ stop duplicate calls
           if (newOffset > offset) {
@@ -290,41 +294,27 @@ const Home = () => {
     setBuyType(type);
     setIsModalOpen(true);
   };
-  const optionColors = [
-    "34,211,238", // cyan
-    "250,204,21", // yellow
-    "96,165,250", // blue
-    "52,211,153", // green
-    "251,146,60", // orange
-    "168,85,247", // purple
-    "244,63,94", // red
-  ];
 
   const goToDetails = (questionId: string) => {
     router.push(`/market/${questionId}`);
   };
 
-  const bookMarkUnBookMark = async (id: string, status: boolean) => {
+  const bookMarkUnBookMark = async (id: string, row: any) => {
     try {
-      if (isWatchList) {
-        setQuestionBookMark((prev: any[]) =>
-          prev.filter((item) => item.id !== id),
-        );
+      if (!row?.isBookmark) {
+        dispatch(addWatchList(row));
       } else {
-        setQuestionData((prev: any[]) =>
-          prev.map((item) =>
-            item.id === id ? { ...item, isBookmark: !item.isBookmark } : item,
-          ),
-        );
+        dispatch(removeWatchList(id));
       }
 
+      // isBookmark
       const payload = { questionId: id };
       const response = await postQuestionBookUnBookMark(payload);
       if (response.success) {
         toast.success(
           response.data?.bookmarked
-            ? "Question added to bookmarks"
-            : "Question removed from bookmarks",
+            ? "Question added to watchlist"
+            : "Question removed from watchlist",
         );
       } else {
         toast.error(response.message);
@@ -333,44 +323,23 @@ const Home = () => {
       toast.success("");
     }
   };
-  const getWatchList = async () => {
-    try {
-      const response = await fetchWatchList();
 
-      if (response.success) {
-        setQuestionBookMark(response?.data?.questions || []);
-      } else {
-        setQuestionBookMark([]);
-      }
-    } catch {
-      setQuestionBookMark([]);
-    }
-  };
-  useEffect(() => {
-    if (isWatchList) {
-      getWatchList();
-    }
-  }, [isWatchList]);
-
-  const questionListFilter = isWatchList ? questionBookMark : questionData;
+  const questionListFilter = questionData;
 
   return (
     <>
       <div
-        className={`max-w-[1268px]  mx-auto px-4 pb-10 ${
+        className={`max-w-[1450px]  mx-auto px-4 pb-10 ${
           eventCategory?.length > 0 && isFilterQuestion
             ? "pt-8 lg:pt-32"
             : eventCategory?.length > 0
               ? "pt-8 lg:pt-32"
               : selectedSubCategory == null && isFilterQuestion
                 ? "pt-44 lg:pt-2"
-                : "pt-12 sm:pt-32 md:pt-28 lg:pt-24 "
+                : "pt-12 sm:pt-32 md:pt-5 lg:pt-16 "
         }`}
       >
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-10 lg:pt-0"
-          // ref={listRef}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-10 lg:pt-0">
           {
             // isEvent ? (
             //   <SubCategory
@@ -435,13 +404,13 @@ const Home = () => {
                         <div onClick={() => goToDetails(row.id)}>
                           <div className="block text-primary">
                             <div
-                              className="line-clamp-1"
+                              className="line-clamp-1 globalFonts"
                               title={row?.question || "--"}
                             >
                               {row?.question || "--"}
                             </div>
                           </div>
-                          <span className=" text-gray-400 text-[11px]  ">
+                          <span className=" text-gray-400 globalFonts text-[11px]  ">
                             Resolves, {moment(row?.endDate).format("MMM YYYY")}
                           </span>
                         </div>
@@ -714,10 +683,10 @@ const Home = () => {
                               className="w-full rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4"
                             >
                               <div className="flex items-center justify-between mb-2 gap-2">
-                                <span className="flex-1 min-w-0  truncate text-sm font-semibold tracking-wide">
+                                <span className="flex-1 min-w-0 globalFonts  truncate text-sm font-semibold tracking-wide">
                                   {item?.name || "--"}
                                 </span>
-                                <span className="shrink-0 text-sm font-semibold">
+                                <span className="shrink-0 globalFonts text-sm font-semibold">
                                   {percentage.toFixed(1)}%
                                 </span>
                               </div>
@@ -733,7 +702,7 @@ const Home = () => {
                                 />
                               </div>
 
-                              <div className="flex items-center justify-between text-xs text-gray-400">
+                              <div className="flex items-center globalFonts justify-between text-xs text-gray-400">
                                 <span>
                                   Price{" "}
                                   <span className="font-medium">
@@ -763,7 +732,8 @@ const Home = () => {
                                   )}
 
                                   <span>
-                                    {Math.abs(diffPercent).toFixed(1)}%
+                                    {/* {Math.abs(diffPercent).toFixed(1)}% */}
+                                    {truncateValue(1 / item?.price)}
                                   </span>
                                 </div>
                               </div>
@@ -808,10 +778,7 @@ const Home = () => {
                                 onClick={() =>
                                   !getToken
                                     ? setIsOpen(true)
-                                    : bookMarkUnBookMark(
-                                        row?.id,
-                                        row?.isBookmark,
-                                      )
+                                    : bookMarkUnBookMark(row?.id, row)
                                 }
                                 className="text-sky-400"
                               />
@@ -820,10 +787,7 @@ const Home = () => {
                                 onClick={() =>
                                   !getToken
                                     ? setIsOpen(true)
-                                    : bookMarkUnBookMark(
-                                        row?.id,
-                                        row?.isBookmark,
-                                      )
+                                    : bookMarkUnBookMark(row?.id, row)
                                 }
                                 className="text-sky-400"
                               />

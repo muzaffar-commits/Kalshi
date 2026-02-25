@@ -113,7 +113,7 @@ export default function MainSearch() {
         value={query}
         onFocus={() => setOpen(true)}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search Opinion Kings"
+        placeholder="Trade on anything"
         className="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-sm focus:outline-none"
       />
 

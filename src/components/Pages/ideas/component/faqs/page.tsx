@@ -190,7 +190,7 @@ export default function FAQs() {
 
   return (
     <div>
-      <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-0 lg:pt-10">
+      <div className="max-w-[880px] xl:max-w-[1450px] mx-auto px-4 pt-0 lg:pt-10">
         <div className="grid grid-cols-1 lg:grid-cols-4">
           {/* Sidebar */}
           <div className="lg:col-span-1">

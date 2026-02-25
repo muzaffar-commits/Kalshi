@@ -5,10 +5,12 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authSlice from "./slice/auth";
 import categorySlice from "./slice/category";
+import watchListSlice from "./slice/watchList";
 
 const rootReducer = combineReducers({
   user: authSlice,
   category: categorySlice,
+  watchlist: watchListSlice,
 });
 
 const persistConfig = {

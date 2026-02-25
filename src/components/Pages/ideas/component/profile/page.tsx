@@ -242,7 +242,7 @@ export default function Profile({ targetId }: { targetId: string }) {
 
   return (
     <div>
-      <div className="max-w-[880px] xl:max-w-[1268px] mx-auto px-4 pt-0 lg:pt-10">
+      <div className="max-w-[880px] xl:max-w-[1450px] mx-auto px-4 pt-0 lg:pt-10">
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <div className="lg:sticky top-32">

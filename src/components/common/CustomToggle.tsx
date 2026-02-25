@@ -26,7 +26,9 @@ export const CustomToggle = ({ label, checked, onChange }: customToggle) => {
       </span>
 
       {/* Label */}
-      <span className="text-xs dark:text-gray-300 text-gray-700">{label}</span>
+      <span className="text-xs dark:text-gray-300 font-normal text-gray-700 font-poppins">
+        {label}
+      </span>
     </label>
   );
 };

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@theme {
+  /* This creates the 'font-poppins' utility class automatically */
+  --font-poppins: var(--font-poppins), sans-serif;
+
+  /* If you want Poppins to be the default 'font-sans' */
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
 /* ===============================
    THEME VARIABLES
 ================================ */
@@ -179,3 +186,13 @@ body {
 /* textarea {
   font: inherit;
 } */
+
+.globalFonts {
+  font-family: var(--font-poppins);
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}

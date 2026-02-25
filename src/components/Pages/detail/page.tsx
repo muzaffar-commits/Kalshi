@@ -456,7 +456,7 @@ const Details = ({ marketId }) => {
         <MarketSkeleton />
       ) : (
         <div>
-          <div className="max-w-[1268px] mx-auto px-4 md:mt-18 mt-6">
+          <div className="max-w-[1450px] mx-auto px-4 md:mt-18 mt-6">
             <div className="container mx-auto pb-6">
               <div className="flex md:mb-6">
                 {questionImages?.imageUrl && (
