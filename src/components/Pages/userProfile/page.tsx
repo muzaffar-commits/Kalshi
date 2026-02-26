@@ -87,7 +87,7 @@ const UserProfile = () => {
   return (
     <>
       <div>
-        <div className="max-w-[900px] md:container 2xl:max-w-[65%]  mx-auto px-4 mt-2 lg:mt-6">
+        <div className="max-w-[1450px]    mx-auto px-4 mt-12 lg:mt-16">
           <div className="flex  justify-between md:pt-16 pt-8">
             <div className="flex gap-3 md:mb-0 sm:mb-4">
               <div className="h-16 w-16 sm:h-24 sm:w-24 flex items-center justify-center rounded bg-gray-300/20">
@@ -100,13 +100,13 @@ const UserProfile = () => {
                 />
               </div>
               <div className="flex-1">
-                <h2 className="dark:text-white text-black font-bold text-xl">
+                <h2 className="dark:text-white text-black font-bold globalFonts text-xl">
                   {userData?.user?.username || "Unknown User"}
                 </h2>
-                <p className="dark:text-gray-400 text-gray-700 text-xs sm:text-sm">
+                <p className="dark:text-gray-400 text-gray-700 globalFonts text-xs sm:text-sm">
                   {userData?.user?.email || "--"}
                 </p>
-                <p className="dark:text-gray-400 text-gray-700 text-xs sm:text-sm">
+                <p className="dark:text-gray-400 text-gray-700 globalFonts text-xs sm:text-sm">
                   Joined{" "}
                   {userData?.user?.createdAt
                     ? moment(userData.user.createdAt).format("DD MMM YYYY")
@@ -116,7 +116,7 @@ const UserProfile = () => {
                   <div className="text-gray-200 mt-3 text-sm flex  gap-4">
                     <span
                       onClick={() => setIsFollow(true)}
-                      className="dark:text-gray-400 flex gap-2 cursor-pointer text-gray-700"
+                      className="dark:text-gray-400 flex gap-2 cursor-pointer globalFonts text-gray-700"
                     >
                       <span className="dark:text-white text-gray-800 font-semibold">
                         {userData?.following || "0"}
@@ -126,7 +126,7 @@ const UserProfile = () => {
 
                     <span
                       onClick={() => setIsFollow(true)}
-                      className="dark:text-gray-400 flex gap-2 cursor-pointer text-gray-700"
+                      className="dark:text-gray-400 flex gap-2 globalFonts cursor-pointer text-gray-700"
                     >
                       <span className="dark:text-white text-gray-800 font-semibold">
                         {userData?.follower || "0"}
@@ -134,7 +134,7 @@ const UserProfile = () => {
                       Followers
                     </span>
 
-                    <span className="dark:text-gray-400 flex gap-2 text-gray-700">
+                    <span className="dark:text-gray-400 flex globalFonts gap-2 text-gray-700">
                       <span className="dark:text-white text-gray-800 font-semibold">
                         {profileStats.stats.totalTrades}
                       </span>{" "}
@@ -160,7 +160,7 @@ const UserProfile = () => {
 
     hover:brightness-110
     active:translate-y-[4px]
-    active:shadow-[0_2px_0_#0077cc]
+    active:shadow-[0_2px_0_#0077cc] globalFonts
   "
               >
                 Edit Profile
@@ -171,9 +171,9 @@ const UserProfile = () => {
             <div className="text-gray-200 text-sm flex  gap-4">
               <span
                 onClick={() => setIsFollow(true)}
-                className="dark:text-gray-400 flex gap-2 cursor-pointer text-gray-700"
+                className="dark:text-gray-400 flex gap-2 cursor-pointer globalFonts text-gray-700"
               >
-                <span className="dark:text-white text-gray-800 font-semibold">
+                <span className="dark:text-white text-gray-800 font-semibold globalFonts">
                   {userData?.following || "0"}
                 </span>{" "}
                 Following
@@ -199,14 +199,14 @@ const UserProfile = () => {
           </div>
           <div className="mt-2">
             <span className="text-gray-800 text-xs dark:text-gray-400">
-              <span className="font-medium text-gray-900 dark:text-gray-200">
+              <span className="font-medium globalFonts text-gray-900 dark:text-gray-200">
                 Bio:
               </span>{" "}
               {userData?.user?.description || "--"}
             </span>
           </div>
 
-          <div className="md:mt-3 pt-1 border-t dark:border-gray-700 border-gray-300">
+          <div className="md:mt-3 pt-3 border-t dark:border-gray-700 border-gray-300">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <span className="me-2">
@@ -220,12 +220,12 @@ const UserProfile = () => {
                     <path d="M16.417 10.283A7.917 7.917 0 1 1 8.5 2.366a7.916 7.916 0 0 1 7.917 7.917zm-4.844 1.754a2.249 2.249 0 0 0-.556-1.477l-.001-.002a3.02 3.02 0 0 0-.835-.665l-.003-.002a3.498 3.498 0 0 0-.866-.313H9.31a3.78 3.78 0 0 0-.795-.083 2.849 2.849 0 0 1-.475-.037 1.8 1.8 0 0 1-.494-.158l-.002-.001a1.17 1.17 0 0 1-.371-.298L7.172 9a.733.733 0 0 1-.175-.44.749.749 0 0 1 .421-.63 2.157 2.157 0 0 1 1.11-.297 2.283 2.283 0 0 1 .391.066l.049.01a2.479 2.479 0 0 1 .473.166 1.33 1.33 0 0 1 .381.261.792.792 0 1 0 1.118-1.12 2.902 2.902 0 0 0-.85-.585 3.996 3.996 0 0 0-.785-.268h-.001l-.008-.002v-.786a.792.792 0 1 0-1.583 0v.763a3.557 3.557 0 0 0-1.14.454 2.328 2.328 0 0 0-1.159 1.967 2.296 2.296 0 0 0 .529 1.44 2.724 2.724 0 0 0 .894.717 3.342 3.342 0 0 0 .942.305 4.398 4.398 0 0 0 .736.059 2.202 2.202 0 0 1 .46.046 1.927 1.927 0 0 1 .467.168 1.431 1.431 0 0 1 .382.308.674.674 0 0 1 .165.436c0 .097 0 .324-.385.573a2.182 2.182 0 0 1-1.132.314 3.515 3.515 0 0 1-.494-.06 2.381 2.381 0 0 1-.459-.148h-.001a.953.953 0 0 1-.356-.274.792.792 0 1 0-1.197 1.037 2.516 2.516 0 0 0 .967.708 3.799 3.799 0 0 0 .774.237h.007v.783a.792.792 0 1 0 1.583 0v-.79a3.581 3.581 0 0 0 1.17-.479 2.215 2.215 0 0 0 1.107-1.9z" />
                   </svg>
                 </span>
-                <span className="dark:text-gray-400 text-gray-700 font-normal text-sm">
+                <span className="dark:text-gray-400 text-gray-700 font-normal globalFonts text-sm">
                   Total Balance
                 </span>
               </div>
               <div className="md:mb-0 mb-3">
-                <span className="bg-green-700 text-white py-1 px-4 text-sm font-semibold rounded-full">
+                <span className="bg-green-700 text-white py-1 px-4 text-sm font-semibold globalFonts rounded-full">
                   ${(Number(balance?.balance) || 0).toFixed(3)}
                 </span>
               </div>
@@ -277,13 +277,13 @@ const UserProfile = () => {
                     />
                   </svg>
                 </span>
-                <span className="dark:text-gray-400 text-gray-700 font-normal text-sm">
+                <span className="dark:text-gray-400 text-gray-700 font-normal globalFonts text-sm">
                   Total Investment
                 </span>
               </div>
 
               <div>
-                <span className="bg-yellow-500/70 text-white py-1 px-4 text-sm rounded-full font-semibold">
+                <span className="bg-yellow-500/70 text-white py-1 px-4 text-sm rounded-full font-semibold globalFonts">
                   $
                   {Number(profileStats.portfolio.investedAmount).toFixed(
                     3,

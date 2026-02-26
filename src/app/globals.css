@@ -68,13 +68,7 @@ body {
   overflow: auto;
   background: var(--color-background);
   color: var(--color-text);
-  font-family:
-    var(--font-roboto),
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Arial,
-    sans-serif;
+  font-family: var(--font-poppins), var(--font-roboto), system-ui, sans-serif;
 }
 
 /* ===============================
@@ -188,7 +182,7 @@ body {
 } */
 
 .globalFonts {
-  font-family: var(--font-poppins);
+  font-family: var(--font-poppins), sans-serif;
 }
 
 .transition-all {

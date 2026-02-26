@@ -25,7 +25,7 @@ export default function MarketCard({ data = [], handleBuySell }) {
         return (
           <div key={row.id} className="relative">
             {isOpen && (
-              <div className="absolute delay-500 left-0 top-0 h-full w-1 rounded-lg  rounded-l-lg" /> //bg-emerald-500 
+              <div className="absolute delay-500 left-0 top-0 h-full w-1 rounded-lg  rounded-l-lg" /> //bg-emerald-500
             )}
 
             <div
@@ -74,15 +74,15 @@ export default function MarketCard({ data = [], handleBuySell }) {
                 <div className="md:flex-[2]">
                   <div className="flex justify-between">
                     <div className="flex flex-col">
-                      <p className="font-semibold text-base text-black dark:text-white">
+                      <p className="font-semibold globalFonts text-base text-black dark:text-white">
                         {row?.name || "--"}
                       </p>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-gray-500 font-normal globalFonts dark:text-gray-400">
                         ${truncateValue(row?.trading?.totalVolume || 0)} VOL.
                       </span>
                     </div>
 
-                    <div className="text-lg font-semibold text-black dark:text-white whitespace-nowrap">
+                    <div className="text-lg font-semibold globalFonts text-black dark:text-white whitespace-nowrap">
                       {truncateValue(row?.price * 100, 2)}%
                     </div>
                   </div>
@@ -106,7 +106,7 @@ export default function MarketCard({ data = [], handleBuySell }) {
     transition-all duration-150 ease-in-out
     hover:bg-red-500/25
     active:translate-y-[2px]
-    active:shadow-[0_1px_0_rgba(239,68,68,0.4)]
+    active:shadow-[0_1px_0_rgba(239,68,68,0.4)] globalFonts
   "
                     >
                       Sell ${truncateValue(row?.price)}
@@ -125,7 +125,7 @@ export default function MarketCard({ data = [], handleBuySell }) {
     transition-all duration-150 ease-in-out
     hover:bg-emerald-500/25
     active:translate-y-[2px]
-    active:shadow-[0_1px_0_rgba(16,185,129,0.4)]
+    active:shadow-[0_1px_0_rgba(16,185,129,0.4)] globalFonts
   "
                     >
                       Buy ${truncateValue(row?.price)}
@@ -157,28 +157,28 @@ export default function MarketCard({ data = [], handleBuySell }) {
                 >
                   {/* HEADER */}
                   <div className="flex text-xs font-semibold text-gray-600 dark:text-gray-300 border-b dark:border-gray-700 pb-2 mb-2">
-                    <div className="w-1/3 text-left">Invested</div>
-                    <div className="w-1/3 text-center">PNL</div>
-                    <div className="w-1/3 text-right">Shares</div>
+                    <div className="w-1/3 text-left globalFonts">Invested</div>
+                    <div className="w-1/3 text-center globalFonts">PNL</div>
+                    <div className="w-1/3 text-right globalFonts">Shares</div>
                   </div>
 
                   {/* VALUES */}
                   <div className="flex text-sm items-center">
-                    <div className="w-1/3 text-left text-gray-700 dark:text-gray-300">
+                    <div className="w-1/3 text-left text-gray-700 globalFonts dark:text-gray-300">
                       {(row.userPosition?.invested ?? 0) > 0
                         ? `$${truncateValue(row.userPosition?.invested, 2)}`
                         : "--"}
                     </div>
 
                     <div
-                      className={`w-1/3 text-center font-semibold ${
+                      className={`w-1/3 text-center font-semibold globalFonts ${
                         pnl < 0 ? "text-red-500" : "text-emerald-500"
                       }`}
                     >
                       {pnl !== 0 ? `$${truncateValue(pnl, 2)}` : "--"}
                     </div>
 
-                    <div className="w-1/3 text-right text-gray-700 dark:text-gray-300">
+                    <div className="w-1/3 text-right globalFonts text-gray-700 dark:text-gray-300">
                       {(row.userPosition?.shares ?? 0) > 0
                         ? truncateValue(row.userPosition?.shares, 2)
                         : "--"}

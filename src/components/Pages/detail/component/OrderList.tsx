@@ -21,6 +21,7 @@ interface OrderListProps {
 
   page: number;
   setOrderPage: (orderId: number) => void;
+  orderPageResponse: any;
 }
 
 export default function OrderList({
@@ -28,12 +29,15 @@ export default function OrderList({
   cancelOrders,
   page,
   setOrderPage,
+  orderPageResponse,
 }: OrderListProps) {
+  console.log(page, orderPageResponse, "page");
+
   const changePageInc = () => {
-    setOrderPage(page - 5);
+    setOrderPage(page + 1);
   };
   const changePageDsc = () => {
-    setOrderPage(page);
+    setOrderPage(page - 1);
   };
   return (
     <div className="w-full rounded-2xl bg-transparent border border-gray-300 dark:border-white/10 p-6">

@@ -4,8 +4,8 @@ export default function PrivacyPolicy() {
   localStorage.setItem("isCategory", "0");
   return (
     <div className=" text-gray-800 dark:text-gray-200 min-h-screen">
-      <div className="max-w-[1450px] mx-auto px-4 pb-16 mt-20 lg:mt-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">
+      <div className="max-w-[1450px] mx-auto px-4 pb-16 mt-16 sm:mt-28 lg:mt-28">
+        <h1 className="text-3xl md:text-4xl font-semibold globalFonts  mb-6 text-center">
           Privacy Policy
         </h1>
 
@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
 
         {/* INTRO */}
         <section className="mb-8">
-          <p>
+          <p className="font-normal globalFonts">
             Welcome to <strong>Opinion Kings</strong>. Your privacy is important
             to us. This Privacy Policy explains how we collect, use, disclose,
             and protect your information when you access or use our website,

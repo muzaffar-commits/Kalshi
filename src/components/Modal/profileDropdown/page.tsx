@@ -10,7 +10,14 @@ import { logoutUser, userDetails } from "../../service/apiService/user";
 import Image from "next/image";
 import { FiLogOut } from "react-icons/fi";
 import toast from "react-hot-toast";
-
+import { MdOutlinePrivacyTip } from "react-icons/md";
+import {
+  Lightbulb,
+  ListOrdered,
+  ShieldCheck,
+  FileText,
+  ChevronRight,
+} from "lucide-react";
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<UserProfileData[] | null>(null);
@@ -53,8 +60,10 @@ export default function ProfileDropdown() {
       router.push("/ideas");
     } else if (id === 1) {
       router.push("/privacyPolicy");
-    } else {
+    } else if (id === 2) {
       router.push("/termsAndConditions");
+    } else {
+      router.push("/watchlist");
     }
     setOpen(false);
   };
@@ -80,7 +89,7 @@ export default function ProfileDropdown() {
   // const portFolioData = user?.[1] || null;
 
   return (
-    <div className="relative" ref={ref}>
+    <div className={` relative`} ref={ref}>
       {/* Profile Icon */}
       <button
         onClick={() => setOpen((prev) => !prev)}
@@ -144,17 +153,74 @@ export default function ProfileDropdown() {
         {/* Menu */}
         <div className="py-2 text-md font-semibold">
           {/* "Bookmarks", */}
-          {["Ideas", "Privacy Policy", "Terms and Conditions"].map(
-            (item, index) => (
-              <div
-                key={item}
-                onClick={() => handleNavigateRoute(index)}
-                className="px-4 py-2 dark:text-gray-300 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-              >
-                {item}
-              </div>
-            ),
-          )}
+
+          <div
+            onClick={() => handleNavigateRoute(0)}
+            className="group px-4 sm:hidden flex items-center justify-between py-2.5 dark:text-gray-300 text-gray-700 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Lightbulb
+                size={18}
+                className="text-yellow-500 dark:text-yellow-400"
+              />
+              <span className="font-medium">Ideas</span>
+            </div>
+            <ChevronRight
+              size={14}
+              className="opacity-0 group-hover:opacity-100 text-gray-400"
+            />
+          </div>
+
+          <div
+            onClick={() => handleNavigateRoute(4)}
+            className="group px-4 sm:hidden flex items-center justify-between py-2.5 dark:text-gray-300 text-gray-700 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <ListOrdered
+                size={18}
+                className="text-blue-500 dark:text-blue-400"
+              />
+              <span className="font-medium">Watch List</span>
+            </div>
+            <ChevronRight
+              size={14}
+              className="opacity-0 group-hover:opacity-100 text-gray-400"
+            />
+          </div>
+
+          <div
+            onClick={() => handleNavigateRoute(1)}
+            className="group px-4 flex items-center justify-between py-2.5 dark:text-gray-300 text-gray-700 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <ShieldCheck
+                size={18}
+                className="text-emerald-500 dark:text-emerald-400"
+              />
+              <span className="font-medium">Privacy Policy</span>
+            </div>
+            <ChevronRight
+              size={14}
+              className="opacity-0 group-hover:opacity-100 text-gray-400"
+            />
+          </div>
+
+          <div
+            onClick={() => handleNavigateRoute(2)}
+            className="group px-4 flex items-center justify-between py-2.5 dark:text-gray-300 text-gray-700 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <FileText
+                size={18}
+                className="text-purple-500 dark:text-purple-400"
+              />
+              <span className="font-medium">Terms and Conditions</span>
+            </div>
+            <ChevronRight
+              size={14}
+              className="opacity-0 group-hover:opacity-100 text-gray-400"
+            />
+          </div>
           <div className="border-t my-2 dark:border-gray-500 border-gray-300" />
           <div className="flex items-center md:justify-center justify-between gap-2 mx-auto  px-4 py-2">
             <div>

@@ -66,26 +66,32 @@ export default function WatchList() {
     }
   };
 
+  const locations = location.pathname;
+
   return (
     <div className="h-full z-50 bg-white dark:bg-[#0F172A]">
       {/* Positions Section */}
-      <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+      <div
+        className={`p-4 ${locations == "/watchlist/" ? "mt-24 " : ""} border-b border-gray-100 dark:border-gray-800`}
+      >
         <div className="flex items-center justify-between mb-8 cursor-pointer group">
-          <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <h2 className="font-bold text-gray-900 dark:text-white globalFonts flex items-center gap-2">
             Positions{" "}
             <HiOutlineChevronDown className="text-gray-400 group-hover:text-gray-600" />
           </h2>
         </div>
         <div className="flex flex-col items-center justify-center py-10">
           <MdOutlineListAlt className="text-4xl text-gray-300 mb-2" />
-          <p className="text-sm text-gray-400 font-medium">No markets</p>
+          <p className="text-sm text-gray-400 font-medium globalFonts">
+            No markets
+          </p>
         </div>
       </div>
 
       {/* Watchlist Section */}
       <div className="">
         <div className="flex border-b px-4 py-2 border-gray-100 dark:border-gray-800 items-center justify-between mb-4">
-          <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <h2 className="font-bold text-gray-900 dark:text-white flex items-center globalFonts gap-2">
             Watchlist <HiOutlineChevronDown className="text-gray-400" />
           </h2>
           <LuListFilter className="text-gray-500 cursor-pointer hover:text-black" />
@@ -148,7 +154,7 @@ export default function WatchList() {
                               {row?.question || "--"}
                             </div>
                           </div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-tight">
+                          <p className="text-[10px] text-gray-400 uppercase globalFonts tracking-tight">
                             Resolves, {moment(row?.endDate).format("MMM YYYY")}
                           </p>
                         </div>
@@ -166,7 +172,7 @@ export default function WatchList() {
                   );
                 })
               : !loading && (
-                  <p className="text-xs text-center text-gray-400 py-4">
+                  <p className="text-xs globalFonts text-center text-gray-400 py-4">
                     Watchlist is empty
                   </p>
                 )}

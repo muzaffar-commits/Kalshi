@@ -261,11 +261,10 @@ const Header = ({ isPosition, setPosition }) => {
     ${isPosition ? "max-w-full px-10" : "max-w-[1450px] px-4"}
   `}
           >
-            <div className={`flex items-center  justify-between w-full `}>
-              {/* LEFT: Logo */}
+            <div className={`flex items-center  pt-1  justify-between w-full `}>
               <div className="flex flex-row   items-center gap-8">
                 <Link href="/" className="shrink-0">
-                  <p className="text-text md:text-[25px] font-poppins text-[15px] font-bold">
+                  <p className="text-text md:text-[25px] font-poppins text-[20px] font-bold">
                     <Crown className="w-6 h-6 relative -top-1 inline-block font-bold" />{" "}
                     <span className="font-normal">OPINION</span>{" "}
                     <span className="text-[#8160ee]">KINGS</span>
@@ -318,7 +317,7 @@ const Header = ({ isPosition, setPosition }) => {
                 {user?.isAuth && (
                   <button
                     className="md:inline-block hidden
-    group relative
+    group relative globalFonts
     hover:bg-btnbg bg-[#8160ee]
     text-white text-sm font-medium
     px-4 py-2 rounded-md
@@ -389,7 +388,7 @@ const Header = ({ isPosition, setPosition }) => {
                 className="flex items-center  sm:px-3 px-5  pb-2 text-[14px] overflow-x-auto whitespace-nowrap scrollbar-hide scroll-smooth"
               >
                 {!isCategory && (
-                  <li className="flex-shrink-0  py-1  ">
+                  <li className="flex-shrink-0 md:block hidden py-1  ">
                     {isPosition ? (
                       <ListIndentIncrease
                         className="cursor-pointer "

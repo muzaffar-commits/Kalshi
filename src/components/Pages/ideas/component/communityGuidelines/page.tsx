@@ -4,11 +4,11 @@ import MobileMenu from "../IdeaList/page";
 export default function CommunityGuidelines() {
   return (
     <div>
-      <div className="max-w-[880px] xl:max-w-[1450px] mx-auto px-4 pt-0 lg:pt-10">
+      <div className="max-w-[1450px] mx-auto px-4 pt-8 sm:pt-24 lg:pt-24">
         <div className="grid grid-cols-1 lg:grid-cols-4">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-32">
+            <div className="lg:sticky top-32">
               <h1 className="dark:text-white text-gray-800 md:ml-0 ml-16 lg:text-3xl text-xl mb-0 mt-3">
                 Ideas
               </h1>

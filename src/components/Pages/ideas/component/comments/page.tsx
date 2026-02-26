@@ -429,10 +429,10 @@ export default function CommentPage() {
   }, [openEmoji]);
   return (
     <div>
-      <div className="max-w-[880px] xl:max-w-[1450px] mx-auto px-4 pt-0 sm:pt-9 lg:pt-10">
+      <div className="max-w-[1450px] mx-auto px-4 pt-8 sm:pt-24 lg:pt-24">
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-1">
-            <div className="sticky top-32 dark:border-gray-700">
+            <div className="lg:sticky top-32 dark:border-gray-700">
               <div className="pl-12 md:pl-0">
                 {" "}
                 <h1 className="dark:text-white text-gray-800 lg:text-3xl text-xl mb-0 mt-3">

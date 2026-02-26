@@ -39,6 +39,7 @@ import {
   saveQuestion,
 } from "@/components/store/slice/watchList";
 import { distance } from "framer-motion";
+import { useSidebar } from "@/components/TradingLayout";
 
 interface selectedSubCategory {
   category: {
@@ -107,7 +108,7 @@ const Home = () => {
   const [emptyData, setEmptyData] = useState([]);
   const [isLoader, setIsLoader] = useState(false);
   const [width, setWidth] = useState(0);
-
+  const { isSidebarOpen } = useSidebar();
   const questionData = useSelector(
     (state: any) => state?.watchlist?.questionList || [],
   );
@@ -326,6 +327,8 @@ const Home = () => {
 
   const questionListFilter = questionData;
 
+  console.log(isSidebarOpen, "isSidebarOpen");
+
   return (
     <>
       <div
@@ -336,10 +339,12 @@ const Home = () => {
               ? "pt-8 lg:pt-32"
               : selectedSubCategory == null && isFilterQuestion
                 ? "pt-44 lg:pt-2"
-                : "pt-12 sm:pt-32 md:pt-5 lg:pt-16 "
+                : "pt-8 sm:pt-10 md:pt-5 lg:pt-16 "
         }`}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-10 lg:pt-0">
+        <div
+          className={`grid grid-cols-1 ${isSidebarOpen ? "lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3" : "md:grid-cols-2 xl:grid-cols-3"}  gap-4 pt-10 lg:pt-0`}
+        >
           {
             // isEvent ? (
             //   <SubCategory
@@ -666,7 +671,7 @@ const Home = () => {
                     )} */}
 
                     {row?.options?.length > 0 && (
-                      <div className="text-xs mt-2 h-[170px] hideScrollbar overflow-y-auto space-y-2">
+                      <div className="text-xs mt-2  h-[130px]  hideScrollbar overflow-y-auto space-y-2">
                         {row?.options?.map((item: OptionItem, idx: number) => {
                           const percentage = item?.price * 100;
                           const isTopOption = item?.price === maxPrice;
@@ -678,64 +683,144 @@ const Home = () => {
                             : 0;
 
                           return (
-                            <div
-                              key={idx}
-                              className="w-full rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4"
-                            >
-                              <div className="flex items-center justify-between mb-2 gap-2">
-                                <span className="flex-1 min-w-0 globalFonts  truncate text-sm font-semibold tracking-wide">
-                                  {item?.name || "--"}
-                                </span>
-                                <span className="shrink-0 globalFonts text-sm font-semibold">
-                                  {percentage.toFixed(1)}%
-                                </span>
-                              </div>
-
-                              <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mb-2">
-                                <div
-                                  className={`h-full ${
-                                    isTopOption
-                                      ? "bg-gradient-to-r from-teal-400 to-cyan-400"
-                                      : "bg-gradient-to-r from-yellow-400 to-red-400"
-                                  }`}
-                                  style={{ width: `${percentage}%` }}
-                                />
-                              </div>
-
-                              <div className="flex items-center globalFonts justify-between text-xs text-gray-400">
-                                <span>
-                                  Price{" "}
-                                  <span className="font-medium">
-                                    {truncateValue(item?.price || 0)}
+                            <div key={idx}>
+                              {/* <div
+                                key={idx}
+                                className="w-full rounded-xl dark:bg-[#272f42] bg-[#f5f5f5] py-1.5 my-2 px-4"
+                              >
+                                <div className="flex items-center justify-between mb-2 gap-2">
+                                  <span className="flex-1 min-w-0 globalFonts  truncate text-sm font-semibold tracking-wide">
+                                    {item?.name || "--"}
                                   </span>
-                                </span>
-
-                                <div
-                                  className={`flex items-center gap-1 font-medium ${
-                                    isAllEqual
-                                      ? "text-gray-400"
-                                      : isTopOption
-                                        ? "text-green-400"
-                                        : "text-yellow-400"
-                                  }`}
-                                >
-                                  {isAllEqual ? (
-                                    <span className="text-lg text-slate-300 leading-none">
-                                      ~
-                                    </span>
-                                  ) : (
-                                    <FaArrowUp
-                                      className={`transition-transform ${
-                                        isTopOption ? "" : "rotate-180"
-                                      }`}
-                                    />
-                                  )}
-
-                                  <span>
-                                    {/* {Math.abs(diffPercent).toFixed(1)}% */}
-                                    {truncateValue(1 / item?.price)}
+                                  <span className="shrink-0 globalFonts text-sm font-semibold">
+                                    {percentage.toFixed(1)}%
                                   </span>
                                 </div>
+
+                                <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mb-2">
+                                  <div
+                                    className={`h-full ${
+                                      isTopOption
+                                        ? "bg-gradient-to-r from-teal-400 to-cyan-400"
+                                        : "bg-gradient-to-r from-yellow-400 to-red-400"
+                                    }`}
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                </div>
+
+                                <div className="flex items-center globalFonts justify-between text-xs text-gray-400">
+                                  <span>
+                                    Price{" "}
+                                    <span className="font-medium">
+                                      {truncateValue(item?.price || 0)}
+                                    </span>
+                                  </span>
+
+                                  <div
+                                    className={`flex items-center gap-1 font-medium ${
+                                      isAllEqual
+                                        ? "text-gray-400"
+                                        : isTopOption
+                                          ? "text-green-400"
+                                          : "text-yellow-400"
+                                    }`}
+                                  >
+                                    {isAllEqual ? (
+                                      <span className="text-lg text-slate-300 leading-none">
+                                        ~
+                                      </span>
+                                    ) : (
+                                      <FaArrowUp
+                                        className={`transition-transform ${
+                                          isTopOption ? "" : "rotate-180"
+                                        }`}
+                                      />
+                                    )}
+
+                                    <span>
+                                      {truncateValue(1 / item?.price)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div> */}
+
+                              <div
+                                key={idx}
+                                className="w-full rounded-xl flex flex-row justify-between gap-3   my-2 "
+                              >
+                                <div className="flex flex-col  w-[60%] sm:w-[70%] ">
+                                  <div className="flex items-center justify-between mb-2 gap-2">
+                                    <span className="flex-1 min-w-0 dark:text-gray-300   text-[14px] truncate  globalFonts tracking-wide">
+                                      {item?.name || "--"}
+                                    </span>
+                                  </div>
+
+                                  <div className="h-1 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden mb-2">
+                                    <div
+                                      className={`h-full ${
+                                        isTopOption
+                                          ? "bg-gradient-to-r from-teal-400 to-cyan-400"
+                                          : "bg-gradient-to-r from-yellow-400 to-red-400"
+                                      }`}
+                                      style={{ width: `${percentage}%` }}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex flex-row justify-end w-[35%] sm:w-[30%] gap-2 items-center">
+                                  <div
+                                    className={`flex items-center gap-1 font-medium ${
+                                      isAllEqual
+                                        ? "text-gray-400"
+                                        : isTopOption
+                                          ? "text-gray-400"
+                                          : "text-gray-400"
+                                    }`}
+                                  >
+                                    <span className="flex text-xs font-normal flex-row text-nowrap">
+                                      {truncateValue(1 / item?.price, 1)}x
+                                    </span>
+                                  </div>
+                                  <div className="border border-green-400 w-16 text-center py-1.5 rounded-full">
+                                    <span className="shrink-0 globalFonts text-sm font-semibold">
+                                      {percentage.toFixed(0)}%
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* <div className="flex items-center globalFonts justify-between text-xs text-gray-400"> */}
+                                {/* <span>
+                                    Price{" "}
+                                    <span className="font-medium">
+                                      {truncateValue(item?.price || 0)}
+                                    </span>
+                                  </span> */}
+
+                                {/* <div
+                                    className={`flex items-center gap-1 font-medium ${
+                                      isAllEqual
+                                        ? "text-gray-400"
+                                        : isTopOption
+                                          ? "text-green-400"
+                                          : "text-yellow-400"
+                                    }`}
+                                  >
+                                    {isAllEqual ? (
+                                      <span className="text-lg text-slate-300 leading-none">
+                                        ~
+                                      </span>
+                                    ) : (
+                                      <FaArrowUp
+                                        className={`transition-transform ${
+                                          isTopOption ? "" : "rotate-180"
+                                        }`}
+                                      />
+                                    )}
+
+                                    <span>
+                                      {truncateValue(1 / item?.price)}
+                                    </span>
+                                  </div> */}
+                                {/* </div> */}
                               </div>
                             </div>
                           );
@@ -743,7 +828,7 @@ const Home = () => {
                       </div>
                     )}
 
-                    <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
+                    {/* <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
                       <div className="flex flex-row gap-2 items-center">
                         <span>{row?.options?.length || "0"} market</span>
                         <div className="flex gap-4 items-center">
@@ -802,6 +887,67 @@ const Home = () => {
                         >
                           Trade
                         </button>
+                      </div>
+                    </div> */}
+                    <div className="flex mt-3  align-baseline justify-between text-xs font-normal text-muted">
+                      <div className="flex flex-row gap-2 items-center">
+                        <div className="flex gap-4 items-center">
+                          <span className="flex items-center gap-1">
+                            {row?.stats?.totalVolume > 0 ? (
+                              <>
+                                <span className="text-yellow-500 font-semibold">
+                                  $
+                                </span>
+                                <span className="text-gray-400">
+                                  {Number(row?.stats?.totalVolume || 0).toFixed(
+                                    2,
+                                  )}{" "}
+                                  Vol
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-yellow-500 flex items-center gap-1">
+                                <GiNinjaStar size={12} className="rotate-45" />
+                                New
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-row items-center gap-3 pr-2">
+                        <span>{row?.options?.length || "0"} market</span>
+
+                        <span
+                          className="cursor-pointer inline-flex
+             transition-transform duration-200 ease-in-out
+             hover:scale-125"
+                        >
+                          {!row?.isBookmark ? (
+                            <FaRegBookmark
+                              onClick={() =>
+                                !getToken
+                                  ? setIsOpen(true)
+                                  : bookMarkUnBookMark(row?.id, row)
+                              }
+                              className="text-sky-400"
+                            />
+                          ) : (
+                            <FaBookmark
+                              onClick={() =>
+                                !getToken
+                                  ? setIsOpen(true)
+                                  : bookMarkUnBookMark(row?.id, row)
+                              }
+                              className="text-sky-400"
+                            />
+                          )}
+                        </span>
+                        {/* <button
+                          onClick={() => goToDetails(row.id)}
+                          className="bg-[#8160ee] cursor-pointer rounded-md py-1.5 px-5 text-[14px] text-white font-semibold text-center"
+                        >
+                          Trade
+                        </button> */}
                       </div>
                     </div>
                   </div>

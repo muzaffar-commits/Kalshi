@@ -218,3 +218,57 @@ export const BASE_COLORS = [
   "#03A9F4",
   "#4CAF50",
 ];
+
+export function extractSingleMainKeyword(sentence) {
+  const stopWords = new Set([
+    "who",
+    "will",
+    "be",
+    "confirmed",
+    "as",
+    "the",
+    "in",
+    "at",
+    "of",
+    "is",
+    "a",
+    "an",
+    "next",
+    "to",
+    "for",
+    "on",
+    "was",
+    "were",
+    "been",
+    "how",
+    "what",
+    "which",
+    "win",
+    "year",
+    "nominated",
+    "will",
+    "this",
+  ]);
+
+  // 1. Clean and split
+  const words = sentence
+    ?.toLowerCase()
+    ?.replace(/[?.,!]/g, "")
+    ?.split(" ");
+
+  // 2. Filter out stopWords
+  const potentialKeywords = words?.filter(
+    (word) => !stopWords?.has(word) && word?.length > 2,
+  );
+
+  // 3. Logic to pick the BEST single keyword:
+  // Prediction market mein aksar pehla "Important" noun hi main subject hota hai.
+  // Jaise: "Which [game]..." or "Who will [treasury]..."
+
+  if (potentialKeywords?.length > 0) {
+    // Hum pehla word return karenge jo filter hone ke baad bacha hai
+    return potentialKeywords[0];
+  }
+
+  return "No keyword found";
+}

@@ -30,23 +30,12 @@ const StackedAreaChart = ({
 
   const options: ApexOptions = {
     chart: {
-      type: "area",
+      type: "line", // 🔥 Shadows hatane ke liye 'line' best hai agar niche ka rang nahi chahiye
       stacked: false,
       toolbar: { show: false },
       zoom: { enabled: true },
-
-      // ✅ smooth hover
       animations: {
         enabled: true,
-      },
-
-      events: {
-        dataPointSelection: (event, chartContext, config) => {
-          const { seriesIndex, dataPointIndex, w } = config;
-          const value = w.config.series[seriesIndex].data[dataPointIndex];
-
-          console.log("Clicked value:", value);
-        },
       },
     },
 
@@ -56,92 +45,81 @@ const StackedAreaChart = ({
       enabled: false,
     },
 
-    // ✅ important for hover detection
+    // ✅ Fix 1: Saare circles aur markers ko hide kiya
     markers: {
       size: 0,
+      strokeWidth: 0,
       hover: {
-        size: 6,
+        size: 0,
       },
     },
 
     stroke: {
       curve: "smooth",
-      width: 2,
+      width: 3,
     },
 
+    // ✅ Fix 2: Niche ki shadow/gradient hatane ke liye fill ko transparent ya solid line rakha
     fill: {
-      type: "gradient",
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.5,
-        opacityTo: 0.8,
-        stops: [0, 90, 100],
-      },
+      type: "solid",
+      opacity: 1,
     },
 
     legend: {
       show: false,
-      labels: {
-        colors: theme === "dark" ? "#fff" : "#000",
-      },
     },
 
     xaxis: {
       type: "datetime",
-
-      // ✅ full chart hover
       crosshairs: {
         show: true,
         width: 1,
+        stroke: {
+          color: "#9ca3af",
+          dashArray: 4,
+        },
       },
-
       labels: {
         style: {
           colors: "#6b7280",
         },
-        datetimeFormatter: {
-          year: "yyyy",
-          month: "MMM 'yy",
-          day: "dd MMM",
-        },
       },
-
-      tickPlacement: "on",
       axisBorder: { show: false },
-      axisTicks: { show: true },
+      axisTicks: { show: false },
     },
 
     yaxis: {
+      opposite: true, // Scale right side par kar diya professional look ke liye
       min: 0,
       max: 1,
       labels: {
         style: { colors: "#6b7280" },
-        formatter: (val: number) => val.toFixed(2),
+        formatter: (val: number) => `${(val * 100).toFixed(0)}%`,
       },
     },
 
     grid: {
-      borderColor: "#7A85F5",
+      borderColor: theme === "dark" ? "#1e293b" : "#e2e8f0",
       strokeDashArray: 4,
       padding: {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 10,
+        right: 20,
       },
     },
 
-    // ✅ FINAL tooltip fix
+    // ✅ Fix 3: Tooltip ko shared rakha taaki kahin bhi hover karne par value dikhe
     tooltip: {
       shared: true,
       intersect: false,
-      followCursor: true, // 🔥 hover anywhere
-
+      followCursor: false,
+      theme: theme === "dark" ? "dark" : "light",
       x: {
-        format: "dd MMM yyyy HH:mm",
+        format: "dd MMM HH:mm",
       },
       y: {
-        formatter: (val: number) => `${val.toFixed(3)}`,
+        formatter: (val: number) => `${(val * 100).toFixed(1)}%`,
+      },
+      marker: {
+        show: true, // Tooltip ke andar color dot dikhega line par nahi
       },
     },
   };
@@ -149,40 +127,40 @@ const StackedAreaChart = ({
   const timeInterval = ["5m", "15m", "30m", "1h", "24h", "7d", "all"];
 
   return (
-    <div className="w-full flex relative -mx-4 sm:mx-0">
-      <div
-        className="absolute right-0 -top-1 flex items-center gap-1
-        dark:bg-[#2B394D] bg-gray-200 rounded-lg px-1 py-1"
-      >
-        {timeInterval.map((item) => (
-          <button
-            key={item}
-            onClick={() => setTimeIntervalValue(item)}
-            className={`
-              px-3 py-1 text-xs font-medium rounded-md transition-all
-              ${
-                item === timeIntervalValue
-                  ? "dark:bg-[#1D293D] bg-gray-50 dark:text-white text-black"
-                  : "dark:text-gray-400 text-gray-600 hover:text-white cursor-pointer hover:bg-white/5"
-              }
-            `}
-          >
-            {item.toUpperCase()}
-          </button>
-        ))}
+    <div className="w-full flex flex-col relative sm:mx-0">
+      {/* Filters Area */}
+      <div className="flex justify-end mb-4">
+        <div className="flex items-center gap-1 dark:bg-[#2B394D] bg-gray-200 rounded-lg px-1 py-1">
+          {timeInterval.map((item) => (
+            <button
+              key={item}
+              onClick={() => setTimeIntervalValue(item)}
+              className={`
+                px-3 py-1 text-xs font-medium rounded-md transition-all
+                ${
+                  item === timeIntervalValue
+                    ? "dark:bg-[#1D293D] bg-white dark:text-white text-black shadow-sm"
+                    : "dark:text-gray-400 text-gray-600 hover:text-white cursor-pointer"
+                }
+              `}
+            >
+              {item.toUpperCase()}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-4 w-full">
+      <div className="w-full">
         {data?.length > 0 ? (
           <ApexChart
-            type="area"
-            height={230}
+            type="line" // 🔥 Area se hatakar line kar diya shadow hatane ke liye
+            height={250}
             series={series}
             options={options}
           />
         ) : (
-          <div className="bg-cyan-100/80 rounded-lg h-56 mt-6 flex items-center justify-center">
-            <span className="text-gray-500">[Chart Placeholder]</span>
+          <div className="bg-gray-100 dark:bg-slate-800 rounded-lg h-56 flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-slate-700">
+            <span className="text-gray-500 font-medium">No Data Available</span>
           </div>
         )}
       </div>
