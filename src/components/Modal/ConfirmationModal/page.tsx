@@ -82,28 +82,37 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
         {/* ACTION BUTTONS */}
         <div className="mt-6 flex gap-3">
-          <Button
-            fullWidth
-            variant="outlined"
+          <button
             onClick={onClose}
-            className="normal-case font-medium rounded-lg !border-[#c7ac77] !text-[#c7ac77] hover:bg-purple-50"
+            className="normal-case h-9 border border-[#7b57f0] font-medium rounded-lg w-full transition-all duration-150 ease-in-out 
+bg-[#fff] dark:bg-[#101828]
+shadow-[0_3px_0_rgba(129,96,238,0.4)]
+ cursor-pointer
+active:translate-y-[2px]
+active:shadow-[0_2px_0_rgba(129,96,238,0.4)]
+text-[#7b57f0]"
           >
             No
-          </Button>
+          </button>
 
-          <Button
-            fullWidth
-            variant="contained"
+          <button
+            // variant="contained"
             onClick={onConfirm}
             disabled={isLoading}
-            className="normal-case font-medium rounded-lg !bg-[#c7ac77] hover:!bg-[#b69658] text-white"
+            className="normal-case font-medium rounded-lg w-full transition-all duration-150 ease-in-out 
+bg-[#8160ee]
+shadow-[0_3px_0_rgba(129,96,238,0.4)]
+hover:bg-[#7b57f0]
+active:translate-y-[2px]
+active:shadow-[0_2px_0_rgba(129,96,238,0.4)]
+dark:text-[#101828] text-white cursor-pointer"
           >
             {isLoading ? (
               <CircularProgress size={22} className="!text-white" />
             ) : (
               "Yes, cancel"
             )}
-          </Button>
+          </button>
         </div>
       </DialogContent>
     </Dialog>

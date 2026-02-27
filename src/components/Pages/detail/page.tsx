@@ -371,7 +371,7 @@ const Details = ({ marketId }) => {
 
   const ordersList = async () => {
     try {
-      const response = await getOrdersList(marketId, orderPage, 2, "NEW");
+      const response = await getOrdersList(marketId, orderPage, 5, "NEW");
 
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);

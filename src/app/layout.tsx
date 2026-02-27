@@ -40,7 +40,7 @@ export default function RootLayout({
           <SocketProvider>
             <ThemeProvider attribute="class" defaultTheme="system">
               <TradingLayout>
-                <Toaster position="top-right" />
+                <Toaster position="bottom-center" />
                 {children}
               </TradingLayout>
             </ThemeProvider>

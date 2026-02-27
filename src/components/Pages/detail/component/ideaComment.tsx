@@ -120,7 +120,9 @@ export default function IdeasActivityTabs({
   };
 
   const chooseImages = async (file: File) => {
+    setShowUploadMenu(false);
     setIsImageUploadLoader(true);
+
     try {
       const formData = new FormData();
       formData.append("images", file);
@@ -391,7 +393,7 @@ export default function IdeasActivityTabs({
                 }
                 className=" flex items-center gap-2
       relative cursor-pointer
-      px-4 pt-2 pb-1 rounded-full
+      px-4 pt-1.5 pb-1.5 rounded-full
       bg-gray-100 dark:bg-gray-500 dark:text-gray-200 text-gray-700 text-sm font-medium
 
       shadow-[0_4px_0_rgb(209,213,219)]

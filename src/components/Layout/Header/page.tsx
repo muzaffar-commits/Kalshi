@@ -249,7 +249,7 @@ const Header = ({ isPosition, setPosition }) => {
         <header
           className="fixed border-b dark:border-[#2B394D] border-gray-300 top-0 left-0 w-full z-[99] 
   bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)] 
-  pb-0 "
+  pb-0  "
         >
           {/* shadow-[0_2px_6px_rgba(0,0,0,0.08)]
   dark:shadow-[0_2px_6px_rgba(0,0,0,0.4)] */}
@@ -262,12 +262,14 @@ const Header = ({ isPosition, setPosition }) => {
   `}
           >
             <div className={`flex items-center  pt-1  justify-between w-full `}>
-              <div className="flex flex-row   items-center gap-8">
+              <div className="flex flex-row   items-center gap-14">
                 <Link href="/" className="shrink-0">
-                  <p className="text-text md:text-[25px] font-poppins text-[20px] font-bold">
+                  <p className="text-text md:text-[25px] flex items-center font-poppins text-[20px] font-bold">
                     <Crown className="w-6 h-6 relative -top-1 inline-block font-bold" />{" "}
-                    <span className="font-normal">OPINION</span>{" "}
-                    <span className="text-[#8160ee]">KINGS</span>
+                    <span className="font-normal sm:block hidden">OPINION</span>{" "}
+                    <span className="text-[#8160ee] sm:block hidden">
+                      KINGS
+                    </span>
                   </p>
                   {/* <Image
                   src="/img/opinionLogo-light.png"
@@ -289,7 +291,7 @@ const Header = ({ isPosition, setPosition }) => {
               {/* CENTER: Search */}
 
               {/* RIGHT: Actions */}
-              <div className="flex items-center md:w-2/3  justify-end  gap-5  shrink-0 ">
+              <div className="flex items-center md:w-2/3  justify-end gap-5  shrink-0 ">
                 <div className="md:hidden inline-block text-center">
                   <MobileSearch />
                 </div>
@@ -347,7 +349,7 @@ const Header = ({ isPosition, setPosition }) => {
                     </button>
                     <button
                       onClick={handleSignup}
-                      className="md:inline-block font-poppins text-nowrap hidden
+                      className="md:inline-block font-poppins text-nowrap 
       group relative
       hover:bg-btnbg bg-[#8160ee]
       text-white text-sm font-medium
@@ -370,18 +372,22 @@ const Header = ({ isPosition, setPosition }) => {
               className={`relative  ${isCategory ? "" : "pb-0"} pt-3  w-full
                 `}
             >
-              <button
-                onClick={() => scroll("left")}
-                className="absolute -left-2 top-[25px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
-              >
-                <FaChevronLeft />
-              </button>
-              <button
-                onClick={() => scroll("right")}
-                className="absolute -right-2 top-[25px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
-              >
-                <FaChevronRight />
-              </button>
+              {!isCategory && (
+                <>
+                  <button
+                    onClick={() => scroll("left")}
+                    className="absolute -left-2 top-[25px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                  >
+                    <FaChevronLeft />
+                  </button>
+                  <button
+                    onClick={() => scroll("right")}
+                    className="absolute -right-2 top-[25px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow p-1 rounded-full flex md:hidden"
+                  >
+                    <FaChevronRight />
+                  </button>
+                </>
+              )}
 
               <ul
                 ref={scrollRef}
@@ -419,12 +425,12 @@ const Header = ({ isPosition, setPosition }) => {
                           dispatch(changeIsEvent(false));
                           row?.id !== categoryId && router.push("/");
                         }}
-                        className={` py-1 px-5 font-poppins   font-semibold flex items-center cursor-pointer
+                        className={`  px-5 font-poppins h-6   font-semibold flex items-center cursor-pointer
       transition-all duration-200 ease-in-out
       ${
         row?.id === categoryId
-          ? "text-[#8160ee]   "
-          : " dark:text-gray-400 text-text hover:text-[#8160ee] text-gray-500 "
+          ? "text-[#8160ee]  text-[16px]  "
+          : " dark:text-gray-400 text-text   hover:text-[#8160ee] text-gray-500 "
       }`}
                       >
                         {index === 0 && (

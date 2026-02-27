@@ -33,14 +33,14 @@ export default function OrderList({
 }: OrderListProps) {
   console.log(page, orderPageResponse, "page");
 
-  const changePageInc = () => {
-    setOrderPage(page + 1);
-  };
-  const changePageDsc = () => {
-    setOrderPage(page - 1);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    setOrderPage(value);
   };
   return (
-    <div className="w-full rounded-2xl bg-transparent border border-gray-300 dark:border-white/10 p-6">
+    <div className="w-full rounded-2xl bg-transparent border border-gray-300 dark:border-white/10 p-3 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-[#c3a66e]">
           <MdOpenInNew size={18} />
@@ -48,7 +48,7 @@ export default function OrderList({
         </h2>
       </div>
 
-      <div className="grid grid-cols-5 px-4 py-3 text-[12px] font-semibold tracking-wide text-[#c3a66e] border-b border-white/10">
+      <div className="grid grid-cols-5 px-2 sm:px-4 py-3 text-[12px] font-semibold tracking-wide text-[#c3a66e] border-b border-white/10">
         <div>SHARES</div>
         <div>PRICE</div>
         <div>TYPE</div>
@@ -56,7 +56,7 @@ export default function OrderList({
         <div className="text-right">ACTION</div>
       </div>
 
-      <div className="mt-2 space-y-2">
+      <div className="mt-2 space-y-1.5 sm:space-y-2">
         {data.map((item) => {
           const isBuy = item.side === "BUY";
           const isTpsl = item.tpslLeg === "TP_OR_SL";
@@ -68,7 +68,7 @@ export default function OrderList({
                 px-4 py-1.5
                 rounded-xl
                 bg-gray-100
-                dark:bg-[#233247]
+                dark:bg-[#2e3c4e]/10
                 border border-white/5
                 dark:hover:bg-[#27364b]
                 transition
@@ -110,7 +110,7 @@ export default function OrderList({
 
               {/* Status */}
               <div className="text-right">
-                <span className="text-xs px-3 py-1 rounded-md bg-blue-500/20 text-blue-400">
+                <span className="text-xs px-3 py-1 rounded-md bg-blue-500/10 text-blue-600">
                   Open
                 </span>
               </div>
@@ -121,7 +121,8 @@ export default function OrderList({
                   onClick={() => cancelOrders(item.id)}
                   className="
                     px-3 cursor-pointer rounded-xl py-1 text-xs font-bold
-    transition-all duration-150 ease-in-out  bg-red-500 text-white
+      bg-red-500 text-white
+      transition-all duration-150 ease-in-out
             shadow-[0_3px_0_rgba(239,68,68,0.5)]
             hover:bg-red-600
             active:translate-y-[2px]
@@ -136,10 +137,10 @@ export default function OrderList({
         })}
       </div>
       <CustomPagination
-        count={5}
-        onChangeDecrement={changePageDsc}
-        onChangeIncrement={changePageInc}
+        // count={17}
+        count={orderPageResponse?.totalPages}
         page={page}
+        onChange={handlePageChange}
       />
     </div>
   );

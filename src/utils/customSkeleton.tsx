@@ -92,7 +92,7 @@ export const CategorySkeleton = ({ count = 7 }) => {
               variant="text"
               className=" !bg-gray-300 dark:!bg-gray-700 "
               width={120}
-              height={60}
+              height={45}
             />
           </div>
         </li>

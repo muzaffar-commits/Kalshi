@@ -145,6 +145,7 @@ export default function IdeaTabs({
   }, [getListOfPost]);
 
   const chooseImages = async (file: File) => {
+    setShowUploadMenu(false);
     setIsImageUploadLoader(true);
     try {
       const formData = new FormData();
