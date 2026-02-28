@@ -558,7 +558,7 @@ export default function PostList({
                   {commentMap[row.id]?.comments?.length > 0 && (
                     <div
                       className={
-                        "pl-2 pr-2 py-3 w-full bg-gray-50 dark:bg-[#2B394D] rounded-lg border border-gray-200 dark:border-gray-800"
+                        "pl-2 pr-2 py-3 w-full rounded-lg bg-gray-50 dark:bg-[#2B394D]  border border-gray-200 dark:border-gray-800"
                       }
                     >
                       {commentMap[row.id].comments.map((comment: any) => {
@@ -580,12 +580,15 @@ export default function PostList({
                             className="flex flex-col gap-1 py-2 border-b last:border-b-0 border-gray-200 dark:border-gray-800"
                           >
                             <div className="flex flex-row gap-3">
-                              <div className="w-fit h-fit p-0.5 rounded-full flex items-center bg-gray-200 shadow dark:bg-gray-700 ">
+                              <div className="p-0.5 cursor-pointer flex h-fit overflow-hidden rounded-full bg-gray-200 dark:bg-gray-500">
                                 <Image
-                                  src={comment?.User?.image_url}
+                                  src={
+                                    comment?.User?.image_url ||
+                                    "https://cdn.vectorstock.com/i/500p/98/17/gray-man-placeholder-portrait-vector-23519817.jpg"
+                                  }
                                   width={30}
                                   height={30}
-                                  className="md:w-8 w-6 h-6 md:h-8  rounded-full cursor-pointer"
+                                  className="rounded-full h-6 w-10 sm:!h-8 sm:!w-8"
                                   alt="user"
                                   onClick={() =>
                                     handleRedirectUserDetails(row?.User?.id)
@@ -602,7 +605,7 @@ export default function PostList({
                                     className="text-gray-900 cursor-pointer relative font-semibold text-sm dark:text-white"
                                   >
                                     {" "}
-                                    {comment?.User?.username}
+                                    {comment?.User?.username || "--"}
                                   </div>
                                   <span className="ml-2 text-[13px] text-gray-400">
                                     {timeAgoCompact(comment?.createdAt)}

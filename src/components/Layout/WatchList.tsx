@@ -23,7 +23,6 @@ export default function WatchList() {
   );
   const router = useRouter();
   const dispatch = useDispatch();
-  console.log(watchListData, "watchListData");
 
   const getWatchList = async () => {
     try {
@@ -69,7 +68,7 @@ export default function WatchList() {
   const locations = location.pathname;
 
   return (
-    <div className="h-full z-50 bg-white dark:bg-[#0F172A]">
+    <div className="h-full  bg-white dark:bg-[#0F172A]">
       {/* Positions Section */}
       <div
         className={`p-4 ${locations == "/watchlist/" ? "mt-24 " : ""} border-b border-gray-100 dark:border-gray-800`}
@@ -124,39 +123,42 @@ export default function WatchList() {
                         duration: 0.3,
                         ease: "easeOut",
                       }}
-                      className="group cursor-pointer border-b border-gray-200 dark:border-gray-700 p-2 -mx-2 transition-colors"
+                      className="group cursor-pointer border-b border-gray-200 dark:border-gray-700 p-2 -mx-2 "
                     >
-                      <div className="flex items-center mb-2">
-                        {metaData?.imageUrl && (
-                          <div
-                            onClick={() => handleRedirectMarket(row?.id)}
-                            className="mr-2 rounded-md w-[35px] h-[35px] flex items-center justify-center shrink-0"
-                          >
-                            <Image
-                              src={
-                                metaData?.imageUrl ||
-                                "/img/opinionLogo-light.png"
-                              }
-                              width={35}
-                              height={35}
-                              alt="trending"
-                              className="w-full h-full object-contain opacity-80 rounded"
-                            />
-                          </div>
-                        )}
-                        <div>
-                          <div className="flex justify-between items-start">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-row">
+                          {metaData?.imageUrl && (
                             <div
                               onClick={() => handleRedirectMarket(row?.id)}
-                              className="line-clamp-1 globalFonts text-sm font-medium"
-                              title={row?.question || "--"}
+                              className="mr-2 rounded-md w-[35px] h-[35px] flex items-center justify-center shrink-0"
                             >
-                              {row?.question || "--"}
+                              <Image
+                                src={
+                                  metaData?.imageUrl ||
+                                  "/img/opinionLogo-light.png"
+                                }
+                                width={35}
+                                height={35}
+                                alt="trending"
+                                className="w-full h-full object-contain opacity-80 rounded"
+                              />
                             </div>
+                          )}
+                          <div>
+                            <div className="flex justify-between items-start">
+                              <div
+                                onClick={() => handleRedirectMarket(row?.id)}
+                                className="line-clamp-1 globalFonts text-sm font-medium"
+                                title={row?.question || "--"}
+                              >
+                                {row?.question || "--"}
+                              </div>
+                            </div>
+                            <p className="text-[10px] text-gray-400 uppercase globalFonts tracking-tight">
+                              Resolves,{" "}
+                              {moment(row?.endDate).format("MMM YYYY")}
+                            </p>
                           </div>
-                          <p className="text-[10px] text-gray-400 uppercase globalFonts tracking-tight">
-                            Resolves, {moment(row?.endDate).format("MMM YYYY")}
-                          </p>
                         </div>
                         <div className="flex pl-3 justify-end">
                           <IoCloseCircleOutline

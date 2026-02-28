@@ -245,10 +245,10 @@ const Header = ({ isPosition, setPosition }) => {
   return (
     <>
       {/* <div className="hidden lg:block"> */}
-      <div className=" ">
+      <div className="fixed top-0 left-0 z-[99]  w-full    ">
         <header
-          className="fixed border-b dark:border-[#2B394D] border-gray-300 top-0 left-0 w-full z-[99] 
-  bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)] 
+          className=" border-b dark:border-[#2B394D] bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)] border-gray-300 
+
   pb-0  "
         >
           {/* shadow-[0_2px_6px_rgba(0,0,0,0.08)]
@@ -445,86 +445,6 @@ const Header = ({ isPosition, setPosition }) => {
             </nav>
 
             {/* event Category Start */}
-
-            {/* {eventCategory?.length > 0 && (
-                    <div
-                      className={`
-                    relative
-                    overflow-hidden
-                    transition-all duration-1000 ease-in-out
-                    ${isWatchList ? "max-h-40 opacity-100" : "max-h-40"}
-                  `}
-                    >
-                      <button
-                        onClick={() =>
-                          scrollRef.current?.scrollBy({
-                            left: -200,
-                            behavior: "smooth",
-                          })
-                        }
-                        className="absolute -left-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow rounded-full p-1 md:hidden"
-                      >
-                        <FaChevronLeft />
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          scrollRef.current?.scrollBy({
-                            left: 200,
-                            behavior: "smooth",
-                          })
-                        }
-                        className="absolute -right-2 top-[20px] -translate-y-1/2 z-10 text-gray-500 bg-white dark:bg-gray-800 shadow rounded-full p-1 md:hidden"
-                      >
-                        <FaChevronRight />
-                      </button>
-
-                      <ul
-                        ref={scrollRef}
-                        className={`
-        flex gap-10 px-8 pt-6 text-[15px]
-        overflow-x-auto whitespace-nowrap scrollbar-hide
-        transform transition-all duration-700 ease-in-out
-        ${isWatchList ? "translate-y-0" : "-translate-y-4"}
-      `}
-                      >
-                        <li className="flex-shrink-0">
-                          <div
-                            onClick={() => {
-                              dispatch(saveSelectSubCategory(null));
-                              setSubCategoryId(null);
-                            }}
-                            className={`${
-                              subCategoryId == null
-                                ? "text-black dark:text-[#c7ac77]"
-                                : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]"
-                            } font-semibold flex items-center cursor-pointer`}
-                          >
-                            <FaArrowTrendUp className="mr-1" />
-                            All
-                          </div>
-                        </li>
-
-                        {eventCategory?.map((row: Category) => (
-                          <li key={row.id} className="flex-shrink-0">
-                            <div
-                              onClick={() => {
-                                dispatch(saveSelectSubCategory(row));
-                                setSubCategoryId(row?.id);
-                              }}
-                              className={`${
-                                row?.id === subCategoryId
-                                  ? "text-black dark:text-[#c7ac77]"
-                                  : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]"
-                              } font-semibold flex items-center cursor-pointer`}
-                            >
-                              {row?.name}
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )} */}
 
             {/* event Category End */}
 
@@ -1002,6 +922,103 @@ const Header = ({ isPosition, setPosition }) => {
             )} */}
           </div>
         </header>
+        {/* bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)] */}
+        {eventCategory?.length > 0 && (
+          <div
+            className={`transition-all duration-500 ease-in-out ${
+              isPosition
+                ? "    w-[calc(100%-380px)] float-right "
+                : "max-w-[1450px] mx-auto  sm:px-4 "
+            } bg-[var(--color-bglight)] dark:bg-[var(--color-bgdark)] `}
+          >
+            <div
+              className={`
+        relative overflow-hidden
+        transition-all duration-700 ease-in-out
+        ${isWatchList ? "opacity-100" : ""}
+      `}
+            >
+              {/* Left Scroll Button */}
+              {/* <button
+                onClick={() =>
+                  scrollRef.current?.scrollBy({
+                    left: -200,
+                    behavior: "smooth",
+                  })
+                }
+                className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 
+        text-gray-500 bg-white dark:bg-gray-800 shadow 
+        rounded-full p-1 md:hidden"
+              >
+                <FaChevronLeft />
+              </button>
+
+             
+              <button
+                onClick={() =>
+                  scrollRef.current?.scrollBy({
+                    left: 200,
+                    behavior: "smooth",
+                  })
+                }
+                className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 
+        text-gray-500 bg-white dark:bg-gray-800 shadow 
+        rounded-full p-1 md:hidden"
+              >
+                <FaChevronRight />
+              </button> */}
+
+              {/* Tabs */}
+              <ul
+                // ref={scrollRef}
+                className={`
+          flex gap-8 px-6 h-8 items-center 
+          text-[15px] ${isPosition ? "sm:pl-8" : "sm:pl-12"}
+          overflow-x-auto whitespace-nowrap scrollbar-hide
+        `}
+              >
+                {/* All */}
+                <li className="flex-shrink-0">
+                  <div
+                    onClick={() => {
+                      dispatch(saveSelectSubCategory(null));
+                      setSubCategoryId(null);
+                    }}
+                    className={`${
+                      subCategoryId == null
+                        ? "text-[#8160ee]  text-[16px] "
+                        : "dark:text-gray-400 text-text   hover:text-[#8160ee] text-gray-500"
+                    } font-poppins h-6   font-semibold flex items-center cursor-pointer
+      transition-all duration-200 ease-in-out`}
+                  >
+                    <FaArrowTrendUp className="mr-1" />
+                    All
+                  </div>
+                </li>
+
+                {/* Categories */}
+                {eventCategory?.map((row: Category) => (
+                  <li key={row.id} className="flex-shrink-0">
+                    <div
+                      onClick={() => {
+                        dispatch(saveSelectSubCategory(row));
+                        setSubCategoryId(row?.id);
+                      }}
+                      className={`font-poppins h-6   font-medium flex items-center cursor-pointer
+      transition-all duration-200 ease-in-out ${
+        row?.id === subCategoryId
+          ? "text-[#8160ee]  text-[16px] "
+          : "dark:text-gray-400 text-text   hover:text-[#8160ee] text-gray-500 "
+      }`}
+                    >
+                      {row?.name}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
 
       <Authentication

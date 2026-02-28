@@ -80,6 +80,7 @@ const Details = ({ marketId }) => {
     useState<CancelOrders | null>(null);
   const [orderPage, setOrderPage] = useState(1);
   const [orderPageResponse, setOrderPageResponse] = useState({});
+  const [orderStatus, setOrderStatus] = useState("NEW");
 
   const router = useRouter();
   // search data from question start
@@ -87,8 +88,6 @@ const Details = ({ marketId }) => {
 
   const fetchQuestions = async (searchValue: string) => {
     if (!searchValue) return;
-
-    console.log("Hitting API with keyword:", searchValue);
 
     try {
       const response = await commonQuestionFindById(
@@ -101,15 +100,13 @@ const Details = ({ marketId }) => {
         null, // userId
       );
 
-      console.log("API Result:", response);
-
       if (response?.success) {
         // API structure ke hisaab se check karein: response.data.questions ya response.questions
         const questions = response.data?.questions || response.data || [];
         setQuestionData(questions);
       }
     } catch (error) {
-      console.error("API Call failed:", error);
+      // console.error("API Call failed:", error);
     }
   };
 
@@ -117,7 +114,6 @@ const Details = ({ marketId }) => {
     const sentence = data?.question?.question;
     if (sentence) {
       const keyword = extractSingleMainKeyword(sentence);
-      console.log("Keyword Extracted:", keyword); // Check karein ye console mein aa raha hai?
 
       // Agar keyword string hai aur "No keyword found" nahi hai, tabhi hit karein
       if (keyword && keyword !== "No keyword found") {
@@ -127,9 +123,6 @@ const Details = ({ marketId }) => {
   }, [data?.question?.question]); // Jab question data load hoga, tabhi ye trigger hoga
 
   const sentence1 = "Trump nominate as the next Fed Chair?";
-
-  console.log(questionData, "Keywords from Sentence 1:");
-  console.log(data?.question?.question, "data======>");
 
   const questionDetailsList = useCallback(async () => {
     setIsLoader(true);
@@ -371,7 +364,7 @@ const Details = ({ marketId }) => {
 
   const ordersList = async () => {
     try {
-      const response = await getOrdersList(marketId, orderPage, 5, "NEW");
+      const response = await getOrdersList(marketId, orderPage, 5, orderStatus);
 
       if (response?.success) {
         setOrderData(response.data?.orders ?? []);
@@ -386,7 +379,7 @@ const Details = ({ marketId }) => {
   };
   useEffect(() => {
     ordersList();
-  }, [orderPage]);
+  }, [orderPage, orderStatus]);
 
   const sellPrices =
     orderFlow?.sells?.map((i: SellOrder) => Number(i?.saleAtPrice) || 0) || [];
@@ -611,6 +604,8 @@ const Details = ({ marketId }) => {
                         page={orderPage}
                         setOrderPage={setOrderPage}
                         orderPageResponse={orderPageResponse}
+                        status={orderStatus}
+                        setOrderStatus={setOrderStatus}
                       />
                     )}
                   </div>

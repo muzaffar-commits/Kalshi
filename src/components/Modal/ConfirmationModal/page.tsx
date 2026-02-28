@@ -29,7 +29,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   const shares = selectedOrderDetails?.shares ?? 0;
   const maxCost = selectedOrderDetails?.maxCost ?? 0;
-  const totalPrice = maxCost * shares;
+  const totalPrice = maxCost;
 
   return (
     <Dialog
@@ -66,21 +66,13 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         {/* SUB TITLE */}
         <Typography className="text-sm text-gray-500 !mt-3">
           Cancelling orders worth{" "}
-          <span className="font-semibold">${totalPrice.toFixed(2)}</span> for a
-          delivery order with a quantity of{" "}
+          <span className="font-semibold">
+            ${truncateValue(Number(totalPrice))}
+          </span>{" "}
+          for a delivery order with a quantity of{" "}
           <span className="font-semibold ">{truncateValue(shares)}</span>.
         </Typography>
 
-        {/* INFO BOX */}
-        {/* <div className="mt-4 flex items-start gap-3 rounded-lg bg-gray-50 dark:bg-gray-800 p-3 text-left">
-          <MdInfoOutline className="text-red-500 -mt-2 " size={40} />
-          <Typography className="text-xs text-gray-600 dark:text-gray-300">
-            This includes 2 partially filled orders. Cancel request will only be
-            placed for unfilled quantity of 60.
-          </Typography>
-        </div> */}
-
-        {/* ACTION BUTTONS */}
         <div className="mt-6 flex gap-3">
           <button
             onClick={onClose}

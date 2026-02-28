@@ -319,6 +319,9 @@ export default function IdeasActivityTabs({
     router.push("/ideas");
   };
 
+  const hasText = String(message).trim().length > 1;
+  const hasGif = !!gif;
+
   return (
     <div className="w-full">
       {/* HEADER */}
@@ -515,36 +518,36 @@ export default function IdeasActivityTabs({
                       {countWords(message)} / {MAX_WORDS} words
                     </div>
                     <button
-                      disabled={gif && String(message).trim().length <= 3}
+                      disabled={!hasText && !hasGif}
                       onClick={() =>
                         token ? postUserMessage() : handleLoginCheck()
                       }
                       className={`
-                                    py-1 px-4 w-16 flex items-center justify-center rounded-md
-                                    text-lg font-semibold
-                                    transition-all duration-200
-                                    ${
-                                      gif || String(message).trim().length > 3
-                                        ? `
-                                          bg-emerald-500
-                                          text-black
-                                          hover:bg-emerald-600
-                                          active:scale-95
-                                          cursor-pointer
-                                          shadow-[0_4px_14px_rgba(34,197,94,0.45)]
-                                        `
-                                        : `
-                                          bg-gray-300
-                                          text-gray-500
-                                          border border-gray-400 dark:bg-gray-600 dark:border-gray-700
-                                          cursor-not-allowed
-                                          shadow-none
-                                        `
-                                    }
-                                  `}
+    py-1.5 px-4 w-16 flex items-center justify-center rounded-md
+    text-sm font-semibold
+    transition-all duration-200
+    ${
+      !hasText && !hasGif
+        ? `
+          bg-gray-300
+          text-gray-500
+          border border-gray-400 dark:bg-gray-600 dark:border-gray-700
+          cursor-not-allowed
+          shadow-none
+        `
+        : `
+          bg-emerald-500
+          text-black
+          hover:bg-emerald-600
+          active:scale-95
+          cursor-pointer
+          shadow-[0_4px_14px_rgba(34,197,94,0.45)]
+        `
+    }
+  `}
                     >
                       {isPostLoader ? (
-                        <CircularProgress size={30} className="!text-white " />
+                        <CircularProgress size={22} className="!text-white " />
                       ) : (
                         "Post"
                       )}
@@ -594,7 +597,7 @@ export default function IdeasActivityTabs({
               </div>
             )}
 
-            {!isPaginationLoader && emptyData?.length > 0 && (
+            {!isPaginationLoader && emptyData?.length > 9 && (
               <div
                 onClick={() => handleChangePage()}
                 className="text-end mt-2 text-sm dark:text-gray-400 cursor-pointer"
