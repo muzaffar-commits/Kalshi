@@ -62,6 +62,8 @@ export default function ProfileDropdown() {
       router.push("/privacyPolicy");
     } else if (id === 2) {
       router.push("/termsAndConditions");
+    } else if (id === 7) {
+      router.push("/reals");
     } else {
       router.push("/watchlist");
     }
@@ -172,7 +174,7 @@ export default function ProfileDropdown() {
           </div>
 
           <div
-            onClick={() => handleNavigateRoute(0)}
+            onClick={() => handleNavigateRoute(7)}
             className="group px-4 sm:hidden flex items-center justify-between py-2.5 dark:text-gray-300 text-gray-700 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
           >
             <div className="flex items-center gap-3">
