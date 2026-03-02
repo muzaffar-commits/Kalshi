@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import Authentication from "@/components/Pages/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { CiViewList } from "react-icons/ci";
+import { CiViewList, CiYoutube } from "react-icons/ci";
 import {
   fetchSubCategory,
   getCommonCategoryAll,
@@ -278,13 +278,30 @@ const Header = ({ isPosition, setPosition }) => {
                   height={80}
                 /> */}
                 </Link>
-                <div
-                  onClick={() =>
-                    !getToken ? setIsOpen(true) : router.push(`/ideas`)
-                  }
-                  className="font-semibold sm:block hidden font-poppins cursor-pointer text-sm text-gray-700 dark:text-gray-300"
-                >
-                  SOCIAL
+                <div className="flex flex-row items-center gap-4">
+                  <div
+                    onClick={() =>
+                      !getToken ? setIsOpen(true) : router.push(`/ideas`)
+                    }
+                    className="font-semibold sm:block hidden font-poppins cursor-pointer text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    SOCIAL
+                  </div>
+                  <div
+                    onClick={
+                      () => (false ? setIsOpen(true) : router.push(`/reels`))
+                      // !getToken ? setIsOpen(true) : router.push(`/reels`)
+                    }
+                    className="font-semibold sm:block hidden font-poppins cursor-pointer text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    <div className="flex items-center gap-2">
+                      <CiYoutube
+                        size={18}
+                        className="text-red-500 dark:text-red-400"
+                      />
+                      REELS
+                    </div>
+                  </div>
                 </div>
               </div>
 

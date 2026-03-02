@@ -21,6 +21,7 @@ export default function MainSearch() {
 
   const ref = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+  const getToken = localStorage.getItem("token");
 
   // outside click close
   useEffect(() => {
@@ -121,28 +122,30 @@ export default function MainSearch() {
       {open && (
         <div className="absolute left-0 top-full mt-2 w-full bg-white dark:bg-[#1D293D] border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50">
           {/* TABS */}
-          <div className="flex border-b border-gray-400 dark:border-gray-700">
-            <button
-              onClick={() => setActiveTab("users")}
-              className={`flex-1 py-2 text-sm font-medium ${
-                activeTab === "users"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500"
-              }`}
-            >
-              Users
-            </button>
-            <button
-              onClick={() => setActiveTab("questions")}
-              className={`flex-1 py-2 text-sm font-medium ${
-                activeTab === "questions"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500"
-              }`}
-            >
-              Questions
-            </button>
-          </div>
+          {getToken && (
+            <div className="flex border-b border-gray-400 dark:border-gray-700">
+              <button
+                onClick={() => setActiveTab("questions")}
+                className={`flex-1 py-2 text-sm font-medium ${
+                  activeTab === "questions"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500"
+                }`}
+              >
+                Questions
+              </button>
+              <button
+                onClick={() => setActiveTab("users")}
+                className={`flex-1 py-2 text-sm font-medium ${
+                  activeTab === "users"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500"
+                }`}
+              >
+                Users
+              </button>
+            </div>
+          )}
 
           {/* RESULTS */}
           <div className="max-h-96 overflow-y-auto p-3">
@@ -187,10 +190,17 @@ export default function MainSearch() {
               )
             ) : questionData.length > 0 ? (
               questionData.map((item) => {
-                const metaData =
-                  typeof item?.metadata === "string"
-                    ? JSON.parse(item.metadata)
-                    : item?.metadata || {};
+                const metaData = (() => {
+                  if (!item?.metadata) return null;
+                  if (typeof item?.metadata === "object") {
+                    return item?.metadata;
+                  }
+                  try {
+                    return JSON.parse(item?.metadata);
+                  } catch (e) {
+                    return null;
+                  }
+                })();
 
                 return (
                   <div
@@ -198,17 +208,17 @@ export default function MainSearch() {
                     onClick={() => handleRedirectMarketDetails(item.id)}
                     className="group flex items-center gap-3.5 rounded-xl px-4 py-3 transition hover:bg-gray-100 dark:hover:bg-gray-900/60 cursor-pointer active:scale-[0.98]"
                   >
-                    {" "}
-                    {/* <div className="relative flex-shrink-0">
-                      {" "}
-                      <Image
-                        src={metaData?.imageUrl || "/img/user.png"}
-                        height={48}
-                        width={48}
-                        alt="Question"
-                        className="rounded-full object-cover ring-1 ring-gray-200/50 dark:ring-gray-700/50"
-                      />{" "}
-                    </div>{" "} */}
+                    {metaData?.imageUrl && (
+                      <div className="relative flex-shrink-0">
+                        <Image
+                          src={metaData?.imageUrl || "/img/user.png"}
+                          height={48}
+                          width={48}
+                          alt="Question"
+                          className="rounded-full object-cover ring-1 ring-gray-200/50 dark:ring-gray-700/50"
+                        />
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       {" "}
                       <p className="line-clamp-1 text-base font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">

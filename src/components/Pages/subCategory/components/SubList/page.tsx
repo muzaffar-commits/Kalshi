@@ -36,8 +36,8 @@ export default function SportsMenu({
             }}
             className={` ${
               eventSubCategoryId == null
-                ? "text-black dark:text-[#c7ac77]"
-                : "dark:text-gray-300 text-[#5e5e5f] hover:text-[#c7ac77]  cursor-pointer"
+                ? "text-[#8160ee]  text-[16px]"
+                : "dark:text-gray-400 text-text   hover:text-[#8160ee] text-gray-500"
             } font-semibold flex items-center`}
           >
             <span>
@@ -55,7 +55,7 @@ export default function SportsMenu({
               {/* CATEGORY */}
               <button
                 onClick={() => toggle(row.id)}
-                className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#ba9c68]"
+                className="w-full flex justify-between items-center dark:text-gray-400 text-gray-700 hover:text-[#8160ee] cursor-pointer"
               >
                 <span>{row.name}</span>
                 <FaAngleDown
@@ -72,7 +72,7 @@ export default function SportsMenu({
                     <li
                       key={item.id}
                       onClick={() => handleSubClick(item.id)}
-                      className={`dark:text-gray-300  ${eventSubCategoryId == item?.id ? "dark:text-[#ba9c68] text-black/80 font-bold" : "text-gray-700"} hover:text-[#ba9c68] text-sm cursor-pointer`}
+                      className={`dark:text-gray-300  ${eventSubCategoryId == item?.id ? "text-[#8160ee]   text-[16px]" : "dark:text-gray-400 text-text cursor-pointer  hover:text-[#8160ee] text-gray-500"} hover:text-[#8160ee] text-sm `}
                     >
                       {item.name}
                     </li>

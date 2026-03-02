@@ -363,3 +363,62 @@ export interface OrderFlow {
   buys: OrderFlowItem[];
   sells: OrderFlowItem[];
 }
+
+export interface ReelCreator {
+  id: number;
+  email: string;
+  preferences?: {
+    username?: string;
+    avatar?: string;
+    [key: string]: unknown;
+  };
+}
+
+
+export interface LinkedQuestion {
+  id: number;
+  question: string;
+  description?: string;
+  status?: string;
+  endDate?: string;
+}
+export interface ReelItem {
+  id: number;
+  userId: number;
+  questionId: number | null;
+  videoUrl: string;
+  thumbnailUrl: string | null;
+  caption: string | null;
+  duration: number;
+  status: string;
+  viewCount: number;
+  likeCount: number;
+  commentCount: number;
+  bookmarkCount: number;
+  shareCount: number;
+  isLiked: number; // 0 | 1
+  isBookmarked: number; // 0 | 1
+  createdAt: string;
+  updatedAt: string;
+  creator?: ReelCreator;
+  linkedQuestion?: LinkedQuestion;
+}
+
+export interface ReelComment {
+  id: number;
+  reelId: number;
+  userId: number;
+  content: string;
+  parentId: number | null;
+  likeCount: number;
+  createdAt: string;
+  updatedAt: string;
+  commenter?: ReelCreator;
+  replies?: ReelComment[];
+}
+
+export interface ReelFeedResponse {
+  reels: ReelItem[];
+  total: number;
+  hasMore: boolean;
+}

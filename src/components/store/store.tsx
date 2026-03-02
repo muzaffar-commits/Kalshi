@@ -6,11 +6,13 @@ import storage from "redux-persist/lib/storage";
 import authSlice from "./slice/auth";
 import categorySlice from "./slice/category";
 import watchListSlice from "./slice/watchList";
+import reelsSlice from "./slice/reels";
 
 const rootReducer = combineReducers({
   user: authSlice,
   category: categorySlice,
   watchlist: watchListSlice,
+  reels: reelsSlice,
 });
 
 const persistConfig = {

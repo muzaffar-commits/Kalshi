@@ -49,4 +49,18 @@ export const API_URLs = {
   feedDetailsById: "/user/feed-by-id",
   follow: "/user",
   feedForFollowingList: "/user/feed",
+
+  // Reels
+  reelsFeed: "/reels/feed",
+  reelCreate: "/reels",
+  reelById: "/reels", // GET /reels/:id
+  reelsByQuestion: "/reels/question", // GET /reels/question/:questionId
+  reelsByUser: "/reels/user", // GET /reels/user/:userId
+  reelDelete: "/reels", // DELETE /reels/:id
+  reelLike: "/reels", // POST /reels/:id/like
+  reelBookmark: "/reels", // POST /reels/:id/bookmark
+  reelComments: "/reels", // GET/POST /reels/:id/comments
+  reelCommentDelete: "/reels/comments", // DELETE /reels/comments/:commentId
+  reelView: "/reels", // POST /reels/:id/view
+  reelBookmarks: "/reels/me/bookmarks",
 };

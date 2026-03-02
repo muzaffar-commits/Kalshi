@@ -350,6 +350,7 @@ const Home = () => {
               bookMarkUnBookMark={bookMarkUnBookMark}
               getToken={getToken}
               setIsOpen={setIsOpen}
+              loader={loader}
             />
           ) : loader ? (
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]?.map((row) => (

@@ -14,6 +14,7 @@ import BuySell from "./components/BuyShell/page";
 import { truncateValue } from "@/utils/Content";
 import moment from "moment";
 import { GiNinjaStar } from "react-icons/gi";
+import LoadingCard from "@/components/common/LoadingCard";
 export default function SubCategory({
   eventSubCategoryId,
   setEventSubCategoryId,
@@ -22,6 +23,7 @@ export default function SubCategory({
   getToken,
   setIsOpen,
   bookMarkUnBookMark,
+  loader,
 }: {
   eventSubCategoryId: number | null;
   setEventSubCategoryId: (id: number | null) => void;
@@ -30,31 +32,13 @@ export default function SubCategory({
   getToken: string;
   setIsOpen: any;
   bookMarkUnBookMark: any;
+  loader: boolean;
 }) {
-  const [buyType, setBuyType] = useState<string>("buy");
-  const [options, setOptions] = useState<OptionItem | null>(null);
-  const [optionIndex, setOptionIndex] = useState<number | null>(null);
-  const [selectedQuestion, setSelectedQuestion] =
-    useState<QuestionItemSecond | null>(null);
   const router = useRouter();
-
   const goToDetails = (userId: string) => {
     router.push(`/market/${userId}`);
   };
-  useEffect(() => {
-    const dataQ = questionData.length > 0 ? questionData?.[0] : null;
-    setSelectedQuestion(dataQ);
-    setOptions(dataQ?.options?.[0] || null);
-  }, [questionData]);
-  const handleSelectedQuestion = (
-    row: QuestionItemSecond | null,
-    option: OptionItem,
-    index: number,
-  ) => {
-    setSelectedQuestion(row);
-    setOptions(option);
-    setOptionIndex(index);
-  };
+
   return (
     <>
       <div className=" w-full   text-gray-800 dark:text-gray-200 min-h-screen">
@@ -82,7 +66,11 @@ export default function SubCategory({
               <div
                 className={`grid  ${isSidebarOpen ? "grid-cols-1  xl:grid-cols-2" : "grid-cols-1 sm:grid-cols-2"} gap-5`}
               >
-                {questionData?.length > 0 &&
+                {loader ? (
+                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]?.map((row) => (
+                    <LoadingCard key={row} />
+                  ))
+                ) : questionData?.length > 0 ? (
                   questionData?.map((row) => {
                     const metaData = (() => {
                       if (!row?.metadata) return null;
@@ -305,7 +293,18 @@ export default function SubCategory({
                         </div>
                       </div>
                     );
-                  })}
+                  })
+                ) : (
+                  <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                    <h3 className="mt-4 text-lg font-semibold text-gray-800 dark:text-white">
+                      No questions found
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-md">
+                      There are no active premium questions available right now.
+                      Please check back later or explore other markets.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
             {/* <div className="md:w-[30%] md:sticky md:top-28 h-fit">

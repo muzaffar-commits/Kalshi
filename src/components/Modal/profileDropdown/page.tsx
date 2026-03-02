@@ -10,7 +10,7 @@ import { logoutUser, userDetails } from "../../service/apiService/user";
 import Image from "next/image";
 import { FiLogOut } from "react-icons/fi";
 import toast from "react-hot-toast";
-import { MdOutlinePrivacyTip } from "react-icons/md";
+import { CiYoutube } from "react-icons/ci";
 import {
   Lightbulb,
   ListOrdered,
@@ -164,6 +164,20 @@ export default function ProfileDropdown() {
                 className="text-yellow-500 dark:text-yellow-400"
               />
               <span className="font-medium">Ideas</span>
+            </div>
+            <ChevronRight
+              size={14}
+              className="opacity-0 group-hover:opacity-100 text-gray-400"
+            />
+          </div>
+
+          <div
+            onClick={() => handleNavigateRoute(0)}
+            className="group px-4 sm:hidden flex items-center justify-between py-2.5 dark:text-gray-300 text-gray-700 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <CiYoutube size={18} className="text-red-500 dark:text-red-400" />
+              <span className="font-medium">Reals</span>
             </div>
             <ChevronRight
               size={14}
