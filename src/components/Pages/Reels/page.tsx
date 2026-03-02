@@ -253,11 +253,11 @@ const ReelsPage = () => {
         {linkedQ ? (
           <div className="bg-white dark:bg-[#1a1f2e] rounded-2xl border border-gray-200 dark:border-gray-700/50 p-5 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#c8aa76] to-[#8a7040] rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#8160EE] to-[#6235f8] rounded-xl flex items-center justify-center shadow-md">
                 <MdQuiz className="text-white text-lg" />
               </div>
               <div>
-                <p className="text-xs text-[#c8aa76] font-bold uppercase tracking-wider">
+                <p className="text-xs text-[#8160EE] font-bold uppercase tracking-wider">
                   Linked Market
                 </p>
                 <p className="text-xs text-gray-400 mt-0.5">
@@ -282,7 +282,7 @@ const ReelsPage = () => {
 
             <button
               onClick={() => router.push(`/market/${linkedQ.id}`)}
-              className="w-full bg-gradient-to-r from-[#c8aa76] to-[#a08850] hover:from-[#d4b882] hover:to-[#b09860] text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm shadow-md shadow-[#c8aa76]/20"
+              className="w-full bg-gradient-to-r from-[#8160EE] to-[#6235f8] hover:from-[#7e5bf1] hover:to-[#5b2afc] text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm shadow-md shadow-[#8160EE]/20"
             >
               Predict Now
             </button>
@@ -324,12 +324,12 @@ const ReelsPage = () => {
               <button
                 key={q.id}
                 onClick={() => router.push(`/market/${q.id}`)}
-                className="w-full bg-white dark:bg-[#1a1f2e] rounded-xl border border-gray-200 dark:border-gray-700/50 p-3 text-left hover:border-[#c8aa76]/40 transition-colors"
+                className="w-full bg-white dark:bg-[#1a1f2e] rounded-xl border border-gray-200 dark:border-gray-700/50 p-3 text-left hover:border-[#8160EE]/40 transition-colors"
               >
                 <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 leading-snug">
                   {q.question}
                 </p>
-                <p className="text-xs text-[#c8aa76] mt-1.5 font-medium">
+                <p className="text-xs text-[#8160EE] mt-1.5 font-medium">
                   {q.status === "active" || q.status === "OPEN"
                     ? "Active"
                     : q.status}
@@ -380,10 +380,10 @@ const ReelsPage = () => {
           className="flex flex-col items-center"
         >
           <div
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${commentsOpen ? "bg-[#c8aa76]/10" : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"}`}
+            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${commentsOpen ? "bg-[#8160EE]/10" : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"}`}
           >
             <FaComment
-              className={`text-xl ${commentsOpen ? "text-[#c8aa76]" : "text-gray-700 dark:text-gray-300"}`}
+              className={`text-xl ${commentsOpen ? "text-[#8160EE]" : "text-gray-700 dark:text-gray-300"}`}
             />
           </div>
           <span className="text-xs mt-1 font-medium text-gray-700 dark:text-gray-300">
@@ -397,8 +397,8 @@ const ReelsPage = () => {
           className="flex flex-col items-center"
         >
           {currentReel.isBookmarked ? (
-            <div className="w-11 h-11 rounded-full bg-[#c8aa76]/10 flex items-center justify-center">
-              <FaBookmark className="text-[#c8aa76] text-xl" />
+            <div className="w-11 h-11 rounded-full bg-[#8160EE]/10 flex items-center justify-center">
+              <FaBookmark className="text-[#8160EE] text-xl" />
             </div>
           ) : (
             <div className="w-11 h-11 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
@@ -439,7 +439,7 @@ const ReelsPage = () => {
         {isAuth && (
           <button
             onClick={() => setCreateOpen(true)}
-            className="w-11 h-11 rounded-full bg-gradient-to-br from-[#c8aa76] to-[#8a7040] hover:from-[#d4b882] hover:to-[#a08850] flex items-center justify-center shadow-lg shadow-[#c8aa76]/30 transition-all hover:scale-110 active:scale-95 mt-2"
+            className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8160EE] to-[#6235f8] hover:from-[#987afa] hover:to-[#6235f8] flex items-center justify-center shadow-lg shadow-[#8160EE]/30 transition-all hover:scale-110 active:scale-95 mt-2"
             title="Create Reel"
           >
             <FaPlus className="text-white text-sm" />
@@ -484,7 +484,7 @@ const ReelsPage = () => {
             {isLoading && (
               <div className="w-full h-full snap-start flex items-center justify-center bg-black">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-10 h-10 border-3 border-[#c8aa76] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-10 h-10 border-3 border-[#8160EE] border-t-transparent rounded-full animate-spin" />
                   <span className="text-gray-400 text-sm">
                     Loading reels...
                   </span>
@@ -494,8 +494,8 @@ const ReelsPage = () => {
 
             {!isLoading && reels.length === 0 && (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-black via-[#0f172a] to-black text-white px-6">
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#c8aa76]/20 to-[#c8aa76]/5 flex items-center justify-center mb-6">
-                  <FaVideo className="text-[#c8aa76] text-3xl" />
+                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#8160EE]/20 to-[#8160EE]/5 flex items-center justify-center mb-6">
+                  <FaVideo className="text-[#8160EE] text-3xl" />
                 </div>
                 <p className="text-xl font-bold mb-2">No reels yet</p>
                 <p className="text-gray-400 text-sm text-center max-w-[280px] leading-relaxed">
@@ -553,7 +553,7 @@ const ReelsPage = () => {
             {isLoading && (
               <div className="w-full h-full snap-start flex items-center justify-center bg-black">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-10 h-10 border-3 border-[#c8aa76] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-10 h-10 border-3 border-[#8160EE] border-t-transparent rounded-full animate-spin" />
                   <span className="text-gray-400 text-sm">
                     Loading reels...
                   </span>
@@ -563,8 +563,8 @@ const ReelsPage = () => {
 
             {!isLoading && reels.length === 0 && (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-black via-[#0f172a] to-black text-white px-6">
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#c8aa76]/20 to-[#c8aa76]/5 flex items-center justify-center mb-6">
-                  <FaVideo className="text-[#c8aa76] text-3xl" />
+                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#8160EE]/20 to-[#8160EE]/5 flex items-center justify-center mb-6">
+                  <FaVideo className="text-[#8160EE] text-3xl" />
                 </div>
                 <p className="text-xl font-bold mb-2">No reels yet</p>
                 <p className="text-gray-400 text-sm text-center max-w-[280px] leading-relaxed">
@@ -573,7 +573,7 @@ const ReelsPage = () => {
                 {isAuth && (
                   <button
                     onClick={() => setCreateOpen(true)}
-                    className="mt-6 bg-gradient-to-r from-[#c8aa76] to-[#a08850] text-white font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-[#c8aa76]/20"
+                    className="mt-6 bg-gradient-to-r from-[#8160EE] to-[#6235f8] text-white font-semibold px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-[#8160EE]/20"
                   >
                     <FaPlus className="text-sm" />
                     Create First Reel
@@ -587,7 +587,7 @@ const ReelsPage = () => {
           {isAuth && reels.length > 0 && (
             <button
               onClick={() => setCreateOpen(true)}
-              className="absolute bottom-6 right-4 z-30 bg-gradient-to-br from-[#c8aa76] to-[#8a7040] hover:from-[#d4b882] hover:to-[#a08850] text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl shadow-[#c8aa76]/30 transition-all hover:scale-110 active:scale-95"
+              className="absolute bottom-6 right-4 z-30 bg-gradient-to-br from-[#8160EE] to-[#6235f8] hover:from-[#8160EE] hover:to-[#6235f8] text-white rounded-full w-12 h-12 flex items-center justify-center shadow-xl shadow-[#8160EE]/30 transition-all hover:scale-110 active:scale-95"
               title="Create Reel"
             >
               <FaPlus className="text-base" />

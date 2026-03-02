@@ -278,12 +278,12 @@ const Header = ({ isPosition, setPosition }) => {
                   height={80}
                 /> */}
                 </Link>
-                <div className="flex flex-row items-center gap-4">
+                <div className="flex flex-row items-center gap-7">
                   <div
                     onClick={() =>
                       !getToken ? setIsOpen(true) : router.push(`/ideas`)
                     }
-                    className="font-semibold sm:block hidden font-poppins cursor-pointer text-sm text-gray-700 dark:text-gray-300"
+                    className="font-medium sm:block hidden font-poppins cursor-pointer text-sm text-gray-700 dark:text-gray-300"
                   >
                     SOCIAL
                   </div>
@@ -292,9 +292,9 @@ const Header = ({ isPosition, setPosition }) => {
                       () => (false ? setIsOpen(true) : router.push(`/reels`))
                       // !getToken ? setIsOpen(true) : router.push(`/reels`)
                     }
-                    className="font-semibold sm:block hidden font-poppins cursor-pointer text-sm text-gray-700 dark:text-gray-300"
+                    className="font-medium sm:block hidden font-poppins cursor-pointer text-sm text-gray-700 dark:text-gray-300"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <CiYoutube
                         size={18}
                         className="text-red-500 dark:text-red-400"

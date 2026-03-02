@@ -224,7 +224,7 @@ const ReelCard: React.FC<ReelCardProps> = ({
       {/* Progress bar */}
       <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/20 z-30">
         <div
-          className="h-full bg-[#c8aa76] transition-all duration-200"
+          className="h-full bg-[#8160EE] transition-all duration-200"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -260,7 +260,7 @@ const ReelCard: React.FC<ReelCardProps> = ({
         {/* Bookmark */}
         <button onClick={handleBookmark} className="flex flex-col items-center">
           {reel.isBookmarked ? (
-            <FaBookmark className="text-[#c8aa76] text-[26px] drop-shadow-lg" />
+            <FaBookmark className="text-[#8160EE] text-[26px] drop-shadow-lg" />
           ) : (
             <FaRegBookmark className="text-white text-[26px] drop-shadow-lg" />
           )}
@@ -291,7 +291,7 @@ const ReelCard: React.FC<ReelCardProps> = ({
       {/* Bottom overlay: creator + caption only */}
       <div className="absolute bottom-5 left-4 right-16 lg:right-4 z-20">
         <div className="flex items-center gap-2 mb-1.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#c8aa76] to-[#8a7040] flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#9070fa] to-[#6031fa] flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
             {creatorName.charAt(0).toUpperCase()}
           </div>
           <span className="text-white font-bold text-sm drop-shadow-lg">

@@ -41,11 +41,11 @@ const QuestionOverlay: React.FC<QuestionOverlayProps> = ({
         </button>
 
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-11 h-11 bg-gradient-to-br from-[#c8aa76] to-[#8a7040] rounded-xl flex items-center justify-center shadow-lg shadow-[#c8aa76]/20">
+          <div className="w-11 h-11 bg-gradient-to-br from-[#8160EE] to-[#5d31ec] rounded-xl flex items-center justify-center shadow-lg shadow-[#c8aa76]/20">
             <MdQuiz className="text-white text-xl" />
           </div>
           <div>
-            <p className="text-xs text-[#c8aa76] font-bold uppercase tracking-wider">
+            <p className="text-xs text-[#8160EE] font-bold uppercase tracking-wider">
               Prediction Market
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
@@ -70,9 +70,9 @@ const QuestionOverlay: React.FC<QuestionOverlayProps> = ({
 
         <button
           onClick={handleGoToQuestion}
-          className="w-full bg-gradient-to-r from-[#c8aa76] to-[#a08850] hover:from-[#d4b882] hover:to-[#b09860] text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#c8aa76]/20"
+          className="w-full bg-gradient-to-r from-[#8160EE] to-[#6137eb] hover:from-[#7048f1] hover:to-[#4f1afd]  text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#c8aa76]/20"
         >
-          Predict Now <FaArrowRight className="text-sm" />
+          Predict Now <FaArrowRight className="text-sm " />
         </button>
       </div>
     </div>

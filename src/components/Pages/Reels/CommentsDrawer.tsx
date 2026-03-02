@@ -123,7 +123,7 @@ const CommentsDrawer: React.FC<CommentsDrawerProps> = ({
 
       {loading && comments.length === 0 && (
         <div className="flex items-center justify-center py-12">
-          <div className="w-8 h-8 border-3 border-[#c8aa76] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-[#8160EE] border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
@@ -134,7 +134,7 @@ const CommentsDrawer: React.FC<CommentsDrawerProps> = ({
           "User";
         return (
           <div key={c.id} className="flex gap-3 group">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#c8aa76] to-[#8a7040] flex items-center justify-center text-white font-bold text-xs flex-shrink-0 ring-2 ring-[#c8aa76]/20">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8160EE] to-[#673bf7] flex items-center justify-center text-white font-bold text-xs flex-shrink-0 ring-2 ring-[#c8aa76]/20">
               {name.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
@@ -151,7 +151,7 @@ const CommentsDrawer: React.FC<CommentsDrawerProps> = ({
               </p>
 
               {c.replies && c.replies.length > 0 && (
-                <div className="mt-3 ml-2 pl-3 border-l-2 border-[#c8aa76]/20 space-y-2.5">
+                <div className="mt-3 ml-2 pl-3 border-l-2 border-[#8160EE]/20 space-y-2.5">
                   {c.replies.map((r) => {
                     const rName =
                       (r.commenter?.preferences as Record<string, string>)
@@ -160,7 +160,7 @@ const CommentsDrawer: React.FC<CommentsDrawerProps> = ({
                       "User";
                     return (
                       <div key={r.id} className="flex gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#c8aa76]/60 to-[#8a7040]/60 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#8160EE]/60 to-[#8160EE]/60 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
                           {rName.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
@@ -193,12 +193,12 @@ const CommentsDrawer: React.FC<CommentsDrawerProps> = ({
       {hasMore && comments.length > 0 && (
         <button
           onClick={handleLoadMore}
-          className="text-[#c8aa76] hover:text-[#d4b882] text-sm w-full text-center py-2 font-medium transition-colors"
+          className="text-[#8160EE] hover:text-[#6335f8] text-sm w-full text-center py-2 font-medium transition-colors"
           disabled={loading}
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
-              <div className="w-3.5 h-3.5 border-2 border-[#c8aa76] border-t-transparent rounded-full animate-spin" />
+              <div className="w-3.5 h-3.5 border-2 border-[#6235f8] border-t-transparent rounded-full animate-spin" />
               Loading...
             </span>
           ) : (
@@ -212,7 +212,7 @@ const CommentsDrawer: React.FC<CommentsDrawerProps> = ({
   const inputBar = (
     <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700/50 flex gap-2 items-center">
       <input
-        className="flex-1 bg-gray-100 dark:bg-[#0f1520] text-sm text-gray-900 dark:text-white rounded-full px-4 py-2.5 outline-none border border-transparent focus:border-[#c8aa76]/30 transition-colors"
+        className="flex-1 bg-gray-100 dark:bg-[#0f1520] text-sm text-gray-900 dark:text-white rounded-full px-4 py-2.5 outline-none border border-transparent focus:border-[#8160EE]/30 transition-colors"
         placeholder="Add a comment..."
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -221,7 +221,7 @@ const CommentsDrawer: React.FC<CommentsDrawerProps> = ({
       <button
         onClick={handleSend}
         disabled={!text.trim() || sending}
-        className="w-9 h-9 rounded-full bg-gradient-to-br from-[#c8aa76] to-[#8a7040] flex items-center justify-center disabled:opacity-30 transition-opacity"
+        className="w-9 h-9 rounded-full bg-gradient-to-br from-[#7c57f8] to-[#6235f8] flex items-center justify-center disabled:opacity-30 transition-opacity"
       >
         {sending ? (
           <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

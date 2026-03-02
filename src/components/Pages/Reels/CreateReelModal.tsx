@@ -136,7 +136,7 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#c8aa76] to-[#8a7040] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#8160EE] to-[#6437f8] flex items-center justify-center">
               <FaVideo className="text-white text-sm" />
             </div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">
@@ -156,8 +156,8 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
           <div
             className={`border-2 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center cursor-pointer transition-all ${
               dragOver
-                ? "border-[#c8aa76] bg-[#c8aa76]/10"
-                : "border-gray-300 dark:border-gray-600 hover:border-[#c8aa76]/60 hover:bg-[#c8aa76]/5"
+                ? "border-[#8160EE] bg-[#8160EE]/10"
+                : "border-gray-300 dark:border-gray-600 hover:border-[#8160EE]/60 hover:bg-[#8160EE]/5"
             }`}
             onClick={() => inputRef.current?.click()}
             onDragOver={(e) => {
@@ -167,8 +167,8 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
             onDragLeave={() => setDragOver(false)}
             onDrop={handleDrop}
           >
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#c8aa76]/20 to-[#c8aa76]/5 flex items-center justify-center mb-4">
-              <FaCloudUploadAlt className="text-3xl text-[#c8aa76]" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#8160EE]/20 to-[#8160EE]/5 flex items-center justify-center mb-4">
+              <FaCloudUploadAlt className="text-3xl text-[#8160EE]" />
             </div>
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
               Tap or drag to upload
@@ -218,7 +218,7 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
         {/* Caption */}
         <div className="mt-4 relative">
           <textarea
-            className="w-full bg-gray-50 dark:bg-[#0f1520] text-sm text-gray-900 dark:text-white rounded-xl px-4 py-3 outline-none resize-none border border-gray-200 dark:border-gray-700/50 focus:border-[#c8aa76]/50 focus:ring-1 focus:ring-[#c8aa76]/20 transition-all"
+            className="w-full bg-gray-50 dark:bg-[#0f1520] text-sm text-gray-900 dark:text-white rounded-xl px-4 py-3 outline-none resize-none border border-gray-200 dark:border-gray-700/50 focus:border-[#8160EE]/50 focus:ring-1 focus:ring-[#8160EE]/20 transition-all"
             rows={3}
             maxLength={MAX_CAPTION}
             placeholder="Write a caption..."
@@ -235,7 +235,7 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
         {/* Link question (optional) */}
         <div className="mt-3">
           <input
-            className="w-full bg-gray-50 dark:bg-[#0f1520] text-sm text-gray-900 dark:text-white rounded-xl px-4 py-3 outline-none border border-gray-200 dark:border-gray-700/50 focus:border-[#c8aa76]/50 focus:ring-1 focus:ring-[#c8aa76]/20 transition-all"
+            className="w-full bg-gray-50 dark:bg-[#0f1520] text-sm text-gray-900 dark:text-white rounded-xl px-4 py-3 outline-none border border-gray-200 dark:border-gray-700/50 focus:border-[#8160EE]/50 focus:ring-1 focus:ring-[#8160EE]/20 transition-all"
             placeholder="Link to Question ID (optional)"
             value={questionId}
             onChange={(e) => setQuestionId(e.target.value)}
@@ -253,13 +253,13 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 Uploading...
               </span>
-              <span className="text-xs font-medium text-[#c8aa76]">
+              <span className="text-xs font-medium text-[#8160EE]">
                 {Math.round(uploadProgress)}%
               </span>
             </div>
             <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-[#c8aa76] to-[#a08850] rounded-full transition-all duration-300"
+                className="h-full bg-gradient-to-r from-[#8160EE] to-[#5f2ffd] rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
@@ -270,7 +270,7 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
         <button
           onClick={handleSubmit}
           disabled={!file || uploading}
-          className="w-full mt-4 bg-gradient-to-r from-[#c8aa76] to-[#a08850] hover:from-[#d4b882] hover:to-[#b09860] disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#c8aa76]/20 disabled:shadow-none"
+          className="w-full mt-4 bg-gradient-to-r from-[#8160EE] to-[#5f2ffd] hover:from-[#8160EE] hover:to-[#7d58f8] disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#8160EE]/20 disabled:shadow-none"
         >
           {uploading ? (
             <>
