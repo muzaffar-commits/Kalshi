@@ -67,8 +67,6 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
     if (selected) processFile(selected);
   };
 
-  console.log(file, "filefilefilefile");
-
   const handleSubmit = async () => {
     if (!file) return toast.error("Select a video");
     setUploading(true);
@@ -86,15 +84,12 @@ const CreateReelModal: React.FC<CreateReelModalProps> = ({
     }, 300);
 
     const formData = new FormData();
-    console.log(file, "rams");
 
     formData.append("video", file);
     formData.append("duration", String(duration));
     if (caption.trim()) formData.append("caption", caption.trim());
     if (questionId.trim()) formData.append("questionId", questionId.trim());
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1], "form");
-    }
+
     const res = await createReel(formData);
     clearInterval(progressInterval);
     setUploadProgress(100);
