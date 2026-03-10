@@ -7,6 +7,7 @@ import { logout } from "../store/slice/auth";
 // export const basedURLs = "http://localhost:2000";
 export const basedURLs = "https://api.opinionkings.com";
 export const developmentBaseURL = `${basedURLs}/api`;
+// console
 
 const apiInstance = axios.create({
   baseURL: developmentBaseURL,
